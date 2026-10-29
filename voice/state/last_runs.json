@@ -1,10 +1,18 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": null,
+  "updated": "2026-10-29T17:14:27.795Z",
   "runs": {
     "analyst": null,
     "lab": null,
-    "curator": null
+    "curator": null,
+    "undefined": {
+      "id": "guardian-september-roundup-one-category-2026",
+      "date": "2026-10-29",
+      "opening_move": "dated_fact",
+      "ending_move": "verification",
+      "title_pattern": "the guardian's september roundup",
+      "humor_lines": 1
+    }
   }
 }

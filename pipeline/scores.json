@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-29T16:23:42.551Z",
+  "updated": "2026-10-29T17:14:27.531Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -220,6 +220,44 @@
         }
       },
       "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "guardian-september-roundup-one-category-2026": {
+      "score": 6.8,
+      "note": "6.8/10 — sem imagem −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 6% com brandon-sanderson-sci-fi-publishing-empire-2026"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "It turns a routine roundup into testable evidence that trade categories no longer describe readers, using the desk's own filing choices."
+        }
+      },
+      "source": "auto",
       "date": "2026-10-29"
     }
   }
