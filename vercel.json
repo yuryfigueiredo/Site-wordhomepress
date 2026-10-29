@@ -1,0 +1,39 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "trailingSlash": false,
+  "cleanUrls": false,
+  "rewrites": [],
+  "redirects": [
+    { "source": "/index.htm", "destination": "/index.html", "permanent": true },
+    { "source": "/dumarest.htm", "destination": "/dumarest/index.htm", "permanent": true },
+    { "source": "/dumarest", "destination": "/dumarest/index.htm", "permanent": true },
+    { "source": "/dumarest/", "destination": "/dumarest/index.htm", "permanent": true },
+    { "source": "/index.php/bishop-chance", "destination": "/chance.htm", "permanent": true },
+    { "source": "/new_HWP/(.*)", "destination": "/chance.htm", "permanent": true },
+    { "source": "/images/PackOfTrouble_Chapter01.pdf", "destination": "/chance.htm", "permanent": true },
+    { "source": "/images/chance/(.*)", "destination": "/chance.htm", "permanent": true },
+
+    { "source": "/culture", "destination": "/culture.html", "permanent": true },
+    { "source": "/reviews", "destination": "/reviews.html", "permanent": true },
+    { "source": "/tech", "destination": "/tech.html", "permanent": true },
+    { "source": "/science", "destination": "/science.html", "permanent": true },
+    { "source": "/archive", "destination": "/archive.html", "permanent": true },
+    { "source": "/disclosure", "destination": "/disclosure.html", "permanent": true },
+    { "source": "/article", "destination": "/article.html", "permanent": true },
+    { "source": "/review", "destination": "/review.html", "permanent": true },
+    { "source": "/tarzan-centennial", "destination": "/tarzan-centennial.html", "permanent": true },
+    { "source": "/classic-comics", "destination": "/classic-comics.html", "permanent": true },
+
+    { "source": "/article.html/:path*", "destination": "/article.html", "permanent": false },
+    { "source": "/review.html/:path*", "destination": "/review.html", "permanent": false }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ]
+}
