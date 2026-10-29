@@ -8,6 +8,7 @@
     { "source": "/dumarest.htm", "destination": "/dumarest/index.htm", "permanent": true },
     { "source": "/dumarest", "destination": "/dumarest/index.htm", "permanent": true },
     { "source": "/dumarest/", "destination": "/dumarest/index.htm", "permanent": true },
+    { "source": "/dumarest/index.html", "destination": "/dumarest/index.htm", "permanent": true },
     { "source": "/index.php/bishop-chance", "destination": "/chance.htm", "permanent": true },
     { "source": "/new_HWP/(.*)", "destination": "/chance.htm", "permanent": true },
     { "source": "/images/PackOfTrouble_Chapter01.pdf", "destination": "/chance.htm", "permanent": true },

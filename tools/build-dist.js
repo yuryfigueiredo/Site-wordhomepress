@@ -24,6 +24,30 @@ function isHtml(file) {
   return /\.html?$/i.test(file);
 }
 
+/* tools/make-stubs.js gera contorno para o GitHub Pages, que nao le
+   _redirects: meta refresh + noindex. Em Workers/Vercel o 301 nativo faz o
+   mesmo trabalho e manda; o stub so brigaria com ele. Nao vai no pacote. */
+function isPagesStub(rel) {
+  const body = fs.readFileSync(path.join(ROOT, rel), "utf8").slice(0, 1200);
+  return /http-equiv="refresh"/i.test(body);
+}
+
+/* Para o redirect nativo cobrir um stub, a URL do stub tem de aparecer como
+   source/linha em vercel.json e _redirects. Sem isso, tirar o stub do pacote
+   transforma uma URL histórica viva em 404. */
+const redirectText = ["vercel.json", "_redirects"]
+  .filter((f) => fs.existsSync(path.join(ROOT, f)))
+  .map((f) => fs.readFileSync(path.join(ROOT, f), "utf8"))
+  .join("\n");
+
+function stubTarget(rel) {
+  const body = fs.readFileSync(path.join(ROOT, rel), "utf8").slice(0, 1200);
+  const m = body.match(/url=([^"'&>]+)/i);
+  if (!m) return null;
+  const dir = path.posix.dirname(rel);
+  return path.posix.normalize(path.posix.join(dir, m[1].trim()));
+}
+
 function rootHtmlFiles() {
   return fs
     .readdirSync(ROOT, { withFileTypes: true })
@@ -64,8 +88,11 @@ function listFiles(dir) {
 
 fs.rmSync(DIST, { recursive: true, force: true });
 
-const files = [...rootHtmlFiles(), ...rootExtras()];
-for (const dir of ASSET_DIRS) if (fs.existsSync(path.join(ROOT, dir))) walk(dir, files);
+const candidates = [...rootHtmlFiles(), ...rootExtras()];
+for (const dir of ASSET_DIRS) if (fs.existsSync(path.join(ROOT, dir))) walk(dir, candidates);
+
+const stubsSkipped = candidates.filter((f) => isHtml(f) && isPagesStub(f));
+const files = candidates.filter((f) => !stubsSkipped.includes(f));
 
 let bytes = 0;
 for (const rel of files) bytes += copy(rel);
@@ -84,6 +111,10 @@ for (const f of shipped.filter(isHtml)) {
 }
 const pages = shipped.filter(isHtml).length;
 if (pages < 10) problems.push(`só ${pages} páginas no pacote — parece incompleto`);
+for (const stub of stubsSkipped) {
+  if (!redirectText.includes(stub))
+    problems.push(`${stub} saiu do pacote mas nenhuma regra de 301 cobre essa URL — ficaria 404`);
+}
 
 const mb = (bytes / 1024 / 1024).toFixed(2);
 console.log(`dist/ montado: ${shipped.length} arquivos, ${pages} páginas, ${mb} MB`);
@@ -92,3 +123,16 @@ if (problems.length) {
   process.exit(1);
 }
 console.log("  pacote validado, pronto para upload");
+if (stubsSkipped.length) console.log(`  ${stubsSkipped.length} stubs do GitHub Pages fora do pacote (301 nativo faz isso)`);
+
+/* O pacote precisa ser identico no seu PC e no CI da Vercel: se la faltar
+   dumarest/ ou sobrar vercel.json, o site publicado nao e o site testado. */
+if (process.env.CI) {
+  const missing = files.filter((f) => !fs.existsSync(path.join(DIST, f)));
+  if (missing.length) {
+    console.log(`  ERRO: ${missing.length} arquivos do manifesto nao foram copiados:`);
+    for (const m of missing.slice(0, 10)) console.log(`    - ${m}`);
+    process.exit(1);
+  }
+  console.log(`  CI: ${files.length} arquivos do manifesto conferidos`);
+}

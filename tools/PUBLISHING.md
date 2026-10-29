@@ -1,58 +1,77 @@
-# Colocar o homeworldpress.com no ar
+# Como o site vai para o ar
 
-Guia para publicar sem linha de comando e sem custo. Feito para ser seguido numa sessão só.
-
-O que existe hoje: o domínio `homeworldpress.com` está **parked** no DomainControl (registro `A @ → Parked`, nameservers `ns11/ns12.domaincontrol.com`). Isso não hospeda nada — só segura o nome. O site está parado nesta pasta, e é daqui que ele vai sair.
-
-Por que Cloudflare Pages e não outra coisa: o arquivo [`_redirects`](../_redirects) da raiz já foi escrito para ele (linha 2 diz "CLOUDFLARE PAGES SURGICAL 301 REDIRECTS"). Ele guarda as URLs históricas de 2008–2025 que a Wikipedia, ERBzine e Comics.org ainda apontam para cá. Perder isso é perder o ranqueamento antigo. Netlify lê o mesmo formato, então serve como plano B sem mudar nada.
-
-O Qoder Sites **não** serve para isto: ele só endereça em `*.qoder.site`, sem domínio próprio. Dá para ter uma cópia de lá, mas a Amazon quer o domínio real público.
-
----
-
-## Fase 1 — site no ar em URL pública (≈10 min)
-
-**1. Recrie o pacote.** Na pasta do projeto:
+## O fluxo, de ponta a ponta
 
 ```
-node tools/build-dist.js
+turno (GitHub Actions, 5x/dia)
+  └─ coleta pauta → Gemini escreve → check-post → nota → publish.js
+       └─ commita e faz push para main
+            └─ Vercel detecta o push e publica sozinha
+                 └─ homeworldpress.com no ar + analytics
 ```
 
-Saída esperada: `dist/ montado: 37 arquivos, 15 páginas, ~1.69 MB` e `pacote validado`. Se der ERRO, pare e leia a linha — o checador reclama se vazar arquivo de trabalho ou se faltar página.
+Nenhuma etapa tem upload manual. O `publish.js` já commita local, o workflow já faz
+push, e a Vercel publica a cada push em `main`. É o mesmo mecanismo que você já usa
+nos outros projetos.
 
-**2. Crie conta em [pages.cloudflare.com](https://pages.cloudflare.com).** E-mail e senha, sem cartão.
+## Por que Vercel e não Cloudflare Pages
 
-**3. Faça o upload.** No painel: **Workers & Pages → Create → Pages → Upload and deploy**. Arraste a pasta `dist` inteira (não os arquivos soltos) para a área de upload. Dê um nome ao projeto, ex.: `homeworldpress`.
+Três motivos concretos, todos verificados:
 
-**4. Confirme.** Ele devolve algo como `https://homeworldpress.pages.dev`. Abra a raiz e uma página de review. Se isso abrir, o site está no ar — a URL `pages.dev` já é pública e indexável.
+1. **Deploy por git.** O Cloudflare Workers (o caminho que usamos primeiro) só aceita
+   upload de pasta. Toda publicação seria arrastar `dist/` manualmente — uma ponta
+   solta exatamente no lugar que precisa ser automático.
+2. **Analytics grátis no plano Hobby.** Visitantes, page views, bounce rate,
+   referrers, países e dispositivos. O Workers de arquivos estáticos devolve
+   "Metrics is unavailable for Workers with only static assets" — ou seja, nada.
+3. **Sem o 307 cortando `.html`.** O roteador de assets do Workers esconde a
+   extensão com redirect temporário, brigando com os canonicals. A Vercel não faz
+   isso, e o `vercel.json` já fixa o comportamento.
 
-Detalhe que importa: o [`js/app.js:409`](../js/app.js) fixa `SITE_ORIGIN = "https://homeworldpress.com"`. Em `pages.dev` os canonicals e og:url apontam para o domínio final. É o comportamento correto para a versão definitiva; na URL de teste só significa que o preview não é canônico para si mesmo.
+## Configuração do projeto na Vercel
 
-## Fase 2 — o domínio próprio (≈15 min + propagação)
+Ao importar `yuryfigueiredo/Site-wordhomepress`:
 
-**5.** No projeto Pages: **Custom domains → Set up a custom domain → homeworldpress.com**.
+| Campo | Valor |
+|---|---|
+| Framework Preset | `Other` |
+| Build Command | `node tools/build-dist.js` |
+| Output Directory | `dist` |
+| Install Command | vazio (o build não usa `node_modules`) |
 
-**6.** A Cloudflare vai dizer que o DNS está em outro lugar e oferecer duas saídas:
+O `vercel.json` na raiz cuida de todos os redirects e cabeçalhos. Não precisa criar
+nada na interface.
 
-- **Migrar os nameservers (recomendado).** Ela te dá dois endereços tipo `kara.ns.cloudflare.com` / `walt.ns.cloudflare.com`. Você volta na tela que já conhece — DomainControl → **Servidores de nomes** — e troca os `ns11/ns12.domaincontrol.com` por esses. É a tela da sua captura de tela, aba "Servidores de nomes".
-- **CNAME setup (ficar onde está).** Você mantém os nameservers do DomainControl e cria só um registro `CNAME` apontando para o projeto. Dá menos trabalho agora e a Cloudflare aceita, mas o registro `A @ → Parked` que está lá hoje precisa ser removido ou ele briga com o CNAME.
+## O que o build garante
 
-Com nameservers na Cloudflare, a Fase 3 some — ela cria os registros sozinha.
+`tools/build-dist.js` não copia a pasta inteira — ele monta um manifesto e recusa o
+que não é site:
 
-**7. HTTPS.** A Cloudflare emite o certificado automaticamente depois que o domínio valida. Não tem nada para configurar; só espere o status sair de "Pending".
+- `.audit/`, `tools/`, `pipeline/`, `voice/`, `.git/` fora do pacote
+- rascunhos editoriais, relatórios e o histórico do git nunca são publicados
+- **stubs do GitHub Pages ficam fora**: `tools/make-stubs.js` gera contorno com
+  `meta refresh` + `noindex` porque o Pages não lê `_redirects`. Em Vercel/Workers o
+  301 nativo faz o mesmo trabalho melhor, e o stub só brigaria com ele.
+- **em CI, cada stub removido precisa ter uma regra de 301 correspondente** em
+  `_redirects` ou `vercel.json`. Se alguém criar um stub novo e esquecer a regra, o
+  build falha com `saiu do pacote mas nenhuma regra de 301 cobre essa URL` — porque
+  o resultado seria uma URL histórica viva virando 404 em silêncio.
 
-**8. `www`.** Os [`canonical`](../js/app.js) e `og:url` do site todo usam o ápice sem `www`, e a [`.htaccess`](../.htaccess) seção 3 faz `www → ápice`. Adicione `www.homeworldpress.com` como segundo custom domain apontando para o mesmo projeto, para não dividir o site em dois.
+## Domínio próprio
 
----
+Vercel → Settings → Domains → `homeworldpress.com`. Ela mostra os dois nameservers
+dela. Você troca na tela do DomainControl que já conhece (aba "Servidores de nomes"),
+deixando de usar `ns11/ns12.domaincontrol.com`. O HTTPS é emitido sozinho depois que
+o DNS valida. Adicione `www.homeworldpress.com` como segundo domínio apontando para o
+mesmo projeto — os canonicals do site todo usam o ápice sem `www`.
 
-## O que ainda é decisão sua, não passo de guia
+## Quando algo publicar errado
 
-**Direito de imagem das capas.** [`dumarest/index.htm`](../dumarest/index.htm) publica 38 capas digitalizadas do arquivo do James Gauthier, com um "ALL RIGHTS RESERVED" genérico no rodapé e nenhuma permissão declarada. As capas de Dune, Neuromancer e Stormlight em `images/books/` são a mesma categoria de risco. Antes de por isso no ar publicamente, confirme a permissão por escrito — depois de indexado, retirar é mais caro.
+O histórico de deploys da Vercel tem botão **Rollback** em cada linha. Um clique e a
+versão anterior volta ao ar, sem tocar em git. É o freio que o upload manual não tem.
 
-**Republicar.** Upload manual não é automatizável: cada mudança é arrastar a pasta de novo. Se você quiser que o `git push` publique sozinho, o caminho é conectar o projeto a um repositório no GitHub e apontar o Pages para lá — aí o build das Camadas 1 e 2 fecha o ciclo. Não é necessário agora.
+## GitHub Pages: desligue
 
-**Ordem com a Amazon.** Esta fase 1 já desbloqueia o cadastro: a Amazon pede uma URL pública, e `pages.dev` resolve. Faça o cadastro com o domínio real se a Fase 2 terminar antes, ou com a URL `pages.dev` e troque depois no painel de settings. A divulgação de afiliado que a política exige já existe no site: o texto "As an Amazon Associate..." no rodapé de todas as páginas e a página [`disclosure.html`](../disclosure.html).
-
-## Depois de no ar
-
-Rode `node tools/doctor.js` — ele passa a checar os links externos de verdade, inclusive contra o domínio publicado. E confirme no navegador que `/index.htm` e `/dumarest` fazem os 301 do `_redirects`: esses redirecionamentos só funcionam hospedado, não no servidor de teste local.
+O workflow `.github/workflows/turno.yml` tem um job `pages` que publicaria uma cópia
+do site em `yuryfigueiredo.github.io`. Com a Vercel no ar, isso é um site duplicado
+disputando o mesmo conteúdo. Settings → Pages → Unpublish site.
