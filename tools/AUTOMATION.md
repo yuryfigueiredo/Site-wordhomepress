@@ -62,6 +62,30 @@ Para desfazer: `schtasks /Delete /TN "HomeworldPress Doctor" /F`.
 
 Depois disso, a manutenção e a curadoria rodam todo dia sem você abrir nada. Você só lê `tools/reports/` quando algo falha e `pipeline/leads/` quando quiser publicar.
 
+## Publicação de posts (Camada 2, sem API)
+
+Quatro comandos, um passo manual no meio:
+
+```bash
+node tools/ingest.js                 # fila de pautas (camada 1)
+node tools/new-post.js 3             # pauta nº 3 → pipeline/drafts/<slug>/{brief.json,prompt.md}
+#   passo manual: cole prompt.md no chat, salve a resposta (só o JSON) em draft.json
+node tools/check-post.js <slug>      # editor mecânico → review.md, exit 1 se reprovar
+node tools/publish.js <slug>         # só com check verde: catálogo + feeds + sitemap + commit
+```
+
+- `new-post.js` monta o brief no formato exato do input contract de `voice/WRITER_PROMPT.md`, escolhe a byline pelo território (`EDITORIAL_VOICE.md` §4) e embute a memória anti-repetição de `voice/state/last_runs.json` no prompt.
+- `check-post.js` mede tudo no texto, não confia no `self_check`: tags permitidas, vocabulário banido (lista única em `WRITER_PROMPT.md`), templates estruturais (máx. 1, nenhum como fecho), ritmo (frase ≤30 palavras, frase curta obrigatória, 1 parágrafo de uma frase, 1 parágrafo longo), humor ≤2 e zero em pauta de morte, abertura/fecho diferentes da última peça do registro, fontes alcançáveis, links do texto presentes nas fontes, e a regra dura: **"we tested" só com `products[].tested=true` e protocolo em `test_notes`**.
+- `publish.js` insere no catálogo, roda `build.js` + `build-sitemap.js` + `doctor.js`, atualiza `last_runs.json` e faz **commit local**. Se qualquer etapa falhar, restaura o catálogo e não publica. Nunca faz push, nunca faz deploy.
+
+### Onde os cards novos aparecem
+
+`tools/build.js` preenche, entre marcadores `<!-- hwp:auto:<slot>:start/end -->`, os feeds listados em `pipeline/placements.json`: MOST RECENT e os grids de culture/tech/science na home, e o feed das três páginas de editoria. A região automática só acrescenta no topo os ids que ainda não aparecem no resto da página — cards escritos à mão nunca são tocados nem duplicados. Capa, TODAY'S PICKS e TRENDING continuam curadoria manual, de propósito.
+
+### Histórico
+
+O projeto é um repositório Git local (branch `main`). Cada publicação vira um commit; o baseline `82c6db3` é o site auditado. `pipeline/drafts/`, `pipeline/leads/`, `pipeline/state/` e `tools/reports/` estão no `.gitignore` porque rascunho não publicado em repositório público é rascunho publicado. Push para `github.com/yuryfigueiredo/Site-wordhomepress` só quando você mandar.
+
 ## O que continua dependendo de gente
 
 - **Publicar.** Nada aqui escreve no site.
