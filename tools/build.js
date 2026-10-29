@@ -94,16 +94,26 @@ const TEMPLATES = {
                   </h3>
                   <div class="meta-line"><span>${esc(String(a.author || "").toUpperCase())}</span><span>•</span><span>${esc(a.date)}</span></div>
                 </div>
+${
+                thumb(a)
+                  ? `
                 <a href="${href(a.id)}">
                   <img src="${esc(thumb(a))}" alt="${esc(a.imageAlt || a.title)}" class="latest-item__thumb" width="76" height="76">
-                </a>
+                </a>`
+                  : ""
+              }
               </article>`,
 
   "article-card": (a) => `          <article class="article-card" data-culture-card data-subtopic="${esc(a.subtopic)}">
             <div>
-              <a href="${href(a.id)}" class="article-card__media">
+${
+                a.image
+                  ? `
+                <a href="${href(a.id)}" class="article-card__media">
                 <img src="${esc(a.image)}" alt="${esc(a.imageAlt || a.title)}" loading="lazy" decoding="async" width="420" height="260">
-              </a>
+              </a>`
+                  : ""
+              }
               <div class="article-card__body">
                 <span class="kicker kicker--${a.category}">${esc(a.kicker)}</span>
                 <h3 class="article-card__title">
@@ -128,9 +138,14 @@ const TEMPLATES = {
           </article>`,
 
   "compact-card": (a) => `              <article class="compact-card">
+${
+                a.image
+                  ? `
                 <a href="${href(a.id)}">
                   <img src="${esc(a.image)}" alt="${esc(a.imageAlt || a.title)}" class="compact-card__img" loading="lazy" decoding="async" width="130" height="96">
-                </a>
+                </a>`
+                  : ""
+              }
                 <div>
                   <span class="kicker kicker--${a.category}">${esc(a.kicker)}</span>
                   <h3 class="compact-card__title">
@@ -143,9 +158,14 @@ const TEMPLATES = {
               </article>`,
 
   "cat-feed-item": (a) => `          <article class="cat-feed-item" data-culture-card data-subtopic="${esc(a.subtopic)}">
+${
+            a.image
+              ? `
             <a href="${href(a.id)}" class="cat-feed-item__media">
               <img src="${esc(a.image)}" alt="${esc(a.imageAlt || a.title)}" loading="lazy" width="280" height="185">
-            </a>
+            </a>`
+              : ""
+          }
             <div>
               <span class="kicker kicker--${a.category}">${esc(a.kicker)}</span>
               <h3 class="cat-feed-item__title">

@@ -12,3 +12,21 @@
 /new_HWP/*                     /chance.htm                     301
 /images/PackOfTrouble_Chapter01.pdf  /chance.htm               301
 /images/chance/*               /chance.htm                     301
+
+# --------------------------------------------------------------------------
+# URL CANONICA: o site declara .html em canonical e sitemap, mas o roteador
+# de assets do Workers corta a extensao sozinho e devolve 307 temporario
+# (/culture.html -> /culture), deixando as duas formas em 200 ao mesmo tempo.
+# As regras abaixo colapsam para a forma .html com 301 permanente.
+# /index.html nao esta aqui: o canonical da home ja e a raiz.
+# --------------------------------------------------------------------------
+/culture                /culture.html               301
+/reviews                /reviews.html               301
+/tech                   /tech.html                  301
+/science                /science.html               301
+/archive                /archive.html               301
+/disclosure             /disclosure.html            301
+/article                /article.html               301
+/review                 /review.html                301
+/tarzan-centennial      /tarzan-centennial.html     301
+/classic-comics         /classic-comics.html        301

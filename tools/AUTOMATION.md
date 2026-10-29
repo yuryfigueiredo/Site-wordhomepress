@@ -10,6 +10,7 @@ node tools/doctor.js --quick    # só catálogo + assets + metadata
 node tools/ingest.js            # atualiza a fila de pautas
 node tools/ingest.js --show     # imprime a fila de hoje
 node tools/build-sitemap.js     # regenera sitemap.xml a partir do catálogo
+node tools/build-dist.js        # monta dist/ para upload (ver PUBLISHING.md)
 ```
 
 ## `doctor.js` — o que ele pega sozinho
@@ -116,7 +117,8 @@ O projeto é um repositório Git local (branch `main`). Cada publicação vira u
 
 - **Push e deploy.** O robô commita local e para aí. Colocar no ar (Cloudflare Pages ou Netlify, por causa do `_redirects`; GitHub Pages não serve) é decisão sua, uma vez só — depois disso o push passa a ser o único passo que separa o site local do site público.
 - **"Nós testamos."** Só sai da sua mão. Sem aparelho na mão, o texto é comparação de especificações e precisa se chamar isso.
-- **Conta Amazon Associates.** Sem a sua Store ID real, os 147 links sem tag não rendem nada e a tag placeholder não paga.
+- **Conta Amazon Associates.** Sem a sua Store ID real, os 184 links com a tag `homeworldpres-20` não rendem nada — a placeholder não paga.
+- **Publicar no ar.** Nada aqui sobe site para servidor. O passo a passo do upload está em [PUBLISHING.md](PUBLISHING.md).
 - **Fotos de produto.** As imagens do review de e-readers são Unsplash, e algumas não batem com o produto (tem luminária ilustrando um Kindle Scribe).
 - **Direito de imagem de capas.** As capas históricas da editora vêm do arquivo do James Gauthier; antes de publicar, confirme a permissão por escrito.
 - **Nota manual no painel.** Opcional. Serve para corrigir o robô quando ele erra de julgamento, não para substituí-lo.

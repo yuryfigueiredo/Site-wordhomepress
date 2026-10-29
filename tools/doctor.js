@@ -30,8 +30,10 @@ const HTML_FILES = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
     /* pipeline/ guarda fragmentos (a capa de fallback), não páginas: checar
-       lang/favicon/<main> neles seria alarme falso. */
-    if (entry.isDirectory() && entry.name === "pipeline") continue;
+       lang/favicon/<main> neles seria alarme falso.
+       dist/ é cópia gerada por tools/build-dist.js: auditar fonte e cópia
+       juntos duplica cada achado. */
+    if (entry.isDirectory() && (entry.name === "pipeline" || entry.name === "dist")) continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) walk(full);
     else if (/\.x?html?$/i.test(entry.name)) HTML_FILES.push(path.relative(ROOT, full).replace(/\\/g, "/"));
@@ -66,6 +68,10 @@ const LOCAL_REF = /(?:src|href|poster)\s*=\s*["']([^"']+)["']|["']((?:\.?\/)?(?:
 const localRefs = new Map();
 for (const file of [...HTML_FILES, "js/articles-db.js"]) {
   const base = file === "js/articles-db.js" ? "" : path.dirname(file);
+  /* src="" ou href="" renderizam como recurso quebrado: é erro, não aviso. */
+  for (const m of read(file).matchAll(/\b(?:src|href)\s*=\s*["']\s*["']/gi)) {
+    fail("asset-empty", `${file}: atributo vazio (src/href sem valor) — card ou link quebrado para o leitor`);
+  }
   for (const m of read(file).matchAll(LOCAL_REF)) {
     const raw = (m[1] || m[2] || "").trim();
     if (!raw || /^(https?:|mailto:|tel:|data:|javascript:|#)/i.test(raw)) continue;
@@ -126,8 +132,8 @@ for (const file of HTML_FILES) {
     if (!has(/property\s*=\s*["']og:image["']/i)) fail("meta-og", `${file}: sem og:image`);
   }
   if (!has(/rel\s*=\s*["']canonical["']/i) && file !== "404.html") fail("meta-canonical", `${file}: sem canonical`);
-  if (!has(/rel\s*=\s*["']icon["']/i)) warn("meta-favicon", `${file}: sem favicon declarado`);
-  if (!has(/<main\b/i)) warn("structure", `${file}: sem <main> (leitor de tela perde o ponto de entrada)`);
+  if (!has(/rel\s*=\s*["']icon["']/i) && !stub) warn("meta-favicon", `${file}: sem favicon declarado`);
+  if (!has(/<main\b/i) && !stub) warn("structure", `${file}: sem <main> (leitor de tela perde o ponto de entrada)`);
   if (!stub && !has(/href\s*=\s*["']#main-content["']/i)) warn("structure", `${file}: sem skip link para #main-content`);
   if (file === "404.html" && !/name\s*=\s*["']robots["'][^>]*noindex/i.test(src))
     fail("meta-robots", "404.html sem noindex — o Google indexa a página de erro");
@@ -179,7 +185,9 @@ for (const a of DB.articles) {
 
 /* ── 8. Monetização honesta ───────────────────────────────────────────── */
 const allText = [...HTML_FILES, "js/articles-db.js", "js/app.js"].map(read).join("\n");
-const amazonLinks = [...allText.matchAll(/https?:\/\/(?:www\.)?(amazon\.[a-z.]+|audible\.[a-z.]+)\/[^"'\s&)]*/gi)];
+/* O delimitador da URL é aspa/espaço, não "&": parar no & truncava
+   `...?k=Foo&tag=x` em `...?k=Foo` e contava link com tag como sem tag. */
+const amazonLinks = [...allText.matchAll(/https?:\/\/(?:www\.)?(amazon\.[a-z.]+|audible\.[a-z.]+)\/[^"'\s)]*/gi)];
 const untagged = amazonLinks.filter((m) => !/[?&]tag=/.test(m[0]));
 if (untagged.length) warn("affiliate", `${untagged.length} links Amazon/Audible sem tag de afiliado (ex.: ${untagged[0][0].slice(0, 70)})`);
 const tagCount = (allText.match(new RegExp(`tag=${PLACEHOLDER_TAG}`, "g")) || []).length;

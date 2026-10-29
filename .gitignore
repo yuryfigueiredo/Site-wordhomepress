@@ -9,6 +9,9 @@ tools/reports/
 .audit/cr-*/
 .audit/build/
 
+# Pacote de deploy gerado por tools/build-dist.js: se reconstrui, nao entra no repo.
+dist/
+
 node_modules/
 *.log
 Thumbs.db

@@ -187,6 +187,8 @@ if (/before (?:the )?prices? (?:spike|rise|jump)|don'?t miss out|grab it now|lim
   reject("tested-rule", "urgência artificial de afiliado no texto");
 
 /* ── 10. título e dek ─────────────────────────────────────────────────── */
+if (!draft.image && !draft.bookCover)
+  reject("image", "sem image nem bookCover: todo card do site tem miniatura, e src vazio aparece quebrado para o leitor");
 const titleWords = words(draft.title || "").length;
 if (titleWords < 6 || titleWords > 14) reject("title", `título com ${titleWords} palavras (faixa 6–14)`);
 if (/\?/.test(draft.title || "")) reject("title", "título em forma de pergunta");
