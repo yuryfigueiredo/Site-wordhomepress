@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "note": "Slots que o tools/build.js preenche automaticamente a partir de js/articles-db.js. Capa, picks e trending continuam curadoria manual: não liste aqui.",
+  "slots": {
+    "index.html": [
+      { "name": "index-latest", "container": { "tag": "div", "class": "latest-list" }, "template": "latest-item", "limit": 4 },
+      { "name": "index-culture", "container": { "tag": "div", "class": "wired-grid-3" }, "template": "article-card", "category": "culture", "limit": 6 },
+      { "name": "index-tech", "container": { "tag": "div", "class": "compact-feed--tech" }, "template": "compact-card", "category": "tech", "limit": 3 },
+      { "name": "index-science", "container": { "tag": "div", "class": "compact-feed--science" }, "template": "compact-card", "category": "science", "limit": 3 }
+    ],
+    "culture.html": [
+      { "name": "culture-feed", "container": { "tag": "div", "class": "cat-feed-list" }, "template": "cat-feed-item", "category": "culture", "limit": 8 }
+    ],
+    "tech.html": [
+      { "name": "tech-feed", "container": { "tag": "div", "class": "cat-feed-list" }, "template": "cat-feed-item", "category": "tech", "limit": 8 }
+    ],
+    "science.html": [
+      { "name": "science-feed", "container": { "tag": "div", "class": "cat-feed-list" }, "template": "cat-feed-item", "category": "science", "limit": 8 }
+    ]
+  }
+}

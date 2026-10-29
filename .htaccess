@@ -1,0 +1,26 @@
+# ==========================================================================
+# HOMEWORLDPRESS.COM — APACHE / LITESPEED SURGICAL 301 REDIRECTS (.htaccess)
+# Preserves Link Juice from Wikipedia, ERBzine, GeorgeKelley.org & Comics.org
+# ==========================================================================
+
+RewriteEngine On
+
+# 1. Exact Legacy HTML & WordPress Paths (2008–2015)
+Redirect 301 /index.htm /index.html
+Redirect 301 /dumarest.htm /dumarest/index.htm
+Redirect 301 /index.php/bishop-chance /chance.htm
+Redirect 301 /images/PackOfTrouble_Chapter01.pdf /chance.htm
+
+# 2. Legacy OpenCart Product & Category Query Strings (2016–2019)
+RewriteCond %{QUERY_STRING} ^route=common/home$ [NC]
+RewriteRule ^index\.php$ /index.html? [R=301,L]
+
+RewriteCond %{QUERY_STRING} ^route=product/(product|category) [NC]
+RewriteRule ^index\.php$ /chance.htm? [R=301,L]
+
+# 3. Canonical Host: www -> apex (matches every rel="canonical" and og:url on the site)
+RewriteCond %{HTTP_HOST} ^www\.homeworldpress\.com$ [NC]
+RewriteRule ^(.*)$ https://homeworldpress.com/$1 [R=301,L]
+
+# 4. Custom 404 (Cloudflare Pages and Netlify serve /404.html automatically)
+ErrorDocument 404 /404.html

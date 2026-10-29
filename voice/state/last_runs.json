@@ -1,0 +1,10 @@
+{
+  "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
+  "version": 1,
+  "updated": null,
+  "runs": {
+    "analyst": null,
+    "lab": null,
+    "curator": null
+  }
+}

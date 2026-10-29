@@ -1,0 +1,14 @@
+# Rascunhos não publicados são editorial confidencial: fora do repositório público.
+pipeline/drafts/
+pipeline/leads/
+pipeline/state/
+tools/reports/
+
+# Scratch de auditoria: só os scripts entram, capturas e perfis de Chrome não.
+.audit/*.png
+.audit/cr-*/
+.audit/build/
+
+node_modules/
+*.log
+Thumbs.db

@@ -1,0 +1,14 @@
+# ==========================================================================
+# HOMEWORLDPRESS.COM — CLOUDFLARE PAGES SURGICAL 301 REDIRECTS
+# Captures 2008–2025 historical URLs without triggering Google Soft-404 penalties
+# ==========================================================================
+
+/index.htm                     /index.html                     301
+/dumarest.htm                  /dumarest/index.htm             301
+/dumarest                      /dumarest/index.htm             301
+/dumarest/                     /dumarest/index.htm             301
+/index.php/bishop-chance       /chance.htm                     301
+/index.php/bishop-chance/      /chance.htm                     301
+/new_HWP/*                     /chance.htm                     301
+/images/PackOfTrouble_Chapter01.pdf  /chance.htm               301
+/images/chance/*               /chance.htm                     301
