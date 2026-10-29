@@ -1,0 +1,9 @@
+{
+  "timezone": "America/Sao_Paulo",
+  "checks_per_day": 5,
+  "check_hours": ["07:00", "10:00", "14:00", "17:00", "21:00"],
+  "cron_expression": "0 7,10,14,17,21 * * *",
+  "max_publishes_per_day": 1,
+  "cover_baseline": 7.0,
+  "notes": "check_hours = quando o robô roda ingest + doctor (5 verificações por dia, como pedido). max_publishes_per_day = teto de matérias novas no ar por dia; publicar mais que isso em domínio recém-reativado é risco de scaled content abuse. cover_baseline = nota que uma matéria nova precisa vencer para tomar a capa da matéria escrita à mão."
+}

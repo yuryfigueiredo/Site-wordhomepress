@@ -12,3 +12,5 @@ tools/reports/
 node_modules/
 *.log
 Thumbs.db
+.audit/*.html
+.audit/*.json

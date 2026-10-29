@@ -55,6 +55,7 @@ const sentences = (text) =>
     .replace(/\s+/g, " ")
     .match(/[^.!?]+[.!?]+(?:["')\]]+)?/g) || [];
 const words = (s) => s.trim().split(/\s+/).filter(Boolean);
+const round2 = (n) => Math.round(n * 100) / 100;
 
 const text = stripTags(draft.content || draft.prose);
 const paras = paragraphs(draft.content || draft.prose);
@@ -171,6 +172,8 @@ for (const link of contentLinks) {
   const known = sources.some((s) => s.url === link) || /amazon\.|audible\./.test(link) || link.startsWith("https://homeworldpress.com");
   if (!known) reject("sources", `link no texto que não está nas fontes: ${link.slice(0, 90)}`);
 }
+const numbersInText = (text.match(/\d+(?:\.\d+)?%|\$\d[\d,.]*/g) || []).length;
+const numbersWithoutSource = sources.length === 0 ? numbersInText : 0;
 
 /* ── 9. a regra do "nós testamos" ───────────────────────────────────────── */
 const testedClaim = /\bwe tested\b|\bour tests?\b|\bwe measured\b|\bin our lab\b/i.test(text);
@@ -190,6 +193,17 @@ if (/\?/.test(draft.title || "")) reject("title", "título em forma de pergunta"
 if (/:\s*$/.test(draft.title || "")) reject("title", "título terminando em dois-pontos decorativo");
 if (stripTags(draft.dek).toLowerCase().split(/\s+/).slice(0, 6).join(" ") === stripTags(draft.title).toLowerCase().split(/\s+/).slice(0, 6).join(" "))
   reject("title", "dek repete o título");
+
+/* ── 10b. bloco ranking (a nota é calculada, o modelo só justifica) ────── */
+if (draft.ranking !== undefined) {
+  const r = draft.ranking || {};
+  if (typeof r.thesis_strength !== "number" || r.thesis_strength < 0 || r.thesis_strength > 2)
+    reject("ranking", "ranking.thesis_strength precisa ser número de 0 a 2");
+  const why = String(r.why || "").trim();
+  if (why.length < 20) reject("ranking", "ranking.why precisa de uma linha de justificativa real (20+ caracteres)");
+  if (words(why).length > 25) reject("ranking", `ranking.why tem ${words(why).length} palavras (máximo 25)`);
+  if (typeof r.score === "number") reject("ranking", "o modelo não pode declarar ranking.score — a nota é calculada por tools/score.js");
+}
 
 /* ── 11. rede (fontes e imagem) ────────────────────────────────────────── */
 async function net() {
@@ -218,6 +232,34 @@ net().then(() => {
 
 /* ── veredito ─────────────────────────────────────────────────────────── */
 const today = new Date().toISOString().slice(0, 10);
+const measured = words(text).length;
+let targetWords = 0;
+try { targetWords = Number(JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")).word_count || 0); } catch {}
+fs.writeFileSync(
+  path.join(DIR, "metrics.json"),
+  JSON.stringify(
+    {
+      id: draft.id,
+      measured_at: new Date().toISOString(),
+      word_count: measured,
+      target_word_count: targetWords,
+      word_count_ratio: targetWords ? round2(measured / targetWords) : 1,
+      paragraphs: paras.length,
+      shortest_sentence_words: shortest,
+      longest_sentence_words: longest,
+      one_sentence_paragraphs: micDrops,
+      has_one_sentence_paragraph: micDrops > 0,
+      has_long_paragraph: paras.some((p) => sentences(p).length >= 4),
+      banned_lexical_found: problems.filter((p) => p.gate === "banned-lexical").length,
+      banned_templates_found: hits.length,
+      numbers_without_source: numbersWithoutSource,
+      humor_lines: humor,
+      rejections: problems.length,
+    },
+    null,
+    2
+  ) + "\n"
+);
 const review = [
   `# Review mecânico — ${SLUG} (${today})`,
   "",

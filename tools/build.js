@@ -17,6 +17,19 @@ global.window = {};
 require(path.join(ROOT, "js", "articles-db.js"));
 const DB = global.window.HWP_DATABASE;
 
+/* As notas vêm de pipeline/scores.json (calculadas por tools/score.js).
+   Nenhum artigo do catálogo usa o campo rank, então nada é sobrescrito.
+   rankSource === "baseline" marca o acervo anterior ao pipeline: essas
+   matérias competem no feed, mas nunca viram capa gerada — o HTML escrito à
+   mão delas carrega detalhes (dek, alt, botão) que o catálogo não tem. */
+try {
+  const store = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "scores.json"), "utf8"));
+  for (const a of DB.articles) {
+    const rec = (store.scores || {})[a.id];
+    if (rec && typeof rec.score === "number") { a.rank = rec.score; a.rankNote = rec.note || ""; a.rankSource = rec.source || "auto"; }
+  }
+} catch {}
+
 const MONTHS = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
 const toTime = (s) => {
   const m = String(s || "").match(/([A-Za-z]{3})[a-z]*\.?\s+(\d{1,2}),\s*(\d{4})/);
@@ -30,6 +43,49 @@ const minutes = (a) => String(a.readTime || "").replace(/\s*MIN(UTE)?S?\s*READ/i
 
 /* ── Templates: mesmos classes e estrutura dos cards escritos à mão ───── */
 const TEMPLATES = {
+  "hero-lead": (a) => `          <article class="hero-lead">
+            <a href="${href(a.id)}" class="hero-lead__media">
+              <span class="hero-lead__badge">COVER STORY // ${esc(String(a.kicker || "").split("//").pop().trim() || "HOMEWORLD PRESS")}</span>
+              <img
+                src="${esc(a.image)}"
+                alt="${esc(a.imageAlt || a.title)}"
+                fetchpriority="high"
+                width="960"
+                height="588"
+              >
+            </a>
+
+            <div>
+              <span class="kicker kicker--${a.category}">${esc(a.kicker)}</span>
+              <h1 class="hero-lead__title">
+                <a href="${href(a.id)}">
+                  ${esc(a.title)}
+                </a>
+              </h1>
+            </div>
+
+            <p class="hero-lead__dek">
+              ${esc(a.dek)}
+            </p>
+
+            <div class="meta-line" style="justify-content:space-between;flex-wrap:wrap;padding-top:0.4rem;">
+              <div>
+                <span>BY <strong>${esc(String(a.author || "").toUpperCase())}</strong></span>
+                <span> • </span>
+                <span>${esc(String(a.date).toUpperCase())}</span>
+                <span> • </span>
+                <span>${esc(a.readTime)}</span>
+              </div>
+              <div style="display:flex;gap:0.65rem;flex-wrap:wrap;">
+                <a href="${href(a.id)}" class="btn-secondary-dark" style="padding:0.42rem 0.85rem;">READ FULL STORY →</a>${
+                shop(a)
+                  ? `\n                <a href="${esc(shop(a))}" target="_blank" rel="nofollow sponsored noopener" class="btn-amazon" style="width:auto;padding:0.42rem 0.9rem;">SHOP ON AMAZON →</a>`
+                  : ""
+              }
+              </div>
+            </div>
+          </article>`,
+
   "latest-item": (a) => `              <article class="latest-item">
                 <div>
                   <span class="kicker kicker--${a.category}">${esc(a.kicker)}</span>
@@ -39,14 +95,14 @@ const TEMPLATES = {
                   <div class="meta-line"><span>${esc(String(a.author || "").toUpperCase())}</span><span>•</span><span>${esc(a.date)}</span></div>
                 </div>
                 <a href="${href(a.id)}">
-                  <img src="${esc(thumb(a))}" alt="${esc(a.title)}" class="latest-item__thumb" width="76" height="76">
+                  <img src="${esc(thumb(a))}" alt="${esc(a.imageAlt || a.title)}" class="latest-item__thumb" width="76" height="76">
                 </a>
               </article>`,
 
   "article-card": (a) => `          <article class="article-card" data-culture-card data-subtopic="${esc(a.subtopic)}">
             <div>
               <a href="${href(a.id)}" class="article-card__media">
-                <img src="${esc(a.image)}" alt="${esc(a.title)}" loading="lazy" decoding="async" width="420" height="260">
+                <img src="${esc(a.image)}" alt="${esc(a.imageAlt || a.title)}" loading="lazy" decoding="async" width="420" height="260">
               </a>
               <div class="article-card__body">
                 <span class="kicker kicker--${a.category}">${esc(a.kicker)}</span>
@@ -73,7 +129,7 @@ const TEMPLATES = {
 
   "compact-card": (a) => `              <article class="compact-card">
                 <a href="${href(a.id)}">
-                  <img src="${esc(a.image)}" alt="${esc(a.title)}" class="compact-card__img" loading="lazy" decoding="async" width="130" height="96">
+                  <img src="${esc(a.image)}" alt="${esc(a.imageAlt || a.title)}" class="compact-card__img" loading="lazy" decoding="async" width="130" height="96">
                 </a>
                 <div>
                   <span class="kicker kicker--${a.category}">${esc(a.kicker)}</span>
@@ -88,7 +144,7 @@ const TEMPLATES = {
 
   "cat-feed-item": (a) => `          <article class="cat-feed-item" data-culture-card data-subtopic="${esc(a.subtopic)}">
             <a href="${href(a.id)}" class="cat-feed-item__media">
-              <img src="${esc(a.image)}" alt="${esc(a.title)}" loading="lazy" width="280" height="185">
+              <img src="${esc(a.image)}" alt="${esc(a.imageAlt || a.title)}" loading="lazy" width="280" height="185">
             </a>
             <div>
               <span class="kicker kicker--${a.category}">${esc(a.kicker)}</span>
@@ -112,8 +168,19 @@ function pick(slot, takenIds) {
   const pool = DB.articles
     .filter((a) => (slot.category ? a.category === slot.category : true))
     .filter((a) => !takenIds.has(a.id))
-    .sort((x, y) => toTime(y.date) - toTime(x.date));
+    .sort((x, y) => (y.rank == null ? -1 : y.rank) - (x.rank == null ? -1 : x.rank) || toTime(y.date) - toTime(x.date));
   return pool.slice(0, slot.limit || 6);
+}
+
+function pickCover() {
+  const scored = DB.articles
+    .filter((a) => typeof a.rank === "number" && a.rankSource !== "baseline" && a.image)
+    .sort((x, y) => y.rank - x.rank || toTime(y.date) - toTime(x.date));
+  const best = scored[0] || null;
+  /* Uma matéria nova só toma a capa se vencer a nota de base da capa vigente. */
+  const incumbent = DB.articles.find((a) => a.rankSource === "baseline" && typeof a.rank === "number");
+  if (best && incumbent && best.rank <= incumbent.rank) return null;
+  return best;
 }
 
 const cache = new Map();
@@ -138,6 +205,34 @@ function applySlot(file, slot) {
     if (!m) return { file, slot: slot.name, added: 0, note: "container não encontrado — nada feito" };
     src = src.replace(m[0], `${m[0]}\n${start}\n${end}`);
     inserted = true;
+  }
+
+  if (slot.mode === "replace") {
+    const i0 = src.indexOf(start) + start.length;
+    const i1 = src.indexOf(end);
+    const region = src.slice(i0, i1);
+    const fb = path.join(ROOT, slot.fallback);
+    const incumbentId = (DB.articles.find((a) => a.rankSource === "baseline" && a.isHeroLead) || {}).id || null;
+    const regionIds = [...region.matchAll(/article\.html\?id=([^&"']+)/g)].map((m) => decodeURIComponent(m[1]));
+    /* O fallback guarda a capa escrita à mão. Ele é ressincronizado sempre que a
+       região atual é a capa manual — assim uma edição sua no HTML vira a nova
+       referência, e uma capa gerada nunca contamina o fallback. */
+    if (!fs.existsSync(fb) || (incumbentId && regionIds[0] === incumbentId)) {
+      fs.mkdirSync(path.dirname(fb), { recursive: true });
+      fs.writeFileSync(fb, region);
+    }
+    const cover = pickCover();
+    const content = cover ? `\n${TEMPLATES[slot.template](cover)}\n          ` : fs.readFileSync(fb, "utf8");
+    const next = src.slice(0, i0) + content + src.slice(i1);
+    if (next !== src) writeSrc(file, next);
+    return {
+      file,
+      slot: slot.name,
+      added: cover ? 1 : 0,
+      note: cover
+        ? `capa por nota: ${cover.id} (${cover.rank})`
+        : `capa manual mantida (nenhuma matéria venceu a nota de base ${incumbentId ? DB.articles.find((a) => a.id === incumbentId).rank : "?"})`,
+    };
   }
 
   const after = src.slice(src.indexOf(end));

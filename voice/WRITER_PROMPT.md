@@ -47,12 +47,17 @@ If `sources` is empty, the model may write **only analysis and context**, with z
   "date": "Mon DD, YYYY",
   "readTime": "N MIN READ",
   "image": "input image or null",
+  "imageAlt": "one factual sentence describing what the image shows, or null",
   "bookCover": null,
   "content": "<p>...</p>",
   "affiliateBox": null,
-  "sources": [{"title": "", "url": "", "claim": ""}],
+  "sources": [{"title": "", "url": "", "date": "YYYY-MM-DD", "type": "primary | secondary", "claim": ""}],
   "fact_flags": [],
   "evidence_level": "sourced | analysis_only",
+  "ranking": {
+    "thesis_strength": 0,
+    "why": "one line, 25 words max, saying what the piece proves that nobody else has"
+  },
   "self_check": {
     "word_count": 0,
     "banned_phrases_found": [],
@@ -71,6 +76,8 @@ If `sources` is empty, the model may write **only analysis and context**, with z
 For `reviews`, output the review schema instead: `id, title, kicker, score, award, updated, readTime, topPickName, priceRange, image, amazonUrl, secondaryCtaText, secondaryCtaUrl, summary, pros[], cons[], matrixTitle, matrixCaption, matrixRows[], secondaryPicks[], prose, sources[], fact_flags[]`.
 
 `content` and `prose` may contain only: `<p> <h2> <h3> <ul> <ol> <li> <blockquote> <strong> <em> <a href>`. No inline styles, no scripts, no images.
+
+`ranking.thesis_strength` is 0 (no thesis, summary of what is already known), 1 (a real argument, but a predictable one), or 2 (a claim a reader could have argued against before reading). It is the only judgment the model contributes to the site's ranking; `tools/score.js` computes the 0–10 note from measured evidence, timeliness, novelty, craft and commercial fit, and weights this field at 1.0 of 10. Never emit a `score` field — the model does not grade itself, and a declared score is rejected.
 
 ---
 

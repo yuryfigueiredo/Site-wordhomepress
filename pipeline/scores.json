@@ -1,0 +1,226 @@
+{
+  "updated": "2026-10-29T16:23:42.551Z",
+  "scores": {
+    "brandon-sanderson-sci-fi-publishing-empire-2026": {
+      "score": 7,
+      "note": "7/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Capa vigente: matéria nova só toma o lugar se passar disso.",
+      "breakdown": {
+        "baseline": {
+          "pts": 7,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "apple-tv-hbo-scifi-book-adaptations-2026": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "1970s-scifi-paperback-cover-art-collectors-guide": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "stephen-king-writing-routine-dark-tower-legacy": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "dune-foundation-dumarest-ultimate-space-opera-reading-order": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "hugo-nebula-award-winners-bestsellers-must-read": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "best-dc-marvel-image-graphic-novel-omnibus-editions": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "philip-k-dick-liu-cixin-prophetic-scifi-novels": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "color-e-ink-kaleido-gallery-technology-explained": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "ai-translation-ancient-manuscripts-indie-publishing": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "solid-state-batteries-portable-power-future": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "local-llm-workstations-writers-researchers-privacy": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "james-webb-exoplanet-atmospheres-biosignatures-2026": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "quantum-timekeeping-interstellar-navigation-physics": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "europa-clipper-subsurface-ocean-habitability": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "lunar-farside-radio-telescopes-cosmic-dark-ages": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    },
+    "archival-digital-preservation-m-disc-optical-glass-storage": {
+      "score": 5,
+      "note": "5/10 — nota de base do acervo anterior ao pipeline (sem sources[] para medir). Feed.",
+      "breakdown": {
+        "baseline": {
+          "pts": 5,
+          "max": 10,
+          "why": "acervo legado"
+        }
+      },
+      "source": "baseline",
+      "date": "2026-10-29"
+    }
+  }
+}

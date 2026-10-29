@@ -29,6 +29,9 @@ const HTML_FILES = [];
 (function walk(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
+    /* pipeline/ guarda fragmentos (a capa de fallback), não páginas: checar
+       lang/favicon/<main> neles seria alarme falso. */
+    if (entry.isDirectory() && entry.name === "pipeline") continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) walk(full);
     else if (/\.x?html?$/i.test(entry.name)) HTML_FILES.push(path.relative(ROOT, full).replace(/\\/g, "/"));

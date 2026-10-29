@@ -62,16 +62,17 @@ Para desfazer: `schtasks /Delete /TN "HomeworldPress Doctor" /F`.
 
 Depois disso, a manutenção e a curadoria rodam todo dia sem você abrir nada. Você só lê `tools/reports/` quando algo falha e `pipeline/leads/` quando quiser publicar.
 
-## Publicação de posts (Camada 2, sem API)
+## Publicação de posts (Camada 2)
 
-Quatro comandos, um passo manual no meio:
+Quatro comandos. O passo de escrever o texto pode ser seu (colar `prompt.md` no chat) ou do robô agendado (Camada 3):
 
 ```bash
 node tools/ingest.js                 # fila de pautas (camada 1)
 node tools/new-post.js 3             # pauta nº 3 → pipeline/drafts/<slug>/{brief.json,prompt.md}
-#   passo manual: cole prompt.md no chat, salve a resposta (só o JSON) em draft.json
+#   quem escreve: você, ou o turno agendado, seguindo prompt.md à risca
 node tools/check-post.js <slug>      # editor mecânico → review.md, exit 1 se reprovar
-node tools/publish.js <slug>         # só com check verde: catálogo + feeds + sitemap + commit
+node tools/score.js --draft <slug>   # nota 0–10 calculada por rubrica (não é opinião)
+node tools/publish.js <slug>         # só com check verde: catálogo + capa + feeds + sitemap + commit
 ```
 
 - `new-post.js` monta o brief no formato exato do input contract de `voice/WRITER_PROMPT.md`, escolhe a byline pelo território (`EDITORIAL_VOICE.md` §4) e embute a memória anti-repetição de `voice/state/last_runs.json` no prompt.
@@ -80,7 +81,32 @@ node tools/publish.js <slug>         # só com check verde: catálogo + feeds + 
 
 ### Onde os cards novos aparecem
 
-`tools/build.js` preenche, entre marcadores `<!-- hwp:auto:<slot>:start/end -->`, os feeds listados em `pipeline/placements.json`: MOST RECENT e os grids de culture/tech/science na home, e o feed das três páginas de editoria. A região automática só acrescenta no topo os ids que ainda não aparecem no resto da página — cards escritos à mão nunca são tocados nem duplicados. Capa, TODAY'S PICKS e TRENDING continuam curadoria manual, de propósito.
+`tools/build.js` preenche, entre marcadores `<!-- hwp:auto:<slot>:start/end -->`, os feeds listados em `pipeline/placements.json`: MOST RECENT e os grids de culture/tech/science na home, e o feed das três páginas de editoria. A região automática só acrescenta no topo os ids que ainda não aparecem no resto da página — cards escritos à mão nunca são tocados nem duplicados.
+
+A capa (`index-hero`, modo `replace`) é a exceção: ela é **substituída** pela matéria de maior nota, desde que essa matéria tenha vencido a nota de base da capa vigente (`cover_baseline` em `pipeline/cadence.json`, hoje 7.0). O HTML da capa escrita à mão é guardado em `pipeline/state/hero-fallback.html` e volta ao lugar sempre que ninguém vence — e é ressincronizado quando você edita a capa à mão. Matérias do acervo antigo (sem `sources[]` para medir) têm nota de base e nunca viram capa gerada: o HTML delas carrega dek, alt e botão que o catálogo não tem.
+
+## A nota (Camada 2.5): calculada, nunca digitada
+
+`tools/score.js` dá 0–10 a cada matéria somando seis critérios, cinco deles medidos:
+
+| critério | peso | o que mede |
+|---|---|---|
+| evidence | 2,5 | fontes únicas, domínio diverso, quantas são primárias e datadas |
+| timeliness | 1,5 | idade da fonte mais recente |
+| novelty | 2,0 | sobreposição de vocabulário com o catálogo (≥72% = quase-duplicata, −2,0 e bloqueio) |
+| craft | 2,0 | o que `check-post.js` medeu em `metrics.json`: ritmo, léxico banido, humor, tamanho vs. brief |
+| commercial | 1,0 | produto com preço, caixa de afiliado, protocolo de teste |
+| judgment | 1,0 | o único ponto de opinião do modelo (`ranking.thesis_strength`, 0–2, com justificativa de até 25 palavras) |
+
+Penalizações: `analysis_only` −0,5, quase-duplicata −2,0, sem imagem −0,5. O modelo **não pode declarar a nota** — se o draft trouxer `ranking.score`, o check reprova. Notas ficam em `pipeline/scores.json` (versionado), com origem `auto`, `baseline` ou `manual`. Nota manual só entra pelo painel com justificativa de 15+ caracteres, e o recálculo nunca a sobrescreve.
+
+## Camada 3: o turno agendado (roda sem você)
+
+Uma automação local do Qoder (`Homeworld Press — turno editorial 5x/dia`, cron `0 7,10,14,17,21 * * *` em America/Sao_Paulo) faz, nesta ordem: `ingest.js` → `doctor.js --offline` (para tudo se houver erro) → confere o teto diário em `pipeline/cadence.json` → escolhe a melhor pauta nova → `new-post.js` → escreve o `draft.json` seguindo `prompt.md` → `check-post.js` (máx. 3 correções) → `score.js` (para se for duplicata) → `publish.js`. Nunca faz push, nunca faz deploy, nunca toca na identidade visual.
+
+- **Teto de publicação:** `max_publishes_per_day` (hoje 1). As 5 rodadas diárias são *verificações*; publicar 5x/dia em domínio recém-reativado é o perfil exato que os buscadores tratam como fábrica de conteúdo. Para furar o teto uma vez: `node tools/publish.js <slug> --force-cadence`.
+- **Painel:** `node tools/admin.js` sobe em `http://127.0.0.1:8099` (só nesta máquina). Mostra estado, rascunhos com veredito, pautas com botão de brief, ranking com badge de capa, ajuste manual de nota e os últimos logs. Os botões chamam os mesmos scripts; o PUBLICAR só habilita com check verde.
+- **Para pausar o robô:** desative a automação no Qoder (Automations) ou mude `max_publishes_per_day` para 0 — as verificações continuam, a publicação para.
 
 ### Histórico
 
@@ -88,8 +114,9 @@ O projeto é um repositório Git local (branch `main`). Cada publicação vira u
 
 ## O que continua dependendo de gente
 
-- **Publicar.** Nada aqui escreve no site.
+- **Push e deploy.** O robô commita local e para aí. Colocar no ar (Cloudflare Pages ou Netlify, por causa do `_redirects`; GitHub Pages não serve) é decisão sua, uma vez só — depois disso o push passa a ser o único passo que separa o site local do site público.
 - **"Nós testamos."** Só sai da sua mão. Sem aparelho na mão, o texto é comparação de especificações e precisa se chamar isso.
 - **Conta Amazon Associates.** Sem a sua Store ID real, os 147 links sem tag não rendem nada e a tag placeholder não paga.
 - **Fotos de produto.** As imagens do review de e-readers são Unsplash, e algumas não batem com o produto (tem luminária ilustrando um Kindle Scribe).
 - **Direito de imagem de capas.** As capas históricas da editora vêm do arquivo do James Gauthier; antes de publicar, confirme a permissão por escrito.
+- **Nota manual no painel.** Opcional. Serve para corrigir o robô quando ele erra de julgamento, não para substituí-lo.

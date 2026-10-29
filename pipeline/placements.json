@@ -3,6 +3,7 @@
   "note": "Slots que o tools/build.js preenche automaticamente a partir de js/articles-db.js. Capa, picks e trending continuam curadoria manual: não liste aqui.",
   "slots": {
     "index.html": [
+      { "name": "index-hero", "mode": "replace", "template": "hero-lead", "fallback": "pipeline/state/hero-fallback.html" },
       { "name": "index-latest", "container": { "tag": "div", "class": "latest-list" }, "template": "latest-item", "limit": 4 },
       { "name": "index-culture", "container": { "tag": "div", "class": "wired-grid-3" }, "template": "article-card", "category": "culture", "limit": 6 },
       { "name": "index-tech", "container": { "tag": "div", "class": "compact-feed--tech" }, "template": "compact-card", "category": "tech", "limit": 3 },
