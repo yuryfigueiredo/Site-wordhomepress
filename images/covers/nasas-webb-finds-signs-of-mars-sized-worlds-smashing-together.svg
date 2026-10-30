@@ -5,10 +5,10 @@
   <circle cx="1000" cy="220" r="332" fill="none" stroke="#00A389" stroke-width="2" opacity="0.1"/>
   <rect x="0" y="0" width="14" height="675" fill="#00A389"/>
   <line x1="96" y1="120" x2="1104" y2="120" stroke="#2A2A28" stroke-width="1"/>
-  <text x="96" y="96" font-family="Helvetica Neue, Arial, sans-serif" font-size="24" font-weight="700" fill="#00A389" letter-spacing="4">SCIENCE // CONCEPTS</text>
-  <text x="96" y="399" font-family="Helvetica Neue, Arial, sans-serif" font-size="78" font-weight="700" fill="#F7F6F2" letter-spacing="-1">Webb Spotting Ancient</text>
-  <text x="96" y="486.36" font-family="Helvetica Neue, Arial, sans-serif" font-size="78" font-weight="700" fill="#F7F6F2" letter-spacing="-1">Collisions of</text>
-  <text x="96" y="573.72" font-family="Helvetica Neue, Arial, sans-serif" font-size="78" font-weight="700" fill="#F7F6F2" letter-spacing="-1">Mars‑Sized Worlds</text>
+  <text x="96" y="96" font-family="Helvetica Neue, Arial, sans-serif" font-size="24" font-weight="700" fill="#00A389" letter-spacing="4">SCIENCE // SPACE</text>
+  <text x="96" y="399" font-family="Helvetica Neue, Arial, sans-serif" font-size="78" font-weight="700" fill="#F7F6F2" letter-spacing="-1">Webb Telescope Data</text>
+  <text x="96" y="486.36" font-family="Helvetica Neue, Arial, sans-serif" font-size="78" font-weight="700" fill="#F7F6F2" letter-spacing="-1">Reveals Massive</text>
+  <text x="96" y="573.72" font-family="Helvetica Neue, Arial, sans-serif" font-size="78" font-weight="700" fill="#F7F6F2" letter-spacing="-1">Planetary Collisions</text>
   <line x1="96" y1="612" x2="1104" y2="612" stroke="#2A2A28" stroke-width="1"/>
   <text x="96" y="648" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" fill="#A3A39E" letter-spacing="3">HOMEWORLDPRESS.COM</text>
   <text x="1104" y="648" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" fill="#00A389" letter-spacing="2">SCIENCE</text>
