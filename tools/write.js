@@ -133,6 +133,14 @@ const falhas = new Map();
       return "definitivo";
     }
     draft.id = draft.id || SLUG.replace(/_/g, "-");
+    /* A reescrita não deve perder a capa: o modelo nunca vê o arquivo gerado
+       por make-cover.js e devolve image null. */
+    if (!draft.image) {
+      try {
+        const anterior = JSON.parse(fs.readFileSync(path.join(DIR, "draft.json"), "utf8"));
+        if (anterior.image) { draft.image = anterior.image; draft.imageAlt = draft.imageAlt || anterior.imageAlt; }
+      } catch {}
+    }
     fs.writeFileSync(path.join(DIR, "draft.json"), JSON.stringify(draft, null, 2) + "\n");
     console.log(`escrito por ${k}: ${draft.id} (${String(draft.content).split(/\s+/).length} palavras brutas)`);
     console.log("próximo passo: node tools/check-post.js " + SLUG);

@@ -62,6 +62,8 @@ if (!prov.armados().length) finish(`nenhum provedor de texto armado — sem chav
 const wrote = run("write.js", [lead.slug]);
 if (wrote.code !== 0) finish(`o redator não entregou texto: ${wrote.out.trim().split("\n").slice(-8).join(" · ").slice(0, 900)}`);
 say("texto", wrote.out.trim().split("\n")[0]);
+const capa = run("make-cover.js", [lead.slug]);
+say("capa", capa.code === 0 ? capa.out.trim().split("\n")[0] : `falhou: ${capa.out.trim().slice(-200)}`);
 
 /* 7. editor mecânico, até 3 tentativas com devolutiva */
 let check = { code: 1, out: "" };
@@ -75,6 +77,7 @@ for (let t = 1; t <= 3; t++) {
     `O editor mecânico reprovou seu draft. Corrija EXATAMENTE estes pontos e devolva o JSON completo de novo:\n${rejs}\nNão mude o que já estava aprovado.`);
   const fix = run("write.js", [lead.slug]);
   if (fix.code !== 0) { say("edição", "reescreva falhou: " + fix.out.trim().split("\n").slice(-1)[0]); break; }
+  run("make-cover.js", [lead.slug]);
 }
 if (check.code !== 0) finish("rascunho ficou reprovado depois de 3 tentativas — guardado para revisão humana, nada publicado.");
 

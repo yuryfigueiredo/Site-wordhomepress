@@ -70,13 +70,15 @@ Quatro comandos. O passo de escrever o texto pode ser seu (colar `prompt.md` no 
 node tools/ingest.js                 # fila de pautas (camada 1)
 node tools/new-post.js 3             # pauta nº 3 → pipeline/drafts/<slug>/{brief.json,prompt.md}
 #   quem escreve: você, ou o turno agendado, seguindo prompt.md à risca
+node tools/make-cover.js <slug>      # miniatura SVG → images/covers/<slug>.svg
 node tools/check-post.js <slug>      # editor mecânico → review.md, exit 1 se reprovar
 node tools/score.js --draft <slug>   # nota 0–10 calculada por rubrica (não é opinião)
 node tools/publish.js <slug>         # só com check verde: catálogo + capa + feeds + sitemap + commit
 ```
 
 - `new-post.js` monta o brief no formato exato do input contract de `voice/WRITER_PROMPT.md`, escolhe a byline pelo território (`EDITORIAL_VOICE.md` §4) e embute a memória anti-repetição de `voice/state/last_runs.json` no prompt.
-- `check-post.js` mede tudo no texto, não confia no `self_check`: tags permitidas, vocabulário banido (lista única em `WRITER_PROMPT.md`), templates estruturais (máx. 1, nenhum como fecho), ritmo (frase ≤30 palavras, frase curta obrigatória, 1 parágrafo de uma frase, 1 parágrafo longo), humor ≤2 e zero em pauta de morte, abertura/fecho diferentes da última peça do registro, fontes alcançáveis, links do texto presentes nas fontes, e a regra dura: **"we tested" só com `products[].tested=true` e protocolo em `test_notes`**.
+- `make-cover.js` desenha a miniatura sem banco de imagens e sem custo: placa 1200×675 em SVG, com a cor do pilar (a mesma de `css/styles.css`), o kicker e o título quebrado em até 4 linhas. É determinística — mesmo slug, mesma placa — e só preenche `image`/`imageAlt` quando o draft ainda está sem capa. O turno roda ela de novo depois de cada reescrita, porque o modelo devolve `image: null` e `write.js` preserva a capa anterior.
+- `check-post.js` mede tudo no texto, não confia no `self_check`: tags permitidas, vocabulário banido (lista única em `WRITER_PROMPT.md`), templates estruturais (máx. 1, nenhum como fecho), ritmo (frase ≤30 palavras, frase curta obrigatória, 1 parágrafo de uma frase, 1 parágrafo longo), humor ≤2 e zero em pauta de morte, abertura/fecho diferentes da última peça do registro, fontes alcançáveis, links do texto presentes nas fontes, comprimento (abaixo de 60% do alvo da pauta é reprovado — o prompt pede no mínimo 70%), e a regra dura: **"we tested" só com `products[].tested=true` e protocolo em `test_notes`**.
 - `publish.js` insere no catálogo, roda `build.js` + `build-sitemap.js` + `doctor.js`, atualiza `last_runs.json` e faz **commit local**. Se qualquer etapa falhar, restaura o catálogo e não publica. Nunca faz push, nunca faz deploy.
 
 ### Onde os cards novos aparecem
