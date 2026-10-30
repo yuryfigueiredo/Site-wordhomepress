@@ -117,7 +117,12 @@ try {
 const runsFile = path.join(ROOT, "voice", "state", "last_runs.json");
 const runs = JSON.parse(fs.readFileSync(runsFile, "utf8"));
 const sc = draft.self_check || {};
-runs.runs[draft.register] = {
+/* O contrato não tem campo register — quem sabe o registro é o brief. Sem
+   isso a memória era gravada em runs["undefined"] e a regra anti-repetição
+   nunca pegava a peça anterior. */
+let REGISTER = draft.register;
+try { REGISTER = JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")).register || REGISTER; } catch {}
+runs.runs[REGISTER] = {
   id: draft.id,
   date: new Date().toISOString().slice(0, 10),
   opening_move: sc.opening_move || "",

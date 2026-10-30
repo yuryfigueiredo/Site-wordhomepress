@@ -3,16 +3,15 @@
   "version": 1,
   "updated": "2026-10-29T17:14:27.795Z",
   "runs": {
-    "analyst": null,
-    "lab": null,
-    "curator": null,
-    "undefined": {
+    "analyst": {
       "id": "guardian-september-roundup-one-category-2026",
       "date": "2026-10-29",
       "opening_move": "dated_fact",
       "ending_move": "verification",
       "title_pattern": "the guardian's september roundup",
       "humor_lines": 1
-    }
+    },
+    "lab": null,
+    "curator": null
   }
 }

@@ -121,7 +121,7 @@ const prompt = [
   "",
   "=== REGRAS DESTA CHAMADA ===",
   `- opening_move NÃO pode ser "${memory && memory.opening_move}". ending_move NÃO pode ser "${memory && memory.ending_move}".`,
-  `- O campo content tem de ter cerca de ${brief.word_count} palavras de texto visível. Menos de ${Math.round(brief.word_count * 0.6)} é recusado pelo editor mecânico.`,
+  `- O campo content tem de ter NO MÍNIMO ${Math.round(brief.word_count * 0.7)} palavras visíveis (alvo ${brief.word_count}). Se ficar abaixo, acrescente seções até atingir — texto curto é recusado pelo editor mecânico, não é estilo.`,
   "- Responda SOMENTE com o JSON do contrato acima, sem cercas de código.",
   "- Preencha self_check com valores medidos no seu próprio texto, não estimados.",
   "- Se as fontes não sustentam um número, escreva sem o número e marque evidence_level corretamente.",
