@@ -60,6 +60,16 @@ function systemPrompt() {
   return fence ? fence[1].trim() : "";
 }
 
+/* O contrato precisa ir junto: antes o prompt mandava "siga o output contract
+   de voice/WRITER_PROMPT.md", um arquivo que o modelo nunca recebe — cada um
+   inventava o seu schema (headline/body em vez de title/content/sources). */
+function outputContract() {
+  const md = fs.readFileSync(path.join(ROOT, "voice", "WRITER_PROMPT.md"), "utf8");
+  const start = md.indexOf("## 2. Output contract");
+  const end = md.indexOf("## 3.", start);
+  return start < 0 || end < 0 ? "" : md.slice(start, end).trim();
+}
+
 const leads = latestLeads();
 let lead = null;
 const positional = ARGS.find((a) => /^\d+$/.test(a));
@@ -101,6 +111,8 @@ const memory = lastRuns.runs[register];
 const prompt = [
   systemPrompt(),
   "",
+  outputContract(),
+  "",
   "=== BRIEF DESTA PEÇA ===",
   JSON.stringify(brief, null, 2),
   "",
@@ -109,7 +121,8 @@ const prompt = [
   "",
   "=== REGRAS DESTA CHAMADA ===",
   `- opening_move NÃO pode ser "${memory && memory.opening_move}". ending_move NÃO pode ser "${memory && memory.ending_move}".`,
-  "- Responda SOMENTE com o JSON do output contract de voice/WRITER_PROMPT.md, sem cercas de código.",
+  `- O campo content tem de ter cerca de ${brief.word_count} palavras de texto visível. Menos de ${Math.round(brief.word_count * 0.6)} é recusado pelo editor mecânico.`,
+  "- Responda SOMENTE com o JSON do contrato acima, sem cercas de código.",
   "- Preencha self_check com valores medidos no seu próprio texto, não estimados.",
   "- Se as fontes não sustentam um número, escreva sem o número e marque evidence_level corretamente.",
 ].join("\n");

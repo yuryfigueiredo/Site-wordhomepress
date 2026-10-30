@@ -83,7 +83,8 @@ async function descobrir(p) {
 }
 
 function chamar(p, modelo, prompt, timeoutMs) {
-  const signal = AbortSignal.timeout(Math.max(30000, Math.min(240000, timeoutMs)));
+  /* AbortSignal.timeout recusa fração: a fatia de tempo sai de uma divisão. */
+  const signal = AbortSignal.timeout(Math.round(Math.max(30000, Math.min(240000, timeoutMs))));
   if (p.tipo === "gemini") {
     return fetch(`${p.endpoint}/models/${modelo}:generateContent`, {
       method: "POST",
@@ -105,6 +106,7 @@ function chamar(p, modelo, prompt, timeoutMs) {
       /* Modelos que "pensam" gastam o teto no raciocínio e devolvem texto
          vazio; o provedor que precisa de folga declara quanto. */
       ...(p.max_tokens ? { max_tokens: Number(p.max_tokens) } : {}),
+      ...(p.reasoning_effort ? { reasoning_effort: p.reasoning_effort } : {}),
     }),
     signal,
   });

@@ -237,6 +237,10 @@ const today = new Date().toISOString().slice(0, 10);
 const measured = words(text).length;
 let targetWords = 0;
 try { targetWords = Number(JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")).word_count || 0); } catch {}
+/* Texto muito abaixo do combinado no brief é modelo preguiçoso, não estilo:
+   200 palavras onde a pauta pedia 1100 vira página fina no índice. */
+if (targetWords && measured < targetWords * 0.6)
+  reject("length", `texto com ${measured} palavras para uma pauta de ~${targetWords} — curto demais para publicar`);
 fs.writeFileSync(
   path.join(DIR, "metrics.json"),
   JSON.stringify(
