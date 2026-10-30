@@ -1,6 +1,6 @@
-# Turno — 2026-10-30 00:43 UTC
+# Turno — 2026-10-30 13:57 UTC
 
-- **coleta** — distribuição: {"science":28,"culture":16,"tech":3,"reviews":1}
+- **coleta** — distribuição: {"science":27,"culture":11,"tech":4}
 - **manutenção** — errors 0 | ✗ warnings 2
 - **cadência** — 0/1 publicação(ões) hoje
 - **pauta** — NASA’s Webb finds signs of Mars-sized worlds smashing together (Science Daily Astronomy, score undefined)
