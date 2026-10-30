@@ -59,7 +59,7 @@ say("brief", `pipeline/drafts/${lead.slug}/ criado`);
 /* 6. texto */
 if (!process.env.GEMINI_API_KEY) finish("sem GEMINI_API_KEY no ambiente — o texto não foi escrito. (No seu PC, use o cron do Qoder; no Actions, confira o Secret.)");
 const wrote = run("write.js", [lead.slug]);
-if (wrote.code !== 0) finish(`o redator não entregou texto: ${wrote.out.trim().split("\n").slice(-2).join(" ")}`);
+if (wrote.code !== 0) finish(`o redator não entregou texto: ${wrote.out.trim().split("\n").slice(-8).join(" · ").slice(0, 900)}`);
 say("texto", wrote.out.trim().split("\n")[0]);
 
 /* 7. editor mecânico, até 3 tentativas com devolutiva */
