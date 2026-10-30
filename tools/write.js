@@ -107,85 +107,91 @@ const FIX = path.join(DIR, "fix.md");
   }
   const prompt = fs.readFileSync(PROMPT, "utf8") + (fs.existsSync(FIX) ? "\n\n---\n" + fs.readFileSync(FIX, "utf8") : "");
 
-  const falhas = [];
-  let lastErr = "";
+  const falhas = new Map();
   /* Teto de parede: sem ele, uma chave sem cota transforma a rodada em uma
      espera de meia hora até o timeout do Actions matar o processo no meio. */
   const MIN = Number(process.env.WRITE_MINUTES || 6);
-  const DEADLINE = Date.now() + MIN * 60000;
+  const inicio = Date.now();
+  const restante = () => MIN * 60000 - (Date.now() - inicio);
   const fila = [...models];
   const tentado = new Set();
-  for (let i = 0; i < fila.length; i++) {
-    const model = fila[i];
-    if (tentado.has(model)) continue;
-    tentado.add(model);
-    if (Date.now() > DEADLINE) { falhas.push(`${model}: nem tentado, o teto de ${MIN}min acabou`); continue; }
-    let desistiu = false;
-    for (let attempt = 1; attempt <= 2 && !desistiu; attempt++) {
-      let res;
-      try {
-        res = await call(model, prompt);
-      } catch (err) {
-        lastErr = `rede: ${err.message}`;
-        if (attempt < 2) await sleep(10000);
-        continue;
-      }
-      if (res.status === 429) {
-        /* Cota: vale uma espera curta, não três. */
-        lastErr = "HTTP 429 (cota do tier)";
-        if (attempt < 2) await sleep(20000); else desistiu = true;
-        continue;
-      }
-      if (res.status === 503 || res.status === 500 || res.status === 502) {
-        /* Serviço ocupado não é problema deste modelo: próximo da fila. */
-        lastErr = `HTTP ${res.status} (serviço ocupado)`;
-        desistiu = true;
-        continue;
-      }
-      if (!res.ok) {
-        const txt = await res.text().catch(() => "");
-        lastErr = `HTTP ${res.status}: ${reason(txt)}`;
-        if (/API_KEY_INVALID/i.test(txt)) {
-          console.error(`a chave foi recusada: ${lastErr}`);
-          process.exit(1);
-        }
-        /* A própria API diz qual modelo usar no lugar; seguir a dica é o que
-           mantém a automação viva quando um nome é aposentado. */
-        const dica = (txt.match(/use\s+models\/([a-z0-9.\-]+)/i) || [])[1];
-        if (dica && !tentado.has(dica)) fila.splice(i + 1, 0, dica);
-        desistiu = true;
-        continue;
-      }
 
-      const json = await res.json();
-      const cand = (json.candidates || [])[0] || {};
-      if (!cand.content) {
-        const blocked = ((json.promptFeedback || {}).blockReason || {}).reason;
-        lastErr = `voltou sem texto (${cand.finishReason || blocked || "resposta vazia"})`;
-        desistiu = true;
-        continue;
-      }
-      const text = (cand.content.parts || []).map((p) => p.text || "").join("");
-      const clean = text.replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, "").trim();
-      let draft;
-      try {
-        draft = JSON.parse(clean);
-      } catch (err) {
-        lastErr = `${cand.finishReason === "MAX_TOKENS" ? "texto truncado no limite de tokens; " : ""}resposta não é JSON: ${clean.slice(0, 200)}`;
-        continue;
-      }
-      const missing = ["id", "title", "dek", "content", "sources", "self_check"].filter((k) => draft[k] === undefined);
-      if (missing.length) { lastErr = `JSON sem campos: ${missing.join(", ")}`; continue; }
-      draft.id = draft.id || SLUG.replace(/_/g, "-");
-      fs.writeFileSync(path.join(DIR, "draft.json"), JSON.stringify(draft, null, 2) + "\n");
-      console.log(`escrito por ${model}: ${draft.id} (${String(draft.content).split(/\s+/).length} palavras brutas)`);
-      console.log("próximo passo: node tools/check-post.js " + SLUG);
-      process.exit(0);
+  /* Uma passada por modelo. "transitorio" (503, 429, rede) é o único caso em
+     que esperar resolve; "definitivo" (nome morto, JSON ruim) pede outro modelo. */
+  async function tentar(model) {
+    const registro = (msg) => falhas.set(model, msg);
+    let res;
+    try {
+      res = await call(model, prompt);
+    } catch (err) {
+      registro(`rede: ${err.message}`);
+      return "transitorio";
     }
-    falhas.push(`${model}: ${lastErr}`);
+    if (res.status === 429) { registro("HTTP 429 (cota do tier)"); return "transitorio"; }
+    if (res.status === 503 || res.status === 500 || res.status === 502) {
+      const txt = await res.text().catch(() => "");
+      registro(`HTTP ${res.status}: ${reason(txt) || "serviço ocupado"}`);
+      return "transitorio";
+    }
+    if (!res.ok) {
+      const txt = await res.text().catch(() => "");
+      registro(`HTTP ${res.status}: ${reason(txt)}`);
+      if (/API_KEY_INVALID|api key not valid/i.test(txt)) {
+        console.error(`a chave foi recusada: ${falhas.get(model)}`);
+        process.exit(1);
+      }
+      /* A própria API diz qual modelo usar no lugar; seguir a dica é o que
+         mantém a automação viva quando um nome é aposentado. */
+      const dica = (txt.match(/use\s+models\/([a-z0-9.\-]+)/i) || [])[1];
+      if (dica && !fila.includes(dica)) fila.push(dica);
+      return "definitivo";
+    }
+
+    const json = await res.json();
+    const cand = (json.candidates || [])[0] || {};
+    if (!cand.content) {
+      const blocked = ((json.promptFeedback || {}).blockReason || {}).reason;
+      registro(`voltou sem texto (${cand.finishReason || blocked || "resposta vazia"})`);
+      return "definitivo";
+    }
+    const text = (cand.content.parts || []).map((p) => p.text || "").join("");
+    const clean = text.replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, "").trim();
+    let draft;
+    try {
+      draft = JSON.parse(clean);
+    } catch (err) {
+      registro(`${cand.finishReason === "MAX_TOKENS" ? "texto truncado no limite de tokens; " : ""}resposta não é JSON: ${clean.slice(0, 200)}`);
+      return "definitivo";
+    }
+    const missing = ["id", "title", "dek", "content", "sources", "self_check"].filter((k) => draft[k] === undefined);
+    if (missing.length) { registro(`JSON sem campos: ${missing.join(", ")}`); return "definitivo"; }
+    draft.id = draft.id || SLUG.replace(/_/g, "-");
+    fs.writeFileSync(path.join(DIR, "draft.json"), JSON.stringify(draft, null, 2) + "\n");
+    console.log(`escrito por ${model}: ${draft.id} (${String(draft.content).split(/\s+/).length} palavras brutas)`);
+    console.log("próximo passo: node tools/check-post.js " + SLUG);
+    process.exit(0);
   }
-  console.error("não consegui texto do Gemini. O que houve com cada modelo da fila:");
-  for (const f of falhas) console.error("  · " + f);
+
+  /* Varre a fila inteira primeiro: custa segundos e separa "nome morto" de
+     "serviço sobrecarregado". Só no segundo caso vale dormir e voltar — é o
+     único erro que passa sozinho. */
+  let espera = 30000;
+  for (;;) {
+    let transitorios = 0;
+    for (const model of [...fila]) {
+      if (tentado.has(model)) continue;
+      if (restante() < 20000) break;
+      tentado.add(model);
+      if ((await tentar(model)) === "transitorio") transitorios++;
+    }
+    if (!transitorios || restante() < espera + 20000) break;
+    console.error(`${transitorios} modelo(s) responderam ocupado; esperando ${Math.round(espera / 1000)}s e tentando de novo (${Math.round(restante() / 1000)}s de orçamento).`);
+    await sleep(espera);
+    espera = Math.min(espera * 2, 120000);
+    for (const m of [...tentado]) if (/ocupado|429|rede/.test(falhas.get(m) || "")) tentado.delete(m);
+  }
+  console.error(`não consegui texto do Gemini em ${MIN}min de tentativas. O que houve com cada modelo:`);
+  for (const [m, f] of falhas) console.error(`  · ${m}: ${f}`);
   if (available && available.length) console.error(`modelos que esta chave tem: ${available.slice(0, 40).join(", ")}`);
   console.error("A rodada termina aqui de propósito: sem texto não há o que checar nem publicar.");
   process.exit(1);
