@@ -2,7 +2,8 @@ name: turno editorial
 
 on:
   schedule:
-    # 5 verificações por dia no fuso de SP; o teto de publicação mora em
+    # O cron do GitHub é SEMPRE UTC, não aceita fuso. Estas 5 horas viram
+    # 04, 07, 11, 14 e 18 no horário de Brasília. O teto de publicação mora em
     # pipeline/cadence.json, não aqui.
     - cron: "0 7,10,14,17,21 * * *"
   workflow_dispatch:
@@ -41,41 +42,3 @@ jobs:
             git commit -m "turno: $(date -u +%Y-%m-%dT%H:%M)Z"
             git push
           fi
-
-  pages:
-    needs: turno
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Monta o pacote do site
-        run: |
-          mkdir -p _site
-          for f in *; do
-            case "$f" in
-              _site|.git|.github|node_modules|pipeline|tools|voice|.audit|_redirects|TURNO.md|urls.txt|dburls.txt) continue ;;
-            esac
-            if [ -e "$f" ]; then cp -r "$f" _site/; fi
-          done
-          rm -f _site/*.md
-          touch _site/.nojekyll
-          ls _site
-
-      - name: Configura o Pages
-        uses: actions/configure-pages@v5
-
-      - name: Empacota
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-
-      - name: Publica
-        id: deploy
-        uses: actions/deploy-pages@v4

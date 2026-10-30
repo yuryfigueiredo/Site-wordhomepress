@@ -70,8 +70,19 @@ mesmo projeto — os canonicals do site todo usam o ápice sem `www`.
 O histórico de deploys da Vercel tem botão **Rollback** em cada linha. Um clique e a
 versão anterior volta ao ar, sem tocar em git. É o freio que o upload manual não tem.
 
-## GitHub Pages: desligue
+## GitHub Pages: não existe, e o job que tentava publicar foi removido
 
-O workflow `.github/workflows/turno.yml` tem um job `pages` que publicaria uma cópia
-do site em `yuryfigueiredo.github.io`. Com a Vercel no ar, isso é um site duplicado
-disputando o mesmo conteúdo. Settings → Pages → Unpublish site.
+O workflow tinha um job `pages` que montava `_site/` e publicaria uma cópia em
+`yuryfigueiredo.github.io`. Ele **nunca publicou nada**: o `configure-pages` falha em
+todas as rodadas porque o Pages está desligado no repositório. O efeito prático era
+deixar o workflow vermelho toda vez, escondendo que a rodada editorial deu certo.
+Removido em 2026-10-30. Se um dia você ligar o Pages de propósito, não volte a job:
+o site duplicado em outro domínio compete com o seu.
+
+## O cron do GitHub é UTC
+
+As 5 horas do workflow (`0 7,10,14,17,21`) são UTC: no seu fuso viram 04, 07, 11, 14
+e 18. Rodar de madrugada não quebra nada, mas se quiser as mesmas horas do cron da
+sua máquina, o valor é `0 10,13,17,20,0 * * *`. E saiba que o gatilho agendado do
+Actions é *best-effort*: há dias em que ele não dispara. `Run workflow` na aba
+Actions força uma rodada na hora.
