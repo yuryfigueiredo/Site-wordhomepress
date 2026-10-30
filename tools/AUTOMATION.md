@@ -1,7 +1,6 @@
-# Automação — Camada 1 (manutenção + curadoria)
+# Automação — as três camadas
 
-Três scripts Node, sem npm, sem dependência, sem serviço pago, sem chave de API.
-Rodam na sua máquina com o Node que já existe (v24). Nenhum deles publica nada.
+Node puro: sem npm, sem dependência, sem serviço pago. A única chave de API é a do Gemini (free tier), usada só pela Camada 3. Rodam na sua máquina com o Node que já existe (v24); a Camada 3 também roda na nuvem.
 
 ```bash
 node tools/doctor.js            # varredura completa (inclui links externos)
@@ -109,16 +108,36 @@ Uma automação local do Qoder (`Homeworld Press — turno editorial 5x/dia`, cr
 - **Painel:** `node tools/admin.js` sobe em `http://127.0.0.1:8099` (só nesta máquina). Mostra estado, rascunhos com veredito, pautas com botão de brief, ranking com badge de capa, ajuste manual de nota e os últimos logs. Os botões chamam os mesmos scripts; o PUBLICAR só habilita com check verde.
 - **Para pausar o robô:** desative a automação no Qoder (Automations) ou mude `max_publishes_per_day` para 0 — as verificações continuam, a publicação para.
 
+### O mesmo turno na nuvem, com o seu PC desligado
+
+`.github/workflows/turno.yml` roda `node tools/turno.js` no GitHub Actions, com a chave do Gemini guardada em **Settings → Secrets → `GEMINI_API_KEY`**. Diferenças que importam:
+
+- **O cron é UTC.** `0 7,10,14,17,21` = 04, 07, 11, 14 e 18 no horário de Brasília. E o gatilho agendado do GitHub é *best-effort*: em dia de fila ele simplesmente não dispara. `Run workflow` na aba Actions força uma rodada na hora.
+- **O segredo de escrever é `tools/write.js`**, que chama a API do Gemini direto. Ele **não** tem lista fixa de modelos: pergunta à chave quais existem (`GET /v1beta/models`), ordena por versão e, quando a API responde "use models/X", segue a dica. Nome de modelo aposentado não derruba mais a rodada.
+- **Diagnóstico sem gastar rodada:** `GEMINI_API_KEY=... node tools/write.js --check` imprime os modelos que a chave tem e a fila que ele usaria.
+- **Se a rodada para**, o motivo fica em `TURNO.md` (commitado pelo próprio robô) com uma linha por modelo tentado. O commit do relatório roda com `if: always()`.
+- **Push = deploy.** O workflow commita `TURNO.md` e o que a rodada mudou; a Vercel publica a cada push em `main`. Não existe mais passo manual de upload (ver [PUBLISHING.md](PUBLISHING.md)).
+
+### Trocar a Store ID da Amazon
+
+A tag aparece em 184 links espalhados por 15 arquivos. Um comando troca todos:
+
+```bash
+node tools/set-affiliate-tag.js minhaloja-20 --dry   # mostra o que faria
+node tools/set-affiliate-tag.js minhaloja-20         # troca
+node tools/doctor.js --quick                         # confirma que não sobrou tag antiga
+```
+
 ### Histórico
 
-O projeto é um repositório Git local (branch `main`). Cada publicação vira um commit; o baseline `82c6db3` é o site auditado. `pipeline/drafts/`, `pipeline/leads/`, `pipeline/state/` e `tools/reports/` estão no `.gitignore` porque rascunho não publicado em repositório público é rascunho publicado. Push para `github.com/yuryfigueiredo/Site-wordhomepress` só quando você mandar.
+O projeto é um repositório Git (branch `main`, remoto `github.com/yuryfigueiredo/Site-wordhomepress`). Cada publicação vira um commit; o baseline `82c6db3` é o site auditado. `pipeline/drafts/`, `pipeline/leads/`, `pipeline/state/` e `tools/reports/` estão no `.gitignore` porque rascunho não publicado em repositório público é rascunho publicado. Push em `main` agora é deploy: a Vercel publica a cada push.
 
 ## O que continua dependendo de gente
 
-- **Push e deploy.** O robô commita local e para aí. Colocar no ar (Cloudflare Pages ou Netlify, por causa do `_redirects`; GitHub Pages não serve) é decisão sua, uma vez só — depois disso o push passa a ser o único passo que separa o site local do site público.
+- **Domínio.** O site está no ar em `site-homeworldpress.vercel.app`, mas os canonicals de todas as páginas apontam para `homeworldpress.com` — e esse domínio ainda responde com a página de estacionamento do GoDaddy. Enquanto os nameservers não forem trocados no DomainControl, o Google vê um canonical que não é o site. Passo a passo em [PUBLISHING.md](PUBLISHING.md).
+- **Conta Amazon Associates.** Sem a sua Store ID real, os 184 links com a tag `homeworldpres-20` não rendem nada. Depois de aprovado, a troca é `node tools/set-affiliate-tag.js <sua-tag>` (acima).
 - **"Nós testamos."** Só sai da sua mão. Sem aparelho na mão, o texto é comparação de especificações e precisa se chamar isso.
-- **Conta Amazon Associates.** Sem a sua Store ID real, os 184 links com a tag `homeworldpres-20` não rendem nada — a placeholder não paga.
-- **Publicar no ar.** Nada aqui sobe site para servidor. O passo a passo do upload está em [PUBLISHING.md](PUBLISHING.md).
 - **Fotos de produto.** As imagens do review de e-readers são Unsplash, e algumas não batem com o produto (tem luminária ilustrando um Kindle Scribe).
 - **Direito de imagem de capas.** As capas históricas da editora vêm do arquivo do James Gauthier; antes de publicar, confirme a permissão por escrito.
+- **Medição de tráfego.** Hoje não há nenhuma: escolher entre Google Search Console (o dado que decide a estratégia de afiliado) e um script de analytics é decisão sua.
 - **Nota manual no painel.** Opcional. Serve para corrigir o robô quando ele erra de julgamento, não para substituí-lo.
