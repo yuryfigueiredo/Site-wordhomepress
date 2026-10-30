@@ -23,10 +23,7 @@
     { "source": "/article", "destination": "/article.html", "permanent": true },
     { "source": "/review", "destination": "/review.html", "permanent": true },
     { "source": "/tarzan-centennial", "destination": "/tarzan-centennial.html", "permanent": true },
-    { "source": "/classic-comics", "destination": "/classic-comics.html", "permanent": true },
-
-    { "source": "/article.html/:path*", "destination": "/article.html", "permanent": false },
-    { "source": "/review.html/:path*", "destination": "/review.html", "permanent": false }
+    { "source": "/classic-comics", "destination": "/classic-comics.html", "permanent": true }
   ],
   "headers": [
     {

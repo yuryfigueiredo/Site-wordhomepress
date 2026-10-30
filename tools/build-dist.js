@@ -116,6 +116,20 @@ for (const stub of stubsSkipped) {
     problems.push(`${stub} saiu do pacote mas nenhuma regra de 301 cobre essa URL — ficaria 404`);
 }
 
+/* ":path*" casa com zero segmentos: source "/review.html/:path*" engole o
+   proprio "/review.html" e a pagina redireciona para si mesma em loop. */
+if (fs.existsSync(path.join(ROOT, "vercel.json"))) {
+  try {
+    const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "vercel.json"), "utf8"));
+    for (const r of cfg.redirects || []) {
+      const src = r.source.replace(/\/:(path|next)\*$/, "").replace(/:.*$/, "");
+      if (src === r.destination) problems.push(`regra em loop: ${r.source} -> ${r.destination}`);
+    }
+  } catch (e) {
+    problems.push(`vercel.json nao e JSON valido: ${e.message}`);
+  }
+}
+
 const mb = (bytes / 1024 / 1024).toFixed(2);
 console.log(`dist/ montado: ${shipped.length} arquivos, ${pages} páginas, ${mb} MB`);
 if (problems.length) {
