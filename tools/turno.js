@@ -1,6 +1,7 @@
 /* turno.js — uma rodada completa do robô, idêntica no seu PC e no GitHub Actions.
-   Coleta → manutenção → teto diário → pauta → brief → texto (Gemini) → editor
-   mecânico (até 3 tentativas) → nota → publicação. Nunca faz push e nunca faz
+   Coleta → manutenção → teto diário → pauta → brief → texto (provedores de
+   pipeline/providers.json) → capa → editor mecânico (até 3 tentativas) → nota →
+   publicação. Nunca faz push e nunca faz
    deploy: quem commita/envia é o workflow. Escreve TURNO.md, o relatório que
    substitui o painel quando o seu PC está desligado.
 
