@@ -1,0 +1,51 @@
+{
+  "_leia": "Ordem em que o redator tenta os provedores. O arquivo NUNCA guarda chave: 'chave_env' é o nome do segredo. Provedor sem segredo no ambiente fica inerte — não quebra nada. Para armar um, crie a chave grátis no site dele e guarde em Settings > Secrets and variables > Actions.",
+  "provedores": [
+    {
+      "nome": "gemini",
+      "tipo": "gemini",
+      "ativo": true,
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta",
+      "chave_env": "GEMINI_API_KEY",
+      "modelos_por_rodada": 6,
+      "reserva": ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-2.5-flash"]
+    },
+    {
+      "nome": "groq",
+      "tipo": "openai",
+      "ativo": true,
+      "endpoint": "https://api.groq.com/openai/v1",
+      "chave_env": "GROQ_API_KEY",
+      "modelos_por_rodada": 2,
+      "fila": ["llama-3.3-70b-versatile", "openai/gpt-oss-120b"]
+    },
+    {
+      "nome": "cerebras",
+      "tipo": "openai",
+      "ativo": true,
+      "endpoint": "https://api.cerebras.ai/v1",
+      "chave_env": "CEREBRAS_API_KEY",
+      "modelos_por_rodada": 2,
+      "fila": ["llama-3.3-70b", "gpt-oss-120b"]
+    },
+    {
+      "nome": "mistral",
+      "tipo": "openai",
+      "ativo": true,
+      "endpoint": "https://api.mistral.ai/v1",
+      "chave_env": "MISTRAL_API_KEY",
+      "modelos_por_rodada": 2,
+      "fila": ["mistral-small-latest", "open-mistral-nemo"]
+    },
+    {
+      "nome": "openrouter",
+      "tipo": "openai",
+      "ativo": true,
+      "endpoint": "https://openrouter.ai/api/v1",
+      "chave_env": "OPENROUTER_API_KEY",
+      "modelos_por_rodada": 2,
+      "filtro": ":free$",
+      "fila": ["meta-llama/llama-3.3-70b-instruct:free", "qwen/qwen3-235b-a22b:free"]
+    }
+  ]
+}

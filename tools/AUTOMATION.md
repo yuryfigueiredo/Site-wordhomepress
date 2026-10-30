@@ -110,12 +110,13 @@ Uma automação local do Qoder (`Homeworld Press — turno editorial 5x/dia`, cr
 
 ### O mesmo turno na nuvem, com o seu PC desligado
 
-`.github/workflows/turno.yml` roda `node tools/turno.js` no GitHub Actions, com a chave do Gemini guardada em **Settings → Secrets → `GEMINI_API_KEY`**. Diferenças que importam:
+`.github/workflows/turno.yml` roda `node tools/turno.js` no GitHub Actions, com as chaves de escrita guardadas em **Settings → Secrets**. Diferenças que importam:
 
 - **O cron é UTC.** `0 7,10,14,17,21` = 04, 07, 11, 14 e 18 no horário de Brasília. E o gatilho agendado do GitHub é *best-effort*: em dia de fila ele simplesmente não dispara. `Run workflow` na aba Actions força uma rodada na hora.
-- **O segredo de escrever é `tools/write.js`**, que chama a API do Gemini direto. Ele **não** tem lista fixa de modelos: pergunta à chave quais existem (`GET /v1beta/models`), ordena por versão e, quando a API responde "use models/X", segue a dica. Nome de modelo aposentado não derruba mais a rodada.
-- **Diagnóstico sem gastar rodada:** `GEMINI_API_KEY=... node tools/write.js --check` imprime os modelos que a chave tem e a fila que ele usaria.
-- **Se a rodada para**, o motivo fica em `TURNO.md` (commitado pelo próprio robô) com uma linha por modelo tentado. O commit do relatório roda com `if: always()`.
+- **Provedores de texto: `pipeline/providers.json`.** O arquivo lista os provedores *na ordem em que devem ser tentados* e diz, para cada um, o **nome** do segredo que guarda a chave — nunca a chave. Provedor sem segredo no ambiente fica inerte; provedor que responde 503/429 é esperado e tentado de novo; provedor que recusa (chave inválida, nome morto) é descartado e a rodada passa para o próximo. Some a chave em Secrets e o provedor entra sozinho na fila, sem mexer em código.
+- **O segredo de escrever é `tools/write.js`**, que não tem lista fixa de modelos: pergunta a cada chave quais existem (`GET .../models`), ordena por versão, e quando a API do Google responde "use models/X", segue a dica. Nome de modelo aposentado não derruba mais a rodada.
+- **Diagnóstico sem gastar rodada nem cota:** `node tools/write.js --check` mostra quem está armado, quem está sem chave e a fila de modelos de cada um. Zero geração.
+- **Se a rodada para**, o motivo fica em `TURNO.md` (commitado pelo próprio robô) com uma linha por `provedor/modelo` tentado. O commit do relatório roda com `if: always()`.
 - **Push = deploy.** O workflow commita `TURNO.md` e o que a rodada mudou; a Vercel publica a cada push em `main`. Não existe mais passo manual de upload (ver [PUBLISHING.md](PUBLISHING.md)).
 
 ### Trocar a Store ID da Amazon

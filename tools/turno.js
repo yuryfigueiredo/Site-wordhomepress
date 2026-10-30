@@ -57,7 +57,8 @@ if (brief.code !== 0) finish(`brief falhou: ${brief.out.slice(-300)}`);
 say("brief", `pipeline/drafts/${lead.slug}/ criado`);
 
 /* 6. texto */
-if (!process.env.GEMINI_API_KEY) finish("sem GEMINI_API_KEY no ambiente — o texto não foi escrito. (No seu PC, use o cron do Qoder; no Actions, confira o Secret.)");
+const prov = require("./lib/providers");
+if (!prov.armados().length) finish(`nenhum provedor de texto armado — sem chave no ambiente, o redator não roda. As chaves que valem são as de pipeline/providers.json: ${prov.configurados().map((p) => p.chave_env).join(", ")}.`);
 const wrote = run("write.js", [lead.slug]);
 if (wrote.code !== 0) finish(`o redator não entregou texto: ${wrote.out.trim().split("\n").slice(-8).join(" · ").slice(0, 900)}`);
 say("texto", wrote.out.trim().split("\n")[0]);
