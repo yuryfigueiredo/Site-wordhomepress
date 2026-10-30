@@ -596,6 +596,36 @@
     });
   }
 
+  // Vercel Analytics + Suporte a link de exclusão (?admin=true / ?optout=true)
+  function initAnalytics() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      // Se acessar com ?admin=true ou ?optout=true, grava no navegador para nunca contar visitas
+      if (urlParams.get("admin") === "true" || urlParams.get("optout") === "true") {
+        localStorage.setItem("va-disable", "true");
+        // Mostra um aviso discreto confirmando que o aparelho foi excluído
+        const banner = document.createElement("div");
+        banner.style.cssText = "position:fixed;bottom:15px;right:15px;background:#E50914;color:#fff;padding:10px 16px;border-radius:4px;font-family:monospace;font-size:12px;font-weight:bold;z-index:999999;box-shadow:0 4px 12px rgba(0,0,0,0.4);";
+        banner.textContent = "✓ Acessos deste aparelho EXCLUÍDOS do Vercel Analytics!";
+        document.body.appendChild(banner);
+        setTimeout(() => banner.remove(), 4500);
+      } else if (urlParams.get("admin") === "false" || urlParams.get("optin") === "true") {
+        localStorage.removeItem("va-disable");
+      }
+
+      // Se não estiver desativado para este navegador, carrega o script do Vercel Analytics
+      if (localStorage.getItem("va-disable") !== "true") {
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+        const script = document.createElement("script");
+        script.defer = true;
+        script.src = "/_vercel/insights/script.js";
+        document.head.appendChild(script);
+      }
+    } catch (e) {
+      // Ignora silenciosamente se o navegador bloquear localStorage/scripts
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     initTheme();
     initCultureFilter();
@@ -604,5 +634,6 @@
     initReviewPage();
     initDynamicHead();
     initAriaCurrent();
+    initAnalytics();
   });
 })();
