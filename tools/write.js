@@ -26,9 +26,9 @@ if (!KEY) {
 /* Os nomes de modelo não podem ser chutados aqui: mudam com o tempo e nem todo
    nome existe no tier gratuito desta chave. A fonte da verdade é a própria
    chave — ela devolve a lista do que ela pode usar no generateContent. */
-const PREFERRED = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-flash-latest", "gemini-2.0-flash"];
-const PREFS = [process.env.GEMINI_MODEL, ...PREFERRED].filter(Boolean);
+const FALLBACK = ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-2.5-flash"];
 const API = "https://generativelanguage.googleapis.com/v1beta";
+const { rank } = require("./lib/rank-models");
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -80,15 +80,15 @@ const FIX = path.join(DIR, "fix.md");
 
 (async () => {
   const available = await modelsForKey();
+  const forcar = process.env.GEMINI_MODEL;
   let models;
   if (!available || !available.length) {
     if (CHECK_ONLY) { console.error("não deu para saber o que a chave tem — o motivo está acima."); process.exit(1); }
-    models = PREFS;
-    console.error("a listagem não respondeu; seguindo com a fila fixa de preferidos.");
+    models = [forcar, ...FALLBACK].filter(Boolean);
+    console.error("a listagem não respondeu; seguindo com a fila de reserva.");
   } else {
-    const preferidos = PREFS.filter((m) => available.includes(m));
-    const extras = available.filter((m) => !PREFS.includes(m)).slice(0, 2);
-    models = [...preferidos, ...extras];
+    const ordenado = rank(available);
+    models = [forcar, ...ordenado.filter((m) => m !== forcar)].filter(Boolean).slice(0, 4);
     if (CHECK_ONLY) {
       console.log(`modelos desta chave que escrevem texto: ${available.length}`);
       console.log(available.join("\n"));
@@ -111,22 +111,35 @@ const FIX = path.join(DIR, "fix.md");
   let lastErr = "";
   /* Teto de parede: sem ele, uma chave sem cota transforma a rodada em uma
      espera de meia hora até o timeout do Actions matar o processo no meio. */
-  const DEADLINE = Date.now() + Number(process.env.WRITE_MINUTES || 8) * 60000;
-  for (const model of models) {
-    if (Date.now() > DEADLINE) { falhas.push(`${model}: desistiu no teto de ${process.env.WRITE_MINUTES || 8}min`); continue; }
-    for (let attempt = 1; attempt <= 3; attempt++) {
+  const MIN = Number(process.env.WRITE_MINUTES || 6);
+  const DEADLINE = Date.now() + MIN * 60000;
+  const fila = [...models];
+  const tentado = new Set();
+  for (let i = 0; i < fila.length; i++) {
+    const model = fila[i];
+    if (tentado.has(model)) continue;
+    tentado.add(model);
+    if (Date.now() > DEADLINE) { falhas.push(`${model}: nem tentado, o teto de ${MIN}min acabou`); continue; }
+    let desistiu = false;
+    for (let attempt = 1; attempt <= 2 && !desistiu; attempt++) {
       let res;
       try {
         res = await call(model, prompt);
       } catch (err) {
         lastErr = `rede: ${err.message}`;
-        await sleep(15000 * attempt);
+        if (attempt < 2) await sleep(10000);
         continue;
       }
-      if (res.status === 429 || res.status === 503) {
-        /* Cota da free tier: espera e tenta de novo; não é erro de texto. */
-        lastErr = `HTTP ${res.status} (cota/indisponível)`;
-        await sleep(30000 * attempt);
+      if (res.status === 429) {
+        /* Cota: vale uma espera curta, não três. */
+        lastErr = "HTTP 429 (cota do tier)";
+        if (attempt < 2) await sleep(20000); else desistiu = true;
+        continue;
+      }
+      if (res.status === 503 || res.status === 500 || res.status === 502) {
+        /* Serviço ocupado não é problema deste modelo: próximo da fila. */
+        lastErr = `HTTP ${res.status} (serviço ocupado)`;
+        desistiu = true;
         continue;
       }
       if (!res.ok) {
@@ -136,9 +149,11 @@ const FIX = path.join(DIR, "fix.md");
           console.error(`a chave foi recusada: ${lastErr}`);
           process.exit(1);
         }
-        /* Nome inexistente ou sem permissão não melhora com repetição: próximo modelo. */
-        if (res.status === 404 || res.status === 403) break;
-        await sleep(15000 * attempt);
+        /* A própria API diz qual modelo usar no lugar; seguir a dica é o que
+           mantém a automação viva quando um nome é aposentado. */
+        const dica = (txt.match(/use\s+models\/([a-z0-9.\-]+)/i) || [])[1];
+        if (dica && !tentado.has(dica)) fila.splice(i + 1, 0, dica);
+        desistiu = true;
         continue;
       }
 
@@ -147,7 +162,8 @@ const FIX = path.join(DIR, "fix.md");
       if (!cand.content) {
         const blocked = ((json.promptFeedback || {}).blockReason || {}).reason;
         lastErr = `voltou sem texto (${cand.finishReason || blocked || "resposta vazia"})`;
-        break;
+        desistiu = true;
+        continue;
       }
       const text = (cand.content.parts || []).map((p) => p.text || "").join("");
       const clean = text.replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, "").trim();

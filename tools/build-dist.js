@@ -40,14 +40,6 @@ const redirectText = ["vercel.json", "_redirects"]
   .map((f) => fs.readFileSync(path.join(ROOT, f), "utf8"))
   .join("\n");
 
-function stubTarget(rel) {
-  const body = fs.readFileSync(path.join(ROOT, rel), "utf8").slice(0, 1200);
-  const m = body.match(/url=([^"'&>]+)/i);
-  if (!m) return null;
-  const dir = path.posix.dirname(rel);
-  return path.posix.normalize(path.posix.join(dir, m[1].trim()));
-}
-
 function rootHtmlFiles() {
   return fs
     .readdirSync(ROOT, { withFileTypes: true })
