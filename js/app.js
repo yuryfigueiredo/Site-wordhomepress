@@ -7,6 +7,10 @@
 
   const DB = window.HWP_DATABASE;
 
+  /* Títulos de fonte vêm de feed de terceiro: entram como texto, nunca como HTML. */
+  const escapeHtml = (s) =>
+    String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+
   // 1. Theme Persistence (Editorial Paper vs. WIRED Dark Mode)
   function initTheme() {
     const saved = localStorage.getItem("hwp_theme") || "light";
@@ -185,6 +189,20 @@
     const desc = document.querySelector('meta[name="description"]');
     if (desc && article.dek) desc.setAttribute("content", article.dek);
 
+    /* O breadcrumb é estático no HTML; sem isto toda matéria de ciência
+       aparecia como "Culture / Buyer's Guides". */
+    const SUBTOPIC_LABEL = { authors: "Authors", news: "News", comics: "Comics", guides: "Guides", concepts: "Concepts", space: "Space" };
+    const crumbCat = document.getElementById("crumbCategory");
+    if (crumbCat) {
+      crumbCat.textContent = article.category.charAt(0).toUpperCase() + article.category.slice(1);
+      crumbCat.setAttribute("href", `${article.category}.html`);
+    }
+    const crumbSub = document.getElementById("crumbSubtopic");
+    if (crumbSub) {
+      crumbSub.textContent = SUBTOPIC_LABEL[article.subtopic] || "Articles";
+      crumbSub.setAttribute("href", `${article.category}.html`);
+    }
+
     // Highlight active category link in the top bar
     document.querySelectorAll(".wired-nav__link").forEach((link) => {
       const href = link.getAttribute("href") || "";
@@ -196,30 +214,16 @@
     });
 
     const box = article.affiliateBox;
-    const prosHtml = box.pros.map((p) => `<li>✓ ${p}</li>`).join("");
-    const consHtml = box.cons.map((c) => `<li>✕ ${c}</li>`).join("");
-    const verdictImg = article.bookCover || article.image;
-    const verdictImgFit = article.bookCover ? "contain" : "cover";
-    const isExternalSecondary = /^https?:\/\//i.test(box.audibleUrl);
-
-    holder.innerHTML = `
-      <div class="article-header">
-        <span class="kicker kicker--${article.category}">${article.kicker}</span>
-        <h1 class="article-title">${article.title}</h1>
-        <p class="article-dek">${article.dek}</p>
-        <div class="meta-line">
-          <span>BY <strong>${article.author}</strong></span>
-          <span>•</span>
-          <span>${article.date}</span>
-          <span>•</span>
-          <span>${article.readTime}</span>
-        </div>
-      </div>
-
-      <figure style="margin-bottom:2rem;border:var(--border-hairline);">
-        <img src="${article.image}" alt="${article.title}" fetchpriority="high" width="900" height="500" style="width:100%;max-height:480px;object-fit:cover;">
-      </figure>
-
+    /* Post novo chega com affiliateBox: null; sem esta guarda a página inteira
+       fica em branco, porque o acesso a box.pros lançava antes do innerHTML. */
+    let verdictHtml = "";
+    if (box) {
+      const prosHtml = (box.pros || []).map((p) => `<li>✓ ${p}</li>`).join("");
+      const consHtml = (box.cons || []).map((c) => `<li>✕ ${c}</li>`).join("");
+      const verdictImg = article.bookCover || article.image;
+      const verdictImgFit = article.bookCover ? "contain" : "cover";
+      const isExternalSecondary = /^https?:\/\//i.test(box.audibleUrl || "");
+      verdictHtml = `
       <!-- High-Converting WIRED + Wirecutter Affiliate Verdict Box -->
       <div class="verdict-box">
         <div class="verdict-box__ribbon">
@@ -247,11 +251,54 @@
             <ul style="list-style:none;margin-top:0.4rem;display:flex;flex-direction:column;gap:0.3rem;">${consHtml}</ul>
           </div>
         </div>
+      </div>`;
+    }
+
+    const sources = Array.isArray(article.sources)
+      ? article.sources.filter((s) => s && /^https?:\/\//i.test(s.url || ""))
+      : [];
+    const sourcesHtml = sources.length
+      ? `
+      <section class="article-sources">
+        <h2 class="article-sources__title">Sources</h2>
+        <ol>
+          ${sources
+            .map(
+              (s) =>
+                `<li><a href="${escapeHtml(s.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(s.title || s.url)}</a>${
+                  s.date ? ` <span class="article-sources__date">${escapeHtml(s.date)}</span>` : ""
+                }</li>`
+            )
+            .join("")}
+        </ol>
+      </section>`
+      : "";
+
+    holder.innerHTML = `
+      <div class="article-header">
+        <span class="kicker kicker--${article.category}">${article.kicker}</span>
+        <h1 class="article-title">${article.title}</h1>
+        <p class="article-dek">${article.dek}</p>
+        <div class="meta-line">
+          <span>BY <strong>${article.author}</strong></span>
+          <span>•</span>
+          <span>${article.date}</span>
+          <span>•</span>
+          <span>${article.readTime}</span>
+        </div>
       </div>
+
+      <figure style="margin-bottom:2rem;border:var(--border-hairline);">
+        <img src="${article.image}" alt="${article.title}" fetchpriority="high" width="900" height="500" style="width:100%;max-height:480px;object-fit:cover;">
+      </figure>
+
+      ${verdictHtml}
 
       <div class="article-prose">
         ${article.content}
       </div>
+
+      ${sourcesHtml}
 
       <div class="ad-slot-container">
         <div class="ad-slot-container__label">ADVERTISEMENT // GOOGLE ADSENSE & MEDIAVINE DISPLAY SLOT (ZERO-CLS RESERVED)</div>

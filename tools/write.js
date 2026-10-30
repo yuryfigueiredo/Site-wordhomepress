@@ -43,6 +43,15 @@ let melhor = null;
 
 function gravar(draft, k) {
   draft.id = draft.id || SLUG.replace(/_/g, "-");
+  /* Modelo às vezes devolve sources vazio mesmo tendo recebido a pauta; a
+     matéria ia ao ar sem nenhuma citação. A fonte do brief é verificada, então
+     ela entra como fonte mínima. */
+  if (!Array.isArray(draft.sources) || !draft.sources.length) {
+    try {
+      const bs = JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")).sources || [];
+      if (bs.length) draft.sources = bs.map((s) => ({ ...s, claim: s.claim || "pauta original da rodada" }));
+    } catch {}
+  }
   /* A reescrita não deve perder a capa: o modelo nunca vê o arquivo gerado
      por make-cover.js e devolve image null. */
   if (!draft.image) {

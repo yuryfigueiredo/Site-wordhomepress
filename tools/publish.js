@@ -79,6 +79,8 @@ const entry = {
   dek: draft.dek,
   affiliateBox: draft.affiliateBox || null,
   content: draft.content,
+  sources: Array.isArray(draft.sources) ? draft.sources : [],
+  evidenceLevel: draft.evidence_level || null,
 };
 const serialized = JSON.stringify(entry, null, 2)
   .split("\n")
