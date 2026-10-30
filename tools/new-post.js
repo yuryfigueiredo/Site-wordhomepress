@@ -122,6 +122,8 @@ const prompt = [
   "=== REGRAS DESTA CHAMADA ===",
   `- opening_move NÃO pode ser "${memory && memory.opening_move}". ending_move NÃO pode ser "${memory && memory.ending_move}".`,
   `- O campo content tem de ter NO MÍNIMO ${Math.round(brief.word_count * 0.7)} palavras visíveis (alvo ${brief.word_count}). Se ficar abaixo, acrescente seções até atingir — texto curto é recusado pelo editor mecânico, não é estilo.`,
+  "- Estrutura do content: 6 a 9 seções <h2>, cada uma com 2 a 4 parágrafos de 50 a 110 palavras. Se o total não bater o piso, acrescente uma seção; não encurte as existentes.",
+  "- Inclua exatamente um parágrafo de uma frase (1 a 7 palavras) e pelo menos um parágrafo com 4 ou mais frases.",
   "- Responda SOMENTE com o JSON do contrato acima, sem cercas de código.",
   "- Preencha self_check com valores medidos no seu próprio texto, não estimados.",
   "- Se as fontes não sustentam um número, escreva sem o número e marque evidence_level corretamente.",

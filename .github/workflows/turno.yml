@@ -50,7 +50,16 @@ jobs:
           git add -A
           if git diff --cached --quiet; then
             echo "nada para commitar"
-          else
-            git commit -m "turno: $(date -u +%Y-%m-%dT%H:%M)Z"
-            git push
+            exit 0
           fi
+          git commit -m "turno: $(date -u +%Y-%m-%dT%H:%M)Z"
+          # Se você empurrou algo durante a rodada, o push direto seria recusado
+          # e a matéria publicada se perderia no runner. Rebase resolve a corrida.
+          for i in 1 2 3; do
+            if git pull --rebase --autostash origin main && git push; then
+              exit 0
+            fi
+            echo "push recusado (tentativa $i), repetindo em 10s"
+            sleep 10
+          done
+          exit 1

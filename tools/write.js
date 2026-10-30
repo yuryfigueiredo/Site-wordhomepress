@@ -32,6 +32,29 @@ const PROMPT = path.join(DIR, "prompt.md");
 const FIX = path.join(DIR, "fix.md");
 
 const falhas = new Map();
+const contar = (html) => String(html || "").replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+const alvo = (() => {
+  try { return Number(JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")).word_count || 0); } catch { return 0; }
+})();
+const piso = alvo ? Math.round(alvo * 0.7) : 0;
+/* Plano B do comprimento: se nenhum modelo bate o piso, fica gravado o mais
+   longo, para a reescrita expandir em vez de começar do zero outra vez. */
+let melhor = null;
+
+function gravar(draft, k) {
+  draft.id = draft.id || SLUG.replace(/_/g, "-");
+  /* A reescrita não deve perder a capa: o modelo nunca vê o arquivo gerado
+     por make-cover.js e devolve image null. */
+  if (!draft.image) {
+    try {
+      const ant = JSON.parse(fs.readFileSync(path.join(DIR, "draft.json"), "utf8"));
+      if (ant.image) { draft.image = ant.image; draft.imageAlt = draft.imageAlt || ant.imageAlt; }
+    } catch {}
+  }
+  fs.writeFileSync(path.join(DIR, "draft.json"), JSON.stringify(draft, null, 2) + "\n");
+  console.log(`escrito por ${k}: ${draft.id} (${contar(draft.content)} palavras)`);
+  console.log("próximo passo: node tools/check-post.js " + SLUG);
+}
 
 (async () => {
   const armados = prov.armados();
@@ -57,7 +80,25 @@ const falhas = new Map();
     console.error(`não existe ${path.relative(ROOT, PROMPT)} — rode new-post.js antes`);
     process.exit(2);
   }
-  const prompt = fs.readFileSync(PROMPT, "utf8") + (fs.existsSync(FIX) ? "\n\n---\n" + fs.readFileSync(FIX, "utf8") : "");
+  const promptBase = fs.readFileSync(PROMPT, "utf8");
+  const fixTxt = fs.existsSync(FIX) ? fs.readFileSync(FIX, "utf8") : "";
+  let anterior = null;
+  try { anterior = JSON.parse(fs.readFileSync(path.join(DIR, "draft.json"), "utf8")); } catch {}
+
+  /* Na reescrita o modelo não estava vendo o que já tinha escrito: recomeçava
+     do zero e devolvia ainda menos palavras. O texto atual vai no prompt e a
+     ordem é expandir, não reescrever. */
+  let prompt = promptBase;
+  if (fixTxt) {
+    prompt += "\n\n---\n" + fixTxt;
+    if (anterior && anterior.content) {
+      const n = contar(anterior.content);
+      prompt +=
+        `\n\n=== SEU TEXTO ATUAL (${n} palavras; o piso é ${piso}) ===\n` +
+        JSON.stringify({ title: anterior.title, dek: anterior.dek, sources: anterior.sources, content: anterior.content }, null, 2) +
+        `\n\nNÃO reescreva do zero. Mantenha os parágrafos que o editor não reprovou e ACRESCENTE seções até passar de ${piso} palavras. O JSON devolvido tem de conter esse texto expandido.`;
+    }
+  }
 
   /* Cada provedor vira um grupo com a sua própria fila de modelos. Só entram
      no jogo os que responderam que têm modelo de texto. */
@@ -133,17 +174,16 @@ const falhas = new Map();
       return "definitivo";
     }
     draft.id = draft.id || SLUG.replace(/_/g, "-");
-    /* A reescrita não deve perder a capa: o modelo nunca vê o arquivo gerado
-       por make-cover.js e devolve image null. */
-    if (!draft.image) {
-      try {
-        const anterior = JSON.parse(fs.readFileSync(path.join(DIR, "draft.json"), "utf8"));
-        if (anterior.image) { draft.image = anterior.image; draft.imageAlt = draft.imageAlt || anterior.imageAlt; }
-      } catch {}
+    const palavras = contar(draft.content);
+    /* Texto abaixo do piso não é publicável, e o modelo anterior já ignorou a
+       instrução: antes de aceitar, tenta o próximo modelo da fila. */
+    if (piso && palavras < piso) {
+      falhas.set(k, `curto: ${palavras} palavras (piso ${piso})`);
+      if (!melhor || palavras > melhor.palavras) melhor = { draft, palavras, k };
+      guardar();
+      return "definitivo";
     }
-    fs.writeFileSync(path.join(DIR, "draft.json"), JSON.stringify(draft, null, 2) + "\n");
-    console.log(`escrito por ${k}: ${draft.id} (${String(draft.content).split(/\s+/).length} palavras brutas)`);
-    console.log("próximo passo: node tools/check-post.js " + SLUG);
+    gravar(draft, k);
     process.exit(0);
   }
 
@@ -176,6 +216,12 @@ const falhas = new Map();
     const fatia = ((fim - Date.now()) * Number(grupos[i].p.peso || 1)) / soma;
     const ate = Math.min(fim, Date.now() + Math.max(60000, fatia));
     await rodar(grupos[i], ate);
+  }
+
+  if (melhor) {
+    gravar(melhor.draft, melhor.k);
+    console.error(`nenhum modelo bateu o piso; guardei o mais longo: ${melhor.palavras} palavras (piso ${piso}). O editor vai reprovar o tamanho e a próxima tentativa expande.`);
+    process.exit(0);
   }
 
   console.error(`não saiu texto em ${MIN}min, em nenhum provedor armado. O que houve:`);
