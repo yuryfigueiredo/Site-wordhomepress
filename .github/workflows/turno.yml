@@ -26,6 +26,8 @@ jobs:
       # provedor correspondente é pulado. A ordem de tentativa mora em
       # pipeline/providers.json — aqui só se entrega o que já foi guardado.
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+      NVIDIA_API_KEY_2: ${{ secrets.NVIDIA_API_KEY_2 }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
       MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}

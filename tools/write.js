@@ -113,15 +113,25 @@ const falhas = new Map();
     const lido = prov.extrair(grupo.p, await res.json().catch(() => null));
     if (!lido.texto) { falhas.set(k, lido.motivo); return "definitivo"; }
     const clean = lido.texto.replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, "").trim();
+    /* Resposta rejeitada fica no rascunho para diagnóstico: sem isso, "JSON sem
+       campos" é um mistério e a única saída é adivinhar o prompt. */
+    const guardar = () => {
+      try { fs.writeFileSync(path.join(DIR, `rejeitado-${k.replace(/[^a-z0-9]+/gi, "-")}.txt`), lido.texto); } catch {}
+    };
     let draft;
     try {
       draft = JSON.parse(clean);
     } catch {
       falhas.set(k, `resposta não é JSON: ${clean.slice(0, 200)}`);
+      guardar();
       return "definitivo";
     }
     const missing = ["id", "title", "dek", "content", "sources", "self_check"].filter((x) => draft[x] === undefined);
-    if (missing.length) { falhas.set(k, `JSON sem campos: ${missing.join(", ")}`); return "definitivo"; }
+    if (missing.length) {
+      falhas.set(k, `JSON sem campos: ${missing.join(", ")} (resposta em rejeitado-*.txt)`);
+      guardar();
+      return "definitivo";
+    }
     draft.id = draft.id || SLUG.replace(/_/g, "-");
     fs.writeFileSync(path.join(DIR, "draft.json"), JSON.stringify(draft, null, 2) + "\n");
     console.log(`escrito por ${k}: ${draft.id} (${String(draft.content).split(/\s+/).length} palavras brutas)`);
@@ -149,11 +159,14 @@ const falhas = new Map();
     }
   }
 
-  /* Fatia justa: o que sobra do teto, dividido entre os provedores que ainda
-     não foram tentados. Com um provedor só, ele fica com o orçamento inteiro. */
+  /* Fatia proporcional ao peso declarado em providers.json: o provedor que
+     escreve melhor fica com mais tempo. O que sobra sempre vai para o último,
+     então nenhum minuto se perde. */
   for (let i = 0; i < grupos.length; i++) {
-    const resto = grupos.length - i;
-    const ate = Math.min(fim, Date.now() + Math.max(60000, (fim - Date.now()) / resto));
+    const restantes = grupos.slice(i);
+    const soma = restantes.reduce((s, g) => s + Number(g.p.peso || 1), 0);
+    const fatia = ((fim - Date.now()) * Number(grupos[i].p.peso || 1)) / soma;
+    const ate = Math.min(fim, Date.now() + Math.max(60000, fatia));
     await rodar(grupos[i], ate);
   }
 

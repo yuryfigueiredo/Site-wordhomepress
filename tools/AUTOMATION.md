@@ -119,6 +119,21 @@ Uma automação local do Qoder (`Homeworld Press — turno editorial 5x/dia`, cr
 - **Se a rodada para**, o motivo fica em `TURNO.md` (commitado pelo próprio robô) com uma linha por `provedor/modelo` tentado. O commit do relatório roda com `if: always()`.
 - **Push = deploy.** O workflow commita `TURNO.md` e o que a rodada mudou; a Vercel publica a cada push em `main`. Não existe mais passo manual de upload (ver [PUBLISHING.md](PUBLISHING.md)).
 
+#### Armar um segundo provedor (quando quiser)
+
+Hoje estão armados o **Gemini** (`GEMINI_API_KEY`) e a **NVIDIA** com duas chaves (`NVIDIA_API_KEY` e `NVIDIA_API_KEY_2`). A NVIDIA grátis anuncia o catálogo inteiro em `/v1/models` mas libera só parte dele por conta — modelo fora da sua cota responde `404 Function not found for account`, então a fila lista só o que foi testado de verdade: `openai/gpt-oss-20b` e `minimaxai/minimax-m3.1-flash`. Os dois são modelos que "pensam": gastam tokens no raciocínio antes de escrever, daí o `max_tokens` mais alto no JSON.
+
+Para acrescentar outro provedor, sem tocar em código:
+
+1. Crie a conta no provedor e gere a chave (`console.groq.com`, `cloud.cerebras.ai`, `console.mistral.ai`, `openrouter.ai`). Os quatro falam o mesmo dialeto (`/chat/completions`), por isso o mesmo adaptador serve para todos. Confira no site o limite gratuito do dia — ele muda sem avisar.
+2. No GitHub: **Settings → Secrets and variables → Actions → New repository secret**. O nome tem de ser exatamente o `chave_env` de `pipeline/providers.json` (`GROQ_API_KEY`, `CEREBRAS_API_KEY`, `MISTRAL_API_KEY` ou `OPENROUTER_API_KEY`).
+3. Rode `node tools/write.js --check` com a chave no ambiente para ver a fila que ele usaria. Não gera texto, não gasta cota.
+4. Nada mais. No próximo turno o provedor entra na fila na posição em que está no JSON; se o de cima falhar, o de baixo escreve e o `TURNO.md` dirá `escrito por nvidia/openai/gpt-oss-20b`.
+
+Para inverter a ordem, basta trocar as linhas do arquivo (`peso` decide quanto tempo da rodada cada um recebe). Para desligar um provedor sem apagar a chave, `"ativo": false`.
+
+Se um modelo responder JSON incompleto, o `write.js` grava a resposta recusada em `pipeline/drafts/<slug>/rejeitado-<provedor>-<modelo>.txt` — é ali que se vê o que ele escreveu de errado.
+
 ### Trocar a Store ID da Amazon
 
 A tag aparece em 184 links espalhados por 15 arquivos. Um comando troca todos:

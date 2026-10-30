@@ -1,5 +1,5 @@
 {
-  "_leia": "Ordem em que o redator tenta os provedores. O arquivo NUNCA guarda chave: 'chave_env' é o nome do segredo. Provedor sem segredo no ambiente fica inerte — não quebra nada. Para armar um, crie a chave grátis no site dele e guarde em Settings > Secrets and variables > Actions.",
+  "_leia": "Ordem em que o redator tenta os provedores. O arquivo NUNCA guarda chave: 'chave_env' é o nome do segredo. Provedor sem segredo no ambiente fica inerte — não quebra nada. Campos: 'peso' divide o tempo da rodada (o que sobra vai para o último), 'modelos_por_rodada' quantos modelos tentar, 'max_tokens' só para modelos que gastam o teto pensando, 'fila' a ordem preferida e 'ativo': false desliga sem apagar a chave.",
   "provedores": [
     {
       "nome": "gemini",
@@ -8,7 +8,28 @@
       "endpoint": "https://generativelanguage.googleapis.com/v1beta",
       "chave_env": "GEMINI_API_KEY",
       "modelos_por_rodada": 6,
+      "peso": 2,
       "reserva": ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-2.5-flash"]
+    },
+    {
+      "nome": "nvidia",
+      "tipo": "openai",
+      "ativo": true,
+      "endpoint": "https://integrate.api.nvidia.com/v1",
+      "chave_env": "NVIDIA_API_KEY",
+      "modelos_por_rodada": 2,
+      "max_tokens": 6000,
+      "fila": ["openai/gpt-oss-20b", "minimaxai/minimax-m3.1-flash"]
+    },
+    {
+      "nome": "nvidia-2",
+      "tipo": "openai",
+      "ativo": true,
+      "endpoint": "https://integrate.api.nvidia.com/v1",
+      "chave_env": "NVIDIA_API_KEY_2",
+      "modelos_por_rodada": 2,
+      "max_tokens": 6000,
+      "fila": ["openai/gpt-oss-20b", "minimaxai/minimax-m3.1-flash"]
     },
     {
       "nome": "groq",

@@ -102,6 +102,9 @@ function chamar(p, modelo, prompt, timeoutMs) {
       model: modelo,
       messages: [{ role: "user", content: prompt + "\n\nResponda SOMENTE com o JSON do output contract. Sem cercas de código, sem comentário." }],
       temperature: 0.9,
+      /* Modelos que "pensam" gastam o teto no raciocínio e devolvem texto
+         vazio; o provedor que precisa de folga declara quanto. */
+      ...(p.max_tokens ? { max_tokens: Number(p.max_tokens) } : {}),
     }),
     signal,
   });
