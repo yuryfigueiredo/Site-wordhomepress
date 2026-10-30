@@ -68,7 +68,7 @@ async function call(model, prompt) {
       contents: [{ role: "user", parts: [{ text: prompt + "\n\nResponda SOMENTE com o JSON do output contract. Sem cercas de código, sem comentário." }] }],
       generationConfig: { responseMimeType: "application/json", temperature: 0.9, maxOutputTokens: 8192 },
     }),
-    signal: AbortSignal.timeout(180000),
+    signal: AbortSignal.timeout(240000),
   });
 }
 
