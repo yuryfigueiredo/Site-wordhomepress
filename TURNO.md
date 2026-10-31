@@ -1,4 +1,4 @@
-# Turno — 2026-10-31 18:37 UTC
+# Turno — 2026-10-31 18:58 UTC
 
 - **coleta** — distribuição: {"science":27,"culture":12,"tech":1} · 2 pautas já estavam no ar (fonte repetida)
 - **manutenção** — errors 0 | ✗ warnings 3
