@@ -182,16 +182,11 @@ try {
   abort("doctor encontrou erros depois da inserção");
 }
 
-const runsFile = path.join(ROOT, "voice", "state", "last_runs.json");
+const lastRuns = require("./lib/lastRuns");
 /* Telemetria de estilo, não portão: com o artigo já inserido no catálogo, um
    JSON quebrado aqui matava a publicação no meio e o `git add -A` do workflow
-   empurrava a matéria ao ar sem commit "publish:" e sem registro. Começa do
-   zero quando o arquivo não presta. */
-let runs = { runs: {} };
-try {
-  const lido = JSON.parse(fs.readFileSync(runsFile, "utf8"));
-  if (lido && typeof lido === "object" && lido.runs && typeof lido.runs === "object") runs = lido;
-} catch {}
+   empurrava a matéria ao ar sem commit "publish:" e sem registro. */
+const runs = lastRuns.ler(ROOT);
 const sc = draft.self_check || {};
 let BRIEF = {};
 try { BRIEF = JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")); } catch {}
@@ -209,8 +204,7 @@ runs.runs[REGISTER] = {
 };
 runs.updated = new Date().toISOString();
 try {
-  fs.writeFileSync(`${runsFile}.tmp`, JSON.stringify(runs, null, 2));
-  fs.renameSync(`${runsFile}.tmp`, runsFile);
+  lastRuns.gravar(ROOT, runs);
 } catch (err) {
   abort(`registro de estilo falhou: ${String(err.message).split("\n")[0]}`);
 }

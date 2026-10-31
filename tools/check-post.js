@@ -188,7 +188,10 @@ if (humor > 2) reject("tone", `${humor} linhas de humor (máximo 2)`);
 if (grim && humor > 0) reject("tone", "linha de humor em pauta de morte/desastre");
 
 /* ── 7. repetição contra a memória e contra o catálogo ────────────────── */
-const lastRuns = JSON.parse(fs.readFileSync(path.join(ROOT, "voice", "state", "last_runs.json"), "utf8"));
+/* Leitura tolerante (lib/lastRuns): sem o histórico a única coisa que se perde é
+   a regra de "não repita a abertura/fecho da peça anterior"; um arquivo
+   corrompido não pode reprovar um texto que passou por todos os outros portões. */
+const lastRuns = require("./lib/lastRuns").ler(ROOT);
 /* O contrato não tem campo register — quem sabe o registro é o brief. */
 let REGISTER = draft.register;
 try { REGISTER = JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")).register || REGISTER; } catch {}

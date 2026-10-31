@@ -59,16 +59,24 @@ jobs:
         run: |
           # Rodada vermelha não publica nada. O publish.js já desfaz a inserção
           # quando ele mesmo falha, mas um estouro fora daquele caminho (ou um
-          # crash do node) deixaria catálogo, página ou capa sujos no diretório —
-          # e o `git add -A` abaixo empurraria a matéria ao ar com o rótulo
-          # "turno:", sem commit "publish:" e sem contabilidade para o teto.
-          # O registro continua indo: TURNO.md e pipeline/memory.json são o que
-          # impede a mesma fonte de ser reofertada na próxima rodada.
+          # crash do node) deixaria resíduo no diretório — e o `git add -A`
+          # abaixo empurraria a matéria ao ar com o rótulo "turno:", sem commit
+          # "publish:" e sem contabilidade para o teto.
+          # Recuo GERAL, não lista de caminhos: uma saída nova de qualquer
+          # ferramenta não pode escapar do portão por esquecimento. O registro
+          # (TURNO.md e pipeline/memory.json) volta ao lugar porque é o que diz
+          # o que a rodada tentou e impede a mesma fonte de ser reofertada.
+          # O publish: legítimo já é HEAD, então a peça publicada de verdade
+          # sobrevive ao recuo.
           if [ "${{ steps.rodada.outcome }}" != "success" ]; then
-            for p in js index.html culture.html tech.html science.html sitemap.xml vercel.json images; do
-              git checkout HEAD -- "$p" 2>/dev/null || true
-            done
-            git clean -fdq -- 'a-*.html' 'r-*.html' images 2>/dev/null || true
+            mkdir -p /tmp/registro
+            cp -f TURNO.md /tmp/registro/ 2>/dev/null || true
+            cp -f pipeline/memory.json /tmp/registro/memory.json 2>/dev/null || true
+            git checkout HEAD -- .
+            git clean -fdq
+            cp -f /tmp/registro/TURNO.md ./TURNO.md 2>/dev/null || true
+            cp -f /tmp/registro/memory.json pipeline/memory.json 2>/dev/null || true
+            git status --porcelain
           fi
           git add -A
           if git diff --cached --quiet; then

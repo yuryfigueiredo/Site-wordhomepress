@@ -135,8 +135,11 @@ const brief = {
   meta: { lead_source: lead.source, lead_score: lead.score, lead_url: lead.url, subtopic, keywords: lead.keywords },
 };
 
-const lastRuns = JSON.parse(fs.readFileSync(path.join(ROOT, "voice", "state", "last_runs.json"), "utf8"));
-const memory = lastRuns.runs[register];
+/* Registro de estilo lido com tolerância: sem ele o prompt só perde a
+   proibição de repetir a abertura/fecho anteriores; com ele quebrado, a rodada
+   morria antes de escrever qualquer coisa. */
+const lastRuns = require("./lib/lastRuns").ler(ROOT);
+const memory = lastRuns.runs[register] || null;
 
 const prompt = [
   systemPrompt(),
