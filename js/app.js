@@ -12,9 +12,39 @@
     String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
   /* Só http(s) e caminho relativo viram href: javascript:/data: num campo do
-     catálogo (que nasce de feed de terceiro) viraria link executável. */
-  const safeHref = (u) =>
-    /^[a-z][a-z0-9+.-]*:/i.test(String(u || "")) && !/^https?:/i.test(String(u || "")) ? "" : String(u || "");
+     catálogo (que nasce de feed de terceiro) viraria link executável.
+     A checagem descarta espaço e caractere de controle antes de olhar o
+     esquema: "  java\tscript:" é o mesmo esquema e passava pela âncora ^. */
+  const safeHref = (u) => {
+    const raw = String(u || "");
+    const probe = raw.replace(/[\u0000-\u0020\u007f]/g, "");
+    return /^[a-z][a-z0-9+.-]*:/i.test(probe) && !/^https?:/i.test(probe) ? "" : raw;
+  };
+
+  /* Segunda camada: o corpo da matéria é HTML de confiança e entra como veio.
+     Depois de montado, o navegador já normalizou entidades e tabs, então
+     conferir a.protocol pega o que um regex no texto deixaria passar. */
+  function neutralizeLinks(root) {
+    root.querySelectorAll("a[href]").forEach((a) => {
+      if (!/^(https?|mailto|tel):$/.test(a.protocol)) a.removeAttribute("href");
+    });
+  }
+
+  /* O corpo sai do pipeline como HTML, e o portão do redator é a única defesa
+     lá atrás. Aqui o que não é texto editorial é retirado antes de entrar no
+     DOM: um <img onerror> vindo do catálogo executa na hora da montagem. */
+  const DROP_ELEMENTS = "script,style,iframe,object,embed,form,img,svg,math,link,meta,base";
+  function sanitizeRichHtml(html) {
+    const doc = new DOMParser().parseFromString(`<div>${String(html || "")}</div>`, "text/html");
+    doc.body.querySelectorAll(DROP_ELEMENTS).forEach((el) => el.remove());
+    doc.body.querySelectorAll("*").forEach((el) => {
+      [...el.attributes].forEach((attr) => {
+        const name = attr.name.toLowerCase();
+        if (name.startsWith("on") || name === "srcdoc") el.removeAttribute(attr.name);
+      });
+    });
+    return doc.body.innerHTML;
+  }
 
   /* Id inexistente não pode cair na matéria mais nova: isso cria infinitas
      URLs duplicadas com o mesmo conteúdo e confunde quem chega por link velho.
@@ -342,7 +372,7 @@
       ${verdictHtml}
 
       <div class="article-prose">
-        ${article.content}
+        ${sanitizeRichHtml(article.content)}
       </div>
 
       ${sourcesHtml}
@@ -352,6 +382,7 @@
         <div style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-secondary);">728x90 / Responsive In-Article Unit — High-RPM US Literature & Tech Contextual Placement</div>
       </div>
     `;
+    neutralizeLinks(holder);
   }
 
   // 5. Buyer's Guide page (review.html?id=...) — dynamically populate full guide, comparison matrix, and tested picks
@@ -492,7 +523,7 @@
       ${secondaryPicksHtml}
 
       <div class="article-prose">
-        ${review.prose || ""}
+        ${sanitizeRichHtml(review.prose)}
       </div>
 
       <div class="ad-slot-container">
@@ -500,6 +531,7 @@
         <div style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-secondary);">728x90 / Responsive Hardware Lab Unit — High-RPM US Consumer Electronics Contextual Placement</div>
       </div>
     `;
+    neutralizeLinks(mount);
   }
 
   // 6. Head metadata for the two dynamic templates + aria-current on nav

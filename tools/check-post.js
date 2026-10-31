@@ -180,13 +180,23 @@ if (draft.evidence_level === "analysis_only") {
   if (numbers.length) reject("sources", `analysis_only mas o texto traz números específicos: ${numbers.slice(0, 5).join(", ")}`);
 }
 /* O corpo é inserido como HTML na página: um href javascript:/data: escrito
-   pelo modelo viraria link executável, e o portão abaixo só olhava http(s). */
-const unsafeHref = [...String(draft.content || "").matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["']/gi)]
-  .map((m) => m[1].trim())
-  .filter((href) => /^(?:javascript|data|vbscript):/i.test(href));
+   pelo modelo viraria link executável, e o portão abaixo só olhava http(s).
+   href sem aspas, com entidade (&colon;, &#9;) ou tab no esquema também vira
+   link no navegador: extrai os três formatos, decodifica e tira controles. */
+const HREF_RE = /<a\b[^>]*?\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+))/gi;
+const NAMED_ENTITIES = { tab: "\t", newline: "\n", colon: ":", quest: "?", amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" };
+const decodeEntities = (s) =>
+  String(s)
+    .replace(/&#x([0-9a-f]+);?/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);?/g, (_, dec) => String.fromCodePoint(Number(dec)))
+    .replace(/&(tab|newline|colon|quest|amp|lt|gt|quot|apos);/gi, (_, name) => NAMED_ENTITIES[name.toLowerCase()]);
+const hrefs = [...String(draft.content || "").matchAll(HREF_RE)]
+  .map((m) => decodeEntities(m[1] ?? m[2] ?? m[3] ?? ""))
+  .map((href) => href.replace(/[\u0000-\u0020\u007f]/g, ""));
+const unsafeHref = hrefs.filter((href) => /^(?:javascript|data|vbscript):/i.test(href));
 if (unsafeHref.length) reject("sources", `link com esquema não permitido no texto: ${unsafeHref[0].slice(0, 60)}`);
 
-const contentLinks = [...String(draft.content || "").matchAll(/<a\b[^>]*href\s*=\s*["'](https?:[^"']+)["']/gi)].map((m) => m[1]);
+const contentLinks = hrefs.filter((href) => /^https?:/i.test(href));
 for (const link of contentLinks) {
   const known = sources.some((s) => s.url === link) || /amazon\.|audible\./.test(link) || link.startsWith("https://homeworldpress.com");
   if (!known) reject("sources", `link no texto que não está nas fontes: ${link.slice(0, 90)}`);
@@ -227,7 +237,7 @@ const datelines = [
     .map((m) => Date.UTC(Number(m[3]), MONTHS[m[1].toLowerCase()] - 1, Number(m[2]))),
   /* O redator também escreve data ISO ("On 2026-11-05"); sem esta linha o
      portão só via o formato por extenso. */
-  ...[...text.matchAll(/\b(?:On|In) (\d{4})-(\d{2})-(\d{2})\b/g)]
+  ...[...text.matchAll(/\b(?:On|In) (\d{4})-(\d{2})-(\d{2})\b/gi)]
     .map((m) => Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]))),
 ];
 const sourceDates = sources.map((s) => Date.parse(s.date)).filter((t) => !isNaN(t));

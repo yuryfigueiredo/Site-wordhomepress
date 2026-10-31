@@ -97,17 +97,35 @@ function sourceDate(url, published) {
   const raw = String(published || "").trim();
   const fromFeed = raw.match(/\d{4}-\d{2}-\d{2}/);
   if (fromFeed) return fromFeed[0];
-  /* A maioria dos feeds manda RFC 2822 ("Fri, 09 Oct 2026 13:31:02 EDT"):
-     sem Date.parse a data do feed era descartada e o rascunho nascia de hoje. */
+  const today = new Date().toISOString().slice(0, 10);
+  /* Feeds mandam RFC 2822 ("Wed, 28 Oct 2026 23:06:41 EDT"). Date.parse
+     converte para UTC e 23h em EDT vira o dia seguinte: vale o dia escrito. */
+  const rfc = raw.match(/\b(\d{1,2})[\s-]+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[\s-]+(\d{4})\b/i);
+  if (rfc) {
+    const month = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"].indexOf(rfc[2].toUpperCase()) + 1;
+    const day = Number(rfc[1]);
+    if (month && day >= 1 && day <= 31) {
+      const iso = `${rfc[3]}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      if (iso <= today) return iso;
+    }
+  }
+  /* Outros formatos (ISO completo, "October 9, 2026") seguem pelo Date.parse. */
   const parsed = raw ? Date.parse(raw) : NaN;
   if (!isNaN(parsed) && parsed <= Date.now()) return new Date(parsed).toISOString().slice(0, 10);
-  const fromUrl = String(url || "").match(/\/(\d{4})\/(\d{2})\/(\d{2})(\d{2})\d{4}\.[a-z]+/i);
-  if (fromUrl) {
-    const [, y, m, d] = fromUrl;
+  /* Duas formas de data no caminho: /YYYY/MM/DD/... (a mais comum) e o bloco
+     compacto /YYYY/MM/DDHHMMSS.ext de alguns portais. */
+  const pathText = String(url || "");
+  const urlDate = (y, m, d) => {
     const dt = new Date(Date.UTC(Number(y), Number(m) - 1, Number(d)));
-    if (!isNaN(dt) && dt <= new Date()) return dt.toISOString().slice(0, 10);
-  }
-  return new Date().toISOString().slice(0, 10);
+    if (Number(m) < 1 || Number(m) > 12 || Number(d) < 1 || Number(d) > 31) return null;
+    if (isNaN(dt) || dt > new Date()) return null;
+    return dt.toISOString().slice(0, 10);
+  };
+  const fromPath = pathText.match(/\/(\d{4})\/(\d{2})\/(\d{2})(?:\/|$)/);
+  if (fromPath) return urlDate(fromPath[1], fromPath[2], fromPath[3]) || today;
+  const fromUrl = pathText.match(/\/(\d{4})\/(\d{2})\/(\d{2})(\d{2})\d{4}\.[a-z]+/i);
+  if (fromUrl) return urlDate(fromUrl[1], fromUrl[2], fromUrl[3]) || today;
+  return today;
 }
 
 const brief = {
