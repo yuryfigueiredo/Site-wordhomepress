@@ -39,21 +39,24 @@ function horasDesdeUltimaPublicacao(root) {
      O clone do Actions vem com fetch-depth: 0, então o log existe.
      --grep não serve: ele varre o corpo da mensagem e casaria com um "fix:"
      qualquer que mencione o commit publish:. Filtra-se pelo assunto, como em
-     publishedToday, e o log vem do mais recente para o mais antigo. */
+     publishedToday. A data lida é a de AUTORIA (o momento real da publicação),
+     mas o log vem ordenado pela de COMMIT — que o `git pull --rebase` do
+     workflow renova — então varre a janela e fica o maior %ad, não o primeiro. */
   try {
-    const linhas = execFileSync("git", ["log", "-n", "200", "--date=iso-strict", "--pretty=%ad%x09%s"], {
+    const linhas = execFileSync("git", ["log", "--since=30 days ago", "--date=iso-strict", "--pretty=%ad%x09%s"], {
       cwd: root,
       stdio: "pipe",
     })
       .toString()
       .split("\n");
+    let maisRecente = NaN;
     for (const l of linhas) {
       const aba = l.indexOf("\t");
       if (aba < 0 || !l.slice(aba + 1).startsWith("publish:")) continue;
       const ms = Date.parse(l.slice(0, aba));
-      if (!isNaN(ms)) return (Date.now() - ms) / 3600000;
-      break;
+      if (!isNaN(ms) && (isNaN(maisRecente) || ms > maisRecente)) maisRecente = ms;
     }
+    if (!isNaN(maisRecente)) return (Date.now() - maisRecente) / 3600000;
   } catch {}
   return null;
 }
