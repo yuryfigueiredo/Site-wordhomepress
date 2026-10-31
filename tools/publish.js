@@ -183,7 +183,15 @@ try {
 }
 
 const runsFile = path.join(ROOT, "voice", "state", "last_runs.json");
-const runs = JSON.parse(fs.readFileSync(runsFile, "utf8"));
+/* Telemetria de estilo, não portão: com o artigo já inserido no catálogo, um
+   JSON quebrado aqui matava a publicação no meio e o `git add -A` do workflow
+   empurrava a matéria ao ar sem commit "publish:" e sem registro. Começa do
+   zero quando o arquivo não presta. */
+let runs = { runs: {} };
+try {
+  const lido = JSON.parse(fs.readFileSync(runsFile, "utf8"));
+  if (lido && typeof lido === "object" && lido.runs && typeof lido.runs === "object") runs = lido;
+} catch {}
 const sc = draft.self_check || {};
 let BRIEF = {};
 try { BRIEF = JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")); } catch {}
@@ -200,8 +208,12 @@ runs.runs[REGISTER] = {
   humor_lines: Number(sc.humor_lines || 0),
 };
 runs.updated = new Date().toISOString();
-fs.writeFileSync(`${runsFile}.tmp`, JSON.stringify(runs, null, 2));
-fs.renameSync(`${runsFile}.tmp`, runsFile);
+try {
+  fs.writeFileSync(`${runsFile}.tmp`, JSON.stringify(runs, null, 2));
+  fs.renameSync(`${runsFile}.tmp`, runsFile);
+} catch (err) {
+  abort(`registro de estilo falhou: ${String(err.message).split("\n")[0]}`);
+}
 
 const hoje = new Date().toISOString().slice(0, 10);
 /* A memória é o que o teto lê: escrita aqui, versionada, e presente no runner

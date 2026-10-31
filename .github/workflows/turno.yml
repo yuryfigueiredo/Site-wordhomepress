@@ -51,11 +51,25 @@ jobs:
           git config user.email "bot@homeworldpress.com"
 
       - name: Rodada do robô
+        id: rodada
         run: node tools/turno.js
 
       - name: Commit do que a rodada mudou
         if: always()
         run: |
+          # Rodada vermelha não publica nada. O publish.js já desfaz a inserção
+          # quando ele mesmo falha, mas um estouro fora daquele caminho (ou um
+          # crash do node) deixaria catálogo, página ou capa sujos no diretório —
+          # e o `git add -A` abaixo empurraria a matéria ao ar com o rótulo
+          # "turno:", sem commit "publish:" e sem contabilidade para o teto.
+          # O registro continua indo: TURNO.md e pipeline/memory.json são o que
+          # impede a mesma fonte de ser reofertada na próxima rodada.
+          if [ "${{ steps.rodada.outcome }}" != "success" ]; then
+            for p in js index.html culture.html tech.html science.html sitemap.xml vercel.json images; do
+              git checkout HEAD -- "$p" 2>/dev/null || true
+            done
+            git clean -fdq -- 'a-*.html' 'r-*.html' images 2>/dev/null || true
+          fi
           git add -A
           if git diff --cached --quiet; then
             echo "nada para commitar"

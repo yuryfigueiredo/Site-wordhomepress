@@ -17,3 +17,7 @@ node_modules/
 Thumbs.db
 .audit/*.html
 .audit/*.json
+
+# Escritas atômicas (escreve .tmp e renomeia): um crash entre as duas deixa
+# rastro no diretório, e o `git add -A` do turno não pode commitar isso.
+*.tmp
