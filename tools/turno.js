@@ -46,12 +46,15 @@ const cad = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json
 const done = require("./lib/cadence").publishedToday(ROOT);
 say("cadência", `${done}/${cad.max_publishes_per_day} publicação(ões) hoje`);
 if (done >= cad.max_publishes_per_day) finish("teto diário atingido — as próximas rodadas só coletam e checam.");
-/* A distância mínima também é checada aqui, antes de escolher pauta: barrada só
-   no publish.js, a rodada gastava brief + texto + editor e ainda marcava a pauta
-   como falha_publicacao, que a deixa 24h fora da fila. */
+/* A distância mínima entre publicações é checada aqui, antes de escolher pauta:
+   barrada só no publish.js, a rodada gastava brief + texto + editor e ainda
+   marcava a pauta como falha_publicacao, que a deixa 24h fora da fila. Vale
+   também depois da virada do dia UTC — com teto de 1 por dia e gap de 20h, uma
+   publicação às 21h fazia as rodadas da manhã seguinte percorrerem a pipeline
+   inteira para então serem barradas no fim, com o CI verde. */
 const horasDesde = require("./lib/cadence").horasDesdeUltimaPublicacao(ROOT);
 const minimoHoras = Number(cad.min_hours_between_publishes || 0);
-if (done > 0 && horasDesde !== null && minimoHoras && horasDesde < minimoHoras) {
+if (horasDesde !== null && minimoHoras && horasDesde < minimoHoras) {
   finish(`cadência: a última matéria está no ar há ${horasDesde.toFixed(1)}h (mínimo ${minimoHoras}h) — esta rodada só coleta e checa.`);
 }
 
@@ -74,7 +77,9 @@ say("brief", `pipeline/drafts/${lead.slug}/ criado`);
 
 /* 6. texto */
 const prov = require("./lib/providers");
-if (!prov.armados().length) finish(`nenhum provedor de texto armado — sem chave no ambiente, o redator não roda. As chaves que valem são as de pipeline/providers.json: ${prov.configurados().map((p) => p.chave_env).join(", ")}.`);
+/* Sem chave no ambiente não é "dia sem notícia": é o robô desligado. Vermelho
+   para o Actions não continuar verde com o site sem publicação por mês. */
+if (!prov.armados().length) finish(`nenhum provedor de texto armado — sem chave no ambiente, o redator não roda. As chaves que valem são as de pipeline/providers.json: ${prov.configurados().map((p) => p.chave_env).join(", ")}.`, 1);
 const wrote = run("write.js", [lead.slug]);
 if (wrote.code !== 0) {
   mem.registrar(ROOT, lead.url, "falha_texto");
