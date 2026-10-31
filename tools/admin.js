@@ -11,6 +11,7 @@ const path = require("path");
 const { execFile } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..");
+const mem = require("./lib/memory");
 const PORT = Number(process.argv[2] || 8099);
 const HOST = "127.0.0.1";
 
@@ -81,9 +82,15 @@ function logs() {
   const repDir = path.join(ROOT, "tools", "reports");
   const files = fs.existsSync(repDir) ? fs.readdirSync(repDir).filter((f) => f.endsWith(".md")).sort().reverse() : [];
   const stateDir = path.join(ROOT, "pipeline", "state");
+  const memoria = mem.ler(ROOT);
+  const days = {};
+  for (const p of memoria.publishes) {
+    const d = String(p.at || "").slice(0, 10);
+    days[d] = (days[d] || 0) + 1;
+  }
   return {
     doctor: files.length ? { file: files[0], text: readText(path.join(repDir, files[0])).slice(0, 4000) } : null,
-    publishLog: read(path.join(stateDir, "publish-log.json"), { days: {}, last: null }),
+    publishLog: { days, last: memoria.publishes.length ? memoria.publishes[memoria.publishes.length - 1] : null, pautas_lembradas: Object.keys(memoria.leads).length },
     seen: (read(path.join(stateDir, "seen.json"), { urls: [] }).urls || []).length,
     lastRuns: read(path.join(ROOT, "voice", "state", "last_runs.json"), { runs: {}, updated: null }),
   };
@@ -121,7 +128,7 @@ const ACTIONS = {
 function page() {
   const cad = read(path.join(ROOT, "pipeline", "cadence.json"), { max_publishes_per_day: 1, check_hours: [] });
   const L = logs();
-  const done = (L.publishLog.days || {})[today()] || 0;
+  const done = require("./lib/cadence").publishedToday(ROOT);
   const R = ranking();
   const D = drafts();
   const LE = leads();

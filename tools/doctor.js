@@ -210,7 +210,46 @@ if (!QUICK) {
   }
 }
 
-/* ── 10. Links externos (rede) ────────────────────────────────────────── */
+/* ── 10. Memória do robô (pipeline/memory.json) ─────────────────────────── */
+/* É a memória que impede o turno do Actions de reescolher a mesma pauta: sem
+   ela, cada rodada acorda sem saber o que já foi publicado ou tentado. Fonte
+   repetida no ar é o mesmo erro, só que visto pelo leitor — duas matérias com a
+   mesma URL de fonte.                                                      */
+const memLib = require("./lib/memory");
+const memoria = (() => {
+  const arquivo = path.join(ROOT, memLib.ARQUIVO);
+  if (!fs.existsSync(arquivo)) {
+    warn("memory", `${memLib.ARQUIVO} ainda não existe — a primeira rodada o cria; sem ele o teto diário e a fila perdem a memória`);
+    return null;
+  }
+  try {
+    return JSON.parse(fs.readFileSync(arquivo, "utf8"));
+  } catch (err) {
+    fail("memory", `${memLib.ARQUIVO} não é JSON válido: ${err.message}`);
+    return null;
+  }
+})();
+if (memoria) {
+  const noAr = new Map();
+  for (const item of [...DB.articles, ...DB.reviews]) {
+    for (const s of item.sources || []) {
+      if (!s || !s.url) continue;
+      const chave = memLib.urlChave(s.url);
+      noAr.set(chave, [...(noAr.get(chave) || []), item.id]);
+    }
+  }
+  for (const [chave, ids] of noAr) {
+    if (ids.length > 1) warn("source-dup", `mesma fonte citada por ${ids.length} matérias no ar: ${ids.join(", ")} (${chave.slice(0, 90)})`);
+  }
+  const ids = new Set([...DB.articles, ...DB.reviews].map((a) => a.id));
+  for (const rec of Object.values(memoria.leads || {})) {
+    if (rec && rec.outcome === "publicada" && rec.id && !ids.has(rec.id)) {
+      warn("memory", `memória diz que "${rec.id}" está publicado, mas o catálogo não tem a matéria (publicação desfeita sem desfazer a memória)`);
+    }
+  }
+}
+
+/* ── 11. Links externos (rede) ────────────────────────────────────────── */
 async function checkExternal(url) {
   const headers = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/131 Safari/537.36", Accept: "*/*" };
   for (const method of ["HEAD", "GET"]) {

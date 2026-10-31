@@ -1,0 +1,44 @@
+{
+  "updated": "2026-10-31T18:15:50.351Z",
+  "leads": {
+    "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
+      "outcome": "publicada",
+      "at": "2026-10-31T00:43:18Z",
+      "id": "webb-telescope-detects-mars-sized-collisions"
+    },
+    "https://www.theguardian.com/books/2026/sep/11/the-best-recent-science-fiction-fantasy-and-horror-review-roundup": {
+      "outcome": "publicada",
+      "at": "2026-10-29T14:14:28-03:00",
+      "id": "guardian-september-roundup-one-category-2026"
+    },
+    "https://phys.org/news/2026-10-built-blast-students-prototype-pad.html": {
+      "outcome": "reprovada",
+      "at": "2026-10-29T19:47:02.901Z",
+      "slug": "built-to-take-the-blast-students-test-prototype-landing-pad-to-m",
+      "topic": "Built to take the blast: Students test prototype landing pad to make moon landings safer"
+    },
+    "https://www.sciencedaily.com/releases/2026/10/251030120000.htm": {
+      "outcome": "reprovada",
+      "at": "2026-10-30T20:45:01.360Z",
+      "slug": "nasas-webb-finds-signs-of-mars-sized-worlds-smashing-together",
+      "topic": "NASA's Webb finds signs of Mars-sized worlds smashing together"
+    }
+  },
+  "publishes": [
+    {
+      "id": "guardian-september-roundup-one-category-2026",
+      "at": "2026-10-29T14:14:28-03:00",
+      "score": 6.8
+    },
+    {
+      "id": "webb-telescope-mars-sized-collisions",
+      "at": "2026-10-30T21:09:35Z",
+      "score": 6.4
+    },
+    {
+      "id": "webb-telescope-detects-mars-sized-collisions",
+      "at": "2026-10-31T00:43:18Z",
+      "score": 6.4
+    }
+  ]
+}

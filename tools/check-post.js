@@ -239,15 +239,11 @@ const numbersWithoutSource = sources.length === 0 ? numbersInText : 0;
 
 /* Fonte repetida é a forma mais barata de quase-duplicata: a rodada seguinte
    reescreve a mesma notícia com outro título e passa pelos outros portões.
-   Só duas matérias antigas têm o campo sources, então os links citados no
-   corpo entram no mesmo conjunto — sem isso o portão nunca enxerga o legado. */
-const publishedUrls = new Set();
-for (const a of DB.articles) {
-  if (a.id === draft.id) continue;
-  for (const x of a.sources || []) if (x && x.url) publishedUrls.add(x.url);
-  for (const m of String(a.content || "").matchAll(/href="(https?:\/\/[^"]+)"/g)) publishedUrls.add(m[1]);
-}
-const reused = sources.find((s) => publishedUrls.has(s.url));
+   A definição de "já publicada" é a mesma do pick-lead (lib/memory), para as
+   duas decisões não divergirem. */
+const memLib = require("./lib/memory");
+const publishedUrls = memLib.fontesPublicadas(DB, draft.id);
+const reused = sources.find((s) => publishedUrls.has(memLib.urlChave(s.url)));
 if (reused) reject("sources", `fonte já usada em matéria publicada: ${reused.url}`);
 
 /* Frase repetida é enchimento para alcançar o piso de palavras — o texto do

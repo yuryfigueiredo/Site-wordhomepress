@@ -11,6 +11,7 @@ const fs = require("fs");
 const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
+const mem = require("./lib/memory");
 const LEAD_DIR = path.join(ROOT, "pipeline", "leads");
 const STATE_FILE = path.join(ROOT, "pipeline", "state", "seen.json");
 const ARGS = process.argv.slice(2);
@@ -128,10 +129,12 @@ async function main() {
   require(path.join(ROOT, "js", "articles-db.js"));
   const DB = global.window.HWP_DATABASE;
   const published = [...DB.articles.map((a) => a.title), ...DB.reviews.map((r) => r.title)];
+  const fontesNoAr = mem.fontesPublicadas(DB);
 
   const seen = loadSeen();
   const fresh = [];
   let fetched = 0;
+  let jaPublicadas = 0;
   for (const feed of FEEDS) {
     let items = [];
     try {
@@ -151,6 +154,14 @@ async function main() {
       if (best.score < 2) continue;
       const near = published.some((t) => titleOverlap(item.title, t) > 0.6);
       if (near) continue;
+      /* Título reescrito pelo modelo engana a comparação de cima: em 2026-10-31
+         a mesma notícia da ScienceDaily entrou duas vezes porque "NASA's Webb
+         finds signs of Mars-sized worlds" não se parece com "Webb Detects Dust
+         Halos...". A URL da fonte é a memória que não falha. */
+      if (fontesNoAr.has(mem.urlChave(item.link))) {
+        jaPublicadas++;
+        continue;
+      }
       const pillar = best.pillar === "reviews" && second.score >= best.score - 1 ? second.pillar : best.pillar;
       fresh.push({
         url: item.link,
@@ -213,7 +224,7 @@ async function main() {
   console.log(`fila: ${queue.length} pautas (${fetched}/${FEEDS.length} feeds ok) → pipeline/leads/${today}.md`);
   const perPillar = {};
   for (const l of queue) perPillar[l.pillar] = (perPillar[l.pillar] || 0) + 1;
-  console.log("distribuição:", JSON.stringify(perPillar));
+  console.log("distribuição:", JSON.stringify(perPillar), jaPublicadas ? `· ${jaPublicadas} pautas já estavam no ar (fonte repetida)` : "");
 }
 
 main().catch((err) => {
