@@ -11,6 +11,11 @@
   const escapeHtml = (s) =>
     String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
+  /* Só http(s) e caminho relativo viram href: javascript:/data: num campo do
+     catálogo (que nasce de feed de terceiro) viraria link executável. */
+  const safeHref = (u) =>
+    /^[a-z][a-z0-9+.-]*:/i.test(String(u || "")) && !/^https?:/i.test(String(u || "")) ? "" : String(u || "");
+
   /* Id inexistente não pode cair na matéria mais nova: isso cria infinitas
      URLs duplicadas com o mesmo conteúdo e confunde quem chega por link velho.
      O estado é de não encontrado e a página pede para não ser indexada. */
@@ -19,6 +24,9 @@
     const desc = document.querySelector('meta[name="description"]');
     if (desc) desc.setAttribute("content", "The page you asked for isn't here.");
     setNoindex();
+    /* O shell da resenha traz um Product de exemplo: sem apagar, a página de
+       não encontrada anuncia estrelas e preço de um produto qualquer. */
+    document.querySelectorAll('script[type="application/ld+json"]').forEach((tag) => tag.remove());
     holder.innerHTML = `
       <div class="article-header">
         <span class="kicker">404 // NOT FOUND</span>
@@ -33,6 +41,7 @@
   const store = {
     get(key) { try { return localStorage.getItem(key); } catch { return null; } },
     set(key, value) { try { localStorage.setItem(key, value); } catch {} },
+    remove(key) { try { localStorage.removeItem(key); } catch {} },
   };
 
   // 1. Theme Persistence (Editorial Paper vs. WIRED Dark Mode)
@@ -191,9 +200,9 @@
       resultsBox.innerHTML = matches
         .map(
           (m) => `
-        <a href="${m.url}" class="search-result-link">
-          <div class="kicker" style="font-size:0.65rem;">${m.kicker}</div>
-          <div style="font-family:var(--font-display);font-weight:800;font-size:1rem;margin-top:0.2rem;">${m.title}</div>
+        <a href="${escapeHtml(safeHref(m.url))}" class="search-result-link">
+          <div class="kicker" style="font-size:0.65rem;">${escapeHtml(m.kicker)}</div>
+          <div style="font-family:var(--font-display);font-weight:800;font-size:1rem;margin-top:0.2rem;">${escapeHtml(m.title)}</div>
         </a>
       `
         )
@@ -207,7 +216,9 @@
     if (!holder || !DB) return;
 
     const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
+    /* data-id: nas cópias a-<id>.html o id vem do atributo, porque a URL é
+       /article.html?id=... só quando passa pela rewrite do vercel.json. */
+    const id = params.get("id") || holder.dataset.id || null;
     /* Sem ?id= a página abre a matéria mais recente (link legado /article);
        com ?id= errado é 404 de verdade — antes ela mostrava a mais recente
        e o Google indexava a URL quebrada com o texto de outra matéria. */
@@ -312,15 +323,15 @@
 
     holder.innerHTML = `
       <div class="article-header">
-        <span class="kicker kicker--${article.category}">${article.kicker}</span>
-        <h1 class="article-title">${article.title}</h1>
-        <p class="article-dek">${article.dek}</p>
+        <span class="kicker kicker--${escapeHtml(article.category)}">${escapeHtml(article.kicker)}</span>
+        <h1 class="article-title">${escapeHtml(article.title)}</h1>
+        <p class="article-dek">${escapeHtml(article.dek)}</p>
         <div class="meta-line">
-          <span>BY <strong>${article.author}</strong></span>
+          <span>BY <strong>${escapeHtml(article.author)}</strong></span>
           <span>•</span>
-          <span>${article.date}</span>
+          <span>${escapeHtml(article.date)}</span>
           <span>•</span>
-          <span>${article.readTime}</span>
+          <span>${escapeHtml(article.readTime)}</span>
         </div>
       </div>
 
@@ -348,7 +359,7 @@
     const mount = document.getElementById("dynamicReviewMount");
     if (!mount || !DB || !Array.isArray(DB.reviews)) return;
 
-    const id = new URLSearchParams(window.location.search).get("id");
+    const id = new URLSearchParams(window.location.search).get("id") || mount.dataset.id || null;
     const review = DB.reviews.find((r) => r.id === id) || (id ? null : DB.reviews[0]);
     if (!review) {
       renderNotFound(mount, "review");
@@ -359,18 +370,18 @@
     const desc = document.querySelector('meta[name="description"]');
     if (desc && review.summary) desc.setAttribute("content", review.summary);
 
-    const prosHtml = (review.pros || []).map((p) => `<li>✓ ${p}</li>`).join("");
-    const consHtml = (review.cons || []).map((c) => `<li>✕ ${c}</li>`).join("");
+    const prosHtml = (review.pros || []).map((p) => `<li>✓ ${escapeHtml(p)}</li>`).join("");
+    const consHtml = (review.cons || []).map((c) => `<li>✕ ${escapeHtml(c)}</li>`).join("");
 
     const matrixRowsHtml = (review.matrixRows || [])
       .map(
         (row) => `
       <tr>
-        <th scope="row">${row.model}</th>
-        <td>${row.bestFor}</td>
-        <td>${row.spec}</td>
-        <td><strong>${row.score}</strong></td>
-        <td><a href="${row.url}" target="_blank" rel="nofollow sponsored noopener" class="btn-amazon" style="padding:0.4rem 0.7rem;width:auto;">AMAZON →</a></td>
+        <th scope="row">${escapeHtml(row.model)}</th>
+        <td>${escapeHtml(row.bestFor)}</td>
+        <td>${escapeHtml(row.spec)}</td>
+        <td><strong>${escapeHtml(row.score)}</strong></td>
+        <td><a href="${escapeHtml(safeHref(row.url))}" target="_blank" rel="nofollow sponsored noopener" class="btn-amazon" style="padding:0.4rem 0.7rem;width:auto;">AMAZON →</a></td>
       </tr>
     `
       )
@@ -381,20 +392,20 @@
         (pick) => `
       <div class="verdict-box">
         <div class="verdict-box__ribbon">
-          <span>${pick.ribbon}</span>
-          <span>HOMEWORLD SCORE: ${pick.score}</span>
+          <span>${escapeHtml(pick.ribbon)}</span>
+          <span>HOMEWORLD SCORE: ${escapeHtml(pick.score)}</span>
         </div>
         <div class="verdict-box__inner">
-          <img src="${pick.image}" alt="${pick.title}" loading="lazy" width="200" height="180" style="width:100%;height:170px;object-fit:cover;border:var(--border-hairline);" />
+          <img src="${escapeHtml(safeHref(pick.image))}" alt="${escapeHtml(pick.title)}" loading="lazy" width="200" height="180" style="width:100%;height:170px;object-fit:cover;border:var(--border-hairline);" />
           <div>
             <h2 style="font-family:var(--font-display);font-size:1.45rem;font-weight:900;margin:0 0 0.35rem;border:none;padding:0;">
-              ${pick.title}
+              ${escapeHtml(pick.title)}
             </h2>
             <p style="font-size:0.93rem;color:var(--text-secondary);margin-bottom:0.85rem;">
-              ${pick.summary}
+              ${escapeHtml(pick.summary)}
             </p>
-            <a href="${pick.url}" target="_blank" rel="nofollow sponsored noopener" class="btn-amazon" style="width:auto;padding:0.7rem 1.25rem;">
-              ${pick.ctaText}
+            <a href="${escapeHtml(safeHref(pick.url))}" target="_blank" rel="nofollow sponsored noopener" class="btn-amazon" style="width:auto;padding:0.7rem 1.25rem;">
+              ${escapeHtml(pick.ctaText)}
             </a>
           </div>
         </div>
@@ -405,39 +416,39 @@
 
     mount.innerHTML = `
       <div class="article-header">
-        <span class="kicker kicker--reviews" id="reviewKicker">${review.kicker}</span>
-        <h1 class="article-title" id="reviewTitle">${review.title}</h1>
-        <p class="article-dek" id="reviewDek">${review.summary}</p>
+        <span class="kicker kicker--reviews" id="reviewKicker">${escapeHtml(review.kicker)}</span>
+        <h1 class="article-title" id="reviewTitle">${escapeHtml(review.title)}</h1>
+        <p class="article-dek" id="reviewDek">${escapeHtml(review.summary)}</p>
         <div class="meta-line">
           <span>BY <strong>HOMEWORLD PRESS LAB TEAM</strong></span>
           <span>•</span>
-          <span>${review.updated || "UPDATED OCTOBER 2026"}</span>
+          <span>${escapeHtml(review.updated || "UPDATED OCTOBER 2026")}</span>
           <span>•</span>
-          <span>${review.readTime || "10 MIN READ"}</span>
+          <span>${escapeHtml(review.readTime || "10 MIN READ")}</span>
         </div>
       </div>
 
       <!-- Pick 1: Best Overall -->
       <div class="verdict-box" id="reviewLead">
         <div class="verdict-box__ribbon">
-          <span id="reviewLeadAward">🏆 #1 ${review.award} (2026)</span>
-          <span id="reviewLeadScore">HOMEWORLD SCORE: ${review.score.replace("/", " / ")}</span>
+          <span id="reviewLeadAward">🏆 #1 ${escapeHtml(review.award)} (2026)</span>
+          <span id="reviewLeadScore">HOMEWORLD SCORE: ${escapeHtml(String(review.score).replace("/", " / "))}</span>
         </div>
         <div class="verdict-box__inner">
-          <img src="${review.image}" id="reviewLeadImg" alt="${review.topPickName}" fetchpriority="high" width="200" height="180" style="width:100%;height:170px;object-fit:cover;border:var(--border-hairline);" />
+          <img src="${escapeHtml(safeHref(review.image))}" id="reviewLeadImg" alt="${escapeHtml(review.topPickName)}" fetchpriority="high" width="200" height="180" style="width:100%;height:170px;object-fit:cover;border:var(--border-hairline);" />
           <div>
             <h2 id="reviewLeadName" style="font-family:var(--font-display);font-size:1.45rem;font-weight:900;margin:0 0 0.35rem;border:none;padding:0;">
-              ${review.topPickName}
+              ${escapeHtml(review.topPickName)}
             </h2>
             <p id="reviewLeadSummary" style="font-size:0.93rem;color:var(--text-secondary);margin-bottom:0.85rem;">
-              <strong>Estimated Price Range: ${review.priceRange}.</strong> ${review.summary}
+              <strong>Estimated Price Range: ${escapeHtml(review.priceRange)}.</strong> ${escapeHtml(review.summary)}
             </p>
             <div style="display:flex;flex-wrap:wrap;gap:0.65rem;">
-              <a href="${review.amazonUrl}" target="_blank" rel="nofollow sponsored noopener" id="reviewLeadCta" class="btn-amazon" style="width:auto;padding:0.7rem 1.25rem;">
+              <a href="${escapeHtml(safeHref(review.amazonUrl))}" target="_blank" rel="nofollow sponsored noopener" id="reviewLeadCta" class="btn-amazon" style="width:auto;padding:0.7rem 1.25rem;">
                 CHECK PRICE ON AMAZON US →
               </a>
-              <a href="${review.secondaryCtaUrl || "https://www.amazon.com/hz/audible/mlp/membership/plus?tag=homeworldpres-20"}" target="_blank" rel="nofollow sponsored noopener" class="btn-secondary-dark" style="background:#111;color:#fff;width:auto;padding:0.7rem 1.1rem;">
-                ${review.secondaryCtaText || "TRY AUDIBLE FREE →"}
+              <a href="${escapeHtml(safeHref(review.secondaryCtaUrl || "https://www.amazon.com/hz/audible/mlp/membership/plus?tag=homeworldpres-20"))}" target="_blank" rel="nofollow sponsored noopener" class="btn-secondary-dark" style="background:#111;color:#fff;width:auto;padding:0.7rem 1.1rem;">
+                ${escapeHtml(review.secondaryCtaText || "TRY AUDIBLE FREE →")}
               </a>
             </div>
           </div>
@@ -456,11 +467,11 @@
 
       <!-- Side-by-Side Comparison Matrix -->
       <div class="article-prose">
-        <h2>${review.matrixTitle}</h2>
+        <h2>${escapeHtml(review.matrixTitle)}</h2>
         <div tabindex="0" role="region" aria-labelledby="ereader-matrix-caption" class="table-wrapper" style="margin-block:1.5rem;">
           <table class="comparison-table">
             <caption id="ereader-matrix-caption">
-              ${review.matrixCaption}
+              ${escapeHtml(review.matrixCaption)}
             </caption>
             <thead>
               <tr>
@@ -498,6 +509,10 @@
   /* og:image e JSON-LD exigem URL absoluta; o catálogo guarda caminho
      relativo ("images/covers/x.svg") e o crawler descarta o relativo. */
   const absoluteUrl = (u) => (u ? (/^https?:\/\//i.test(u) ? u : `${SITE_ORIGIN}/${String(u).replace(/^\/+/, "")}`) : DEFAULT_OG_IMAGE);
+
+  /* Facebook, X e LinkedIn não renderizam SVG em og:image: o card sai vazio.
+     O JSON-LD aceita SVG, então só o compartilhamento cai no PNG genérico. */
+  const socialImage = (u) => (/\.svg$/i.test(String(u || "")) ? DEFAULT_OG_IMAGE : absoluteUrl(u));
   const MONTH_NUMBERS = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
 
   // Schema dates must be real calendar dates; display strings like "UPDATED OCTOBER 2026" are not.
@@ -572,11 +587,13 @@
     if ((!isArticle && !isReview) || !DB) return;
 
     const params = new URLSearchParams(window.location.search);
+    const mount = document.getElementById("dynamicArticleMount") || document.getElementById("dynamicReviewMount");
+    const id = params.get("id") || (mount && mount.dataset.id) || null;
     const page = isArticle ? "article.html" : "review.html";
     const selfUrl = `${SITE_ORIGIN}/${page}`;
 
     if (isArticle) {
-      const article = DB.articles.find((a) => a.id === params.get("id")) || (params.get("id") ? null : DB.articles[0]);
+      const article = DB.articles.find((a) => a.id === id) || (id ? null : DB.articles[0]);
       if (!article) {
         /* URL quebrada: sem canonical para a página "sem nada" e fora do índice. */
         setNoindex();
@@ -589,7 +606,7 @@
         title: `${article.title} | Homeworld Press`,
         description: article.dek,
         url,
-        image: absoluteUrl(article.image),
+        image: socialImage(article.image),
         type: "article",
       });
       writeJsonLd({
@@ -612,7 +629,7 @@
       return;
     }
 
-    const review = DB.reviews.find((r) => r.id === params.get("id")) || (params.get("id") ? null : DB.reviews[0]);
+    const review = DB.reviews.find((r) => r.id === id) || (id ? null : DB.reviews[0]);
     if (!review) {
       setNoindex();
       setLink("canonical", selfUrl);
@@ -624,7 +641,7 @@
       title: `${review.title} | Homeworld Press Hardware Lab`,
       description: review.summary,
       url,
-      image: absoluteUrl(review.image),
+      image: socialImage(review.image),
       type: "article",
     });
     /* Product+Review, não Article: é o que dá estrela e faixa de preço no
@@ -646,7 +663,6 @@
         author: { "@type": "Organization", name: "Homeworld Press Editorial Lab" },
         publisher: { "@type": "Organization", name: "Homeworld Press", url: SITE_ORIGIN },
       },
-      mainEntityOfPage: { "@type": "WebPage", "@id": url },
     });
   }
 
@@ -668,7 +684,7 @@
       const urlParams = new URLSearchParams(window.location.search);
       // Se acessar com ?admin=true ou ?optout=true, grava no navegador para nunca contar visitas
       if (urlParams.get("admin") === "true" || urlParams.get("optout") === "true") {
-        localStorage.setItem("va-disable", "true");
+        store.set("va-disable", "true");
         // Mostra um aviso discreto confirmando que o aparelho foi excluído
         const banner = document.createElement("div");
         banner.style.cssText = "position:fixed;bottom:15px;right:15px;background:#E50914;color:#fff;padding:10px 16px;border-radius:4px;font-family:monospace;font-size:12px;font-weight:bold;z-index:999999;box-shadow:0 4px 12px rgba(0,0,0,0.4);";
@@ -676,11 +692,11 @@
         document.body.appendChild(banner);
         setTimeout(() => banner.remove(), 4500);
       } else if (urlParams.get("admin") === "false" || urlParams.get("optin") === "true") {
-        localStorage.removeItem("va-disable");
+        store.remove("va-disable");
       }
 
       // Se não estiver desativado para este navegador, carrega o script do Vercel Analytics
-      if (localStorage.getItem("va-disable") !== "true") {
+      if (store.get("va-disable") !== "true") {
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
         const script = document.createElement("script");
         script.defer = true;
