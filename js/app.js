@@ -274,8 +274,8 @@
       <!-- High-Converting WIRED + Wirecutter Affiliate Verdict Box -->
       <div class="verdict-box">
         <div class="verdict-box__ribbon">
-          <span>★ ${box.badge}</span>
-          <span>SCORE: ${box.score}</span>
+          <span>★ ${escapeHtml(box.badge)}</span>
+          <span>SCORE: ${escapeHtml(box.score)}</span>
         </div>
         <div class="verdict-box__inner">
           <img src="${escapeHtml(verdictImg || "")}" alt="${escapeHtml(box.title || article.title)}" style="width:100%;height:165px;object-fit:${verdictImgFit};background:#0d0d0d;border:var(--border-hairline);">
@@ -283,8 +283,8 @@
             <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;margin-bottom:0.35rem;">${escapeHtml(box.title)}</h2>
             <p style="font-family:var(--font-mono);font-size:0.8rem;color:var(--text-muted);margin-bottom:0.85rem;">ESTIMATED PRICE: <strong>${escapeHtml(box.price)}</strong></p>
             <div style="display:flex;flex-wrap:wrap;gap:0.65rem;">
-              <a href="${escapeHtml(box.amazonUrl || "")}" ${isExternalPrimary ? 'target="_blank" rel="nofollow sponsored noopener"' : ""} class="btn-amazon" style="width:auto;padding:0.65rem 1.25rem;">${isExternalPrimary ? "CHECK PRICE ON AMAZON →" : "SEE OUR TESTED GUIDE →"}</a>
-              <a href="${escapeHtml(box.audibleUrl || "")}" ${isExternalSecondary ? 'target="_blank" rel="nofollow sponsored noopener"' : ""} class="btn-secondary-dark" style="background:#111;color:#fff;padding:0.65rem 1.1rem;">TRY ON AUDIBLE / MORE →</a>
+              <a href="${escapeHtml(safeHref(box.amazonUrl || ""))}" ${isExternalPrimary ? 'target="_blank" rel="nofollow sponsored noopener"' : ""} class="btn-amazon" style="width:auto;padding:0.65rem 1.25rem;">${isExternalPrimary ? "CHECK PRICE ON AMAZON →" : "SEE OUR TESTED GUIDE →"}</a>
+              <a href="${escapeHtml(safeHref(box.audibleUrl || ""))}" ${isExternalSecondary ? 'target="_blank" rel="nofollow sponsored noopener"' : ""} class="btn-secondary-dark" style="background:#111;color:#fff;padding:0.65rem 1.1rem;">TRY ON AUDIBLE / MORE →</a>
             </div>
           </div>
         </div>

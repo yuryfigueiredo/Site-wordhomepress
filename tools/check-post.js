@@ -179,6 +179,13 @@ if (draft.evidence_level === "analysis_only") {
   const numbers = text.match(/\d+(?:\.\d+)?%|\$\d[\d,.]*/g) || [];
   if (numbers.length) reject("sources", `analysis_only mas o texto traz números específicos: ${numbers.slice(0, 5).join(", ")}`);
 }
+/* O corpo é inserido como HTML na página: um href javascript:/data: escrito
+   pelo modelo viraria link executável, e o portão abaixo só olhava http(s). */
+const unsafeHref = [...String(draft.content || "").matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["']/gi)]
+  .map((m) => m[1].trim())
+  .filter((href) => /^(?:javascript|data|vbscript):/i.test(href));
+if (unsafeHref.length) reject("sources", `link com esquema não permitido no texto: ${unsafeHref[0].slice(0, 60)}`);
+
 const contentLinks = [...String(draft.content || "").matchAll(/<a\b[^>]*href\s*=\s*["'](https?:[^"']+)["']/gi)].map((m) => m[1]);
 for (const link of contentLinks) {
   const known = sources.some((s) => s.url === link) || /amazon\.|audible\./.test(link) || link.startsWith("https://homeworldpress.com");
@@ -188,10 +195,16 @@ const numbersInText = (text.match(/\d+(?:\.\d+)?%|\$\d[\d,.]*/g) || []).length;
 const numbersWithoutSource = sources.length === 0 ? numbersInText : 0;
 
 /* Fonte repetida é a forma mais barata de quase-duplicata: a rodada seguinte
-   reescreve a mesma notícia com outro título e passa pelos outros portões. */
-const reused = sources.find((s) =>
-  DB.articles.some((a) => a.id !== draft.id && (a.sources || []).some((x) => x && x.url === s.url))
-);
+   reescreve a mesma notícia com outro título e passa pelos outros portões.
+   Só duas matérias antigas têm o campo sources, então os links citados no
+   corpo entram no mesmo conjunto — sem isso o portão nunca enxerga o legado. */
+const publishedUrls = new Set();
+for (const a of DB.articles) {
+  if (a.id === draft.id) continue;
+  for (const x of a.sources || []) if (x && x.url) publishedUrls.add(x.url);
+  for (const m of String(a.content || "").matchAll(/href="(https?:\/\/[^"]+)"/g)) publishedUrls.add(m[1]);
+}
+const reused = sources.find((s) => publishedUrls.has(s.url));
 if (reused) reject("sources", `fonte já usada em matéria publicada: ${reused.url}`);
 
 /* Frase repetida é enchimento para alcançar o piso de palavras — o texto do
@@ -209,8 +222,14 @@ if (repeated.length)
 /* A data do fato tem de caber na data da fonte. Sem isso o redator datava a
    notícia de hoje e a nota de atualidade aprovava o texto. */
 const MONTHS = { january: 1, february: 2, march: 3, april: 4, may: 5, june: 6, july: 7, august: 8, september: 9, october: 10, november: 11, december: 12 };
-const datelines = [...text.matchAll(/\b(?:On|In) (January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),\s*(\d{4})/gi)]
-  .map((m) => Date.UTC(Number(m[3]), MONTHS[m[1].toLowerCase()] - 1, Number(m[2])));
+const datelines = [
+  ...text.matchAll(/\b(?:On|In) (January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),\s*(\d{4})/gi)
+    .map((m) => Date.UTC(Number(m[3]), MONTHS[m[1].toLowerCase()] - 1, Number(m[2]))),
+  /* O redator também escreve data ISO ("On 2026-11-05"); sem esta linha o
+     portão só via o formato por extenso. */
+  ...[...text.matchAll(/\b(?:On|In) (\d{4})-(\d{2})-(\d{2})\b/g)]
+    .map((m) => Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]))),
+];
 const sourceDates = sources.map((s) => Date.parse(s.date)).filter((t) => !isNaN(t));
 if (datelines.length && sourceDates.length) {
   const newest = Math.max(...sourceDates);

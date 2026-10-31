@@ -94,8 +94,13 @@ const slug = flag("slug") || slugify(lead.title);
    de atualidade dava 1,5/1,5 sempre e o texto podia datar o fato no dia errado.
    Vale a data do feed; sem ela, a que estiver no caminho da URL; só então hoje. */
 function sourceDate(url, published) {
-  const fromFeed = String(published || "").match(/\d{4}-\d{2}-\d{2}/);
+  const raw = String(published || "").trim();
+  const fromFeed = raw.match(/\d{4}-\d{2}-\d{2}/);
   if (fromFeed) return fromFeed[0];
+  /* A maioria dos feeds manda RFC 2822 ("Fri, 09 Oct 2026 13:31:02 EDT"):
+     sem Date.parse a data do feed era descartada e o rascunho nascia de hoje. */
+  const parsed = raw ? Date.parse(raw) : NaN;
+  if (!isNaN(parsed) && parsed <= Date.now()) return new Date(parsed).toISOString().slice(0, 10);
   const fromUrl = String(url || "").match(/\/(\d{4})\/(\d{2})\/(\d{2})(\d{2})\d{4}\.[a-z]+/i);
   if (fromUrl) {
     const [, y, m, d] = fromUrl;
