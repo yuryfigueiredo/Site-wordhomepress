@@ -8,6 +8,7 @@
    Saída: pipeline/drafts/<slug>/review.md · exit 1 quando reprova.            */
 const fs = require("fs");
 const path = require("path");
+const memLib = require("./lib/memory");
 
 const ROOT = path.resolve(__dirname, "..");
 const SLUG = process.argv[2];
@@ -231,7 +232,10 @@ const contentLinks = hrefs
   .map((href) => (/^\/\//.test(href) ? `https:${href}` : href))
   .filter((href) => /^https?:/i.test(href));
 for (const link of contentLinks) {
-  const known = sources.some((s) => s.url === link) || /amazon\.|audible\./.test(link) || link.startsWith("https://homeworldpress.com");
+  /* a mesma URL com barra no cabo ou utm_ não é outro link: comparar cru
+    gastava uma das três reescritas por cosmética */
+  const chave = memLib.urlChave(link);
+  const known = sources.some((s) => memLib.urlChave(s.url) === chave) || /amazon\.|audible\./.test(link) || link.startsWith("https://homeworldpress.com");
   if (!known) reject("sources", `link no texto que não está nas fontes: ${link.slice(0, 90)}`);
 }
 const numbersInText = (text.match(/\d+(?:\.\d+)?%|\$\d[\d,.]*/g) || []).length;
@@ -241,7 +245,6 @@ const numbersWithoutSource = sources.length === 0 ? numbersInText : 0;
    reescreve a mesma notícia com outro título e passa pelos outros portões.
    A definição de "já publicada" é a mesma do pick-lead (lib/memory), para as
    duas decisões não divergirem. */
-const memLib = require("./lib/memory");
 const publishedUrls = memLib.fontesPublicadas(DB, draft.id);
 const reused = sources.find((s) => publishedUrls.has(memLib.urlChave(s.url)));
 if (reused) reject("sources", `fonte já usada em matéria publicada: ${reused.url}`);

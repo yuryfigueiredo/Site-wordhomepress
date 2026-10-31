@@ -109,9 +109,24 @@ async function alcançavel(url) {
 }
 
 (async () => {
-  for (const c of candidatas.slice(0, 8)) {
+  /* Todas as candidatas são sondadas, não só as oito primeiras: se as topo de
+     fila são de um portal que bloqueia robô (403), o oitavo lugar nunca seria
+     oferecido e a rodada fecharia verde "sem pauta nova". O teto de tempo existe
+     porque cada sonda pode demorar 10s e a rodada tem relógio. */
+  const orcamentoMs = 120000;
+  const t0 = Date.now();
+  let sondadas = 0;
+  let naoAbre = 0;
+  for (const c of candidatas) {
+    if (sondadas >= 8 && Date.now() - t0 > orcamentoMs) {
+      console.error(`pick-lead: teto de tempo da sondagem estourado (${sondadas} de ${candidatas.length} fontes checadas)`);
+      break;
+    }
+    sondadas++;
     if (!(await alcançavel(c.url))) {
       console.error(`pauta descartada (fonte não abre): ${c.url}`);
+      naoAbre++;
+      mem.registrar(ROOT, c.url, "fonte_inalcancavel", { slug: c.slug, topic: c.topic });
       continue;
     }
     /* A partir daqui a pauta está comprometida com esta rodada: se o registro
@@ -123,7 +138,8 @@ async function alcançavel(url) {
   const total = candidatas.length + Object.values(porQue).reduce((a, b) => a + b, 0);
   console.error(
     `nenhuma pauta nova hoje (${total} itens nas 3 filas mais recentes: ${porQue.fonte_ja_usada} com fonte já publicada, ` +
-      `${porQue.coluna_ja_coberta} de coluna já coberta, ${porQue.ja_tentada} tentadas há pouco, ${porQue.pauta_velha} com fonte velha, ${porQue.rascunho_ou_id} com rascunho/id no ar) — ` +
+      `${porQue.coluna_ja_coberta} de coluna já coberta, ${porQue.ja_tentada} tentadas há pouco, ${porQue.pauta_velha} com fonte velha, ${porQue.rascunho_ou_id} com rascunho/id no ar` +
+      `${naoAbre ? `, ${naoAbre} com fonte que não abriu (fora da fila 12h)` : ""}) — ` +
       "a rodada termina após coletar e checar"
   );
   process.exit(1);

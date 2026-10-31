@@ -18,13 +18,16 @@ const MAX_LEADS = 400;
 const MAX_PUBLISHES = 60;
 
 /* A mesma matéria chega por URLs que diferem só no fim: barra no cabo, http vs
-   https,utm_ do feed. Sem normalizar, "fonte já usada" não pega. */
+   https, utm_ do feed, âncora. Sem normalizar, "fonte já usada" não pega.
+   Só o cabeçalho (esquema + host) é sem maiúsculas: caminho e consulta
+   diferenciam A de a no servidor, e abaixar o texto inteiro faria duas notícias
+   diferentes colidirem — a bloqueada seria esquecida para sempre. */
 function urlChave(u) {
-  let s = String(u || "").trim().toLowerCase();
-  if (!s) return "";
-  s = s.replace(/^http:\/\//, "https://");
+  const bruto = String(u || "").trim();
+  if (!bruto) return "";
+  let s = bruto.replace(/^http:\/\//i, "https://");
+  /* fragmento é marca-texto dentro da mesma página, não outra fonte */
   const hash = s.indexOf("#");
-  const frag = hash >= 0 ? s.slice(hash) : "";
   if (hash >= 0) s = s.slice(0, hash);
   const q = s.indexOf("?");
   const query = q >= 0 ? s.slice(q + 1) : "";
@@ -37,7 +40,10 @@ function urlChave(u) {
   };
   const keep = query.split("&").filter((kv) => kv && !lixo(kv));
   s = s.replace(/\/+$/, "");
-  return s + (keep.length ? `?${keep.join("&")}` : "") + frag;
+  const duplo = s.indexOf("//");
+  const fimCabecalho = duplo < 0 ? 0 : s.indexOf("/", duplo + 2);
+  const cabo = fimCabecalho < 0 ? s.length : fimCabecalho;
+  return s.slice(0, cabo).toLowerCase() + s.slice(cabo) + (keep.length ? `?${keep.join("&")}` : "");
 }
 
 function ler(root) {
@@ -85,7 +91,7 @@ function registrar(root, url, outcome, extra = {}) {
 }
 
 /* Quantas horas um resultado ainda segura a pauta fora da fila. */
-const BLOQUEIO_PADRAO = { em_andamento: 6, falha_brief: 24, falha_texto: 24, falha_publicacao: 24, reprovada: 72, publicada: Infinity };
+const BLOQUEIO_PADRAO = { em_andamento: 6, falha_brief: 24, falha_texto: 24, falha_publicacao: 24, fonte_inalcancavel: 12, reprovada: 72, publicada: Infinity };
 
 function bloqueada(rec, horas) {
   if (!rec || !rec.outcome) return false;
@@ -152,19 +158,31 @@ function registrarPublicacao(root, urls, id, score) {
   gravar(root, store);
 }
 
-const diaUTC = (iso) => String(iso || "").slice(0, 10);
+/* O dia é o UTC do instante, não o texto que chegou: uma publicação feita às
+   23:30 de -03:00 é madrugada de outro dia em UTC, e o teto conta por dia UTC.
+   Data ilegível não casa com dia nenhum. */
+function diaUTC(at) {
+  const ms = Date.parse(at);
+  if (isNaN(ms)) return "";
+  return new Date(ms).toISOString().slice(0, 10);
+}
 
 function publicacoesNoDia(root, dia) {
-  const alvo = dia || diaUTC(new Date().toISOString());
+  const alvo = dia || new Date().toISOString().slice(0, 10);
   return ler(root).publishes.filter((p) => diaUTC(p.at) === alvo).length;
 }
 
-function ultimaPublicacaoEm(root, horas) {
-  const list = ler(root).publishes;
-  if (!list.length) return null;
-  const at = Date.parse(list[list.length - 1].at || "");
-  if (isNaN(at)) return null;
-  return (Date.now() - at) / 3600000;
+/* A mais recente de verdade, não a última da lista: uma semente feita à mão ou
+   um merge pode entregar as entradas fora de ordem, e a distância mínima entre
+   publicações passaria por baixo. */
+function ultimaPublicacaoEm(root) {
+  let maisRecente = NaN;
+  for (const p of ler(root).publishes) {
+    const at = Date.parse(p && p.at);
+    if (!isNaN(at) && (isNaN(maisRecente) || at > maisRecente)) maisRecente = at;
+  }
+  if (isNaN(maisRecente)) return null;
+  return (Date.now() - maisRecente) / 3600000;
 }
 
 module.exports = {

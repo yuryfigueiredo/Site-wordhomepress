@@ -11,8 +11,9 @@
     "falha_brief": 24,
     "falha_texto": 24,
     "falha_publicacao": 24,
+    "fonte_inalcancavel": 12,
     "reprovada": 72
   },
   "cover_baseline": 7.0,
-  "notes": "check_hours = quando o robô roda ingest + doctor (5 verificações por dia, como pedido). max_publishes_per_day = teto de matérias novas no ar por dia; publicar mais que isso em domínio recém-reativado é risco de scaled content abuse. min_hours_between_publishes = distância mínima entre duas peças, para o teto não ser driblado pela virada do dia UTC. lead_max_age_days = acima disso a fonte é velha demais para virar notícia. lead_retry_hours = quanto tempo uma pauta fica fora da fila depois de cada resultado (pipeline/memory.json). cover_baseline = nota que uma matéria nova precisa vencer para tomar a capa da matéria escrita à mão."
+  "notes": "check_hours = quando o robô roda ingest + doctor (5 verificações por dia, como pedido). max_publishes_per_day = teto de matérias novas no ar por dia; publicar mais que isso em domínio recém-reativado é risco de scaled content abuse. min_hours_between_publishes = distância mínima entre duas peças, para o teto não ser driblado pela virada do dia UTC; vale também depois da virada, e é checado antes de escolher a pauta. lead_max_age_days = acima disso a fonte é velha demais para virar notícia. lead_retry_hours = quanto tempo uma pauta fica fora da fila depois de cada resultado (pipeline/memory.json); fonte_inalcancavel é o portal que devolveu 403/404 na sondagem, para a fila não parar sempre nele. cover_baseline = nota que uma matéria nova precisa vencer para tomar a capa da matéria escrita à mão."
 }
