@@ -90,13 +90,28 @@ const subtopic =
 const byline = flag("byline") || BYLINE[`${lead.pillar}:${subtopic}`] || BYLINE[lead.pillar] || "Marcus Vance";
 const slug = flag("slug") || slugify(lead.title);
 
+/* A data da fonte vinha de new Date(): todo rascunho nascia "de hoje", a nota
+   de atualidade dava 1,5/1,5 sempre e o texto podia datar o fato no dia errado.
+   Vale a data do feed; sem ela, a que estiver no caminho da URL; só então hoje. */
+function sourceDate(url, published) {
+  const fromFeed = String(published || "").match(/\d{4}-\d{2}-\d{2}/);
+  if (fromFeed) return fromFeed[0];
+  const fromUrl = String(url || "").match(/\/(\d{4})\/(\d{2})\/(\d{2})(\d{2})\d{4}\.[a-z]+/i);
+  if (fromUrl) {
+    const [, y, m, d] = fromUrl;
+    const dt = new Date(Date.UTC(Number(y), Number(m) - 1, Number(d)));
+    if (!isNaN(dt) && dt <= new Date()) return dt.toISOString().slice(0, 10);
+  }
+  return new Date().toISOString().slice(0, 10);
+}
+
 const brief = {
   pillar: lead.pillar,
   register,
   byline,
   topic: lead.title,
   angle: flag("angle") || null,
-  sources: [{ title: lead.title, url: lead.url, date: new Date().toISOString().slice(0, 10), type: "secondary" }],
+  sources: [{ title: lead.title, url: lead.url, date: sourceDate(lead.url, flag("source-date") || lead.published), type: "secondary" }],
   products: [],
   image: flag("image") || null,
   word_count: Number(flag("words") || WORD_COUNT[lead.pillar] || 1200),

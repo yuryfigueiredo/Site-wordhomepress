@@ -187,6 +187,39 @@ for (const link of contentLinks) {
 const numbersInText = (text.match(/\d+(?:\.\d+)?%|\$\d[\d,.]*/g) || []).length;
 const numbersWithoutSource = sources.length === 0 ? numbersInText : 0;
 
+/* Fonte repetida é a forma mais barata de quase-duplicata: a rodada seguinte
+   reescreve a mesma notícia com outro título e passa pelos outros portões. */
+const reused = sources.find((s) =>
+  DB.articles.some((a) => a.id !== draft.id && (a.sources || []).some((x) => x && x.url === s.url))
+);
+if (reused) reject("sources", `fonte já usada em matéria publicada: ${reused.url}`);
+
+/* Frase repetida é enchimento para alcançar o piso de palavras — o texto do
+   turno de 2026-10-31 repetiu "The data were collected in the infrared." 15x. */
+const sentenceCount = new Map();
+for (const s of sents) {
+  const key = s.toLowerCase().replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
+  if (key.length < 30) continue;
+  sentenceCount.set(key, (sentenceCount.get(key) || 0) + 1);
+}
+const repeated = [...sentenceCount].filter(([, n]) => n > 1).sort((a, b) => b[1] - a[1]);
+if (repeated.length)
+  reject("repetition", `frase repetida ${repeated[0][1]}x: "${repeated[0][0].slice(0, 70)}…"`);
+
+/* A data do fato tem de caber na data da fonte. Sem isso o redator datava a
+   notícia de hoje e a nota de atualidade aprovava o texto. */
+const MONTHS = { january: 1, february: 2, march: 3, april: 4, may: 5, june: 6, july: 7, august: 8, september: 9, october: 10, november: 11, december: 12 };
+const datelines = [...text.matchAll(/\b(?:On|In) (January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),\s*(\d{4})/gi)]
+  .map((m) => Date.UTC(Number(m[3]), MONTHS[m[1].toLowerCase()] - 1, Number(m[2])));
+const sourceDates = sources.map((s) => Date.parse(s.date)).filter((t) => !isNaN(t));
+if (datelines.length && sourceDates.length) {
+  const newest = Math.max(...sourceDates);
+  const latestDateline = Math.max(...datelines);
+  if (latestDateline > newest + 86400000)
+    reject("sources", `data no texto (${new Date(latestDateline).toISOString().slice(0, 10)}) posterior à fonte mais recente (${new Date(newest).toISOString().slice(0, 10)})`);
+}
+if (sourceDates.some((t) => t > Date.now() + 86400000)) reject("sources", "fonte com data no futuro");
+
 /* ── 9. a regra do "nós testamos" ───────────────────────────────────────── */
 const testedClaim = /\bwe tested\b|\bour tests?\b|\bwe measured\b|\bin our lab\b/i.test(text);
 const testedProducts = (draft.products || []).filter((p) => p.tested && String(p.test_notes || "").length > 20);

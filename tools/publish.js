@@ -26,14 +26,7 @@ const LOG_FILE = path.join(ROOT, "pipeline", "state", "publish-log.json");
 const today = new Date().toISOString().slice(0, 10);
 let log = { days: {} };
 try { log = JSON.parse(fs.readFileSync(LOG_FILE, "utf8")); } catch {}
-/* pipeline/state/ é gitignored: no CI o log nasce vazio todo dia e o teto
-   nunca disparava. O histórico de commits conta mesmo sem estado local. */
-let doneToday = (log.days || {})[today] || 0;
-try {
-  const subjects = execFileSync("git", ["log", `--since=${today}T00:00:00Z`, "--pretty=%s"], { cwd: ROOT, stdio: "pipe" }).toString();
-  const fromCommits = subjects.split("\n").filter((l) => l.startsWith("publish:")).length;
-  doneToday = Math.max(doneToday, fromCommits);
-} catch {}
+const doneToday = require("./lib/cadence").publishedToday(ROOT);
 if (doneToday >= cadence.max_publishes_per_day && !process.argv.includes("--force-cadence")) {
   console.error(`cadência: ${doneToday}/${cadence.max_publishes_per_day} publicação(ões) hoje (${today}).`);
   console.error("O teto existe para o site não virar fábrica de conteúdo — o robô continua checando fontes nas próximas rodadas.");
@@ -80,6 +73,7 @@ const BUILD_OUTPUTS = [
   "tech.html",
   "science.html",
   "pipeline/state/hero-fallback.html",
+  "vercel.json",
 ];
 const snapshot = new Map(
   BUILD_OUTPUTS.map((f) => [f, fs.existsSync(path.join(ROOT, f)) ? fs.readFileSync(path.join(ROOT, f)) : null])
@@ -124,6 +118,9 @@ const abort = (why) => {
     if (content === null) fs.rmSync(abs, { force: true });
     else fs.writeFileSync(abs, content);
   }
+  /* O retrato não cobre a-<id>.html: com o catálogo já restaurado, o gerador
+     apaga o arquivo da matéria que não chegou a existir. */
+  try { run("meta-pages.js"); } catch {}
   if (scoresBackup !== null) fs.writeFileSync(SCORES_FILE, scoresBackup);
   else if (fs.existsSync(SCORES_FILE)) fs.unlinkSync(SCORES_FILE);
   console.error(`${why} — catálogo, HTML, sitemap e notas restaurados, nada publicado`);
@@ -134,6 +131,7 @@ let buildLog = "";
 try {
   buildLog += run("build.js");
   buildLog += run("build-sitemap.js");
+  buildLog += run("meta-pages.js");
 } catch (err) {
   abort(`build falhou: ${err.message}`);
 }
@@ -171,8 +169,10 @@ fs.writeFileSync(LOG_FILE, JSON.stringify(log, null, 2) + "\n");
 let commitNote = "sem repositório git: commit pulado (rode git init quando quiser histórico)";
 try {
   execFileSync("git", ["rev-parse", "--is-inside-work-tree"], { cwd: ROOT, stdio: "pipe" });
-  const files = ["js/articles-db.js", "sitemap.xml", "voice/state/last_runs.json", "pipeline/scores.json", "index.html", "culture.html", "tech.html", "science.html", "images"];
+  const files = ["js/articles-db.js", "sitemap.xml", "voice/state/last_runs.json", "pipeline/scores.json", "index.html", "culture.html", "tech.html", "science.html", "images", "vercel.json"];
   for (const f of files) execFileSync("git", ["add", f], { cwd: ROOT, stdio: "pipe" });
+  /* glob como pathspec: o git expande e o commit cobre também órfão removido */
+  execFileSync("git", ["add", "--", "a-*.html", "r-*.html"], { cwd: ROOT, stdio: "pipe" });
   execFileSync("git", ["commit", "-m", `publish: ${draft.title} (nota ${score.score})`], { cwd: ROOT, stdio: "pipe" });
   commitNote = "commit local criado (push não foi feito)";
 } catch {}

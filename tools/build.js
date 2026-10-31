@@ -237,12 +237,15 @@ function applySlot(file, slot) {
     /* O fallback guarda a capa escrita à mão. Ele é ressincronizado sempre que a
        região atual é a capa manual — assim uma edição sua no HTML vira a nova
        referência, e uma capa gerada nunca contamina o fallback. */
-    if (!fs.existsSync(fb) || (incumbentId && regionIds[0] === incumbentId)) {
+    const fallbackExists = fs.existsSync(fb);
+    const resync = !fallbackExists || (incumbentId && regionIds[0] === incumbentId);
+    if (!DRY && resync) {
       fs.mkdirSync(path.dirname(fb), { recursive: true });
       fs.writeFileSync(fb, region);
     }
     const cover = pickCover();
-    const content = cover ? `\n${TEMPLATES[slot.template](cover)}\n          ` : fs.readFileSync(fb, "utf8");
+    const manual = resync ? region : fs.readFileSync(fb, "utf8");
+    const content = cover ? `\n${TEMPLATES[slot.template](cover)}\n          ` : manual;
     const next = src.slice(0, i0) + content + src.slice(i1);
     if (next !== src) writeSrc(file, next);
     return {

@@ -33,7 +33,7 @@ for (const f of files.slice(0, 3)) {
   for (const l of leads) {
     const slug = slugify(l.title);
     if (taken.has(slug) || published.has(slug)) continue;
-    candidatas.push({ url: l.url, pillar: l.pillar, topic: l.title, slug, source: l.source, score: l.score, file: f });
+    candidatas.push({ url: l.url, pillar: l.pillar, topic: l.title, slug, source: l.source, score: l.score, published: l.published || null, file: f });
   }
 }
 

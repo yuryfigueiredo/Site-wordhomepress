@@ -33,11 +33,22 @@ jobs:
       MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
     steps:
+      # O clone raso esconde os commits do dia: o teto de cadência e a memória
+      # anti-repetição leem o histórico, então ele precisa vir inteiro.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      # A identidade vem antes da rodada: publish.js faz o próprio commit e,
+      # sem user.name/email, ele falhava calado e o teto nunca contava a peça.
+      - name: Identidade do robô
+        run: |
+          git config user.name "homeworld-press-bot"
+          git config user.email "bot@homeworldpress.com"
 
       - name: Rodada do robô
         run: node tools/turno.js
@@ -45,8 +56,6 @@ jobs:
       - name: Commit do que a rodada mudou
         if: always()
         run: |
-          git config user.name "homeworld-press-bot"
-          git config user.email "bot@homeworldpress.com"
           git add -A
           if git diff --cached --quiet; then
             echo "nada para commitar"

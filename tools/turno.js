@@ -41,8 +41,7 @@ if (doc.code !== 0) finish("doctor terminou com erros — a rodada para aqui por
 
 /* 3. teto diário */
 const cad = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8"));
-let done = 0;
-try { done = (JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "state", "publish-log.json"), "utf8")).days || {})[new Date().toISOString().slice(0, 10)] || 0; } catch {}
+const done = require("./lib/cadence").publishedToday(ROOT);
 say("cadência", `${done}/${cad.max_publishes_per_day} publicação(ões) hoje`);
 if (done >= cad.max_publishes_per_day) finish("teto diário atingido — as próximas rodadas só coletam e checam.");
 
@@ -53,7 +52,9 @@ const lead = JSON.parse(pick.out.trim().split("\n").pop());
 say("pauta", `${lead.topic} (${lead.source}, score ${lead.score})`);
 
 /* 5. brief */
-const brief = run("new-post.js", ["--url", lead.url, "--pillar", lead.pillar, "--topic", lead.topic, "--slug", lead.slug]);
+const briefArgs = ["--url", lead.url, "--pillar", lead.pillar, "--topic", lead.topic, "--slug", lead.slug];
+if (lead.published) briefArgs.push("--source-date", lead.published);
+const brief = run("new-post.js", briefArgs);
 if (brief.code !== 0) finish(`brief falhou: ${brief.out.slice(-300)}`);
 say("brief", `pipeline/drafts/${lead.slug}/ criado`);
 
