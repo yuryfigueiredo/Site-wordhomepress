@@ -260,44 +260,6 @@
       "source": "auto",
       "date": "2026-10-29"
     },
-    "webb-telescope-mars-sized-collisions": {
-      "score": 6.4,
-      "note": "6.4/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
-      "breakdown": {
-        "evidence": {
-          "pts": 0.8,
-          "max": 2.5,
-          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
-        },
-        "timeliness": {
-          "pts": 1.5,
-          "max": 1.5,
-          "why": "fonte mais recente há 1 dia(s)"
-        },
-        "novelty": {
-          "pts": 2,
-          "max": 2,
-          "why": "sobrepõe 29% com james-webb-exoplanet-atmospheres-biosignatures-2026"
-        },
-        "craft": {
-          "pts": 1.6,
-          "max": 2,
-          "why": "ritmo e léxico medidos (80%)"
-        },
-        "commercial": {
-          "pts": 0,
-          "max": 1,
-          "why": "sem produto nem caixa de afiliado"
-        },
-        "judgment": {
-          "pts": 1,
-          "max": 1,
-          "why": "It argues that high-temperature mineral signatures specifically require catastrophic impacts over steady grinding."
-        }
-      },
-      "source": "auto",
-      "date": "2026-10-30"
-    },
     "webb-telescope-detects-mars-sized-collisions": {
       "score": 6.4,
       "note": "6.4/10 — força em timeliness (fonte mais recente há 0 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",

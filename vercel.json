@@ -22,17 +22,6 @@
         {
           "type": "query",
           "key": "id",
-          "value": "webb-telescope-mars-sized-collisions"
-        }
-      ],
-      "destination": "/a-webb-telescope-mars-sized-collisions.html"
-    },
-    {
-      "source": "/article.html",
-      "has": [
-        {
-          "type": "query",
-          "key": "id",
           "value": "guardian-september-roundup-one-category-2026"
         }
       ],
@@ -372,6 +361,11 @@
     {
       "source": "/classic-comics",
       "destination": "/classic-comics.html",
+      "permanent": true
+    },
+    {
+      "source": "/a-webb-telescope-mars-sized-collisions.html",
+      "destination": "/a-webb-telescope-detects-mars-sized-collisions.html",
       "permanent": true
     }
   ],
