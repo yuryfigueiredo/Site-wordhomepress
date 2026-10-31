@@ -232,7 +232,14 @@ function main() {
        rubrica não tem o que medir nelas. Elas recebem uma nota de base fixa,
        marcada como "baseline", para que uma matéria nova precise vencer a capa
        atual em vez de herdá-la de graça. */
-    const HERO_BASE = Number(argv[argv.indexOf("--baseline") + 1] || "") || 7.0;
+    const capaDoCad = (() => {
+      try {
+        return Number(JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8")).cover_baseline) || null;
+      } catch {
+        return null;
+      }
+    })();
+    const HERO_BASE = Number(argv[argv.indexOf("--baseline") + 1] || "") || capaDoCad || 7.0;
     const REST_BASE = 5.0;
     let n = 0;
     for (const a of DB.articles || []) {
