@@ -84,7 +84,7 @@
   </header>
 
   <!-- Official Imprint Heritage Bar -->
-  <div class="wired-substrip">
+  <div class="wired-substrip" role="region" aria-label="Editorial dispatch">
     <div class="container wired-substrip__inner">
       <span><strong>EST. 2006 // RIVER FOREST &amp; CHICAGO, IL</strong> — INDEPENDENT LITERARY, TECH &amp; REVIEW PUBLICATION</span>
       <div class="wired-substrip__links">
@@ -109,7 +109,7 @@
       <div class="container wired-3col-grid">
 
         <!-- COLUMN 1 (LEFT): TODAY'S PICKS -->
-        <aside class="col-todays-picks" aria-label="Today's Picks">
+        <section class="col-todays-picks" aria-label="Today's Picks">
           <div class="section-header-bar">
             <h2 class="section-header-bar__title">TODAY'S PICKS</h2>
             <a href="culture.html" class="section-header-bar__Action">CULTURE →</a>
@@ -148,7 +148,7 @@
               </div>
             </article>
           </div>
-        </aside>
+        </section>
 
         <!-- COLUMN 2 (CENTER): THE BIG STORY (MAIN STAGE) -->
         <div class="col-center-stage">
@@ -213,7 +213,7 @@
         </div>
 
         <!-- COLUMN 3 (RIGHT): MOST RECENT + TRENDING PANEL -->
-        <aside class="col-right-rail" aria-label="Most Recent and Trending Stories">
+        <section class="col-right-rail" aria-label="Most Recent and Trending Stories">
           <div>
             <div class="section-header-bar">
               <h2 class="section-header-bar__title">MOST RECENT</h2>
@@ -334,7 +334,7 @@
 
           <div class="trending-panel">
             <div class="trending-panel__header">
-              <div class="trending-panel__title">
+              <div class="trending-panel__title" role="heading" aria-level="2">
                 <span style="color:var(--accent-wired-red-text);">▲</span> TRENDING // TOP 5
               </div>
               <span style="font-family:var(--font-mono);font-size:0.65rem;color:var(--text-muted);">READER RANKED</span>
@@ -378,7 +378,7 @@
               </li>
             </ol>
           </div>
-        </aside>
+        </section>
 
       </div>
     </section>
@@ -510,7 +510,7 @@
           </span>
         </div>
 
-        <div class="subtopic-pills" role="tablist" aria-label="Filter Culture Subtopics">
+        <div class="subtopic-pills" role="group" aria-label="Filter Culture Subtopics">
           <button type="button" class="subtopic-pill is-active" data-culture-filter="all">ALL CULTURE (6)</button>
           <button type="button" class="subtopic-pill" data-culture-filter="authors"><span aria-hidden="true">✍️ </span>AUTHORS &amp; CREATORS</button>
           <button type="button" class="subtopic-pill" data-culture-filter="news"><span aria-hidden="true">🎬 </span>PUBLISHING, TV &amp; AWARDS</button>
@@ -1099,8 +1099,8 @@
           <p class="footer-brand__text">
             Established in 2006 in River Forest / Chicago, IL. Homeworld Press is an independent digital magazine covering speculative culture, authors, emerging technology, space science, and hands-on product reviews—while preserving our historic sci-fi and comic publishing catalog.
           </p>
-          <p style="font-family:var(--font-mono);font-size:0.72rem;color:#777;">
-            FTC AFFILIATE DISCLOSURE: As an Amazon Associate and Audible affiliate, Homeworld Press earns from qualifying purchases at no extra cost to readers. <a href="disclosure.html" style="color:var(--accent-wired-red-text);text-decoration:underline;">Read the full policy.</a></p>
+          <p style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted-on-dark);">
+            FTC AFFILIATE DISCLOSURE: As an Amazon Associate and Audible affiliate, Homeworld Press earns from qualifying purchases at no extra cost to readers. <a href="disclosure.html" style="color:var(--accent-wired-red-on-dark);text-decoration:underline;">Read the full policy.</a></p>
         </div>
 
         <div>

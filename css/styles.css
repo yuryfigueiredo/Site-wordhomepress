@@ -32,6 +32,9 @@
   --accent-science-cyan-text: #006B5B;
   --accent-archive-gold-text: #6E5200;
   --accent-reviews-text: #C23A00;
+  /* O rodapé é sempre escuro, mesmo no tema claro: link vermelho ali precisa
+     do vermelho claro para passar em contraste (6,5:1 sobre #0A0A0A). */
+  --accent-wired-red-on-dark: #FF5C5C;
 
   --border-hairline: 1px solid #141414;
   --border-subtle: 1px solid #D6D3CC;
@@ -571,7 +574,7 @@ a {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent-wired-red);
+  color: var(--accent-wired-red-text);
 }
 
 .latest-list {
@@ -1649,6 +1652,22 @@ a {
   font-size: 1.05rem;
   line-height: 1.75;
   color: var(--text-primary);
+}
+
+/* O reset global tira o sublinhado de todo link; no corpo do texto isso deixa
+   o link idêntico ao parágrafo. Aqui ele volta a se anunciar como link — menos
+   nos botões, que têm cor própria (branco sobre vermelho) e não são texto. */
+.article-prose a:not([class*="btn"]),
+.article-dek a:not([class*="btn"]) {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+  color: var(--accent-wired-red-text);
+}
+
+.article-prose a:not([class*="btn"]):hover,
+.article-dek a:not([class*="btn"]):hover {
+  text-decoration-thickness: 3px;
 }
 
 .article-prose h2 {

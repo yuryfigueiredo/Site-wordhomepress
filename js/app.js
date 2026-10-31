@@ -256,7 +256,7 @@
         <div class="verdict-box__inner">
           <img src="${verdictImg}" alt="${box.title}" style="width:100%;height:165px;object-fit:${verdictImgFit};background:#0d0d0d;border:var(--border-hairline);">
           <div>
-            <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;margin-bottom:0.35rem;">${box.title}</h3>
+            <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;margin-bottom:0.35rem;">${box.title}</h2>
             <p style="font-family:var(--font-mono);font-size:0.8rem;color:var(--text-muted);margin-bottom:0.85rem;">ESTIMATED PRICE: <strong>${box.price}</strong></p>
             <div style="display:flex;flex-wrap:wrap;gap:0.65rem;">
               <a href="${box.amazonUrl}" target="_blank" rel="nofollow sponsored noopener" class="btn-amazon" style="width:auto;padding:0.65rem 1.25rem;">CHECK PRICE ON AMAZON →</a>
