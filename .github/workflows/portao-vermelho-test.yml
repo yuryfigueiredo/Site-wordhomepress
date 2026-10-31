@@ -31,6 +31,7 @@ jobs:
           echo '{"leads":{},"publishes":[{"id":"registro-da-rodada"}]}' > pipeline/memory.json
           printf '# Turno — teste\n- fim — rodada vermelha.\n' > TURNO.md
           echo 'rastro' > pipeline/memory.json.tmp
+          mkdir -p pipeline/state
           echo 'ignorado' > pipeline/state/nao-apagar.txt
           git status --porcelain
 
