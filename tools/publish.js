@@ -22,15 +22,22 @@ const draft = JSON.parse(fs.readFileSync(path.join(DIR, "draft.json"), "utf8"));
 
 /* ── teto de cadência: quantas matérias podem subir por dia ───────────── */
 const cadence = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8"));
-const LOG_FILE = path.join(ROOT, "pipeline", "state", "publish-log.json");
-const today = new Date().toISOString().slice(0, 10);
-let log = { days: {} };
-try { log = JSON.parse(fs.readFileSync(LOG_FILE, "utf8")); } catch {}
+const mem = require("./lib/memory");
+const FORCAR = process.argv.includes("--force-cadence");
 const doneToday = require("./lib/cadence").publishedToday(ROOT);
-if (doneToday >= cadence.max_publishes_per_day && !process.argv.includes("--force-cadence")) {
-  console.error(`cadência: ${doneToday}/${cadence.max_publishes_per_day} publicação(ões) hoje (${today}).`);
+if (doneToday >= cadence.max_publishes_per_day && !FORCAR) {
+  console.error(`cadência: ${doneToday}/${cadence.max_publishes_per_day} publicação(ões) hoje.`);
   console.error("O teto existe para o site não virar fábrica de conteúdo — o robô continua checando fontes nas próximas rodadas.");
   console.error("Para publicar mesmo assim: node tools/publish.js " + SLUG + " --force-cadence");
+  process.exit(1);
+}
+/* Com rodadas perto da meia-noite UTC, o teto do dia viraria licença para
+   publicar duas peças em sequência: a distância mínima vale entre publicações,
+   não dentro do dia. */
+const horasDesde = require("./lib/cadence").horasDesdeUltimaPublicacao(ROOT);
+const minimoHoras = Number(cadence.min_hours_between_publishes || 0);
+if (horasDesde !== null && minimoHoras && horasDesde < minimoHoras && !FORCAR) {
+  console.error(`cadência: a última matéria está no ar há ${horasDesde.toFixed(1)}h (mínimo ${minimoHoras}h) — nada publicado.`);
   process.exit(1);
 }
 
@@ -112,6 +119,26 @@ if (!anchor) {
 const insertAt = backup.indexOf("[", anchor.index) + 1;
 fs.writeFileSync(DB_FILE, backup.slice(0, insertAt) + `\n${serialized},` + backup.slice(insertAt));
 
+/* Conferência da inserção: o catálogo é lido pelo site com window.HWP_DATABASE,
+   e a memória anti-duplicata só enxerga as fontes que estão no arquivo. Se a
+   inserição sair torta ( vírgula, escaping do content), a matéria sobe sem
+   sources e a fila volta a oferecer a mesma notícia amanhã — foi exatamente
+   assim que guardian-september-roundup ficou invisível para o portão. */
+try {
+  const w = {};
+  new Function("window", fs.readFileSync(DB_FILE, "utf8"))(w);
+  const gravada = (w.HWP_DATABASE.articles || []).find((a) => a.id === draft.id);
+  if (!gravada) throw new Error("a matéria não aparece no catálogo re-lido");
+  if (!Array.isArray(gravada.sources) || gravada.sources.length !== entry.sources.length) {
+    throw new Error(`sources perdidas na inserção (${gravada.sources && gravada.sources.length} ≠ ${entry.sources.length})`);
+  }
+  if (gravada.content !== entry.content) throw new Error("o corpo da matéria mudou durante a inserção");
+} catch (err) {
+  fs.writeFileSync(DB_FILE, backup);
+  console.error(`inserção no catálogo rejeitada: ${err.message}`);
+  process.exit(1);
+}
+
 const abort = (why) => {
   for (const [file, content] of snapshot) {
     const abs = path.join(ROOT, file);
@@ -144,11 +171,12 @@ try {
 const runsFile = path.join(ROOT, "voice", "state", "last_runs.json");
 const runs = JSON.parse(fs.readFileSync(runsFile, "utf8"));
 const sc = draft.self_check || {};
+let BRIEF = {};
+try { BRIEF = JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")); } catch {}
 /* O contrato não tem campo register — quem sabe o registro é o brief. Sem
    isso a memória era gravada em runs["undefined"] e a regra anti-repetição
    nunca pegava a peça anterior. */
-let REGISTER = draft.register;
-try { REGISTER = JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")).register || REGISTER; } catch {}
+const REGISTER = BRIEF.register || draft.register || "analyst";
 runs.runs[REGISTER] = {
   id: draft.id,
   date: new Date().toISOString().slice(0, 10),
@@ -158,27 +186,50 @@ runs.runs[REGISTER] = {
   humor_lines: Number(sc.humor_lines || 0),
 };
 runs.updated = new Date().toISOString();
-fs.writeFileSync(runsFile, JSON.stringify(runs, null, 2));
+fs.writeFileSync(`${runsFile}.tmp`, JSON.stringify(runs, null, 2));
+fs.renameSync(`${runsFile}.tmp`, runsFile);
 
-log.days = log.days || {};
-log.days[today] = doneToday + 1;
-log.last = { id: draft.id, date: today, score: score.score };
-fs.mkdirSync(path.dirname(LOG_FILE), { recursive: true });
-fs.writeFileSync(LOG_FILE, JSON.stringify(log, null, 2) + "\n");
+const hoje = new Date().toISOString().slice(0, 10);
+/* A memória é o que o teto lê: escrita aqui, versionada, e presente no runner
+   em qualquer forma de publicação — local ou Actions. A URL da pauta vai junto
+   com as URLs citadas, senão o pick-lead reoferece a mesma notícia amanhã. */
+mem.registrarPublicacao(ROOT, [BRIEF.meta && BRIEF.meta.lead_url, ...entry.sources.map((s) => s && s.url)], draft.id, score.score);
+
+/* Duas coisas no mesmo repositório ao mesmo tempo é normal no Actions: o job
+   setup-node commita telemetria enquanto o robô publica, e o git trava o índice
+   e sai com erro. Antes esse erro caía num catch mudo: o "publish:" nunca
+   apareceu no histórico e o teto diário do turno seguinte leu 0/1. */
+const esperaSync = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+function gitTenta(args, tentativas = 4) {
+  for (let i = 1; ; i++) {
+    try {
+      return execFileSync("git", args, { cwd: ROOT, stdio: "pipe" }).toString();
+    } catch (err) {
+      const msg = `${err.stdout || ""}${err.stderr || ""}${err.message || ""}`.trim();
+      if (!/index\.lock|cannot lock ref|cannot create repository/.test(msg) || i >= tentativas) {
+        throw new Error(msg.slice(0, 300));
+      }
+      esperaSync(2000);
+    }
+  }
+}
 
 let commitNote = "sem repositório git: commit pulado (rode git init quando quiser histórico)";
 try {
-  execFileSync("git", ["rev-parse", "--is-inside-work-tree"], { cwd: ROOT, stdio: "pipe" });
-  const files = ["js/articles-db.js", "sitemap.xml", "voice/state/last_runs.json", "pipeline/scores.json", "index.html", "culture.html", "tech.html", "science.html", "images", "vercel.json"];
-  for (const f of files) execFileSync("git", ["add", f], { cwd: ROOT, stdio: "pipe" });
+  gitTenta(["rev-parse", "--is-inside-work-tree"]);
+  const files = ["js/articles-db.js", "sitemap.xml", "voice/state/last_runs.json", "pipeline/scores.json", "pipeline/memory.json", "index.html", "culture.html", "tech.html", "science.html", "images", "vercel.json"];
+  for (const f of files) gitTenta(["add", f]);
   /* glob como pathspec: o git expande e o commit cobre também órfão removido */
-  execFileSync("git", ["add", "--", "a-*.html", "r-*.html"], { cwd: ROOT, stdio: "pipe" });
-  execFileSync("git", ["commit", "-m", `publish: ${draft.title} (nota ${score.score})`], { cwd: ROOT, stdio: "pipe" });
-  commitNote = "commit local criado (push não foi feito)";
-} catch {}
+  gitTenta(["add", "--", "a-*.html", "r-*.html"]);
+  gitTenta(["commit", "-m", `publish: ${draft.title} (nota ${score.score})`]);
+  const sujeito = gitTenta(["log", "-1", "--pretty=%s"]).trim();
+  commitNote = sujeito.startsWith("publish:") ? "commit local criado (push não foi feito)" : `AVISO: HEAD é "${sujeito}" — o commit "publish:" não aconteceu`;
+} catch (err) {
+  commitNote = `AVISO: commit local falhou: ${String(err.message).split("\n")[0]}`;
+}
 
 console.log(`publicado localmente: ${draft.id} · nota ${score.score}/10`);
 console.log(buildLog.trim());
 console.log(commitNote);
-console.log(`cadência hoje: ${log.days[today]}/${cadence.max_publishes_per_day}`);
+console.log(`cadência hoje: ${require("./lib/cadence").publishedToday(ROOT, hoje)}/${cadence.max_publishes_per_day}`);
 console.log("deploy continua sendo decisão sua: nada foi enviado para nenhum servidor.");

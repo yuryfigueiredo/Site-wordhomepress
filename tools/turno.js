@@ -22,11 +22,11 @@ function run(script, args = []) {
     return { code: err.status || 1, out: String(err.stdout || "") + String(err.stderr || "") };
   }
 }
-const finish = (why) => {
+const finish = (why, codigo = 0) => {
   if (why) say("fim", why);
   const head = `# Turno — ${new Date().toISOString().replace("T", " ").slice(0, 16)} UTC\n\n`;
   fs.writeFileSync(path.join(ROOT, "TURNO.md"), head + log.join("\n") + "\n");
-  process.exit(0);
+  process.exit(codigo);
 };
 
 /* 1. coleta */
@@ -37,15 +37,26 @@ say("coleta", ing.code === 0 ? (ing.out.trim().split("\n").pop() || "ok") : `fal
 const doc = run("doctor.js", ["--offline"]);
 const docLine = (doc.out.match(/errors \d+ \| .*warnings \d+/) || ["sem resumo"])[0];
 say("manutenção", docLine);
-if (doc.code !== 0) finish("doctor terminou com erros — a rodada para aqui por segurança.");
+/* Vermelho de propósito: dia inteiro com o CI verde e nenhuma publicação foi
+   possível enquanto um erro aberto barrava a rodada no meio do caminho. */
+if (doc.code !== 0) finish("doctor terminou com erros — a rodada para aqui por segurança.", 1);
 
 /* 3. teto diário */
 const cad = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8"));
 const done = require("./lib/cadence").publishedToday(ROOT);
 say("cadência", `${done}/${cad.max_publishes_per_day} publicação(ões) hoje`);
 if (done >= cad.max_publishes_per_day) finish("teto diário atingido — as próximas rodadas só coletam e checam.");
+/* A distância mínima também é checada aqui, antes de escolher pauta: barrada só
+   no publish.js, a rodada gastava brief + texto + editor e ainda marcava a pauta
+   como falha_publicacao, que a deixa 24h fora da fila. */
+const horasDesde = require("./lib/cadence").horasDesdeUltimaPublicacao(ROOT);
+const minimoHoras = Number(cad.min_hours_between_publishes || 0);
+if (done > 0 && horasDesde !== null && minimoHoras && horasDesde < minimoHoras) {
+  finish(`cadência: a última matéria está no ar há ${horasDesde.toFixed(1)}h (mínimo ${minimoHoras}h) — esta rodada só coleta e checa.`);
+}
 
 /* 4. pauta */
+const mem = require("./lib/memory");
 const pick = run("pick-lead.js");
 if (pick.code !== 0) finish(pick.out.trim() || "sem pauta nova.");
 const lead = JSON.parse(pick.out.trim().split("\n").pop());
@@ -55,14 +66,20 @@ say("pauta", `${lead.topic} (${lead.source}, score ${lead.score})`);
 const briefArgs = ["--url", lead.url, "--pillar", lead.pillar, "--topic", lead.topic, "--slug", lead.slug];
 if (lead.published) briefArgs.push("--source-date", lead.published);
 const brief = run("new-post.js", briefArgs);
-if (brief.code !== 0) finish(`brief falhou: ${brief.out.slice(-300)}`);
+if (brief.code !== 0) {
+  mem.registrar(ROOT, lead.url, "falha_brief");
+  finish(`brief falhou: ${brief.out.slice(-300)}`);
+}
 say("brief", `pipeline/drafts/${lead.slug}/ criado`);
 
 /* 6. texto */
 const prov = require("./lib/providers");
 if (!prov.armados().length) finish(`nenhum provedor de texto armado — sem chave no ambiente, o redator não roda. As chaves que valem são as de pipeline/providers.json: ${prov.configurados().map((p) => p.chave_env).join(", ")}.`);
 const wrote = run("write.js", [lead.slug]);
-if (wrote.code !== 0) finish(`o redator não entregou texto: ${wrote.out.trim().split("\n").slice(-8).join(" · ").slice(0, 900)}`);
+if (wrote.code !== 0) {
+  mem.registrar(ROOT, lead.url, "falha_texto");
+  finish(`o redator não entregou texto: ${wrote.out.trim().split("\n").slice(-8).join(" · ").slice(0, 900)}`);
+}
 say("texto", wrote.out.trim().split("\n")[0]);
 const capa = run("make-cover.js", [lead.slug]);
 say("capa", capa.code === 0 ? capa.out.trim().split("\n")[0] : `falhou: ${capa.out.trim().slice(-200)}`);
@@ -81,16 +98,35 @@ for (let t = 1; t <= 3; t++) {
   if (fix.code !== 0) { say("edição", "reescreva falhou: " + fix.out.trim().split("\n").slice(-1)[0]); break; }
   run("make-cover.js", [lead.slug]);
 }
-if (check.code !== 0) finish("rascunho ficou reprovado depois de 3 tentativas — guardado para revisão humana, nada publicado.");
+if (check.code !== 0) {
+  mem.registrar(ROOT, lead.url, "reprovada", { slug: lead.slug, topic: lead.topic });
+  finish("rascunho ficou reprovado depois de 3 tentativas — nada publicado, e a pauta fica 72h fora da fila (pipeline/memory.json).");
+}
 
 /* 8. nota */
 const sc = run("score.js", ["--draft", lead.slug]);
 const nota = (sc.out.match(/nota ([\d.]+)\/10/) || [])[1];
 say("nota", nota ? `${nota}/10 · ${(sc.out.split("\n")[1] || "").slice(0, 160)}` : sc.out.trim().split("\n")[0]);
-if (/DUPLICATA/.test(sc.out)) finish("nota calculada aponta quase-duplicata — nada publicado.");
+if (/DUPLICATA/.test(sc.out)) {
+  mem.registrar(ROOT, lead.url, "reprovada", { slug: lead.slug, motivo: "duplicata" });
+  finish("nota calculada aponta quase-duplicata — nada publicado.");
+}
 
 /* 9. publicação */
 const pub = run("publish.js", [lead.slug]);
-if (pub.code !== 0) finish(`publicação abortada pelo próprio publish.js: ${pub.out.trim().split("\n").slice(-2).join(" ")}`);
-say("publicação", pub.out.trim().split("\n").slice(0, 2).join(" · "));
-finish("rodada completa. O commit e o push são do workflow; o deploy é do Pages.");
+if (pub.code !== 0) {
+  /* barrado pela cadência não é falha da pauta: sem este teste a janela de
+     re-tentativa de 24h punia a pauta certa por causa do relógio. */
+  if (/cadência:/.test(pub.out)) finish(`publicação barrada pela cadência: ${pub.out.trim().split("\n").filter((l) => /cadência:/.test(l)).pop()}`);
+  mem.registrar(ROOT, lead.url, "falha_publicacao");
+  finish(`publicação abortada pelo próprio publish.js: ${pub.out.trim().split("\n").slice(-2).join(" ")}`);
+}
+say("publicação", pub.out.split("\n").filter((l) => /publicado localmente|cadência hoje|^AVISO:/.test(l)).join(" · ") || pub.out.trim().split("\n").slice(0, 2).join(" · "));
+/* Um "AVISO:" aqui é contabilidade quebrada: a matéria está no ar, mas algo que
+   o teto ou o histórico dependem não foi gravado. Rodada vermelha de propósito
+   — foi assim que o commit "publish:" ficou mudo por dois dias. */
+if (/AVISO:/.test(pub.out)) {
+  say("alerta", "publicação registrada, mas a contabilidade falhou — leia a linha de publicação acima.");
+  finish("rodada terminou com alerta.", 1);
+}
+finish("rodada completa. O commit e o push são do workflow; o deploy é da Vercel.");
