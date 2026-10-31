@@ -16,6 +16,9 @@ const NEVER = [
   "dburls.txt",
   "urls.txt",
   "wiki_plan.yaml",
+  "_redirects",
+  "vercel.json",
+  ".htaccess",
 ];
 
 const NEVER_DIRS = [".git", ".audit", ".codegraph", ".qoder", "tools", "pipeline", "voice", "node_modules", "dist"];
@@ -49,7 +52,7 @@ function rootHtmlFiles() {
 }
 
 function rootExtras() {
-  return ["_redirects", "vercel.json", "robots.txt", "sitemap.xml", ".htaccess"].filter((f) => fs.existsSync(path.join(ROOT, f)));
+  return ["robots.txt", "sitemap.xml"].filter((f) => fs.existsSync(path.join(ROOT, f)));
 }
 
 function walk(relDir, out) {
@@ -116,6 +119,18 @@ if (fs.existsSync(path.join(ROOT, "vercel.json"))) {
     for (const r of cfg.redirects || []) {
       const src = r.source.replace(/\/:(path|next)\*$/, "").replace(/:.*$/, "");
       if (src === r.destination) problems.push(`regra em loop: ${r.source} -> ${r.destination}`);
+    }
+    /* /article.html?id=x serve a-x.html por rewrite. Arquivo fora do pacote =
+       matéria canônica em 404; rewrite sem arquivo = mesma coisa. */
+    const destinations = new Set();
+    for (const r of cfg.rewrites || []) {
+      if (!String(r.destination || "").startsWith("/")) continue;
+      const dest = r.destination.slice(1);
+      destinations.add(dest);
+      if (!shipped.includes(dest)) problems.push(`rewrite sem arquivo no pacote: ${r.source} -> ${r.destination}`);
+    }
+    for (const f of shipped.filter((f) => /^[ar]-[a-z0-9-]+\.html$/.test(f))) {
+      if (!destinations.has(f)) problems.push(`${f} no pacote mas nenhuma rewrite chega nele`);
     }
   } catch (e) {
     problems.push(`vercel.json nao e JSON valido: ${e.message}`);

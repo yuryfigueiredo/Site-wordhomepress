@@ -6,6 +6,7 @@
    Saída: console + tools/reports/AAAA-MM-DD.md.  Exit 1 quando há ERROR. */
 const fs = require("fs");
 const path = require("path");
+const { execFileSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..");
 const ARGS = process.argv.slice(2);
@@ -198,7 +199,18 @@ for (const m of allText.matchAll(/(ADVERTISEMENT[^\n<]{0,60}|Lorem ipsum|TODO:|F
   warn("placeholder-copy", `texto de rascunho visível ao público: "${m[0].slice(0, 60)}"`);
 }
 
-/* ── 9. Links externos (rede) ─────────────────────────────────────────── */
+/* ── 9. Cópias de head por matéria (tools/meta-pages.js) ────────────────── */
+/* a-<id>.html e r-<id>.html são o que o Facebook/X leem. Se o catálogo mudou
+   e a cópia não, o cartão compartilhado mostra o título antigo. */
+if (!QUICK) {
+  try {
+    execFileSync(process.execPath, [path.join(ROOT, "tools", "meta-pages.js"), "--check"], { cwd: ROOT, stdio: "pipe" });
+  } catch (err) {
+    fail("meta-pages", "cópias a-<id>.html/r-<id>.html fora de sincronia com o catálogo (rode node tools/meta-pages.js)");
+  }
+}
+
+/* ── 10. Links externos (rede) ────────────────────────────────────────── */
 async function checkExternal(url) {
   const headers = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/131 Safari/537.36", Accept: "*/*" };
   for (const method of ["HEAD", "GET"]) {

@@ -4,35 +4,399 @@
   "cleanUrls": false,
   "buildCommand": "node tools/build-dist.js",
   "outputDirectory": "dist",
-  "rewrites": [],
+  "rewrites": [
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "webb-telescope-detects-mars-sized-collisions"
+        }
+      ],
+      "destination": "/a-webb-telescope-detects-mars-sized-collisions.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "webb-telescope-mars-sized-collisions"
+        }
+      ],
+      "destination": "/a-webb-telescope-mars-sized-collisions.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "guardian-september-roundup-one-category-2026"
+        }
+      ],
+      "destination": "/a-guardian-september-roundup-one-category-2026.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "brandon-sanderson-sci-fi-publishing-empire-2026"
+        }
+      ],
+      "destination": "/a-brandon-sanderson-sci-fi-publishing-empire-2026.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "apple-tv-hbo-scifi-book-adaptations-2026"
+        }
+      ],
+      "destination": "/a-apple-tv-hbo-scifi-book-adaptations-2026.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "1970s-scifi-paperback-cover-art-collectors-guide"
+        }
+      ],
+      "destination": "/a-1970s-scifi-paperback-cover-art-collectors-guide.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "stephen-king-writing-routine-dark-tower-legacy"
+        }
+      ],
+      "destination": "/a-stephen-king-writing-routine-dark-tower-legacy.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "dune-foundation-dumarest-ultimate-space-opera-reading-order"
+        }
+      ],
+      "destination": "/a-dune-foundation-dumarest-ultimate-space-opera-reading-order.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "hugo-nebula-award-winners-bestsellers-must-read"
+        }
+      ],
+      "destination": "/a-hugo-nebula-award-winners-bestsellers-must-read.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "best-dc-marvel-image-graphic-novel-omnibus-editions"
+        }
+      ],
+      "destination": "/a-best-dc-marvel-image-graphic-novel-omnibus-editions.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "philip-k-dick-liu-cixin-prophetic-scifi-novels"
+        }
+      ],
+      "destination": "/a-philip-k-dick-liu-cixin-prophetic-scifi-novels.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "color-e-ink-kaleido-gallery-technology-explained"
+        }
+      ],
+      "destination": "/a-color-e-ink-kaleido-gallery-technology-explained.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "ai-translation-ancient-manuscripts-indie-publishing"
+        }
+      ],
+      "destination": "/a-ai-translation-ancient-manuscripts-indie-publishing.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "solid-state-batteries-portable-power-future"
+        }
+      ],
+      "destination": "/a-solid-state-batteries-portable-power-future.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "local-llm-workstations-writers-researchers-privacy"
+        }
+      ],
+      "destination": "/a-local-llm-workstations-writers-researchers-privacy.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "james-webb-exoplanet-atmospheres-biosignatures-2026"
+        }
+      ],
+      "destination": "/a-james-webb-exoplanet-atmospheres-biosignatures-2026.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "quantum-timekeeping-interstellar-navigation-physics"
+        }
+      ],
+      "destination": "/a-quantum-timekeeping-interstellar-navigation-physics.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "europa-clipper-subsurface-ocean-habitability"
+        }
+      ],
+      "destination": "/a-europa-clipper-subsurface-ocean-habitability.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "lunar-farside-radio-telescopes-cosmic-dark-ages"
+        }
+      ],
+      "destination": "/a-lunar-farside-radio-telescopes-cosmic-dark-ages.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "archival-digital-preservation-m-disc-optical-glass-storage"
+        }
+      ],
+      "destination": "/a-archival-digital-preservation-m-disc-optical-glass-storage.html"
+    },
+    {
+      "source": "/review.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "best-ereaders-2026"
+        }
+      ],
+      "destination": "/r-best-ereaders-2026.html"
+    },
+    {
+      "source": "/review.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "best-noise-canceling-headphones-reading-focus"
+        }
+      ],
+      "destination": "/r-best-noise-canceling-headphones-reading-focus.html"
+    },
+    {
+      "source": "/review.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "best-reading-desk-lamps-home-library-lighting"
+        }
+      ],
+      "destination": "/r-best-reading-desk-lamps-home-library-lighting.html"
+    },
+    {
+      "source": "/review.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
+          "value": "best-ergonomic-chairs-espresso-machines-writers"
+        }
+      ],
+      "destination": "/r-best-ergonomic-chairs-espresso-machines-writers.html"
+    }
+  ],
   "redirects": [
-    { "source": "/index.htm", "destination": "/index.html", "permanent": true },
-    { "source": "/dumarest.htm", "destination": "/dumarest/index.htm", "permanent": true },
-    { "source": "/dumarest", "destination": "/dumarest/index.htm", "permanent": true },
-    { "source": "/dumarest/", "destination": "/dumarest/index.htm", "permanent": true },
-    { "source": "/dumarest/index.html", "destination": "/dumarest/index.htm", "permanent": true },
-    { "source": "/index.php/bishop-chance", "destination": "/chance.htm", "permanent": true },
-    { "source": "/new_HWP/(.*)", "destination": "/chance.htm", "permanent": true },
-    { "source": "/images/PackOfTrouble_Chapter01.pdf", "destination": "/chance.htm", "permanent": true },
-    { "source": "/images/chance/(.*)", "destination": "/chance.htm", "permanent": true },
-
-    { "source": "/culture", "destination": "/culture.html", "permanent": true },
-    { "source": "/reviews", "destination": "/reviews.html", "permanent": true },
-    { "source": "/tech", "destination": "/tech.html", "permanent": true },
-    { "source": "/science", "destination": "/science.html", "permanent": true },
-    { "source": "/archive", "destination": "/archive.html", "permanent": true },
-    { "source": "/disclosure", "destination": "/disclosure.html", "permanent": true },
-    { "source": "/article", "destination": "/article.html", "permanent": true },
-    { "source": "/review", "destination": "/review.html", "permanent": true },
-    { "source": "/tarzan-centennial", "destination": "/tarzan-centennial.html", "permanent": true },
-    { "source": "/classic-comics", "destination": "/classic-comics.html", "permanent": true }
+    {
+      "source": "/index.htm",
+      "destination": "/index.html",
+      "permanent": true
+    },
+    {
+      "source": "/dumarest.htm",
+      "destination": "/dumarest/index.htm",
+      "permanent": true
+    },
+    {
+      "source": "/dumarest",
+      "destination": "/dumarest/index.htm",
+      "permanent": true
+    },
+    {
+      "source": "/dumarest/",
+      "destination": "/dumarest/index.htm",
+      "permanent": true
+    },
+    {
+      "source": "/dumarest/index.html",
+      "destination": "/dumarest/index.htm",
+      "permanent": true
+    },
+    {
+      "source": "/index.php/bishop-chance",
+      "destination": "/chance.htm",
+      "permanent": true
+    },
+    {
+      "source": "/new_HWP/(.*)",
+      "destination": "/chance.htm",
+      "permanent": true
+    },
+    {
+      "source": "/images/PackOfTrouble_Chapter01.pdf",
+      "destination": "/chance.htm",
+      "permanent": true
+    },
+    {
+      "source": "/images/chance/(.*)",
+      "destination": "/chance.htm",
+      "permanent": true
+    },
+    {
+      "source": "/culture",
+      "destination": "/culture.html",
+      "permanent": true
+    },
+    {
+      "source": "/reviews",
+      "destination": "/reviews.html",
+      "permanent": true
+    },
+    {
+      "source": "/tech",
+      "destination": "/tech.html",
+      "permanent": true
+    },
+    {
+      "source": "/science",
+      "destination": "/science.html",
+      "permanent": true
+    },
+    {
+      "source": "/archive",
+      "destination": "/archive.html",
+      "permanent": true
+    },
+    {
+      "source": "/disclosure",
+      "destination": "/disclosure.html",
+      "permanent": true
+    },
+    {
+      "source": "/article",
+      "destination": "/article.html",
+      "permanent": true
+    },
+    {
+      "source": "/review",
+      "destination": "/review.html",
+      "permanent": true
+    },
+    {
+      "source": "/tarzan-centennial",
+      "destination": "/tarzan-centennial.html",
+      "permanent": true
+    },
+    {
+      "source": "/classic-comics",
+      "destination": "/classic-comics.html",
+      "permanent": true
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/a-:slug.html",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/r-:slug.html",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
       ]
     }
   ]
