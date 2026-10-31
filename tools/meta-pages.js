@@ -39,7 +39,11 @@ function isoDate(input) {
   if (!m) return null;
   const month = MONTHS[m[1].slice(0, 3)];
   if (!month) return null;
-  return `${m[3]}-${String(month).padStart(2, "0")}-${String(m[2]).padStart(2, "0")}`;
+  /* "Feb 31, 2026" passava e virava datePublished inválido no JSON-LD. */
+  const day = Number(m[2]);
+  const dt = new Date(Date.UTC(Number(m[3]), month - 1, day));
+  if (dt.getUTCMonth() !== month - 1 || dt.getUTCDate() !== day) return null;
+  return `${m[3]}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
 function ldJson(obj) {
@@ -80,11 +84,13 @@ function renderPage(shell, block, mountId, id) {
   const headEnd = shell.indexOf("</head>");
   let head = shell.slice(0, headEnd);
   for (const rule of STRIP) head = head.replace(rule, "");
-  head = head.replace(/(<meta name="viewport"[^>]*>)/i, `$1\n${block}`);
+  head = head.replace(/(<meta name="viewport"[^>]*>)/i, (m) => `${m}\n${block}`);
   const withBlock = head + shell.slice(headEnd);
   /* data-id: se a cópia for aberta direto (sem ?id=), o js/app.js ainda sabe
-     qual matéria renderizar em vez de cair na primeira do catálogo. */
-  return withBlock.replace(new RegExp(`(<article id="${mountId}"[^>]*?)>`), `$1 data-id="${esc(id)}">`);
+     qual matéria renderizar em vez de cair na primeira do catálogo.
+     Substituição por função: título com "$&" ou "$1" era expandido pelo
+     String.replace e corrompia o head (viewport duplicado, JSON-LD inválido). */
+  return withBlock.replace(new RegExp(`(<article id="${mountId}"[^>]*?)>`), (m, open) => `${open} data-id="${esc(id)}">`);
 }
 
 function articleMeta(a) {

@@ -569,7 +569,10 @@
     if (!m) return null;
     const month = MONTH_NUMBERS[m[1].slice(0, 3)];
     if (!month) return null;
-    return `${m[3]}-${String(month).padStart(2, "0")}-${String(m[2]).padStart(2, "0")}`;
+    const day = Number(m[2]);
+    const dt = new Date(Date.UTC(Number(m[3]), month - 1, day));
+    if (dt.getUTCMonth() !== month - 1 || dt.getUTCDate() !== day) return null;
+    return `${m[3]}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
   }
 
   function setMeta(selector, attrs, content) {

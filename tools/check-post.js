@@ -86,7 +86,17 @@ const hrefs = anchors.flatMap((a) => a.hrefs);
 const REQUIRED = ["id", "title", "dek", "kicker", "category", "subtopic", "author", "date", "readTime", "content", "sources", "evidence_level", "self_check"];
 for (const key of REQUIRED) if (draft[key] === undefined || draft[key] === null || draft[key] === "") reject("schema", `campo obrigatório ausente: ${key}`);
 if (!["culture", "tech", "science"].includes(draft.category)) reject("schema", `category inválida: ${draft.category}`);
-if (!/^[A-Za-z]{3}[a-z]*\.?\s+\d{1,2},\s+\d{4}$/.test(draft.date || "")) reject("schema", `date fora do padrão "Mon DD, YYYY": ${draft.date}`);
+const dateMatch = String(draft.date || "").match(/^([A-Za-z]{3})[a-z]*\.?\s+(\d{1,2}),\s+(\d{4})$/);
+if (!dateMatch) {
+  reject("schema", `date fora do padrão "Mon DD, YYYY": ${draft.date}`);
+} else {
+  /* "Feb 31, 2026" cabia no padrão e virava datePublished inválido no JSON-LD. */
+  const MONTHS_SHORT = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  const month = MONTHS_SHORT.indexOf(dateMatch[1].toUpperCase().slice(0, 3)) + 1;
+  const day = Number(dateMatch[2]);
+  const dt = new Date(Date.UTC(Number(dateMatch[3]), month - 1, day));
+  if (!month || dt.getUTCMonth() !== month - 1 || dt.getUTCDate() !== day) reject("schema", `data impossível no calendário: ${draft.date}`);
+}
 if (!/^\d+\s*MIN READ$/i.test(draft.readTime || "")) reject("schema", `readTime fora do padrão "N MIN READ": ${draft.readTime}`);
 if (!/^[a-z0-9-]+$/.test(draft.id || "")) reject("schema", `id não é kebab-case: ${draft.id}`);
 if (DB.articles.some((a) => a.id === draft.id)) reject("schema", `id já publicado: ${draft.id}`);
@@ -215,7 +225,11 @@ for (const [key, value] of boxUrls) {
   if (!/^https?:\/\//i.test(probe)) reject("sources", `affiliateBox.${key} fora de http(s): ${value.slice(0, 60)}`);
 }
 
-const contentLinks = hrefs.filter((href) => /^https?:/i.test(href));
+/* Link "//host/x" resolve para http(s) na página e não passava pelo teste:
+   normaliza para https antes de conferir se está nas fontes. */
+const contentLinks = hrefs
+  .map((href) => (/^\/\//.test(href) ? `https:${href}` : href))
+  .filter((href) => /^https?:/i.test(href));
 for (const link of contentLinks) {
   const known = sources.some((s) => s.url === link) || /amazon\.|audible\./.test(link) || link.startsWith("https://homeworldpress.com");
   if (!known) reject("sources", `link no texto que não está nas fontes: ${link.slice(0, 90)}`);

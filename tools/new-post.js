@@ -123,9 +123,9 @@ function sourceDate(url, published) {
       ? isoDate(long[3], MONTH_INDEX.indexOf(long[1].toUpperCase()) + 1, long[2])
       : null;
   if (written) return written;
-  /* Data escrita e impossível (31 de fevereiro) não cai no Date.parse, que
-     rolaria para março e daria uma data que o feed nunca disse. */
-  if (!rfc && !long) {
+  /* Data escrita e impossível (31 de fevereiro, ISO 2026-02-31) não cai no
+     Date.parse, que rolaria para outro dia e inventaria uma data. */
+  if (!rfc && !long && !fromFeed) {
     const parsed = raw ? Date.parse(raw) : NaN;
     if (!isNaN(parsed) && parsed <= Date.now()) return new Date(parsed).toISOString().slice(0, 10);
   }

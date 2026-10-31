@@ -141,6 +141,12 @@ if (fs.existsSync(path.join(ROOT, "vercel.json"))) {
     for (const f of shipped.filter((f) => /^[ar]-[a-z0-9-]+\.html$/.test(f))) {
       if (!destinations.has(f)) problems.push(`${f} no pacote mas nenhuma rewrite chega nele`);
     }
+    /* Sem a rewrite genérica (sem `has`), id ausente ou desconhecido cai no
+       404 do Vercel em vez de servir o shell com a página de não encontrada. */
+    for (const [source, destination] of [["/article.html", "/article-shell.html"], ["/review.html", "/review-shell.html"]]) {
+      const hasFallback = (cfg.rewrites || []).some((r) => r.source === source && r.destination === destination && !(r.has && r.has.length));
+      if (!hasFallback) problems.push(`falta a rewrite de fallback ${source} -> ${destination}`);
+    }
   } catch (e) {
     problems.push(`vercel.json nao e JSON valido: ${e.message}`);
   }

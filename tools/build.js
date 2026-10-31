@@ -215,7 +215,12 @@ const readSrc = (file) => {
 };
 const writeSrc = (file, src) => {
   cache.set(file, src);
-  if (!DRY) fs.writeFileSync(path.join(ROOT, file), src);
+  if (DRY) return;
+  /* tmp+rename: um kill no meio do build não deixa feed truncado. */
+  const target = path.join(ROOT, file);
+  const tmp = `${target}.tmp`;
+  fs.writeFileSync(tmp, src);
+  fs.renameSync(tmp, target);
 };
 
 function applySlot(file, slot) {
