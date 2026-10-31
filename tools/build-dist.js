@@ -63,9 +63,14 @@ function walk(relDir, out) {
   }
 }
 
+/* O Vercel serve arquivo estático antes de aplicar rewrite: se article.html
+   existisse no pacote, /article.html?id=x nunca chegaria em a-x.html. O shell
+   viaja com outro nome e as rewrites (tools/meta-pages.js) ligam as URLs. */
+const SHELL_RENAMES = { "article.html": "article-shell.html", "review.html": "review-shell.html" };
+
 function copy(rel) {
   const src = path.join(ROOT, rel);
-  const dst = path.join(DIST, rel);
+  const dst = path.join(DIST, SHELL_RENAMES[rel] || rel);
   fs.mkdirSync(path.dirname(dst), { recursive: true });
   fs.copyFileSync(src, dst);
   return fs.statSync(src).size;
@@ -97,6 +102,10 @@ const problems = [];
 const shipped = listFiles(DIST).map((f) => path.relative(DIST, f).replace(/\\/g, "/"));
 if (!shipped.includes("index.html")) problems.push("dist sem index.html");
 if (!shipped.includes("404.html")) problems.push("dist sem 404.html");
+for (const [orig, renamed] of Object.entries(SHELL_RENAMES)) {
+  if (shipped.includes(orig)) problems.push(`${orig} no pacote: o arquivo estático anula a rewrite para ${renamed}`);
+  if (!shipped.includes(renamed)) problems.push(`dist sem ${renamed} (shell de ${orig})`);
+}
 for (const banned of NEVER) if (shipped.some((f) => f === banned)) problems.push(`arquivo de trabalho vazou no dist: ${banned}`);
 for (const d of NEVER_DIRS) if (shipped.some((f) => f.split("/")[0] === d)) problems.push(`diretório privado vazou no dist: ${d}`);
 for (const f of shipped.filter(isHtml)) {
@@ -149,7 +158,7 @@ if (stubsSkipped.length) console.log(`  ${stubsSkipped.length} stubs do GitHub P
 /* O pacote precisa ser identico no seu PC e no CI da Vercel: se la faltar
    dumarest/ ou sobrar vercel.json, o site publicado nao e o site testado. */
 if (process.env.CI) {
-  const missing = files.filter((f) => !fs.existsSync(path.join(DIST, f)));
+  const missing = files.filter((f) => !fs.existsSync(path.join(DIST, SHELL_RENAMES[f] || f)));
   if (missing.length) {
     console.log(`  ERRO: ${missing.length} arquivos do manifesto nao foram copiados:`);
     for (const m of missing.slice(0, 10)) console.log(`    - ${m}`);

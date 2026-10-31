@@ -179,6 +179,13 @@ for (const a of DB.articles) {
 for (const r of DB.reviews) {
   rules.push({ source: "/review.html", has: [{ type: "query", key: "id", value: r.id }], destination: `/r-${r.id}.html` });
 }
+/* Última regra, sem `has`: id desconhecido ou ausente cai no shell, que mostra
+   a matéria mais nova ou a página de não encontrada.
+   O shell não pode ficar em /article.html: o Vercel dá precedência ao arquivo
+   estático e a rewrite nunca rodaria (por isso o pacote publica
+   article-shell.html — ver SHELL_RENAMES em build-dist.js). */
+rules.push({ source: "/article.html", destination: "/article-shell.html" });
+rules.push({ source: "/review.html", destination: "/review-shell.html" });
 const vercelNext = JSON.stringify({ ...vercel, rewrites: rules }, null, 2) + "\n";
 const vercelCurrent = fs.readFileSync(VERCEL, "utf8");
 const vercelChanged = norm(vercelNext) !== norm(vercelCurrent);
