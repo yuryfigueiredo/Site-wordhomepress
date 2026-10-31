@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-30T21:09:35.343Z",
+  "updated": "2026-10-31T00:43:18.566Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -297,6 +297,44 @@
       },
       "source": "auto",
       "date": "2026-10-30"
+    },
+    "webb-telescope-detects-mars-sized-collisions": {
+      "score": 6.4,
+      "note": "6.4/10 — força em timeliness (fonte mais recente há 0 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 0 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 21% com webb-telescope-mars-sized-collisions"
+        },
+        "craft": {
+          "pts": 1.6,
+          "max": 2,
+          "why": "ritmo e léxico medidos (80%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 0.5,
+          "max": 1,
+          "why": "Webb observations of dust rings around young stars suggest slow accumulation rather than catastrophic single impacts."
+        }
+      },
+      "source": "auto",
+      "date": "2026-10-31"
     }
   }
 }
