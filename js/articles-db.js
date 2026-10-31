@@ -50,7 +50,7 @@ window.HWP_DATABASE = {
   articles: [
 {
       "id": "webb-telescope-detects-mars-sized-collisions",
-      "title": "Webb Detects Dust Halos Indicating MarsSized World Impacts",
+      "title": "Webb Detects Dust Halos Indicating Mars-Sized World Impacts",
       "kicker": "SCIENCE // SPACE",
       "category": "science",
       "subtopic": "space",
@@ -60,7 +60,7 @@ window.HWP_DATABASE = {
       "readTime": "4 MIN READ",
       "isHeroLead": false,
       "image": "images/covers/nasas-webb-finds-signs-of-mars-sized-worlds-smashing-together.svg",
-      "imageAlt": "Placa editorial do pilar science com o título \"Webb Detects Dust Halos Indicating MarsSized World Impacts\".",
+      "imageAlt": "Placa editorial do pilar science com o título Webb Detects Dust Halos Indicating Mars-Sized World Impacts.",
       "bookCover": null,
       "dek": "NASA’s recent observations of distant dust halos raise questions about the frequency of planetary smash‑ups in young systems.",
       "affiliateBox": null,
