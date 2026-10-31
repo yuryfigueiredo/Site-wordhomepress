@@ -33,9 +33,10 @@ const FIX = path.join(DIR, "fix.md");
 
 const falhas = new Map();
 const contar = (html) => String(html || "").replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
-const alvo = (() => {
-  try { return Number(JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")).word_count || 0); } catch { return 0; }
+const BRIEF = (() => {
+  try { return JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")); } catch { return {}; }
 })();
+const alvo = Number(BRIEF.word_count || 0);
 const piso = alvo ? Math.round(alvo * 0.7) : 0;
 /* Plano B do comprimento: se nenhum modelo bate o piso, fica gravado o mais
    longo, para a reescrita expandir em vez de começar do zero outra vez. */
@@ -47,11 +48,15 @@ function gravar(draft, k) {
      matéria ia ao ar sem nenhuma citação. A fonte do brief é verificada, então
      ela entra como fonte mínima. */
   if (!Array.isArray(draft.sources) || !draft.sources.length) {
-    try {
-      const bs = JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")).sources || [];
-      if (bs.length) draft.sources = bs.map((s) => ({ ...s, claim: s.claim || "pauta original da rodada" }));
-    } catch {}
+    const bs = BRIEF.sources || [];
+    if (bs.length) draft.sources = bs.map((s) => ({ ...s, claim: s.claim || "pauta original da rodada" }));
   }
+  /* Data e tempo de leitura não são do modelo: a data é o dia em que a peça vai
+     ao ar (o brief já traz formatada) e o tempo é o texto contado. Em 2026-10-31
+     o escritor devolveu "Wed Oct 07, 2026" — data da fonte com o dia da semana
+     na frente — e o turno perdeu três reescritas nesse campo. */
+  if (BRIEF.data_publicacao) draft.date = BRIEF.data_publicacao;
+  draft.readTime = `${Math.max(1, Math.round(contar(draft.content) / 200))} MIN READ`;
   /* A reescrita não deve perder a capa: o modelo nunca vê o arquivo gerado
      por make-cover.js e devolve image null. */
   if (!draft.image) {

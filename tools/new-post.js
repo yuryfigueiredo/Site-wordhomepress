@@ -10,6 +10,7 @@ const fs = require("fs");
 const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
+const { isoDeTexto, isoValida } = require("./lib/feeddate");
 const ARGS = process.argv.slice(2);
 const flag = (name) => {
   const i = ARGS.indexOf(`--${name}`);
@@ -92,52 +93,31 @@ const slug = flag("slug") || slugify(lead.title);
 
 /* A data da fonte vinha de new Date(): todo rascunho nascia "de hoje", a nota
    de atualidade dava 1,5/1,5 sempre e o texto podia datar o fato no dia errado.
-   Vale a data do feed; sem ela, a que estiver no caminho da URL; só então hoje. */
+   Vale a data do feed (lida por lib/feeddate, o mesmo parser que decide a idade
+   da pauta no pick-lead); sem ela, a que estiver no caminho da URL; só então
+   hoje. */
 function sourceDate(url, published) {
-  const raw = String(published || "").trim();
   const today = new Date().toISOString().slice(0, 10);
-  const MONTH_INDEX = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-  /* Data de calendário válida e não futura; 31 de fevereiro e "2026-11-05"
-     (fonte no futuro) passavam e derrubavam toda reescrita no check-post. */
-  const isoDate = (y, m, d) => {
-    y = Number(y); m = Number(m); d = Number(d);
-    if (y < 2000 || y > 2100 || m < 1 || m > 12 || d < 1 || d > 31) return null;
-    const dt = new Date(Date.UTC(y, m - 1, d));
-    if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== m - 1 || dt.getUTCDate() !== d) return null;
-    const iso = dt.toISOString().slice(0, 10);
-    return iso <= today ? iso : null;
-  };
-  const fromFeed = raw.match(/\d{4}-\d{2}-\d{2}/);
-  if (fromFeed) {
-    const iso = isoDate(fromFeed[0].slice(0, 4), fromFeed[0].slice(5, 7), fromFeed[0].slice(8, 10));
-    if (iso) return iso;
-  }
-  /* Feeds mandam RFC 2822 ("Wed, 28 Oct 2026 23:06:41 EDT") ou "October 9,
-     2026 11:06 PM": Date.parse converte para UTC e 23h em EDT vira o dia
-     seguinte, então vale o dia escrito no texto. */
-  const rfc = raw.match(/\b(\d{1,2})[\s-]+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?[\s-]+(\d{4})\b/i);
-  const long = raw.match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+(\d{1,2}),?\s+(\d{4})\b/i);
-  const written = rfc
-    ? isoDate(rfc[3], MONTH_INDEX.indexOf(rfc[2].toUpperCase()) + 1, rfc[1])
-    : long
-      ? isoDate(long[3], MONTH_INDEX.indexOf(long[1].toUpperCase()) + 1, long[2])
-      : null;
-  if (written) return written;
-  /* Data escrita e impossível (31 de fevereiro, ISO 2026-02-31) não cai no
-     Date.parse, que rolaria para outro dia e inventaria uma data. */
-  if (!rfc && !long && !fromFeed) {
-    const parsed = raw ? Date.parse(raw) : NaN;
-    if (!isNaN(parsed) && parsed <= Date.now()) return new Date(parsed).toISOString().slice(0, 10);
-  }
+  const doFeed = isoDeTexto(published);
+  if (doFeed) return doFeed;
   /* Duas formas de data no caminho: /YYYY/MM/DD/... (a mais comum) e o bloco
      compacto /YYYY/MM/DDHHMMSS.ext de alguns portais. */
   const pathText = String(url || "");
   const fromPath = pathText.match(/\/(\d{4})\/(\d{2})\/(\d{2})(?:\/|$)/);
-  if (fromPath) return isoDate(fromPath[1], fromPath[2], fromPath[3]) || today;
+  if (fromPath) return isoValida(fromPath[1], fromPath[2], fromPath[3]) || today;
   const fromUrl = pathText.match(/\/(\d{4})\/(\d{2})\/(\d{2})(\d{2})\d{4}\.[a-z]+/i);
-  if (fromUrl) return isoDate(fromUrl[1], fromUrl[2], fromUrl[3]) || today;
+  if (fromUrl) return isoValida(fromUrl[1], fromUrl[2], fromUrl[3]) || today;
   return today;
 }
+
+/* A data da matéria é a do dia em que ela vai ao ar, medida pelo robô — não um
+   chute do modelo. Em 2026-10-31 o escritor devolveu "Wed Oct 07, 2026" (data
+   da fonte com dia da semana na frente) e depois "Mon 07, 2026"; o portão mecânico
+   reprovou as duas e a rodada queimou três reescritas em cima de um campo que
+   nunca deveria ter sido dele. */
+const HOPE_ISO = new Date().toISOString().slice(0, 10);
+const [HOANO, HOMES, HODIA] = HOPE_ISO.split("-").map(Number);
+const DATA_PUBLICACAO = `${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][HOMES - 1]} ${Number(HODIA)}, ${HOANO}`;
 
 const brief = {
   pillar: lead.pillar,
@@ -151,7 +131,8 @@ const brief = {
   word_count: Number(flag("words") || WORD_COUNT[lead.pillar] || 1200),
   must_include: [],
   must_avoid: ["qualquer número, preço, data ou citação que não venha das fontes listadas"],
-  meta: { lead_source: lead.source, lead_score: lead.score, subtopic, keywords: lead.keywords },
+  data_publicacao: DATA_PUBLICACAO,
+  meta: { lead_source: lead.source, lead_score: lead.score, lead_url: lead.url, subtopic, keywords: lead.keywords },
 };
 
 const lastRuns = JSON.parse(fs.readFileSync(path.join(ROOT, "voice", "state", "last_runs.json"), "utf8"));
@@ -174,6 +155,7 @@ const prompt = [
   "- Estrutura do content: 6 a 9 seções <h2>, cada uma com 2 a 4 parágrafos de 50 a 110 palavras. Se o total não bater o piso, acrescente uma seção; não encurte as existentes.",
   "- Inclua exatamente um parágrafo de uma frase (1 a 7 palavras) e pelo menos um parágrafo com 4 ou mais frases.",
   "- Responda SOMENTE com o JSON do contrato acima, sem cercas de código.",
+  `- Campo "date": copie exatamente "${brief.data_publicacao}". Não é a data da fonte e não é para inventar.`,
   "- Preencha self_check com valores medidos no seu próprio texto, não estimados.",
   "- Se as fontes não sustentam um número, escreva sem o número e marque evidence_level corretamente.",
 ].join("\n");
