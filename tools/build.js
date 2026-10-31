@@ -38,7 +38,12 @@ const toTime = (s) => {
 const esc = (s) => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const href = (id) => `article.html?id=${encodeURIComponent(id)}`;
 const thumb = (a) => a.bookCover || a.image;
-const shop = (a) => (a.affiliateBox && a.affiliateBox.amazonUrl) || null;
+/* O box vem do rascunho e vira href em página estática, onde não há app.js
+   para conferir o esquema: javascript:/data: aqui seria XSS armazenado. */
+const shop = (a) => {
+  const url = a.affiliateBox && a.affiliateBox.amazonUrl;
+  return typeof url === "string" && /^https?:\/\//i.test(url) ? url : null;
+};
 const minutes = (a) => String(a.readTime || "").replace(/\s*MIN(UTE)?S?\s*READ/i, "").trim() || "5";
 
 /* ── Templates: mesmos classes e estrutura dos cards escritos à mão ───── */
@@ -56,7 +61,7 @@ const TEMPLATES = {
             </a>
 
             <div>
-              <span class="kicker kicker--${a.category}">${esc(a.kicker)}</span>
+              <span class="kicker kicker--${esc(a.category)}">${esc(a.kicker)}</span>
               <h1 class="hero-lead__title">
                 <a href="${href(a.id)}">
                   ${esc(a.title)}
@@ -88,7 +93,7 @@ const TEMPLATES = {
 
   "latest-item": (a) => `              <article class="latest-item">
                 <div>
-                  <span class="kicker kicker--${a.category}">${esc(a.kicker)}</span>
+                  <span class="kicker kicker--${esc(a.category)}">${esc(a.kicker)}</span>
                   <h3 class="latest-item__title">
                     <a href="${href(a.id)}">${esc(a.title)}</a>
                   </h3>
@@ -115,7 +120,7 @@ ${
                   : ""
               }
               <div class="article-card__body">
-                <span class="kicker kicker--${a.category}">${esc(a.kicker)}</span>
+                <span class="kicker kicker--${esc(a.category)}">${esc(a.kicker)}</span>
                 <h3 class="article-card__title">
                   <a href="${href(a.id)}">
                     ${esc(a.title)}
@@ -147,7 +152,7 @@ ${
                   : ""
               }
                 <div>
-                  <span class="kicker kicker--${a.category}">${esc(a.kicker)}</span>
+                  <span class="kicker kicker--${esc(a.category)}">${esc(a.kicker)}</span>
                   <h3 class="compact-card__title">
                     <a href="${href(a.id)}">
                       ${esc(a.title)}
@@ -167,7 +172,7 @@ ${
               : ""
           }
             <div>
-              <span class="kicker kicker--${a.category}">${esc(a.kicker)}</span>
+              <span class="kicker kicker--${esc(a.category)}">${esc(a.kicker)}</span>
               <h3 class="cat-feed-item__title">
                 <a href="${href(a.id)}">${esc(a.title)}</a>
               </h3>

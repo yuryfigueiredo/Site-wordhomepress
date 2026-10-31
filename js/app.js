@@ -30,19 +30,34 @@
     });
   }
 
+  const asArray = (x) => (Array.isArray(x) ? x : []);
+
   /* O corpo sai do pipeline como HTML, e o portão do redator é a única defesa
-     lá atrás. Aqui o que não é texto editorial é retirado antes de entrar no
-     DOM: um <img onerror> vindo do catálogo executa na hora da montagem. */
-  const DROP_ELEMENTS = "script,style,iframe,object,embed,form,img,svg,math,link,meta,base";
+     lá atrás. Aqui o HTML é reconstruído a partir do que pode existir — uma
+     lista de proibidos em cima de DOMParser deixa passar <template>/<noscript>
+     e variantes de mXSS, e um <img onerror> do catálogo executa na montagem. */
+  const ALLOWED_ELEMENTS = new Set(["P", "H2", "H3", "H4", "UL", "OL", "LI", "BLOCKQUOTE", "STRONG", "EM", "B", "I", "A", "BR", "HR", "CODE", "PRE"]);
+  const DROP_ELEMENTS = new Set(["SCRIPT", "STYLE", "IFRAME", "OBJECT", "EMBED", "FORM", "IMG", "SVG", "MATH", "LINK", "META", "BASE", "TEMPLATE", "NOSCRIPT", "FRAME", "FRAMESET", "APPLET", "PARAM", "MARQUEE", "AUDIO", "VIDEO", "SOURCE", "TRACK", "CANVAS", "INPUT", "BUTTON", "SELECT", "TEXTAREA"]);
+  const SAFE_ATTRIBUTES = new Set(["href", "title", "rel", "target"]);
   function sanitizeRichHtml(html) {
     const doc = new DOMParser().parseFromString(`<div>${String(html || "")}</div>`, "text/html");
-    doc.body.querySelectorAll(DROP_ELEMENTS).forEach((el) => el.remove());
-    doc.body.querySelectorAll("*").forEach((el) => {
-      [...el.attributes].forEach((attr) => {
-        const name = attr.name.toLowerCase();
-        if (name.startsWith("on") || name === "srcdoc") el.removeAttribute(attr.name);
-      });
-    });
+    const clean = (node) => {
+      for (const child of [...node.children]) {
+        if (DROP_ELEMENTS.has(child.tagName)) {
+          child.remove();
+          continue;
+        }
+        clean(child);
+        if (!ALLOWED_ELEMENTS.has(child.tagName)) {
+          child.replaceWith(...child.childNodes);
+          continue;
+        }
+        [...child.attributes].forEach((attr) => {
+          if (!SAFE_ATTRIBUTES.has(attr.name.toLowerCase())) child.removeAttribute(attr.name);
+        });
+      }
+    };
+    clean(doc.body);
     return doc.body.innerHTML;
   }
 
@@ -265,15 +280,16 @@
     /* O breadcrumb é estático no HTML; sem isto toda matéria de ciência
        aparecia como "Culture / Buyer's Guides". */
     const SUBTOPIC_LABEL = { authors: "Authors", news: "News", comics: "Comics", guides: "Guides", concepts: "Concepts", space: "Space" };
+    const category = String(article.category || "");
     const crumbCat = document.getElementById("crumbCategory");
     if (crumbCat) {
-      crumbCat.textContent = article.category.charAt(0).toUpperCase() + article.category.slice(1);
-      crumbCat.setAttribute("href", `${article.category}.html`);
+      crumbCat.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+      crumbCat.setAttribute("href", `${category}.html`);
     }
     const crumbSub = document.getElementById("crumbSubtopic");
     if (crumbSub) {
       crumbSub.textContent = SUBTOPIC_LABEL[article.subtopic] || "Articles";
-      crumbSub.setAttribute("href", `${article.category}.html`);
+      crumbSub.setAttribute("href", `${category}.html`);
     }
 
     // Highlight active category link in the top bar
@@ -291,8 +307,8 @@
        fica em branco, porque o acesso a box.pros lançava antes do innerHTML. */
     let verdictHtml = "";
     if (box) {
-      const prosHtml = (box.pros || []).map((p) => `<li>✓ ${escapeHtml(p)}</li>`).join("");
-      const consHtml = (box.cons || []).map((c) => `<li>✕ ${escapeHtml(c)}</li>`).join("");
+      const prosHtml = asArray(box.pros).map((p) => `<li>✓ ${escapeHtml(p)}</li>`).join("");
+      const consHtml = asArray(box.cons).map((c) => `<li>✕ ${escapeHtml(c)}</li>`).join("");
       const verdictImg = article.bookCover || article.image;
       const verdictImgFit = article.bookCover ? "contain" : "cover";
       const isExternalSecondary = /^https?:\/\//i.test(box.audibleUrl || "");
@@ -401,10 +417,10 @@
     const desc = document.querySelector('meta[name="description"]');
     if (desc && review.summary) desc.setAttribute("content", review.summary);
 
-    const prosHtml = (review.pros || []).map((p) => `<li>✓ ${escapeHtml(p)}</li>`).join("");
-    const consHtml = (review.cons || []).map((c) => `<li>✕ ${escapeHtml(c)}</li>`).join("");
+    const prosHtml = asArray(review.pros).map((p) => `<li>✓ ${escapeHtml(p)}</li>`).join("");
+    const consHtml = asArray(review.cons).map((c) => `<li>✕ ${escapeHtml(c)}</li>`).join("");
 
-    const matrixRowsHtml = (review.matrixRows || [])
+    const matrixRowsHtml = asArray(review.matrixRows)
       .map(
         (row) => `
       <tr>
@@ -418,7 +434,7 @@
       )
       .join("");
 
-    const secondaryPicksHtml = (review.secondaryPicks || [])
+    const secondaryPicksHtml = asArray(review.secondaryPicks)
       .map(
         (pick) => `
       <div class="verdict-box">

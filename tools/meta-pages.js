@@ -84,7 +84,7 @@ function renderPage(shell, block, mountId, id) {
   const withBlock = head + shell.slice(headEnd);
   /* data-id: se a cópia for aberta direto (sem ?id=), o js/app.js ainda sabe
      qual matéria renderizar em vez de cair na primeira do catálogo. */
-  return withBlock.replace(new RegExp(`(<article id="${mountId}"[^>]*?)>`), `$1 data-id="${id}">`);
+  return withBlock.replace(new RegExp(`(<article id="${mountId}"[^>]*?)>`), `$1 data-id="${esc(id)}">`);
 }
 
 function articleMeta(a) {

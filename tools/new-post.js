@@ -95,36 +95,47 @@ const slug = flag("slug") || slugify(lead.title);
    Vale a data do feed; sem ela, a que estiver no caminho da URL; só então hoje. */
 function sourceDate(url, published) {
   const raw = String(published || "").trim();
-  const fromFeed = raw.match(/\d{4}-\d{2}-\d{2}/);
-  if (fromFeed) return fromFeed[0];
   const today = new Date().toISOString().slice(0, 10);
-  /* Feeds mandam RFC 2822 ("Wed, 28 Oct 2026 23:06:41 EDT"). Date.parse
-     converte para UTC e 23h em EDT vira o dia seguinte: vale o dia escrito. */
-  const rfc = raw.match(/\b(\d{1,2})[\s-]+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[\s-]+(\d{4})\b/i);
-  if (rfc) {
-    const month = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"].indexOf(rfc[2].toUpperCase()) + 1;
-    const day = Number(rfc[1]);
-    if (month && day >= 1 && day <= 31) {
-      const iso = `${rfc[3]}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-      if (iso <= today) return iso;
-    }
+  const MONTH_INDEX = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  /* Data de calendário válida e não futura; 31 de fevereiro e "2026-11-05"
+     (fonte no futuro) passavam e derrubavam toda reescrita no check-post. */
+  const isoDate = (y, m, d) => {
+    y = Number(y); m = Number(m); d = Number(d);
+    if (y < 2000 || y > 2100 || m < 1 || m > 12 || d < 1 || d > 31) return null;
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== m - 1 || dt.getUTCDate() !== d) return null;
+    const iso = dt.toISOString().slice(0, 10);
+    return iso <= today ? iso : null;
+  };
+  const fromFeed = raw.match(/\d{4}-\d{2}-\d{2}/);
+  if (fromFeed) {
+    const iso = isoDate(fromFeed[0].slice(0, 4), fromFeed[0].slice(5, 7), fromFeed[0].slice(8, 10));
+    if (iso) return iso;
   }
-  /* Outros formatos (ISO completo, "October 9, 2026") seguem pelo Date.parse. */
-  const parsed = raw ? Date.parse(raw) : NaN;
-  if (!isNaN(parsed) && parsed <= Date.now()) return new Date(parsed).toISOString().slice(0, 10);
+  /* Feeds mandam RFC 2822 ("Wed, 28 Oct 2026 23:06:41 EDT") ou "October 9,
+     2026 11:06 PM": Date.parse converte para UTC e 23h em EDT vira o dia
+     seguinte, então vale o dia escrito no texto. */
+  const rfc = raw.match(/\b(\d{1,2})[\s-]+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?[\s-]+(\d{4})\b/i);
+  const long = raw.match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+(\d{1,2}),?\s+(\d{4})\b/i);
+  const written = rfc
+    ? isoDate(rfc[3], MONTH_INDEX.indexOf(rfc[2].toUpperCase()) + 1, rfc[1])
+    : long
+      ? isoDate(long[3], MONTH_INDEX.indexOf(long[1].toUpperCase()) + 1, long[2])
+      : null;
+  if (written) return written;
+  /* Data escrita e impossível (31 de fevereiro) não cai no Date.parse, que
+     rolaria para março e daria uma data que o feed nunca disse. */
+  if (!rfc && !long) {
+    const parsed = raw ? Date.parse(raw) : NaN;
+    if (!isNaN(parsed) && parsed <= Date.now()) return new Date(parsed).toISOString().slice(0, 10);
+  }
   /* Duas formas de data no caminho: /YYYY/MM/DD/... (a mais comum) e o bloco
      compacto /YYYY/MM/DDHHMMSS.ext de alguns portais. */
   const pathText = String(url || "");
-  const urlDate = (y, m, d) => {
-    const dt = new Date(Date.UTC(Number(y), Number(m) - 1, Number(d)));
-    if (Number(m) < 1 || Number(m) > 12 || Number(d) < 1 || Number(d) > 31) return null;
-    if (isNaN(dt) || dt > new Date()) return null;
-    return dt.toISOString().slice(0, 10);
-  };
   const fromPath = pathText.match(/\/(\d{4})\/(\d{2})\/(\d{2})(?:\/|$)/);
-  if (fromPath) return urlDate(fromPath[1], fromPath[2], fromPath[3]) || today;
+  if (fromPath) return isoDate(fromPath[1], fromPath[2], fromPath[3]) || today;
   const fromUrl = pathText.match(/\/(\d{4})\/(\d{2})\/(\d{2})(\d{2})\d{4}\.[a-z]+/i);
-  if (fromUrl) return urlDate(fromUrl[1], fromUrl[2], fromUrl[3]) || today;
+  if (fromUrl) return isoDate(fromUrl[1], fromUrl[2], fromUrl[3]) || today;
   return today;
 }
 

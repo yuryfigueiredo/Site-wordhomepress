@@ -61,6 +61,27 @@ const text = stripTags(draft.content || draft.prose);
 const paras = paragraphs(draft.content || draft.prose);
 const sents = sentences(text);
 
+/* Links do corpo, lidos da tag inteira e não por regex de texto: o valor de
+   um atributo pode conter ">", e aí <a title="x>y" href="..."> escondia o
+   href. Decodificar entidades e tirar controles antes de olhar o esquema
+   fecha "jav&#x61;script:" e "java&Tab;script:". */
+const A_TAG_RE = /<a\b((?:[^>"']|"[^"]*"|'[^']*')*)>/gi;
+const ATTR_RE = /[\/\s]*([a-z][a-z0-9:-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>`]+))/gi;
+const NAMED_ENTITIES = { tab: "\t", newline: "\n", colon: ":", quest: "?", amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" };
+const decodeEntities = (s) =>
+  String(s)
+    .replace(/&#x([0-9a-f]+);?/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);?/g, (_, dec) => String.fromCodePoint(Number(dec)))
+    .replace(/&(tab|newline|colon|quest|amp|lt|gt|quot|apos);/gi, (_, name) => NAMED_ENTITIES[name.toLowerCase()]);
+const anchors = [...String(draft.content || "").matchAll(A_TAG_RE)].map((tag) => {
+  const attrs = [...tag[1].matchAll(ATTR_RE)].map((attr) => ({
+    name: attr[1].toLowerCase(),
+    value: decodeEntities(attr[2] ?? attr[3] ?? attr[4] ?? "").replace(/[\u0000-\u0020\u007f]/g, ""),
+  }));
+  return { hasHref: attrs.some((a) => a.name === "href"), hrefs: attrs.filter((a) => a.name === "href").map((a) => a.value) };
+});
+const hrefs = anchors.flatMap((a) => a.hrefs);
+
 /* ── 1. schema ────────────────────────────────────────────────────────── */
 const REQUIRED = ["id", "title", "dek", "kicker", "category", "subtopic", "author", "date", "readTime", "content", "sources", "evidence_level", "self_check"];
 for (const key of REQUIRED) if (draft[key] === undefined || draft[key] === null || draft[key] === "") reject("schema", `campo obrigatório ausente: ${key}`);
@@ -75,7 +96,7 @@ const foreignTags = [...String(draft.content || "").matchAll(/<\/?([a-zA-Z][a-zA
   .map((m) => m[1].toLowerCase())
   .filter((t) => !ALLOWED_TAGS.includes(t));
 if (foreignTags.length) reject("content-tags", `tags fora do permitido (${ALLOWED_TAGS.join(", ")}): ${[...new Set(foreignTags)].join(", ")}`);
-if (/<a\b(?![^>]*href)/i.test(draft.content || "")) reject("content-tags", "<a> sem href");
+if (anchors.some((a) => !a.hasHref)) reject("content-tags", "<a> sem href");
 if (/style\s*=|<script|on\w+\s*=/i.test(draft.content || "")) reject("content-tags", "atributo de estilo/script inline no content");
 
 /* ── 3. vocabulário banido (lista única em WRITER_PROMPT.md) ──────────── */
@@ -180,21 +201,19 @@ if (draft.evidence_level === "analysis_only") {
   if (numbers.length) reject("sources", `analysis_only mas o texto traz números específicos: ${numbers.slice(0, 5).join(", ")}`);
 }
 /* O corpo é inserido como HTML na página: um href javascript:/data: escrito
-   pelo modelo viraria link executável, e o portão abaixo só olhava http(s).
-   href sem aspas, com entidade (&colon;, &#9;) ou tab no esquema também vira
-   link no navegador: extrai os três formatos, decodifica e tira controles. */
-const HREF_RE = /<a\b[^>]*?\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+))/gi;
-const NAMED_ENTITIES = { tab: "\t", newline: "\n", colon: ":", quest: "?", amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" };
-const decodeEntities = (s) =>
-  String(s)
-    .replace(/&#x([0-9a-f]+);?/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
-    .replace(/&#(\d+);?/g, (_, dec) => String.fromCodePoint(Number(dec)))
-    .replace(/&(tab|newline|colon|quest|amp|lt|gt|quot|apos);/gi, (_, name) => NAMED_ENTITIES[name.toLowerCase()]);
-const hrefs = [...String(draft.content || "").matchAll(HREF_RE)]
-  .map((m) => decodeEntities(m[1] ?? m[2] ?? m[3] ?? ""))
-  .map((href) => href.replace(/[\u0000-\u0020\u007f]/g, ""));
+   pelo modelo viraria link executável. Os links já vêm lidos da tag em
+   `anchors` (aspas respeitadas, entidades decodificadas, controles fora). */
 const unsafeHref = hrefs.filter((href) => /^(?:javascript|data|vbscript):/i.test(href));
 if (unsafeHref.length) reject("sources", `link com esquema não permitido no texto: ${unsafeHref[0].slice(0, 60)}`);
+
+/* O box de afiliado não passa por app.js nas páginas de feed: o valor vira
+   href estático, então só http(s) pode entrar. */
+const boxUrls = Object.entries(draft.affiliateBox || {})
+  .filter(([key, value]) => /url$/i.test(key) && typeof value === "string" && value.trim() !== "");
+for (const [key, value] of boxUrls) {
+  const probe = decodeEntities(value).replace(/[\u0000-\u0020\u007f]/g, "");
+  if (!/^https?:\/\//i.test(probe)) reject("sources", `affiliateBox.${key} fora de http(s): ${value.slice(0, 60)}`);
+}
 
 const contentLinks = hrefs.filter((href) => /^https?:/i.test(href));
 for (const link of contentLinks) {
