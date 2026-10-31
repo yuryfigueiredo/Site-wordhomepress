@@ -27,9 +27,18 @@
       </div>`;
   }
 
+  /* Safari privado, Chrome com storage bloqueado e iframe de terceiro lançam
+     ao tocar em localStorage. Sem a guarda, o erro matava o arquivo inteiro e
+     a página do artigo ficava em branco. */
+  const store = {
+    get(key) { try { return localStorage.getItem(key); } catch { return null; } },
+    set(key, value) { try { localStorage.setItem(key, value); } catch {} },
+  };
+
   // 1. Theme Persistence (Editorial Paper vs. WIRED Dark Mode)
   function initTheme() {
-    const saved = localStorage.getItem("hwp_theme") || "light";
+    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const saved = store.get("hwp_theme") || (prefersDark ? "dark" : "light");
     document.documentElement.setAttribute("data-theme", saved);
     updateThemeButtons(saved);
 
@@ -38,7 +47,7 @@
         const current = document.documentElement.getAttribute("data-theme") || "light";
         const next = current === "dark" ? "light" : "dark";
         document.documentElement.setAttribute("data-theme", next);
-        localStorage.setItem("hwp_theme", next);
+        store.set("hwp_theme", next);
         updateThemeButtons(next);
       });
     });
@@ -241,11 +250,15 @@
        fica em branco, porque o acesso a box.pros lançava antes do innerHTML. */
     let verdictHtml = "";
     if (box) {
-      const prosHtml = (box.pros || []).map((p) => `<li>✓ ${p}</li>`).join("");
-      const consHtml = (box.cons || []).map((c) => `<li>✕ ${c}</li>`).join("");
+      const prosHtml = (box.pros || []).map((p) => `<li>✓ ${escapeHtml(p)}</li>`).join("");
+      const consHtml = (box.cons || []).map((c) => `<li>✕ ${escapeHtml(c)}</li>`).join("");
       const verdictImg = article.bookCover || article.image;
       const verdictImgFit = article.bookCover ? "contain" : "cover";
       const isExternalSecondary = /^https?:\/\//i.test(box.audibleUrl || "");
+      /* Nem todo box aponta para a Amazon: um deles manda para a própria
+         resenha. Link interno com target/rel de afiliado e rótulo "Amazon"
+         era uma promessa falsa. */
+      const isExternalPrimary = /^https?:\/\//i.test(box.amazonUrl || "");
       verdictHtml = `
       <!-- High-Converting WIRED + Wirecutter Affiliate Verdict Box -->
       <div class="verdict-box">
@@ -254,23 +267,23 @@
           <span>SCORE: ${box.score}</span>
         </div>
         <div class="verdict-box__inner">
-          <img src="${verdictImg}" alt="${box.title}" style="width:100%;height:165px;object-fit:${verdictImgFit};background:#0d0d0d;border:var(--border-hairline);">
+          <img src="${escapeHtml(verdictImg || "")}" alt="${escapeHtml(box.title || article.title)}" style="width:100%;height:165px;object-fit:${verdictImgFit};background:#0d0d0d;border:var(--border-hairline);">
           <div>
-            <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;margin-bottom:0.35rem;">${box.title}</h2>
-            <p style="font-family:var(--font-mono);font-size:0.8rem;color:var(--text-muted);margin-bottom:0.85rem;">ESTIMATED PRICE: <strong>${box.price}</strong></p>
+            <h2 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;margin-bottom:0.35rem;">${escapeHtml(box.title)}</h2>
+            <p style="font-family:var(--font-mono);font-size:0.8rem;color:var(--text-muted);margin-bottom:0.85rem;">ESTIMATED PRICE: <strong>${escapeHtml(box.price)}</strong></p>
             <div style="display:flex;flex-wrap:wrap;gap:0.65rem;">
-              <a href="${box.amazonUrl}" target="_blank" rel="nofollow sponsored noopener" class="btn-amazon" style="width:auto;padding:0.65rem 1.25rem;">CHECK PRICE ON AMAZON →</a>
-              <a href="${box.audibleUrl}" ${isExternalSecondary ? 'target="_blank" rel="nofollow sponsored noopener"' : ""} class="btn-secondary-dark" style="background:#111;color:#fff;padding:0.65rem 1.1rem;">TRY ON AUDIBLE / MORE →</a>
+              <a href="${escapeHtml(box.amazonUrl || "")}" ${isExternalPrimary ? 'target="_blank" rel="nofollow sponsored noopener"' : ""} class="btn-amazon" style="width:auto;padding:0.65rem 1.25rem;">${isExternalPrimary ? "CHECK PRICE ON AMAZON →" : "SEE OUR TESTED GUIDE →"}</a>
+              <a href="${escapeHtml(box.audibleUrl || "")}" ${isExternalSecondary ? 'target="_blank" rel="nofollow sponsored noopener"' : ""} class="btn-secondary-dark" style="background:#111;color:#fff;padding:0.65rem 1.1rem;">TRY ON AUDIBLE / MORE →</a>
             </div>
           </div>
         </div>
         <div class="verdict-box__pros-cons" style="padding:0 1.5rem 1.25rem;">
           <div>
-            <strong style="font-family:var(--font-mono);font-size:0.74rem;color:#1B7F37;text-transform:uppercase;">WHY WE RECOMMEND IT</strong>
+            <strong class="verdict-label verdict-label--pros">WHY WE RECOMMEND IT</strong>
             <ul style="list-style:none;margin-top:0.4rem;display:flex;flex-direction:column;gap:0.3rem;">${prosHtml}</ul>
           </div>
           <div>
-            <strong style="font-family:var(--font-mono);font-size:0.74rem;color:#C92A2A;text-transform:uppercase;">KEEP IN MIND</strong>
+            <strong class="verdict-label verdict-label--cons">KEEP IN MIND</strong>
             <ul style="list-style:none;margin-top:0.4rem;display:flex;flex-direction:column;gap:0.3rem;">${consHtml}</ul>
           </div>
         </div>
@@ -312,7 +325,7 @@
       </div>
 
       ${article.image ? `<figure style="margin-bottom:2rem;border:var(--border-hairline);">
-        <img src="${article.image}" alt="${article.imageAlt || article.title}" fetchpriority="high" width="900" height="500" style="width:100%;max-height:480px;object-fit:cover;">
+        <img src="${escapeHtml(article.image)}" alt="${escapeHtml(article.imageAlt || article.title)}" fetchpriority="high" width="900" height="500" style="width:100%;max-height:480px;object-fit:cover;">
       </figure>` : ""}
 
       ${verdictHtml}
@@ -431,11 +444,11 @@
         </div>
         <div class="verdict-box__pros-cons" id="reviewLeadProsCons" style="padding:0 1.5rem 1.25rem;">
           <div>
-            <strong style="font-family:var(--font-mono);font-size:0.74rem;color:#1B7F37;">PROS</strong>
+            <strong class="verdict-label verdict-label--pros">PROS</strong>
             <ul style="list-style:none;margin-top:0.35rem;display:flex;flex-direction:column;gap:0.25rem;">${prosHtml}</ul>
           </div>
           <div>
-            <strong style="font-family:var(--font-mono);font-size:0.74rem;color:#C92A2A;">CONS</strong>
+            <strong class="verdict-label verdict-label--cons">CONS</strong>
             <ul style="list-style:none;margin-top:0.35rem;display:flex;flex-direction:column;gap:0.25rem;">${consHtml}</ul>
           </div>
         </div>
@@ -481,6 +494,10 @@
   // 6. Head metadata for the two dynamic templates + aria-current on nav
   const SITE_ORIGIN = "https://homeworldpress.com";
   const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/images/og-homeworldpress.png`;
+
+  /* og:image e JSON-LD exigem URL absoluta; o catálogo guarda caminho
+     relativo ("images/covers/x.svg") e o crawler descarta o relativo. */
+  const absoluteUrl = (u) => (u ? (/^https?:\/\//i.test(u) ? u : `${SITE_ORIGIN}/${String(u).replace(/^\/+/, "")}`) : DEFAULT_OG_IMAGE);
   const MONTH_NUMBERS = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
 
   // Schema dates must be real calendar dates; display strings like "UPDATED OCTOBER 2026" are not.
@@ -572,7 +589,7 @@
         title: `${article.title} | Homeworld Press`,
         description: article.dek,
         url,
-        image: article.image || DEFAULT_OG_IMAGE,
+        image: absoluteUrl(article.image),
         type: "article",
       });
       writeJsonLd({
@@ -580,7 +597,7 @@
         "@type": "NewsArticle",
         headline: article.title,
         description: article.dek,
-        image: article.image || DEFAULT_OG_IMAGE,
+        image: absoluteUrl(article.image),
         ...(isoDate(article.date) ? { datePublished: isoDate(article.date) } : {}),
         articleSection: article.kicker,
         author: { "@type": "Person", name: article.author },
@@ -607,18 +624,28 @@
       title: `${review.title} | Homeworld Press Hardware Lab`,
       description: review.summary,
       url,
-      image: review.image || DEFAULT_OG_IMAGE,
+      image: absoluteUrl(review.image),
       type: "article",
     });
+    /* Product+Review, não Article: é o que dá estrela e faixa de preço no
+       Google. O shell HTML traz um Product de exemplo; sem reescrever, ele
+       ficaria descrevendo o produto errado em toda resenha. */
+    const rating = String(review.score || "").split("/")[0].trim();
     writeJsonLd({
       "@context": "https://schema.org",
-      "@type": "Article",
-      headline: review.title,
+      "@type": "Product",
+      name: review.topPickName || review.title,
       description: review.summary,
-      image: review.image || DEFAULT_OG_IMAGE,
-      ...(isoDate(review.updated) ? { dateModified: isoDate(review.updated) } : {}),
-      author: { "@type": "Organization", name: "Homeworld Press Lab" },
-      publisher: { "@type": "Organization", name: "Homeworld Press", url: SITE_ORIGIN },
+      image: absoluteUrl(review.image),
+      review: {
+        "@type": "Review",
+        name: review.title,
+        reviewBody: review.summary,
+        ...(rating ? { reviewRating: { "@type": "Rating", ratingValue: rating, bestRating: "10", worstRating: "0" } } : {}),
+        ...(isoDate(review.updated) ? { datePublished: isoDate(review.updated) } : {}),
+        author: { "@type": "Organization", name: "Homeworld Press Editorial Lab" },
+        publisher: { "@type": "Organization", name: "Homeworld Press", url: SITE_ORIGIN },
+      },
       mainEntityOfPage: { "@type": "WebPage", "@id": url },
     });
   }
@@ -665,14 +692,20 @@
     }
   }
 
+  /* Um recurso do navegador bloqueado não pode derrubar o resto da página:
+     cada inicializador isola a própria falha. */
+  const safe = (fn) => {
+    try { fn(); } catch (err) { console.error("init falhou:", err); }
+  };
+
   document.addEventListener("DOMContentLoaded", () => {
-    initTheme();
-    initCultureFilter();
-    initSearchModal();
-    initArticleReader();
-    initReviewPage();
-    initDynamicHead();
-    initAriaCurrent();
-    initAnalytics();
+    safe(initTheme);
+    safe(initCultureFilter);
+    safe(initSearchModal);
+    safe(initArticleReader);
+    safe(initReviewPage);
+    safe(initDynamicHead);
+    safe(initAriaCurrent);
+    safe(initAnalytics);
   });
 })();

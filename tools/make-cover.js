@@ -91,7 +91,9 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
 const rel = `images/covers/${SLUG}.svg`;
 fs.writeFileSync(path.join(ROOT, rel), svg);
 
-const alt = `Placa editorial do pilar ${pilar} com o título "${titulo}".`;
+/* Sem aspas no alt: ele é escrito em atributo HTML e a aspa do título
+   fechava o atributo, quebrando o marcador em pedaços. */
+const alt = `Placa editorial do pilar ${pilar} com o título ${titulo.replace(/["“”]/g, "")}.`;
 if (!draft.image || draft.image === rel) {
   /* A reescrita pode mudar o título depois da primeira capa: se a imagem é a
      nossa, o alt acompanha o título final junto com o SVG. */

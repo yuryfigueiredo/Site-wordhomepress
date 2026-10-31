@@ -1753,6 +1753,25 @@ a {
   align-items: center;
 }
 
+.verdict-label {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+}
+
+.verdict-label--pros { color: #1B7F37; }
+.verdict-label--cons { color: #C92A2A; }
+
+/* Sobre fundo escuro o verde e o vermelho do rótulo caem para 3:1. */
+[data-theme="dark"] .verdict-label--pros { color: #6BD98A; }
+[data-theme="dark"] .verdict-label--cons { color: #FF8A8A; }
+
+[data-theme="dark"] .wired-brand__press,
+[data-theme="dark"] .wired-nav__link.is-active,
+[data-theme="dark"] .wired-nav__link[aria-current="page"] {
+  color: var(--accent-wired-red-on-dark);
+}
+
 .verdict-box__pros-cons {
   display: grid;
   grid-template-columns: 1fr 1fr;

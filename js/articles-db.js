@@ -82,13 +82,13 @@ window.HWP_DATABASE = {
       "kicker": "SCIENCE // SPACE",
       "category": "science",
       "subtopic": "concepts",
-      "author": "by Dr. Aris Thorne",
+      "author": "Dr. Aris Thorne",
       "role": "analyst",
       "date": "Oct 30, 2026",
       "readTime": "6 MIN READ",
       "isHeroLead": false,
       "image": "images/covers/nasas-webb-finds-signs-of-mars-sized-worlds-smashing-together.svg",
-      "imageAlt": "Placa editorial do pilar science com o título \"Webb Telescope Data Reveals Massive Planetary Collisions\".",
+      "imageAlt": "Placa editorial do pilar science com o título Webb Telescope Data Reveals Massive Planetary Collisions.",
       "bookCover": null,
       "dek": "New infrared observations suggest that rocky planets form through violent, Mars-sized impacts rather than gradual accretion.",
       "affiliateBox": null,
@@ -117,7 +117,7 @@ window.HWP_DATABASE = {
       "readTime": "6 MIN READ",
       "isHeroLead": false,
       "image": "images/covers/guardian-september-roundup-one-category-2026.svg",
-      "imageAlt": "Placa editorial do pilar culture com o título \"The Guardian’s September Roundup Treats Speculative Fiction as One Category\".",
+      "imageAlt": "Placa editorial do pilar culture com o título The Guardian’s September Roundup Treats Speculative Fiction as One Category.",
       "bookCover": null,
       "dek": "Four titles, one banner, and an editorial claim about who actually reads across genre lines.",
       "affiliateBox": null,
@@ -230,7 +230,7 @@ window.HWP_DATABASE = {
       content: `
         <p>Before digital rendering homogenized movie posters, science fiction paperbacks and comic strips relied on master painters and inkers. Artists like Kelly Freas, Chris Foss, Doug Klauba (cover artist for Homeworld Press’s historic <em>Dumarest</em> Vol. 33 release), and veteran DC/Archie illustrator Sal Amendola turned every book cover into a portal.</p>
         <h2>How to Spot Valuable First Printings and Omnibus Editions</h2>
-        <p>Whether you are hunting Daw yellow-spine paperbacks, Ace Doubles, or oversized Marvel/DC Omnibus hardcovers on Amazon, condition and printing state dictate collector value. Don't miss our <a href="dumarest/index.htm" style="color:var(--accent-wired-red);font-weight:700;text-decoration:underline;">Complete Dumarest of Terra 33-Cover Gallery in THE ARCHIVE</a>.</p>
+        <p>Whether you are hunting Daw yellow-spine paperbacks, Ace Doubles, or oversized Marvel/DC Omnibus hardcovers on Amazon, condition and printing state dictate collector value. Don't miss our <a href="dumarest/index.htm" style="color:var(--accent-wired-red-text);font-weight:700;text-decoration:underline;">Complete Dumarest of Terra 33-Cover Gallery in THE ARCHIVE</a>.</p>
       `
     },
     {
@@ -290,7 +290,7 @@ window.HWP_DATABASE = {
         <h2>2. Isaac Asimov’s Foundation (Publication Order Beats Chronological)</h2>
         <p>Begin with the core trilogy (<em>Foundation</em>, <em>Foundation and Empire</em>, <em>Second Foundation</em>) before reading the 1980s sequels and prequels.</p>
         <h2>3. E.C. Tubb’s Dumarest of Terra (Vol. 1 to 33)</h2>
-        <p>Explore our <a href="dumarest/index.htm" style="color:var(--accent-wired-red);font-weight:700;text-decoration:underline;">Complete 33-Book Dumarest Archive & Cover Gallery</a> for the full checklist and Amazon/Audible links.</p>
+        <p>Explore our <a href="dumarest/index.htm" style="color:var(--accent-wired-red-text);font-weight:700;text-decoration:underline;">Complete 33-Book Dumarest Archive & Cover Gallery</a> for the full checklist and Amazon/Audible links.</p>
       `
     },
     {
@@ -399,7 +399,7 @@ window.HWP_DATABASE = {
         <p>Traditional LCD and OLED tablets emit direct backlighting into your retinas—great for cinema, terrible for three hours of evening reading. For years, E-Ink Carta screens solved eye fatigue for prose readers, but left comic book, manga, and illustrated fiction fans in monochrome.</p>
         <h2>The Physics of Oxide Backplanes and Color Filter Arrays</h2>
         <p>By pairing high-transmittance color filter arrays with custom nitride LED front-lighting and rapid waveform controllers, modern color E-Ink achieves crisp 150 to 300 PPI color reproduction that mimics vintage pulp and newsprint comic stock.</p>
-        <p><strong>Want to know which specific model to buy?</strong> Head over to our <a href="review.html?id=best-ereaders-2026" style="color:var(--accent-wired-red);font-weight:700;text-decoration:underline;">Definitive 2026 E-Reader Buyer's Guide in REVIEWS</a> where we tested the top 6 devices head-to-head.</p>
+        <p><strong>Want to know which specific model to buy?</strong> Head over to our <a href="review.html?id=best-ereaders-2026" style="color:var(--accent-wired-red-text);font-weight:700;text-decoration:underline;">Definitive 2026 E-Reader Buyer's Guide in REVIEWS</a> where we tested the top 6 devices head-to-head.</p>
       `
     },
     {

@@ -2,6 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "trailingSlash": false,
   "cleanUrls": false,
+  "buildCommand": "node tools/build-dist.js",
+  "outputDirectory": "dist",
   "rewrites": [],
   "redirects": [
     { "source": "/index.htm", "destination": "/index.html", "permanent": true },
