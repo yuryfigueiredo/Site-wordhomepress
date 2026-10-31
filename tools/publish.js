@@ -78,7 +78,11 @@ const backup = fs.readFileSync(DB_FILE, "utf8");
 
 /* build.js e build-sitemap.js gravam HTML e sitemap antes do doctor rodar:
    restaurar só o catálogo deixava o site com uma matéria que não existe mais
-   no banco. O snapshot cobre tudo que os dois builds tocam. */
+   no banco. O snapshot cobre tudo que os dois builds tocam.
+   memory.json e last_runs.json entram porque o workflow final faz `git add -A`
+   com `if: always()`: se a publicação estourar depois de inserir o artigo, um
+   registro órfão — ou um artigo no ar sem contabilidade nenhuma — seria
+   commitado como "turno:" e empurrado mesmo com a rodada vermelha. */
 const BUILD_OUTPUTS = [
   "js/articles-db.js",
   "sitemap.xml",
@@ -87,6 +91,8 @@ const BUILD_OUTPUTS = [
   "tech.html",
   "science.html",
   "pipeline/state/hero-fallback.html",
+  "pipeline/memory.json",
+  "voice/state/last_runs.json",
   "vercel.json",
 ];
 const snapshot = new Map(
@@ -200,8 +206,14 @@ fs.renameSync(`${runsFile}.tmp`, runsFile);
 const hoje = new Date().toISOString().slice(0, 10);
 /* A memória é o que o teto lê: escrita aqui, versionada, e presente no runner
    em qualquer forma de publicação — local ou Actions. A URL da pauta vai junto
-   com as URLs citadas, senão o pick-lead reoferece a mesma notícia amanhã. */
-mem.registrarPublicacao(ROOT, [BRIEF.meta && BRIEF.meta.lead_url, ...entry.sources.map((s) => s && s.url)], draft.id, score.score);
+   com as URLs citadas, senão o pick-lead reoferece a mesma notícia amanhã.
+   Estourar aqui deixaria o artigo no ar sem registro — o teto leria 0/1 e a
+   rodada seguinte repetiria a fonte. abort() desfaz a publicação em vez disso. */
+try {
+  mem.registrarPublicacao(ROOT, [BRIEF.meta && BRIEF.meta.lead_url, ...entry.sources.map((s) => s && s.url)], draft.id, score.score);
+} catch (err) {
+  abort(`registro na memória falhou: ${String(err.message).split("\n")[0]}`);
+}
 
 /* Duas coisas no mesmo repositório ao mesmo tempo é normal no Actions: o job
    setup-node commita telemetria enquanto o robô publica, e o git trava o índice
