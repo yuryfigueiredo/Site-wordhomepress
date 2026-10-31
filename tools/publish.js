@@ -51,6 +51,13 @@ try {
 /* ── a nota: calculada por rubrica, não declarada pelo modelo ─────────── */
 const SCORES_FILE = path.join(ROOT, "pipeline", "scores.json");
 const scoresBackup = fs.existsSync(SCORES_FILE) ? fs.readFileSync(SCORES_FILE, "utf8") : null;
+/* score.js --record já escreveu a nota quando a publicação ainda pode falhar.
+   Sem devolver o arquivo, fica uma nota de uma matéria que nunca existiu — e é
+   ela que o painel e o ranking mostram. */
+const restaurarNotas = () => {
+  if (scoresBackup !== null) fs.writeFileSync(SCORES_FILE, scoresBackup);
+  else if (fs.existsSync(SCORES_FILE)) fs.unlinkSync(SCORES_FILE);
+};
 let scoreOut = "";
 try {
   scoreOut = run("score.js", ["--draft", SLUG, "--record"]);
@@ -135,7 +142,8 @@ try {
   if (gravada.content !== entry.content) throw new Error("o corpo da matéria mudou durante a inserção");
 } catch (err) {
   fs.writeFileSync(DB_FILE, backup);
-  console.error(`inserção no catálogo rejeitada: ${err.message}`);
+  restaurarNotas();
+  console.error(`inserção no catálogo rejeitada: ${err.message} — catálogo e notas restaurados, nada publicado`);
   process.exit(1);
 }
 
