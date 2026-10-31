@@ -11,6 +11,22 @@
   const escapeHtml = (s) =>
     String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
+  /* Id inexistente não pode cair na matéria mais nova: isso cria infinitas
+     URLs duplicadas com o mesmo conteúdo e confunde quem chega por link velho.
+     O estado é de não encontrado e a página pede para não ser indexada. */
+  function renderNotFound(holder, kind) {
+    document.title = "Not found | Homeworld Press";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.setAttribute("content", "The page you asked for isn't here.");
+    setNoindex();
+    holder.innerHTML = `
+      <div class="article-header">
+        <span class="kicker">404 // NOT FOUND</span>
+        <h1 class="article-title">${kind === "review" ? "That buyer’s guide isn’t here." : "That story isn’t here."}</h1>
+        <p class="article-dek">The link may be old or mistyped. <a href="index.html">Go back to the front page</a> or <a href="reviews.html">browse the buyer’s guides</a>.</p>
+      </div>`;
+  }
+
   // 1. Theme Persistence (Editorial Paper vs. WIRED Dark Mode)
   function initTheme() {
     const saved = localStorage.getItem("hwp_theme") || "light";
@@ -183,7 +199,14 @@
 
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
-    const article = DB.articles.find((a) => a.id === id) || DB.articles[0];
+    /* Sem ?id= a página abre a matéria mais recente (link legado /article);
+       com ?id= errado é 404 de verdade — antes ela mostrava a mais recente
+       e o Google indexava a URL quebrada com o texto de outra matéria. */
+    const article = DB.articles.find((a) => a.id === id) || (id ? null : DB.articles[0]);
+    if (!article) {
+      renderNotFound(holder, "article");
+      return;
+    }
 
     document.title = `${article.title} | Homeworld Press`;
     const desc = document.querySelector('meta[name="description"]');
@@ -288,9 +311,9 @@
         </div>
       </div>
 
-      <figure style="margin-bottom:2rem;border:var(--border-hairline);">
-        <img src="${article.image}" alt="${article.title}" fetchpriority="high" width="900" height="500" style="width:100%;max-height:480px;object-fit:cover;">
-      </figure>
+      ${article.image ? `<figure style="margin-bottom:2rem;border:var(--border-hairline);">
+        <img src="${article.image}" alt="${article.imageAlt || article.title}" fetchpriority="high" width="900" height="500" style="width:100%;max-height:480px;object-fit:cover;">
+      </figure>` : ""}
 
       ${verdictHtml}
 
@@ -313,8 +336,11 @@
     if (!mount || !DB || !Array.isArray(DB.reviews)) return;
 
     const id = new URLSearchParams(window.location.search).get("id");
-    const review = DB.reviews.find((r) => r.id === id) || DB.reviews[0];
-    if (!review) return;
+    const review = DB.reviews.find((r) => r.id === id) || (id ? null : DB.reviews[0]);
+    if (!review) {
+      renderNotFound(mount, "review");
+      return;
+    }
 
     document.title = `${review.title} | Homeworld Press Hardware Lab`;
     const desc = document.querySelector('meta[name="description"]');
@@ -476,6 +502,16 @@
     tag.setAttribute("content", content);
   }
 
+  function setNoindex() {
+    let tag = document.head.querySelector('meta[name="robots"]');
+    if (!tag) {
+      tag = document.createElement("meta");
+      tag.setAttribute("name", "robots");
+      document.head.appendChild(tag);
+    }
+    tag.setAttribute("content", "noindex");
+  }
+
   function setLink(rel, href) {
     let tag = document.head.querySelector(`link[rel="${rel}"]`);
     if (!tag) {
@@ -523,8 +559,10 @@
     const selfUrl = `${SITE_ORIGIN}/${page}`;
 
     if (isArticle) {
-      const article = DB.articles.find((a) => a.id === params.get("id"));
+      const article = DB.articles.find((a) => a.id === params.get("id")) || (params.get("id") ? null : DB.articles[0]);
       if (!article) {
+        /* URL quebrada: sem canonical para a página "sem nada" e fora do índice. */
+        setNoindex();
         setLink("canonical", selfUrl);
         setMeta('meta[property="og:url"]', { property: "og:url" }, selfUrl);
         return;
@@ -557,8 +595,9 @@
       return;
     }
 
-    const review = DB.reviews.find((r) => r.id === params.get("id"));
+    const review = DB.reviews.find((r) => r.id === params.get("id")) || (params.get("id") ? null : DB.reviews[0]);
     if (!review) {
+      setNoindex();
       setLink("canonical", selfUrl);
       setMeta('meta[property="og:url"]', { property: "og:url" }, selfUrl);
       return;

@@ -91,9 +91,12 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
 const rel = `images/covers/${SLUG}.svg`;
 fs.writeFileSync(path.join(ROOT, rel), svg);
 
-if (!draft.image) {
+const alt = `Placa editorial do pilar ${pilar} com o título "${titulo}".`;
+if (!draft.image || draft.image === rel) {
+  /* A reescrita pode mudar o título depois da primeira capa: se a imagem é a
+     nossa, o alt acompanha o título final junto com o SVG. */
   draft.image = rel;
-  draft.imageAlt = `Placa editorial do pilar ${pilar} com o título "${titulo}".`;
+  draft.imageAlt = alt;
   fs.writeFileSync(draftFile, JSON.stringify(draft, null, 2) + "\n");
   console.log(`capa criada: ${rel} (${linhas.length} linhas de título)`);
 } else {
