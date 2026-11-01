@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "artemis-i-radiation-discrepancy"
+        }
+      ],
+      "destination": "/a-artemis-i-radiation-discrepancy.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "webb-telescope-detects-mars-sized-collisions"
         }
       ],

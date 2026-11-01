@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-31T00:43:18.566Z",
+  "updated": "2026-11-01T14:14:59.469Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -297,6 +297,44 @@
       },
       "source": "auto",
       "date": "2026-10-31"
+    },
+    "artemis-i-radiation-discrepancy": {
+      "score": 6.9,
+      "note": "6.9/10 — força em timeliness (fonte mais recente há 5 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 5 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 12% com quantum-timekeeping-interstellar-navigation-physics"
+        },
+        "craft": {
+          "pts": 1.6,
+          "max": 2,
+          "why": "ritmo e léxico medidos (80%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "It argues that current shielding models are fundamentally insufficient for lunar proximity, not just temporarily inaccurate."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-01"
     }
   }
 }
