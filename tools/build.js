@@ -47,13 +47,23 @@ const shop = (a) => {
 const minutes = (a) => String(a.readTime || "").replace(/\s*MIN(UTE)?S?\s*READ/i, "").trim() || "5";
 
 /* ── Templates: mesmos classes e estrutura dos cards escritos à mão ───── */
+/* A placa do feed carrega o título gravado dentro dela. No hero isso sai
+   duplicado, porque o H1 vem logo abaixo — então o hero usa a variante -hero
+   que tools/make-cover.js escreve ao lado. Sem a variante, usa a imagem normal. */
+function heroImg(a) {
+  const placa = /^images\/covers\/(.+)\.svg$/.exec(a.image || "");
+  if (!placa) return a.image;
+  const variante = `images/covers/${placa[1]}-hero.svg`;
+  return fs.existsSync(path.join(ROOT, variante)) ? variante : a.image;
+}
+
 const TEMPLATES = {
   "hero-lead": (a) => `          <article class="hero-lead">
             <a href="${href(a.id)}" class="hero-lead__media">
-              <span class="hero-lead__badge">COVER STORY // ${esc(String(a.kicker || "").split("//").pop().trim() || "HOMEWORLD PRESS")}</span>
+              <span class="hero-lead__badge">COVER STORY // ${esc(String(a.kicker || "").split("//")[0].trim() || "HOMEWORLD PRESS")}</span>
               <img
-                src="${esc(a.image)}"
-                alt="${esc(a.imageAlt || a.title)}"
+                src="${esc(heroImg(a))}"
+                alt="${esc(heroImg(a) === a.image ? (a.imageAlt || a.title) : `Placa editorial de marca da Homeworld Press para o pilar ${a.category}.`)}"
                 fetchpriority="high"
                 width="960"
                 height="588"
@@ -197,15 +207,25 @@ function pick(slot, takenIds) {
   return pool.slice(0, slot.limit || 6);
 }
 
+/* Piso da capa: pipeline/cadence.json → cover_baseline. */
+function coverFloor() {
+  try {
+    return Number(JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8")).cover_baseline) || 0;
+  } catch {
+    return 0;
+  }
+}
+
 function pickCover() {
+  /* Só compete quem passou pela curadoria do pipeline: nota medida por rubrica
+     ("auto") ou ajustada por você ("manual"). O acervo antigo ("baseline") fica
+     de fora — o HTML escrito à mão dele carrega dek, alt e botão que o catálogo
+     não tem. E só entra na capa quem tem imagem própria para o hero. */
+  const floor = coverFloor();
   const scored = DB.articles
-    .filter((a) => typeof a.rank === "number" && a.rankSource !== "baseline" && a.image)
+    .filter((a) => typeof a.rank === "number" && a.rankSource !== "baseline" && a.image && a.rank >= floor)
     .sort((x, y) => y.rank - x.rank || toTime(y.date) - toTime(x.date));
-  const best = scored[0] || null;
-  /* Uma matéria nova só toma a capa se vencer a nota de base da capa vigente. */
-  const incumbent = DB.articles.find((a) => a.rankSource === "baseline" && typeof a.rank === "number");
-  if (best && incumbent && best.rank <= incumbent.rank) return null;
-  return best;
+  return scored[0] || null;
 }
 
 const cache = new Map();
@@ -263,8 +283,8 @@ function applySlot(file, slot) {
       slot: slot.name,
       added: cover ? 1 : 0,
       note: cover
-        ? `capa por nota: ${cover.id} (${cover.rank})`
-        : `capa manual mantida (nenhuma matéria venceu a nota de base ${incumbentId ? DB.articles.find((a) => a.id === incumbentId).rank : "?"})`,
+        ? `capa por nota: ${cover.id} (${cover.rank}) · piso ${coverFloor()}`
+        : `capa manual mantida (nenhuma matéria do pipeline atingiu o piso ${coverFloor()})`,
     };
   }
 

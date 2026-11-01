@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img">
   <rect width="1200" height="675" fill="#0A0A0A"/>
-  <circle cx="1060" cy="140" r="150" fill="none" stroke="#00A389" stroke-width="2" opacity="0.22"/>
-  <circle cx="1030" cy="180" r="254" fill="none" stroke="#00A389" stroke-width="2" opacity="0.16"/>
-  <circle cx="1000" cy="220" r="332" fill="none" stroke="#00A389" stroke-width="2" opacity="0.1"/>
+  <text x="96" y="96" font-family="Helvetica Neue, Arial, sans-serif" font-size="24" font-weight="700" fill="#00A389" letter-spacing="4">SCIENCE // SPACE</text>
+  <circle cx="1060" cy="140" r="254" fill="none" stroke="#00A389" stroke-width="2" opacity="0.22"/>
+  <circle cx="1030" cy="180" r="280" fill="none" stroke="#00A389" stroke-width="2" opacity="0.16"/>
+  <circle cx="1000" cy="220" r="358" fill="none" stroke="#00A389" stroke-width="2" opacity="0.1"/>
+  <text x="96" y="392" font-family="Helvetica Neue, Arial, sans-serif" font-size="64" font-weight="700" fill="#F7F6F2" letter-spacing="-1">Webb Detects Dust Halos</text>
+  <text x="96" y="463.68" font-family="Helvetica Neue, Arial, sans-serif" font-size="64" font-weight="700" fill="#F7F6F2" letter-spacing="-1">Indicating Mars-Sized</text>
+  <text x="96" y="535.36" font-family="Helvetica Neue, Arial, sans-serif" font-size="64" font-weight="700" fill="#F7F6F2" letter-spacing="-1">World Impacts</text>
   <rect x="0" y="0" width="14" height="675" fill="#00A389"/>
   <line x1="96" y1="120" x2="1104" y2="120" stroke="#2A2A28" stroke-width="1"/>
-  <text x="96" y="96" font-family="Helvetica Neue, Arial, sans-serif" font-size="24" font-weight="700" fill="#00A389" letter-spacing="4">SCIENCE // CONCEPTS</text>
-  <text x="96" y="399" font-family="Helvetica Neue, Arial, sans-serif" font-size="78" font-weight="700" fill="#F7F6F2" letter-spacing="-1">Webb Uncovers Evidence</text>
-  <text x="96" y="486.36" font-family="Helvetica Neue, Arial, sans-serif" font-size="78" font-weight="700" fill="#F7F6F2" letter-spacing="-1">of Mars‑Sized</text>
-  <text x="96" y="573.72" font-family="Helvetica Neue, Arial, sans-serif" font-size="78" font-weight="700" fill="#F7F6F2" letter-spacing="-1">Collisions</text>
   <line x1="96" y1="612" x2="1104" y2="612" stroke="#2A2A28" stroke-width="1"/>
   <text x="96" y="648" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" fill="#A3A39E" letter-spacing="3">HOMEWORLDPRESS.COM</text>
   <text x="1104" y="648" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" fill="#00A389" letter-spacing="2">SCIENCE</text>

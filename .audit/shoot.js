@@ -1,8 +1,8 @@
 /* shoot.js — screenshot headless reutilizável (auditoria, não faz parte do site)
-   uso: node .audit/shoot.js <url> <arquivo.png> [largura] [altura] [fullPage] */
+   uso: node .audit/shoot.js <url> <arquivo.png> [largura] [altura] [fullPage] [scrollY] */
 const { spawn } = require("child_process");
 const PORT = Number(process.env.CDP_PORT || 9341);
-const [URL, OUT, W = "1360", H = "900", FULL = "0"] = process.argv.slice(2);
+const [URL, OUT, W = "1360", H = "900", FULL = "0", SCROLL = "0"] = process.argv.slice(2);
 const chrome = spawn("C:/Program Files/Google/Chrome/Application/chrome.exe", ["--headless=new", "--disable-gpu", `--remote-debugging-port=${PORT}`, "--user-data-dir=C:/Users/Yury/AppData/Local/Temp/hwp-shoot", "about:blank"], { stdio: "ignore" });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -18,6 +18,10 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   await send("Emulation.setDeviceMetricsOverride", { width: Number(W), height: Number(H), deviceScaleFactor: 1, mobile: false });
   await send("Page.navigate", { url: URL });
   await sleep(2600);
+  if (Number(SCROLL)) {
+    await send("Runtime.evaluate", { expression: `window.scrollTo(0, ${Number(SCROLL)})` });
+    await sleep(700);
+  }
   const shot = await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: FULL === "1" });
   require("fs").writeFileSync(OUT, Buffer.from(shot.data, "base64"));
   console.log("gravado:", OUT);

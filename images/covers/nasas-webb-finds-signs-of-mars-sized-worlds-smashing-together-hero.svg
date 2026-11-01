@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img">
+  <rect width="1200" height="675" fill="#0A0A0A"/>
+  <text x="96" y="470" font-family="Helvetica Neue, Arial, sans-serif" font-size="230" font-weight="700" fill="none" stroke="#00A389" stroke-width="1.5" opacity="0.5" letter-spacing="-6">SCIENCE</text>
+  <circle cx="940" cy="230" r="326" fill="none" stroke="#00A389" stroke-width="2" opacity="0.22"/>
+  <circle cx="910" cy="270" r="352" fill="none" stroke="#00A389" stroke-width="2" opacity="0.16"/>
+  <circle cx="880" cy="310" r="430" fill="none" stroke="#00A389" stroke-width="2" opacity="0.1"/>
+  <rect x="0" y="0" width="14" height="675" fill="#00A389"/>
+  <line x1="96" y1="120" x2="1104" y2="120" stroke="#2A2A28" stroke-width="1"/>
+  <line x1="96" y1="612" x2="1104" y2="612" stroke="#2A2A28" stroke-width="1"/>
+  <text x="96" y="648" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" fill="#A3A39E" letter-spacing="3">HOMEWORLDPRESS.COM</text>
+  <text x="1104" y="648" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" fill="#00A389" letter-spacing="2">SCIENCE</text>
+</svg>
