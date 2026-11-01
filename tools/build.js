@@ -217,15 +217,19 @@ function coverFloor() {
 }
 
 function pickCover() {
-  /* Só compete quem passou pela curadoria do pipeline: nota medida por rubrica
-     ("auto") ou ajustada por você ("manual"). O acervo antigo ("baseline") fica
-     de fora — o HTML escrito à mão dele carrega dek, alt e botão que o catálogo
-     não tem. E só entra na capa quem tem imagem própria para o hero. */
+  /* Capa é o dia, não o ranking histórico: entra a matéria mais nova do
+     pipeline que passe o piso. A nota é peneira de qualidade, não troféu — as
+     notas não decaem depois de publicadas (a atualidade é medida no dia da
+     avaliação), então "maior nota de todos os tempos" congelaria a capa do
+     mesmo jeito que a comparação com a capa escrita à mão congelava.
+     Só competem notas medidas por rubrica ("auto") ou ajustadas por você
+     ("manual"): o acervo antigo ("baseline") fica de fora porque o HTML escrito
+     à mão dele carrega dek, alt e botão que o catálogo não tem. */
   const floor = coverFloor();
-  const scored = DB.articles
+  const elegiveis = DB.articles
     .filter((a) => typeof a.rank === "number" && a.rankSource !== "baseline" && a.image && a.rank >= floor)
-    .sort((x, y) => y.rank - x.rank || toTime(y.date) - toTime(x.date));
-  return scored[0] || null;
+    .sort((x, y) => toTime(y.date) - toTime(x.date) || y.rank - x.rank);
+  return elegiveis[0] || null;
 }
 
 const cache = new Map();
@@ -283,8 +287,8 @@ function applySlot(file, slot) {
       slot: slot.name,
       added: cover ? 1 : 0,
       note: cover
-        ? `capa por nota: ${cover.id} (${cover.rank}) · piso ${coverFloor()}`
-        : `capa manual mantida (nenhuma matéria do pipeline atingiu o piso ${coverFloor()})`,
+        ? `capa do dia: ${cover.id} (${cover.rank}, ${cover.date}) · piso ${coverFloor()}`
+        : `capa manual mantida (nenhuma matéria do pipeline acima do piso ${coverFloor()})`,
     };
   }
 
