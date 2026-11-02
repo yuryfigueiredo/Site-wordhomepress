@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-01T14:14:59.645Z",
+  "updated": "2026-11-02T16:14:40.973Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -29,6 +29,12 @@
       "outcome": "publicada",
       "at": "2026-11-01T14:14:59.645Z",
       "id": "artemis-i-radiation-discrepancy"
+    },
+    "https://www.sciencedaily.com/releases/2026/10/261031221209.htm": {
+      "slug": "nasas-hubble-and-webb-discover-ancient-worlds-that-remember-thei",
+      "topic": "NASA's Hubble and Webb discover ancient worlds that remember their past",
+      "outcome": "reprovada",
+      "at": "2026-11-02T16:14:40.973Z"
     }
   },
   "publishes": [
