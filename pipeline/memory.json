@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02T16:14:40.973Z",
+  "updated": "2026-11-02T17:12:10.136Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -35,6 +35,13 @@
       "topic": "NASA's Hubble and Webb discover ancient worlds that remember their past",
       "outcome": "reprovada",
       "at": "2026-11-02T16:14:40.973Z"
+    },
+    "https://www.space.com/space-exploration/on-this-day-in-space-october-30-2026": {
+      "slug": "on-this-day-in-space-oct-30-1964-nasas-weird-lunar-landing-resea",
+      "topic": "On this day in space! Oct. 30, 1964: NASA's weird Lunar Landing Research Vehicle takes 1st test flight to help Apollo astronauts land on the moon",
+      "outcome": "publicada",
+      "at": "2026-11-02T17:12:10.136Z",
+      "id": "nasa-lunar-landing-research-vehicle-test"
     }
   },
   "publishes": [
@@ -57,6 +64,11 @@
       "id": "artemis-i-radiation-discrepancy",
       "at": "2026-11-01T14:14:59.645Z",
       "score": 6.9
+    },
+    {
+      "id": "nasa-lunar-landing-research-vehicle-test",
+      "at": "2026-11-02T17:12:10.136Z",
+      "score": 7.3
     }
   ]
 }
