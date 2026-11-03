@@ -1,15 +1,15 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-02T17:12:10.135Z",
+  "updated": "2026-11-03T22:22:46.842Z",
   "runs": {
     "analyst": {
-      "id": "nasa-lunar-landing-research-vehicle-test",
-      "date": "2026-11-02",
-      "opening_move": "dated_fact",
-      "ending_move": "small_observation",
-      "title_pattern": "nasa built a dangerous",
-      "humor_lines": 1
+      "id": "physicists-watch-time-emerge-without-clocks",
+      "date": "2026-11-03",
+      "opening_move": "object",
+      "ending_move": "flat_statement",
+      "title_pattern": "physicists watch time emerge",
+      "humor_lines": 0
     },
     "lab": null,
     "curator": null

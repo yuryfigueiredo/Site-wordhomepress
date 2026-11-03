@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "physicists-watch-time-emerge-without-clocks"
+        }
+      ],
+      "destination": "/a-physicists-watch-time-emerge-without-clocks.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "nasa-lunar-landing-research-vehicle-test"
         }
       ],

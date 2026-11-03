@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-03T15:04:46.908Z",
+  "updated": "2026-11-03T22:22:46.843Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -48,6 +48,13 @@
       "topic": "Do we know how many Starship launches SpaceX will need to get NASA astronauts to the moon? No. Will its refuelling plan be simple? Also no.",
       "outcome": "reprovada",
       "at": "2026-11-03T15:04:46.908Z"
+    },
+    "https://www.sciencedaily.com/releases/2026/10/261028234703.htm": {
+      "slug": "physicists-created-a-tiny-universe-and-watched-time-emerge-witho",
+      "topic": "Physicists created a tiny universe and watched time emerge without a clock",
+      "outcome": "publicada",
+      "at": "2026-11-03T22:22:46.842Z",
+      "id": "physicists-watch-time-emerge-without-clocks"
     }
   },
   "publishes": [
@@ -75,6 +82,11 @@
       "id": "nasa-lunar-landing-research-vehicle-test",
       "at": "2026-11-02T17:12:10.136Z",
       "score": 7.3
+    },
+    {
+      "id": "physicists-watch-time-emerge-without-clocks",
+      "at": "2026-11-03T22:22:46.842Z",
+      "score": 6.9
     }
   ]
 }
