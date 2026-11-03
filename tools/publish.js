@@ -105,7 +105,9 @@ const entry = {
   kicker: draft.kicker,
   category: draft.category,
   subtopic: draft.subtopic,
-  author: draft.author,
+  /* "by Fulano" copiado da fonte virava "BY BY FULANO" na capa: o catálogo grava
+     só o nome. */
+  author: String(draft.author || "").replace(/^\s*by\s+/i, "").trim(),
   role: draft.role || null,
   date: draft.date,
   readTime: draft.readTime,

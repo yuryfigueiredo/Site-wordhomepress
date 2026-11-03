@@ -54,7 +54,7 @@ window.HWP_DATABASE = {
       "kicker": "SCIENCE // SPACE HISTORY",
       "category": "science",
       "subtopic": "concepts",
-      "author": "by Dr. Aris Thorne",
+      "author": "Dr. Aris Thorne",
       "role": "analyst",
       "date": "Nov 2, 2026",
       "readTime": "5 MIN READ",

@@ -45,6 +45,10 @@ const shop = (a) => {
   return typeof url === "string" && /^https?:\/\//i.test(url) ? url : null;
 };
 const minutes = (a) => String(a.readTime || "").replace(/\s*MIN(UTE)?S?\s*READ/i, "").trim() || "5";
+/* O redator às vezes copia a byline da fonte ("by Fulano") para o campo author.
+   O template já escreve o BY, então o prefixo sai na renderização — senão a capa
+   publica "BY BY FULANO". */
+const byline = (a) => esc(String(a.author || "").replace(/^\s*by\s+/i, "").trim().toUpperCase());
 
 /* ── Templates: mesmos classes e estrutura dos cards escritos à mão ───── */
 /* A placa do feed carrega o título gravado dentro dela. No hero isso sai
@@ -85,7 +89,7 @@ const TEMPLATES = {
 
             <div class="meta-line" style="justify-content:space-between;flex-wrap:wrap;padding-top:0.4rem;">
               <div>
-                <span>BY <strong>${esc(String(a.author || "").toUpperCase())}</strong></span>
+                <span>BY <strong>${byline(a)}</strong></span>
                 <span> • </span>
                 <span>${esc(String(a.date).toUpperCase())}</span>
                 <span> • </span>
@@ -107,7 +111,7 @@ const TEMPLATES = {
                   <h3 class="latest-item__title">
                     <a href="${href(a.id)}">${esc(a.title)}</a>
                   </h3>
-                  <div class="meta-line"><span>${esc(String(a.author || "").toUpperCase())}</span><span>•</span><span>${esc(a.date)}</span></div>
+                  <div class="meta-line"><span>${byline(a)}</span><span>•</span><span>${esc(a.date)}</span></div>
                 </div>
 ${
                 thumb(a)
@@ -142,7 +146,7 @@ ${
               </div>
             </div>
             <div class="article-card__footer">
-              <span class="meta-line">BY <strong>${esc(String(a.author || "").toUpperCase())}</strong> • ${esc(minutes(a))} MIN</span>${
+              <span class="meta-line">BY <strong>${byline(a)}</strong> • ${esc(minutes(a))} MIN</span>${
                 shop(a)
                   ? `\n              <a href="${esc(shop(a))}" target="_blank" rel="nofollow sponsored noopener" style="font-family:var(--font-mono);font-size:0.72rem;font-weight:700;color:var(--accent-wired-red-text);">
                 SHOP ON AMAZON →
@@ -168,7 +172,7 @@ ${
                       ${esc(a.title)}
                     </a>
                   </h3>
-                  <div class="meta-line"><span>${esc(String(a.author || "").toUpperCase())}</span><span>•</span><span>${esc(a.readTime)}</span></div>
+                  <div class="meta-line"><span>${byline(a)}</span><span>•</span><span>${esc(a.readTime)}</span></div>
                 </div>
               </article>`,
 
@@ -188,7 +192,7 @@ ${
               </h3>
               <p class="article-card__dek">${esc(a.dek)}</p>
               <div class="meta-line" style="margin-top:0.75rem;">
-                <span>BY <strong>${esc(String(a.author || "").toUpperCase())}</strong></span>
+                <span>BY <strong>${byline(a)}</strong></span>
                 <span>•</span>${
                   shop(a)
                     ? `\n                <a href="${esc(shop(a))}" target="_blank" rel="nofollow sponsored noopener" style="color:var(--accent-wired-red-text);font-weight:700;">SHOP ON AMAZON →</a>`
@@ -200,10 +204,13 @@ ${
 };
 
 function pick(slot, takenIds) {
+  /* Feed automático é por data, não por nota: a região se vende como MOST
+     RECENT, e matéria de 29/10 acima de 31/10 desmente o próprio rótulo. A nota
+     continua sendo a peneira da capa (pickCover) e o desempate aqui. */
   const pool = DB.articles
     .filter((a) => (slot.category ? a.category === slot.category : true))
     .filter((a) => !takenIds.has(a.id))
-    .sort((x, y) => (y.rank == null ? -1 : y.rank) - (x.rank == null ? -1 : x.rank) || toTime(y.date) - toTime(x.date));
+    .sort((x, y) => toTime(y.date) - toTime(x.date) || (y.rank == null ? -1 : y.rank) - (x.rank == null ? -1 : x.rank));
   return pool.slice(0, slot.limit || 6);
 }
 
