@@ -78,24 +78,43 @@ if (linhas.length > 4) {
 }
 
 /* Motivo geométrico derivado do slug: mesma placa sempre, placas diferentes
-   entre si. Hash simples — não precisa ser bonito, precisa ser estável. */
+   entre si. Hash simples — não precisa ser bonito, precisa ser estável.
+   peso = espessura do traço: no hero o traço precisa ser grosso porque a placa
+   é mostrada a ~45% do tamanho nativo, e linha fina desaparece na redução. */
 let h = 0;
 for (const c of SLUG) h = (h * 31 + c.charCodeAt(0)) % 100003;
 /* d desloca o motivo para o centro do quadro na placa do hero, onde não há
    título ocupando a metade de baixo. */
-const arcos = (d) => Array.from({ length: 3 }, (_, i) => {
+const arcos = (d, peso = 2) => Array.from({ length: 3 }, (_, i) => {
   const r = 150 + ((h >> (i * 3)) % 9) * 26 + d * 0.6;
-  return `<circle cx="${1060 - i * 30 - d}" cy="${140 + i * 40 + d * 0.75}" r="${r}" fill="none" stroke="${cor}" stroke-width="2" opacity="${0.22 - i * 0.06}"/>`;
+  return `<circle cx="${1060 - i * 30 - d}" cy="${140 + i * 40 + d * 0.75}" r="${r}" fill="none" stroke="${cor}" stroke-width="${peso + i * (peso > 4 ? 3 : 0)}" opacity="${0.22 - i * 0.06 + (peso > 4 ? 0.18 : 0)}"/>`;
 }).join("\n  ");
 
-const moldura = (corpo) => `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img">
+/* Meio-tom: pontos SÓLIDOS. É o único elemento da placa do hero que continua
+   visível quando o quadro vira miniatura — forma mancha, não linha. */
+const meiotom = Array.from({ length: 6 }, (_, linha) =>
+  Array.from({ length: 17 }, (_, col) => {
+    const fase = (h + linha * 31 + col * 17) % 6;
+    return `<circle cx="${118 + col * 60}" cy="${168 + linha * 74}" r="${3 + fase * 1.1}" fill="${cor}" opacity="${0.05 + fase * 0.014}"/>`;
+  }).join("")
+).join("\n    ");
+
+const moldura = (corpo, peso = 1) => `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img">
+  <defs>
+    <radialGradient id="brilho" cx="0.74" cy="0.24" r="0.9">
+      <stop offset="0" stop-color="${cor}" stop-opacity="0.3"/>
+      <stop offset="0.5" stop-color="${cor}" stop-opacity="0.07"/>
+      <stop offset="1" stop-color="${cor}" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
   <rect width="1200" height="675" fill="#0A0A0A"/>
+  <rect width="1200" height="675" fill="url(#brilho)"/>
   ${corpo}
-  <rect x="0" y="0" width="14" height="675" fill="${cor}"/>
-  <line x1="96" y1="120" x2="1104" y2="120" stroke="#2A2A28" stroke-width="1"/>
-  <line x1="96" y1="612" x2="1104" y2="612" stroke="#2A2A28" stroke-width="1"/>
-  <text x="96" y="648" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" fill="#A3A39E" letter-spacing="3">HOMEWORLDPRESS.COM</text>
-  <text x="1104" y="648" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" fill="${cor}" letter-spacing="2">${esc(pilar.toUpperCase())}</text>
+  <rect x="0" y="0" width="${peso > 1 ? 22 : 14}" height="675" fill="${cor}"/>
+  <line x1="96" y1="120" x2="1104" y2="120" stroke="#2A2A28" stroke-width="${peso}"/>
+  <line x1="96" y1="612" x2="1104" y2="612" stroke="#2A2A28" stroke-width="${peso}"/>
+  <text x="96" y="648" font-family="Helvetica Neue, Arial, sans-serif" font-size="${peso > 1 ? 24 : 19}" fill="#A3A39E" letter-spacing="3">HOMEWORLDPRESS.COM</text>
+  <text x="1104" y="648" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="${peso > 1 ? 24 : 19}" fill="${cor}" letter-spacing="2">${esc(pilar.toUpperCase())}</text>
 </svg>
 `;
 
@@ -112,9 +131,14 @@ const corpoFeed = `${rotulo}
 /* A placa do hero não leva título: o hero escreve o H1 logo abaixo da imagem e
    o mesmo texto nos dois lugares parece descuido, não hierarquia. No lugar do
    título entra a marca d'água do pilar, do tamanho do quadro, e o motivo
-   geométrico assume o centro. */
-const corpoHero = `<text x="96" y="470" font-family="Helvetica Neue, Arial, sans-serif" font-size="230" font-weight="700" fill="none" stroke="${cor}" stroke-width="1.5" opacity="0.5" letter-spacing="-6">${esc(pilar.toUpperCase().slice(0, 9))}</text>
-  ${arcos(120)}`;
+   geométrico assume o centro. Tudo aqui é escolhido para continuar lendo a
+   ~45% do tamanho nativo: mancha sólida em vez de contorno fino.
+   A fonte se ajusta ao comprimento da palavra para ela nunca encostar na borda. */
+const marca = esc(pilar.toUpperCase().slice(0, 9));
+const fonteMarca = Math.min(230, Math.floor(1008 / (0.62 * marca.length)));
+const corpoHero = `    ${meiotom}
+  ${arcos(120, 10)}
+  <text x="96" y="470" font-family="Helvetica Neue, Arial, sans-serif" font-size="${fonteMarca}" font-weight="700" fill="${cor}" fill-opacity="0.16" stroke="${cor}" stroke-width="10" stroke-opacity="0.75" letter-spacing="-6">${marca}</text>`;
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
 const base = FROM_DB ? path.basename(String(draft.image || ""), ".svg") : SLUG;
@@ -125,7 +149,7 @@ if (FROM_DB && !String(draft.image || "").startsWith("images/covers/")) {
 const rel = `images/covers/${base}.svg`;
 const relHero = `images/covers/${base}-hero.svg`;
 fs.writeFileSync(path.join(ROOT, rel), moldura(corpoFeed));
-fs.writeFileSync(path.join(ROOT, relHero), moldura(corpoHero));
+fs.writeFileSync(path.join(ROOT, relHero), moldura(corpoHero, 3));
 if (FROM_DB) {
   /* O catálogo é a fonte da verdade: regerar a partir dele conserta placa que
      ficou com o título de uma versão anterior do texto. */

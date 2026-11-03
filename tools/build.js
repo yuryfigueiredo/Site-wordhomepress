@@ -60,7 +60,7 @@ function heroImg(a) {
 const TEMPLATES = {
   "hero-lead": (a) => `          <article class="hero-lead">
             <a href="${href(a.id)}" class="hero-lead__media">
-              <span class="hero-lead__badge">COVER STORY // ${esc(String(a.kicker || "").split("//")[0].trim() || "HOMEWORLD PRESS")}</span>
+              <span class="hero-lead__badge">COVER STORY</span>
               <img
                 src="${esc(heroImg(a))}"
                 alt="${esc(heroImg(a) === a.image ? (a.imageAlt || a.title) : `Placa editorial de marca da Homeworld Press para o pilar ${a.category}.`)}"
