@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "nasa-fights-orbital-drag-to-prolong-hubble-survival"
+        }
+      ],
+      "destination": "/a-nasa-fights-orbital-drag-to-prolong-hubble-survival.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "physicists-watch-time-emerge-without-clocks"
         }
       ],

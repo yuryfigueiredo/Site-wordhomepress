@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-03T22:22:46.669Z",
+  "updated": "2026-11-04T22:30:52.478Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -411,6 +411,44 @@
       },
       "source": "auto",
       "date": "2026-11-03"
+    },
+    "nasa-fights-orbital-drag-to-prolong-hubble-survival": {
+      "score": 6.4,
+      "note": "6.4/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 11% com nasa-lunar-landing-research-vehicle-test"
+        },
+        "craft": {
+          "pts": 1.6,
+          "max": 2,
+          "why": "ritmo e léxico medidos (80%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Proves that Hubble's core threat is aerodynamic and structural rather than financial, showing that uncrewed rendezvous poses higher risks th"
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-04"
     }
   }
 }

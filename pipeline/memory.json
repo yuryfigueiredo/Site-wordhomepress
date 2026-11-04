@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-03T22:22:46.843Z",
+  "updated": "2026-11-04T22:30:52.745Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -55,6 +55,13 @@
       "outcome": "publicada",
       "at": "2026-11-03T22:22:46.842Z",
       "id": "physicists-watch-time-emerge-without-clocks"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261104012254.htm": {
+      "slug": "nasa-is-racing-against-time-to-save-the-hubble-space-telescope",
+      "topic": "NASA is racing against time to save the Hubble Space Telescope",
+      "outcome": "publicada",
+      "at": "2026-11-04T22:30:52.745Z",
+      "id": "nasa-fights-orbital-drag-to-prolong-hubble-survival"
     }
   },
   "publishes": [
@@ -87,6 +94,11 @@
       "id": "physicists-watch-time-emerge-without-clocks",
       "at": "2026-11-03T22:22:46.842Z",
       "score": 6.9
+    },
+    {
+      "id": "nasa-fights-orbital-drag-to-prolong-hubble-survival",
+      "at": "2026-11-04T22:30:52.745Z",
+      "score": 6.4
     }
   ]
 }
