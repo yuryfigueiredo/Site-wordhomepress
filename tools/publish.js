@@ -172,6 +172,9 @@ const abort = (why) => {
 
 let buildLog = "";
 try {
+  /* Gera as placas SVG (feed + hero) antes de rebuildar os feeds, senão a capa
+     fica sem imagem (404) até alguém rodar make-cover.js manualmente. */
+  buildLog += run("make-cover.js", ["--from-db", draft.id]);
   buildLog += run("build.js");
   buildLog += run("build-sitemap.js");
   buildLog += run("meta-pages.js");
