@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02T17:12:10.136Z",
+  "updated": "2026-11-06T00:55:57.995Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -42,6 +42,11 @@
       "outcome": "publicada",
       "at": "2026-11-02T17:12:10.136Z",
       "id": "nasa-lunar-landing-research-vehicle-test"
+    },
+    "https://www.space.com/space-exploration/artemis/do-we-know-how-many-starship-launches-spacex-will-need-to-get-nasa-astronauts-to-the-moon-no-will-its-refuelling-plan-be-simple-also-no": {
+      "outcome": "publicada",
+      "at": "2026-11-06T00:55:57.995Z",
+      "id": "https-www-space-com-space-exploration-artemis-do-we-know-how-man"
     }
   },
   "publishes": [
@@ -69,6 +74,11 @@
       "id": "nasa-lunar-landing-research-vehicle-test",
       "at": "2026-11-02T17:12:10.136Z",
       "score": 7.3
+    },
+    {
+      "id": "https-www-space-com-space-exploration-artemis-do-we-know-how-man",
+      "at": "2026-11-06T00:55:57.995Z",
+      "score": 6.4
     }
   ]
 }
