@@ -119,13 +119,14 @@ const moldura = (corpo, peso = 1) => `<svg xmlns="http://www.w3.org/2000/svg" wi
 `;
 
 const yFinal = Math.max(300, 360 + ((4 - linhas.length) * fonte) / 2);
-/* O kicker só vai na placa do feed: no hero, o badge "COVER STORY // ..." já
-   está em cima da imagem e um segundo rótulo dentro da placa é ruído. */
-const rotulo = `<text x="96" y="96" font-family="Helvetica Neue, Arial, sans-serif" font-size="24" font-weight="700" fill="${cor}" letter-spacing="4">${esc(kicker.slice(0, 46))}</text>`;
-const corpoFeed = `${rotulo}
-  ${arcos(0)}
+/* Placa do feed otimizada para miniaturas (~100px): fundo colorido sólido,
+   texto branco em alto contraste, sem elementos decorativos que desaparecem
+   em tamanho pequeno. */
+const rotulo = `<text x="96" y="96" font-family="Helvetica Neue, Arial, sans-serif" font-size="24" font-weight="700" fill="#FFFFFF" fill-opacity="0.9" letter-spacing="4">${esc(kicker.slice(0, 46))}</text>`;
+const corpoFeed = `<rect width="1200" height="675" fill="${cor}"/>
+  ${rotulo}
   ${linhas
-    .map((l, i) => `<text x="96" y="${yFinal + i * fonte * 1.12}" font-family="Helvetica Neue, Arial, sans-serif" font-size="${fonte}" font-weight="700" fill="#F7F6F2" letter-spacing="-1">${esc(l)}</text>`)
+    .map((l, i) => `<text x="600" y="${280 + i * fonte * 1.15}" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="${fonte + 10}" font-weight="700" fill="#FFFFFF" letter-spacing="-1">${esc(l)}</text>`)
     .join("\n  ")}`;
 
 /* A placa do hero não leva título: o hero escreve o H1 logo abaixo da imagem e
