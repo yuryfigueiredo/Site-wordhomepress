@@ -3,8 +3,9 @@
   "checks_per_day": 5,
   "check_hours": ["07:00", "10:00", "14:00", "17:00", "21:00"],
   "cron_expression": "0 7,10,14,17,21 * * *",
-  "max_publishes_per_day": 1,
-  "min_hours_between_publishes": 20,
+  "max_publishes_per_day": 5,
+  "min_hours_between_publishes": 4,
+  "cover_changes_per_day": 2,
   "lead_max_age_days": 7,
   "lead_retry_hours": {
     "em_andamento": 6,

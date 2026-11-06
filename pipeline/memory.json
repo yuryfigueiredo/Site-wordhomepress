@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-06T18:06:27.246Z",
+  "updated": "2026-11-06T19:48:38.878Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -63,6 +63,90 @@
       "outcome": "publicada",
       "at": "2026-11-04T22:30:52.745Z",
       "id": "nasa-fights-orbital-drag-to-prolong-hubble-survival"
+    },
+    "https://phys.org/news/2026-10-decade-carbon-dioxide-space.html": {
+      "slug": "a-decade-of-carbon-dioxide-data-from-space-gets-an-upgrade",
+      "topic": "A decade of carbon dioxide data from space gets an upgrade",
+      "outcome": "em_andamento",
+      "at": "2026-11-06T18:12:29.732Z"
+    },
+    "https://phys.org/news/2026-10-tiny-photonic-chip-links-telescopes.html": {
+      "slug": "tiny-photonic-chip-links-telescopes-together-to-view-the-univers",
+      "topic": "Tiny photonic chip links telescopes together to view the universe in 'astonishing' detail",
+      "outcome": "em_andamento",
+      "at": "2026-11-06T18:12:30.203Z"
+    },
+    "https://www.space.com/entertainment/space-movies-shows/this-week-in-space-podcast-episode-234-living-in-lunar-caves": {
+      "slug": "this-week-in-space-podcast-episode-234-living-in-lunar-caves",
+      "topic": "This Week In Space podcast: Episode 234 — Living in Lunar Caves",
+      "outcome": "em_andamento",
+      "at": "2026-11-06T18:13:04.177Z"
+    },
+    "https://blog.talosintelligence.com/appraisal-by-ai-model-driven-victim-prioritization-in-the-volta-infostealer": {
+      "slug": "malware-uses-llms-to-rank-victims-by-how-much-theyre-worth",
+      "topic": "Malware uses LLMs to rank victims by how much they're worth",
+      "outcome": "em_andamento",
+      "at": "2026-11-06T18:13:04.452Z"
+    },
+    "https://www.sciencedaily.com/releases/2026/10/261030002935.htm": {
+      "slug": "scientists-smash-oxygen-nuclei-to-recreate-matter-from-the-big-b",
+      "topic": "Scientists smash oxygen nuclei to recreate matter from the Big Bang",
+      "outcome": "em_andamento",
+      "at": "2026-11-06T18:13:05.118Z"
+    },
+    "https://phys.org/news/2026-10-superconducting-cables-link-large-quantum.html": {
+      "slug": "four-superconducting-cables-link-two-large-quantum-processors-in",
+      "topic": "Four superconducting cables link two large quantum processors into one",
+      "outcome": "em_andamento",
+      "at": "2026-11-06T18:13:37.376Z"
+    },
+    "https://phys.org/news/2026-10-scientists-boost-prime-dicot.html": {
+      "slug": "scientists-develop-new-system-to-boost-prime-editing-in-dicot-pl",
+      "topic": "Scientists develop new system to boost prime editing in dicot plants",
+      "outcome": "em_andamento",
+      "at": "2026-11-06T18:13:37.973Z"
+    },
+    "https://phys.org/news/2026-10-figuring-cosmic-neutrinos-tricky-radio.html": {
+      "slug": "figuring-out-where-cosmic-neutrinos-come-from-is-tricky-radio-te",
+      "topic": "Figuring out where cosmic neutrinos come from is tricky—radio telescopes could help find 'ghost particles' origin",
+      "outcome": "em_andamento",
+      "at": "2026-11-06T18:13:38.544Z"
+    },
+    "https://phys.org/news/2026-11-ai-disease-hidden-mitochondria.html": {
+      "slug": "ai-points-researchers-toward-new-disease-targets-hidden-in-mitoc",
+      "topic": "AI points researchers toward new disease targets hidden in mitochondria",
+      "outcome": "em_andamento",
+      "at": "2026-11-06T19:48:09.798Z"
+    },
+    "https://phys.org/news/2026-11-mega-interaction-soil-moisture-atmospheric.html": {
+      "slug": "mega-heat-waves-strengthened-by-interaction-between-soil-moistur",
+      "topic": "'Mega heat waves' strengthened by interaction between soil moisture, atmospheric pressure and temperature",
+      "outcome": "em_andamento",
+      "at": "2026-11-06T19:48:10.382Z"
+    },
+    "https://phys.org/news/2026-11-fruit-fly-clues-insect-survival.html": {
+      "slug": "fruit-fly-study-offers-clues-to-insect-survival-in-a-hotter-drie",
+      "topic": "Fruit fly study offers clues to insect survival in a hotter, drier world",
+      "outcome": "em_andamento",
+      "at": "2026-11-06T19:48:10.940Z"
+    },
+    "https://phys.org/news/2026-10-hidden-erosion-reveals-soft-mountain.html": {
+      "slug": "hidden-erosion-study-reveals-soft-mountain-rock-erodes-three-tim",
+      "topic": "Hidden erosion: Study reveals soft mountain rock erodes three times faster than hard rock—with climate implications",
+      "outcome": "em_andamento",
+      "at": "2026-11-06T19:48:37.697Z"
+    },
+    "https://phys.org/news/2026-10-ute-reveals-flavors-superconductivity-extreme.html": {
+      "slug": "ute-reveals-two-flavors-of-superconductivity-under-extreme-press",
+      "topic": "UTe₂ reveals two flavors of superconductivity under extreme pressure",
+      "outcome": "em_andamento",
+      "at": "2026-11-06T19:48:38.295Z"
+    },
+    "https://www.space.com/stargazing/the-moon-mars-and-jupiter-shine-in-the-heart-of-the-lion-overnight-on-nov-1-2": {
+      "slug": "the-moon-mars-and-jupiter-shine-in-the-heart-of-the-lion-overnig",
+      "topic": "The moon, Mars, and Jupiter shine in the heart of the Lion overnight on Nov. 1-2",
+      "outcome": "em_andamento",
+      "at": "2026-11-06T19:48:38.878Z"
     }
   },
   "publishes": [
