@@ -20,6 +20,22 @@ const run = (script, args = []) => execFileSync(process.execPath, [path.join(ROO
 const DIR = path.join(ROOT, "pipeline", "drafts", SLUG);
 const draft = JSON.parse(fs.readFileSync(path.join(DIR, "draft.json"), "utf8"));
 
+/* ── busca automática de foto real ────────────────────────────────────── */
+/* Se o draft não tem imagem ou usa placa SVG, busca foto real via Unsplash/Pexels.
+   A busca usa o título (primeiras 6 palavras) + categoria como query. */
+const ehFotoReal = (img) => img && /\.(jpg|jpeg|png|webp)$/i.test(img) && !img.startsWith("images/covers/");
+if (!ehFotoReal(draft.image)) {
+  console.log(`buscando foto real para ${SLUG}...`);
+  try {
+    const findCoverOut = execFileSync(process.execPath, [path.join(ROOT, "tools", "find-cover.js"), SLUG], { cwd: ROOT, encoding: "utf8" });
+    console.log(findCoverOut.trim());
+    /* Recarrega o draft atualizado pelo find-cover.js */
+    Object.assign(draft, JSON.parse(fs.readFileSync(path.join(DIR, "draft.json"), "utf8")));
+  } catch (err) {
+    console.error(`erro na busca de foto: ${err.message} — continua com placa SVG`);
+  }
+}
+
 /* ── teto de cadência: quantas matérias podem subir por dia ───────────── */
 const cadence = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8"));
 const mem = require("./lib/memory");
