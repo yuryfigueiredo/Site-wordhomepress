@@ -551,7 +551,7 @@
   }
 
   // 6. Head metadata for the two dynamic templates + aria-current on nav
-  const SITE_ORIGIN = "https://homeworldpress.com";
+  const SITE_ORIGIN = "https://www.homeworldpress.com";
   const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/images/og-homeworldpress.png`;
 
   /* og:image e JSON-LD exigem URL absoluta; o catálogo guarda caminho

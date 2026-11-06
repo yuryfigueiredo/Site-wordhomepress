@@ -12,7 +12,7 @@ const ROOT = path.resolve(__dirname, "..");
 const ARGS = process.argv.slice(2);
 const OFFLINE = ARGS.includes("--offline");
 const QUICK = ARGS.includes("--quick");
-const ORIGIN = "https://homeworldpress.com";
+const ORIGIN = "https://www.homeworldpress.com";
 const PLACEHOLDER_TAG = "homeworldpres-20";
 
 global.window = {};

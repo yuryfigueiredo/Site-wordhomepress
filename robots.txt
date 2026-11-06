@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://homeworldpress.com/sitemap.xml
+Sitemap: https://www.homeworldpress.com/sitemap.xml

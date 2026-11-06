@@ -20,7 +20,7 @@ const stub = (target, depth) => {
 <meta charset="utf-8">
 <meta name="robots" content="noindex,follow">
 <meta http-equiv="refresh" content="0; url=${up}${clean}">
-<link rel="canonical" href="https://homeworldpress.com/${clean}">
+<link rel="canonical" href="https://www.homeworldpress.com/${clean}">
 <title>Homeworld Press — moved</title>
 <script>location.replace("${up}${clean}" + location.search + location.hash);</script>
 </head>

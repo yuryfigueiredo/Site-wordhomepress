@@ -8,7 +8,7 @@ const ROOT = path.resolve(__dirname, "..");
 require(path.join(ROOT, "js", "articles-db.js"));
 const DB = global.window.HWP_DATABASE;
 
-const ORIGIN = "https://homeworldpress.com";
+const ORIGIN = "https://www.homeworldpress.com";
 const MONTHS = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
 
 function toISO(input) {

@@ -17,7 +17,7 @@ const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
 const CHECK = process.argv.includes("--check");
-const ORIGIN = "https://homeworldpress.com";
+const ORIGIN = "https://www.homeworldpress.com";
 const DEFAULT_OG = `${ORIGIN}/images/og-homeworldpress.png`;
 const MONTHS = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
 
