@@ -64,6 +64,7 @@ function headBlock({ title, description, canonical, image, jsonLd }) {
   return `  <title>${esc(title)}</title>
   <meta name="description" content="${esc(description)}">
   <link rel="canonical" href="${esc(canonical)}">
+  <link rel="alternate" type="application/rss+xml" title="Homeworld Press Feed" href="/feed.xml">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="Homeworld Press">
   <meta property="og:locale" content="en_US">
@@ -221,8 +222,6 @@ function articleBody(a) {
 
       ${sourcesHtml(a)}
 
-      ${adSlotHtml("ADVERTISEMENT // GOOGLE ADSENSE & MEDIAVINE DISPLAY SLOT (ZERO-CLS RESERVED)", "728x90 / Responsive In-Article Unit — High-RPM US Literature & Tech Contextual Placement")}
-
       ${readNextHtml(a)}
 `;
 }
@@ -352,8 +351,6 @@ function reviewBody(r) {
       <div class="article-prose">
         ${r.prose || ""}
       </div>
-
-      ${adSlotHtml("ADVERTISEMENT // GOOGLE ADSENSE & MEDIAVINE DISPLAY SLOT (ZERO-CLS RESERVED)", "728x90 / Responsive Hardware Lab Unit — High-RPM US Consumer Electronics Contextual Placement")}
 `;
 }
 

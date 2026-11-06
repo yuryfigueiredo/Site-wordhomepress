@@ -424,11 +424,6 @@
 
       ${sourcesHtml}
 
-      <div class="ad-slot-container">
-        <div class="ad-slot-container__label">ADVERTISEMENT // GOOGLE ADSENSE & MEDIAVINE DISPLAY SLOT (ZERO-CLS RESERVED)</div>
-        <div style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-secondary);">728x90 / Responsive In-Article Unit — High-RPM US Literature & Tech Contextual Placement</div>
-      </div>
-
       ${readNextHtml(article)}
     `;
     neutralizeLinks(holder);
@@ -580,11 +575,6 @@
 
       <div class="article-prose">
         ${sanitizeRichHtml(review.prose)}
-      </div>
-
-      <div class="ad-slot-container">
-        <div class="ad-slot-container__label">ADVERTISEMENT // GOOGLE ADSENSE & MEDIAVINE DISPLAY SLOT (ZERO-CLS RESERVED)</div>
-        <div style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-secondary);">728x90 / Responsive Hardware Lab Unit — High-RPM US Consumer Electronics Contextual Placement</div>
       </div>
     `;
     neutralizeLinks(mount);

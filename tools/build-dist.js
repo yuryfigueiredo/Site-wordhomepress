@@ -2,6 +2,7 @@
    Uso: node tools/build-dist.js  */
 const fs = require("fs");
 const path = require("path");
+const { execFileSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..");
 const DIST = path.join(ROOT, "dist");
@@ -52,7 +53,7 @@ function rootHtmlFiles() {
 }
 
 function rootExtras() {
-  return ["robots.txt", "sitemap.xml"].filter((f) => fs.existsSync(path.join(ROOT, f)));
+  return ["robots.txt", "sitemap.xml", "feed.xml"].filter((f) => fs.existsSync(path.join(ROOT, f)));
 }
 
 function walk(relDir, out) {
@@ -87,6 +88,14 @@ function listFiles(dir) {
 }
 
 fs.rmSync(DIST, { recursive: true, force: true });
+
+/* Gera feed.xml antes de montar o pacote (tools/build-feed.js). */
+try {
+  execFileSync(process.execPath, [path.join(ROOT, "tools", "build-feed.js")], { cwd: ROOT, stdio: "inherit" });
+} catch (e) {
+  console.error("ERRO: build-feed.js falhou —", e.message);
+  process.exit(1);
+}
 
 const candidates = [...rootHtmlFiles(), ...rootExtras()];
 for (const dir of ASSET_DIRS) if (fs.existsSync(path.join(ROOT, dir))) walk(dir, candidates);

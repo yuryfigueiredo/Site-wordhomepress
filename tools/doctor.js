@@ -78,7 +78,10 @@ for (const file of [...HTML_FILES, "js/articles-db.js"]) {
     if (!raw || /^(https?:|mailto:|tel:|data:|javascript:|#)/i.test(raw)) continue;
     const bare = raw.split("?")[0].split("#")[0];
     if (!bare) continue;
-    const rel = path.normalize(path.join(base, bare.replace(/^\/+/, ""))).replace(/\\/g, "/");
+    /* Caminho root-relative (ex.: /feed.xml) resolve da raiz do site. */
+    const rel = bare.startsWith("/")
+      ? bare.replace(/^\/+/, "").replace(/\\/g, "/")
+      : path.normalize(path.join(base, bare)).replace(/\\/g, "/");
     if (!localRefs.has(rel)) localRefs.set(rel, new Set());
     localRefs.get(rel).add(file);
   }
@@ -99,8 +102,13 @@ for (const file of HTML_FILES) {
   for (const m of src.matchAll(/(?:href|src)\s*=\s*["']([^"'#:]+)(#[^"']*)?["']/g)) {
     const raw = m[1].trim();
     if (/^(https?:|mailto:|tel:|data:|\/\/)/i.test(raw)) continue;
-    const target = path.normalize(path.join(path.dirname(file), raw.split("?")[0]));
-    if (!fs.existsSync(path.join(ROOT, target))) {
+    /* Caminho root-relative (ex.: /feed.xml) resolve da raiz, não do diretório do arquivo. */
+    const bare = raw.split("?")[0];
+    const target = bare.startsWith("/")
+      ? bare.replace(/^\/+/, "")
+      : path.join(path.dirname(file), bare);
+    const normalized = path.normalize(target);
+    if (!fs.existsSync(path.join(ROOT, normalized))) {
       fail("internal-link", `${file} → ${raw} não resolve`);
     }
   }
@@ -189,7 +197,8 @@ const allText = [...HTML_FILES, "js/articles-db.js", "js/app.js"].map(read).join
 /* O delimitador da URL é aspa/espaço, não "&": parar no & truncava
    `...?k=Foo&tag=x` em `...?k=Foo` e contava link com tag como sem tag. */
 const amazonLinks = [...allText.matchAll(/https?:\/\/(?:www\.)?(amazon\.[a-z.]+|audible\.[a-z.]+)\/[^"'\s)]*/gi)];
-const untagged = amazonLinks.filter((m) => !/[?&]tag=/.test(m[0]));
+/* No HTML atributos, "&" vira "&amp;": o regex precisa reconhecer ambos. */
+const untagged = amazonLinks.filter((m) => !/[?&](?:amp;)?tag=/.test(m[0]));
 if (untagged.length) warn("affiliate", `${untagged.length} links Amazon/Audible sem tag de afiliado (ex.: ${untagged[0][0].slice(0, 70)})`);
 const tagCount = (allText.match(new RegExp(`tag=${PLACEHOLDER_TAG}`, "g")) || []).length;
 if (tagCount) note("affiliate", `tag placeholder "${PLACEHOLDER_TAG}" em ${tagCount} links — trocar pela sua Store ID real antes de publicar`);
