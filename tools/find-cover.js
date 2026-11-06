@@ -1,11 +1,13 @@
-/* find-cover.js — busca foto real para o draft com fallback Unsplash → Pexels.
+/* find-cover.js — busca foto real para o draft com candidatos de query e
+   fallback Unsplash → Pexels.
    Uso: node tools/find-cover.js <slug>
-   Atualiza o draft.json com a foto encontrada (ou mantém placa SVG se não achar).
+   Atualiza o draft.json com a foto encontrada. Sem foto, sai 2 e deixa o
+   portão do publish.js travar a publicação e abrir o alerta.
    Requer: UNSPLASH_ACCESS_KEY e/ou PEXELS_API_KEY no .env ou process.env. */
 
 const fs = require("fs");
 const path = require("path");
-const { findPhoto } = require("./lib/find-photo");
+const { findPhotoSmart } = require("./lib/find-photo");
 
 const ROOT = path.resolve(__dirname, "..");
 const SLUG = process.argv[2];
@@ -17,30 +19,32 @@ if (!SLUG) {
 
 const draftFile = path.join(ROOT, "pipeline", "drafts", SLUG, "draft.json");
 if (!fs.existsSync(draftFile)) {
-  console.error(`não achei ${path.relative(ROOT, draftFile)} — rode new-post.js antes`);
-  process.exit(1);
+  console.error(`não existe ${path.relative(ROOT, draftFile)} — rode new-post.js antes`);
+  process.exit(2);
 }
 
 const draft = JSON.parse(fs.readFileSync(draftFile, "utf8"));
 
-/* Query de busca: usa o título (primeiras 6 palavras) + categoria. */
-const titulo = String(draft.title || "");
-const query = titulo.split(/\s+/).slice(0, 6).join(" ") + " " + (draft.category || "");
-
 (async () => {
-  console.log(`buscando foto para ${SLUG}... query: "${query}"`);
-  const foto = await findPhoto(SLUG, query, draft.category);
+  const { foto, log } = await findPhotoSmart(SLUG, draft);
+  for (const tentativa of log) {
+    console.log(`query: "${tentativa.query}" → ${tentativa.attempts.join(" | ")}`);
+  }
 
   if (foto) {
     draft.image = foto.local;
-    draft.imageAlt = `${titulo} — ${foto.credit}`;
+    draft.imageAlt = `${draft.title} — ${foto.credit}`;
     draft.imageAuthor = foto.author;
     fs.writeFileSync(draftFile, JSON.stringify(draft, null, 2) + "\n");
     console.log(`✓ foto encontrada: ${foto.local} (${foto.credit})`);
-  } else {
-    console.log(`✗ nenhuma foto encontrada — mantém placa SVG`);
+    process.exit(0);
   }
+
+  console.log("✗ nenhuma foto encontrada em nenhum candidato");
+  /* O log vira o corpo da issue de alerta. */
+  console.log("LOG_JSON:" + JSON.stringify(log));
+  process.exit(1);
 })().catch((err) => {
   console.error(`erro: ${err.message}`);
-  process.exit(1);
+  process.exit(2);
 });

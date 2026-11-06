@@ -10,6 +10,9 @@ on:
 
 permissions:
   contents: write
+  # notify-foto.js abre issue quando a busca de foto falha; sem isso o
+  # GITHUB_TOKEN recebe 403 e o alerta se cala.
+  issues: write
 
 concurrency:
   group: turno
@@ -32,6 +35,10 @@ jobs:
       CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
       MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      # A busca de foto real lê estas duas; chave ausente = candidato pulado,
+      # e sem nenhuma o portão do publish trava a rodada inteira.
+      UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+      PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
     steps:
       # O clone raso esconde os commits do dia: o teto de cadência e a memória
       # anti-repetição leem o histórico, então ele precisa vir inteiro.

@@ -21,19 +21,47 @@ const DIR = path.join(ROOT, "pipeline", "drafts", SLUG);
 const draft = JSON.parse(fs.readFileSync(path.join(DIR, "draft.json"), "utf8"));
 
 /* ── busca automática de foto real ────────────────────────────────────── */
-/* Se o draft não tem imagem ou usa placa SVG, busca foto real via Unsplash/Pexels.
-   A busca usa o título (primeiras 6 palavras) + categoria como query. */
+/* Sem foto real a publicação é abortada e o dono é avisado por issue no
+   GitHub (o GitHub manda o e-mail). A placa SVG existia para não travar a
+   rodada, mas virou o jeito fácil de publicar página feia: o leitor fecha e
+   o Google indexa a matéria sem imagem. */
 const ehFotoReal = (img) => img && /\.(jpg|jpeg|png|webp)$/i.test(img) && !img.startsWith("images/covers/");
-if (!ehFotoReal(draft.image)) {
+const temFotoReal = () => ehFotoReal(draft.image) || ehFotoReal(draft.bookCover);
+let logFoto = [];
+if (!temFotoReal()) {
   console.log(`buscando foto real para ${SLUG}...`);
+  let saida = "";
   try {
-    const findCoverOut = execFileSync(process.execPath, [path.join(ROOT, "tools", "find-cover.js"), SLUG], { cwd: ROOT, encoding: "utf8" });
-    console.log(findCoverOut.trim());
-    /* Recarrega o draft atualizado pelo find-cover.js */
-    Object.assign(draft, JSON.parse(fs.readFileSync(path.join(DIR, "draft.json"), "utf8")));
+    saida = execFileSync(process.execPath, [path.join(ROOT, "tools", "find-cover.js"), SLUG], { cwd: ROOT, encoding: "utf8" });
   } catch (err) {
-    console.error(`erro na busca de foto: ${err.message} — continua com placa SVG`);
+    /* exit 1 = nenhum candidato achou foto (o stdout traz o LOG_JSON);
+       exit 2 = o próprio buscador quebrou. */
+    saida = `${err.stdout || ""}`;
+    if (!saida) console.error(`busca de foto quebrou: ${String(err.stderr || err.message).split("\n")[0]}`);
   }
+  console.log(saida.trim());
+  const m = saida.match(/LOG_JSON:(.+)/);
+  if (m) {
+    try {
+      logFoto = JSON.parse(m[1]);
+    } catch {}
+  }
+  Object.assign(draft, JSON.parse(fs.readFileSync(path.join(DIR, "draft.json"), "utf8")));
+}
+
+if (!temFotoReal()) {
+  try {
+    console.log(
+      execFileSync(process.execPath, [path.join(ROOT, "tools", "notify-foto.js"), SLUG, draft.title || SLUG, JSON.stringify(logFoto)], {
+        cwd: ROOT,
+        encoding: "utf8",
+      }).trim(),
+    );
+  } catch (err) {
+    console.error(`aviso por issue NÃO enviado: ${String(err.stdout || err.message).split("\n").filter(Boolean).slice(-1)[0]}`);
+  }
+  console.error(`sem foto real — publicação abortada, nada foi alterado no catálogo`);
+  process.exit(1);
 }
 
 /* ── teto de cadência: quantas matérias podem subir por dia ───────────── */
