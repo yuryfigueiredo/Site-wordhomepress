@@ -9,8 +9,8 @@
   <rect width="1200" height="675" fill="#0A0A0A"/>
   <rect width="1200" height="675" fill="url(#brilho)"/>
   <text x="96" y="96" font-family="Helvetica Neue, Arial, sans-serif" font-size="24" font-weight="700" fill="#00A389" letter-spacing="4">SCIENCE // CONCEPTS</text>
-  <circle cx="1060" cy="140" r="306" fill="none" stroke="#00A389" stroke-width="2" opacity="0.22"/>
-  <circle cx="1030" cy="180" r="306" fill="none" stroke="#00A389" stroke-width="2" opacity="0.16"/>
+  <circle cx="1060" cy="140" r="358" fill="none" stroke="#00A389" stroke-width="2" opacity="0.22"/>
+  <circle cx="1030" cy="180" r="228" fill="none" stroke="#00A389" stroke-width="2" opacity="0.16"/>
   <circle cx="1000" cy="220" r="332" fill="none" stroke="#00A389" stroke-width="2" opacity="0.1"/>
   <text x="96" y="399" font-family="Helvetica Neue, Arial, sans-serif" font-size="78" font-weight="700" fill="#F7F6F2" letter-spacing="-1">Physicists Watch Time</text>
   <text x="96" y="486.36" font-family="Helvetica Neue, Arial, sans-serif" font-size="78" font-weight="700" fill="#F7F6F2" letter-spacing="-1">Emerge Without Clocks</text>
