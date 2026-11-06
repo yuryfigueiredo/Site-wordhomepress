@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-05T22:44:27.873Z",
+  "updated": "2026-11-06T18:06:27.246Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -46,8 +46,9 @@
     "https://www.space.com/space-exploration/artemis/do-we-know-how-many-starship-launches-spacex-will-need-to-get-nasa-astronauts-to-the-moon-no-will-its-refuelling-plan-be-simple-also-no": {
       "slug": "do-we-know-how-many-starship-launches-spacex-will-need-to-get-na",
       "topic": "Do we know how many Starship launches SpaceX will need to get NASA astronauts to the moon? No. Will its refuelling plan be simple? Also no.",
-      "outcome": "reprovada",
-      "at": "2026-11-03T15:04:46.908Z"
+      "outcome": "publicada",
+      "at": "2026-11-06T18:06:27.245Z",
+      "id": "https-www-space-com-space-exploration-artemis-do-we-know-how-man"
     },
     "https://www.sciencedaily.com/releases/2026/10/261028234703.htm": {
       "slug": "physicists-created-a-tiny-universe-and-watched-time-emerge-witho",
@@ -98,6 +99,11 @@
     {
       "id": "nasa-fights-orbital-drag-to-prolong-hubble-survival",
       "at": "2026-11-04T22:30:52.745Z",
+      "score": 6.4
+    },
+    {
+      "id": "https-www-space-com-space-exploration-artemis-do-we-know-how-man",
+      "at": "2026-11-06T18:06:27.245Z",
       "score": 6.4
     }
   ]
