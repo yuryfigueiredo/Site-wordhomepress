@@ -308,3 +308,13 @@ console.log(buildLog.trim());
 console.log(commitNote);
 console.log(`cadência hoje: ${require("./lib/cadence").publishedToday(ROOT, hoje)}/${cadence.max_publishes_per_day}`);
 console.log("deploy continua sendo decisão sua: nada foi enviado para nenhum servidor.");
+
+/* Registra a publicação no estado da capa para forçar trocas quando
+   nenhuma matéria sair na janela atual. */
+try {
+  const coverState = require("./lib/cover-state");
+  const state = coverState.loadState();
+  coverState.recordPublish(state, draft.id);
+} catch (err) {
+  console.error(`aviso: estado da capa não atualizado: ${err.message}`);
+}

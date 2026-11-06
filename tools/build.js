@@ -223,19 +223,29 @@ function coverFloor() {
   }
 }
 
-function pickCover() {
-  /* Capa é o dia, não o ranking histórico: entra a matéria mais nova do
-     pipeline que passe o piso. A nota é peneira de qualidade, não troféu — as
-     notas não decaem depois de publicadas (a atualidade é medida no dia da
-     avaliação), então "maior nota de todos os tempos" congelaria a capa do
-     mesmo jeito que a comparação com a capa escrita à mão congelava.
-     Só competem notas medidas por rubrica ("auto") ou ajustadas por você
-     ("manual"): o acervo antigo ("baseline") fica de fora porque o HTML escrito
-     à mão dele carrega dek, alt e botão que o catálogo não tem. */
+/* Capa forçada: quando nenhuma matéria foi publicada na janela atual,
+   escolhe a próxima matéria elegível (não a mais recente) para garantir
+   que a capa troque pelo menos 2x por dia. */
+function pickCover(forceChange = false) {
   const floor = coverFloor();
   const elegiveis = DB.articles
     .filter((a) => typeof a.rank === "number" && a.rankSource !== "baseline" && a.image && a.rank >= floor)
     .sort((x, y) => toTime(y.date) - toTime(x.date) || y.rank - x.rank);
+
+  if (!forceChange || elegiveis.length === 0) {
+    return elegiveis[0] || null;
+  }
+
+  // Forçando: pula a capa atual e pega a próxima
+  const coverState = require("./lib/cover-state");
+  const state = coverState.loadState();
+  const currentId = state.currentCoverId;
+
+  if (currentId && elegiveis.length > 1) {
+    const next = elegiveis.find((a) => a.id !== currentId);
+    return next || elegiveis[0];
+  }
+
   return elegiveis[0] || null;
 }
 
@@ -284,17 +294,34 @@ function applySlot(file, slot) {
       fs.mkdirSync(path.dirname(fb), { recursive: true });
       fs.writeFileSync(fb, region);
     }
-    const cover = pickCover();
+
+    /* Força troca de capa se nenhuma matéria foi publicada na janela atual */
+    const coverState = require("./lib/cover-state");
+    const state = coverState.loadState();
+    const window = coverState.currentWindow();
+    const forceChange = coverState.shouldForceChange(state, window);
+
+    const cover = pickCover(forceChange);
     const manual = resync ? region : fs.readFileSync(fb, "utf8");
     const content = cover ? `\n${TEMPLATES[slot.template](cover)}\n          ` : manual;
     const next = src.slice(0, i0) + content + src.slice(i1);
     if (next !== src) writeSrc(file, next);
+
+    /* Atualiza o estado da capa */
+    if (!DRY && cover) {
+      if (forceChange) {
+        coverState.recordForcedChange(state, cover.id);
+      } else {
+        coverState.recordPublish(state, cover.id);
+      }
+    }
+
     return {
       file,
       slot: slot.name,
       added: cover ? 1 : 0,
       note: cover
-        ? `capa do dia: ${cover.id} (${cover.rank}, ${cover.date}) · piso ${coverFloor()}`
+        ? `capa ${forceChange ? "forçada" : "do dia"}: ${cover.id} (${cover.rank}, ${cover.date}) · piso ${coverFloor()} · janela ${window}`
         : `capa manual mantida (nenhuma matéria do pipeline acima do piso ${coverFloor()})`,
     };
   }
