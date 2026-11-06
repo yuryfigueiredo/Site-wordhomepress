@@ -20,29 +20,57 @@
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "NewsArticle",
-  "headline": "Artemis I data shows higher lunar radiation",
-  "description": "Unexpected particle flux near the Moon challenges existing deep-space shielding models.",
-  "image": "https://www.homeworldpress.com/images/posts/artemis-i-radiation-discrepancy.jpg",
-  "datePublished": "2026-11-01",
-  "articleSection": "SCIENCE // CONCEPTS",
-  "author": {
-    "@type": "Person",
-    "name": "Dr. Aris Thorne"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Homeworld Press",
-    "url": "https://www.homeworldpress.com",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://www.homeworldpress.com/images/og-homeworldpress.png"
+  "@graph": [
+    {
+      "@type": "NewsArticle",
+      "headline": "Artemis I data shows higher lunar radiation",
+      "description": "Unexpected particle flux near the Moon challenges existing deep-space shielding models.",
+      "image": "https://www.homeworldpress.com/images/posts/artemis-i-radiation-discrepancy.jpg",
+      "datePublished": "2026-11-01",
+      "articleSection": "SCIENCE // CONCEPTS",
+      "author": {
+        "@type": "Person",
+        "name": "Dr. Aris Thorne"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Homeworld Press",
+        "url": "https://www.homeworldpress.com",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.homeworldpress.com/images/og-homeworldpress.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.homeworldpress.com/article.html?id=artemis-i-radiation-discrepancy"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.homeworldpress.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Science",
+          "item": "https://www.homeworldpress.com/science.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Artemis I data shows higher lunar radiation",
+          "item": "https://www.homeworldpress.com/article.html?id=artemis-i-radiation-discrepancy"
+        }
+      ]
     }
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://www.homeworldpress.com/article.html?id=artemis-i-radiation-discrepancy"
-  }
+  ]
 }
   </script>
   <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
@@ -108,7 +136,59 @@
 
   <main id="main-content" class="container article-layout">
     <!-- Dynamically Populated by js/app.js based on ?id=... -->
-    <article id="dynamicArticleMount" class="article-main" data-id="artemis-i-radiation-discrepancy"></article>
+    <article id="dynamicArticleMount" class="article-main" data-id="artemis-i-radiation-discrepancy">
+      <div class="article-header">
+        <span class="kicker kicker--science">SCIENCE // CONCEPTS</span>
+        <h1 class="article-title">Artemis I data shows higher lunar radiation</h1>
+        <p class="article-dek">Unexpected particle flux near the Moon challenges existing deep-space shielding models.</p>
+        <div class="meta-line">
+          <span>BY <strong>Dr. Aris Thorne</strong></span>
+          <span>•</span>
+          <span>Nov 1, 2026</span>
+          <span>•</span>
+          <span>4 MIN READ</span>
+        </div>
+      </div>
+
+      <figure style="margin-bottom:2rem;border:var(--border-hairline);">
+        <img src="images/posts/artemis-i-radiation-discrepancy.jpg" alt="Artemis I data shows higher lunar radiation — Photo by NASA on Unsplash" fetchpriority="high" width="900" height="500" style="width:100%;max-height:480px;object-fit:cover;">
+      </figure>
+
+      
+
+      <div class="article-prose">
+        <h2>The Artemis telemetry</h2><p>A single sensor readout from the Artemis I mission recorded a spike in ionizing radiation. This specific data point came from the spacecraft during its lunar transit in late 2022. The numbers did not match the predictions used to design the mission's shielding.</p><p>Current deep-space transit models rely on solar cycle averages and established galactic cosmic ray flux. The Artemis I data suggests these models are insufficient for lunar proximity. We must rethink how we protect human crews during long-duration stays in the cislunar environment.</p><h2>The shielding gap</h2><p>Engineers designed the Orion capsule to withstand known radiation environments. These designs assume a certain baseline of particle interaction. The mission data reveals that the local lunar environment is more volatile than expected. This discrepancy creates a technical debt for future crewed missions.</p><p>The unexpected flux might stem from unmapped magnetic interactions near the Moon. We cannot yet say if this is a localized phenomenon or a regional trend. The discrepancy between simulation and reality is the primary concern for mission planners. It suggests our current maps of the lunar radiation environment are incomplete.</p><p>Shielding is heavy.</p><h2>Model limitations</h2><p>Existing models use historical data from previous deep-space probes. These probes often operated in different orbits or at different solar phases. Relying on old datasets creates a false sense of security for new mission architectures. The Artemis I results highlight this specific vulnerability in our predictive science.</p><p>We do not know the exact composition of the high-energy particles detected. It remains unclear if the spike was a transient event or a sustained flux. Without more frequent measurements, we are guessing at the cause. The limitation of our current knowledge is the lack of continuous monitoring near the Moon.</p><h2>The solar variable</h2><p>Solar activity plays a massive role in radiation levels. The mission occurred during a specific phase of the solar cycle. Some argue that the readings are merely a product of that particular timing. This view suggests the radiation environment is not inherently more dangerous, just temporarily more active.</p><p>However, even accounting for solar activity, the levels exceeded the modeled thresholds. A simple solar cycle adjustment does not bridge the gap between the prediction and the observation. The error margin in the models seems larger than previously acknowledged. This makes the entire predictive framework look shaky.</p><h2>Counter-arguments in planning</h2><p>Some mission architects suggest that the sensor itself may have experienced interference. They argue that the hardware might not have been calibrated for these specific energy levels. This perspective shifts the blame from the physics to the instrumentation. It is a conservative approach to data interpretation.</p><p>If the sensors are the problem, the mission physics remains intact. This would mean our models are still valid and our shielding is sufficient. However, if the sensors are accurate, the entire mission profile is at risk. We cannot assume hardware error without a thorough investigation of the telemetry logs.</p><h2>The physical reality</h2><p>Radiation leaves a trace on electronic components. Looking at the logs, one might see subtle bit-flips in the non-critical systems. These are not catastrophic, but they are present. This physical evidence supports the idea that the environment was harsher than anticipated.</p><p>The shielding material itself shows no signs of structural degradation. This is a relief for immediate mission safety. Yet, the electronic interference remains a documented reality. We are seeing the effects of a medium we thought we understood.</p><h2>Future mission implications</h2><p>Future crewed missions to the Moon cannot rely on current shielding mass estimates. If the radiation is higher, the crew requires more protection. More protection means more mass. More mass increases launch costs and complicates orbital mechanics.</p><p>This creates a cycle of increasing complexity for NASA and its partners. Every gram of extra shielding must be justified by a survival probability. If the survival probability drops because of unforeseen radiation, the math changes. The mission architecture must evolve to meet this new reality.</p><h2>Unanswered questions</h2><p>We do not know if the Moon's crust contributes to this flux through secondary particle production. The interaction between solar wind and lunar regolith is complex. We also lack data on how these particles behave in the lunar shadow. This creates a significant blind spot in our deep-space situational awareness.</p><p>The discrepancy is a call for better sensors and more frequent observations. We need a dedicated constellation of small satellites to map the cislunar radiation environment. Relying on single-mission data is a recipe for future failure. We must turn these surprising readings into a standardized baseline.</p><h2>The practical path</h2><p>Mission planners must now incorporate a higher margin of error into their shielding calculations. This will likely result in heavier spacecraft for the Artemis II and III flights. It is a necessary, if expensive, adjustment to our lunar ambitions. Safety in space requires more than just optimistic modeling.</p><p>The Artemis I mission has provided a much-needed reality check. It has moved the conversation from theoretical models to empirical observations. We are now forced to face the actual environment of the Moon. This is a difficult but essential step for human spaceflight.</p>
+      </div>
+
+      <section class="article-sources">
+        <h2 class="article-sources__title">Sources</h2>
+        <ol>
+          <li><a href="https://www.sciencedaily.com/releases/2026/10/261027063659.htm" target="_blank" rel="noopener noreferrer">NASA’s Artemis I mission reveals surprising radiation levels near the Moon</a> <span class="article-sources__date">2026-10-28</span></li>
+        </ol>
+      </section>
+
+      <div class="ad-slot-container">
+        <div class="ad-slot-container__label">ADVERTISEMENT // GOOGLE ADSENSE & MEDIAVINE DISPLAY SLOT (ZERO-CLS RESERVED)</div>
+        <div style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-secondary);">728x90 / Responsive In-Article Unit — High-RPM US Literature & Tech Contextual Placement</div>
+      </div>
+
+      <section class="read-next" aria-label="Related articles" style="margin-top:3rem;border-top:var(--border-hairline);padding-top:1.5rem;">
+    <h2 class="read-next__heading" style="font-family:var(--font-display);font-size:1.1rem;font-weight:900;letter-spacing:0.06em;margin:0 0 1rem;">READ NEXT</h2>
+    <div class="read-next__grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.75rem;"><a class="read-next__card" href="article.html?id=nasa-fights-orbital-drag-to-prolong-hubble-survival" style="display:block;border:var(--border-hairline);padding:0.9rem 1rem;text-decoration:none;">
+      <span class="read-next__kicker" style="display:block;font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.3rem;">SCIENCE // SPACE</span>
+      <span class="read-next__title" style="display:block;font-family:var(--font-display);font-weight:900;font-size:1rem;line-height:1.3;">NASA Confronts Orbital Decay to Prolong Hubble Space Telescope Operations</span>
+      <span class="read-next__meta" style="display:block;font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);margin-top:0.45rem;">BY Dr. Aris Thorne • Nov 4, 2026</span>
+    </a><a class="read-next__card" href="article.html?id=physicists-watch-time-emerge-without-clocks" style="display:block;border:var(--border-hairline);padding:0.9rem 1rem;text-decoration:none;">
+      <span class="read-next__kicker" style="display:block;font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.3rem;">SCIENCE // CONCEPTS</span>
+      <span class="read-next__title" style="display:block;font-family:var(--font-display);font-weight:900;font-size:1rem;line-height:1.3;">Physicists Watch Time Emerge Without Clocks in Artificial Universe</span>
+      <span class="read-next__meta" style="display:block;font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);margin-top:0.45rem;">BY Dr. Aris Thorne • Nov 3, 2026</span>
+    </a><a class="read-next__card" href="article.html?id=nasa-lunar-landing-research-vehicle-test" style="display:block;border:var(--border-hairline);padding:0.9rem 1rem;text-decoration:none;">
+      <span class="read-next__kicker" style="display:block;font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.3rem;">SCIENCE // SPACE HISTORY</span>
+      <span class="read-next__title" style="display:block;font-family:var(--font-display);font-weight:900;font-size:1rem;line-height:1.3;">NASA Built A Dangerous Cage To Train Apollo Moon Landers</span>
+      <span class="read-next__meta" style="display:block;font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);margin-top:0.45rem;">BY Dr. Aris Thorne • Nov 2, 2026</span>
+    </a></div>
+  </section>
+</article></article>
 
     <section class="article-sidebar" aria-label="Related reading">
       <div class="trending-panel" style="margin-bottom:1.75rem;">

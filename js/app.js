@@ -256,6 +256,28 @@
   }
 
   // 4. Dynamic Article Reader Page (article.html?id=...)
+
+  /* Mesmo bloco que o tools/meta-pages.js grava nas páginas estáticas:
+     aqui cobre só o fallback (shell sem conteúdo, ex.: link legado /article). */
+  const bylineClean = (s) => String(s || "").replace(/^\s*by\s+/i, "").trim();
+  function readNextHtml(a) {
+    const same = DB.articles.filter((x) => x.id !== a.id && x.category === a.category).slice(0, 3);
+    if (!same.length) return "";
+    const cards = same
+      .map(
+        (x) => `<a class="read-next__card" href="article.html?id=${encodeURIComponent(x.id)}" style="display:block;border:var(--border-hairline);padding:0.9rem 1rem;text-decoration:none;">
+      <span class="read-next__kicker" style="display:block;font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.3rem;">${escapeHtml(x.kicker)}</span>
+      <span class="read-next__title" style="display:block;font-family:var(--font-display);font-weight:900;font-size:1rem;line-height:1.3;">${escapeHtml(x.title)}</span>
+      <span class="read-next__meta" style="display:block;font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);margin-top:0.45rem;">BY ${escapeHtml(bylineClean(x.author))} • ${escapeHtml(x.date)}</span>
+    </a>`
+      )
+      .join("");
+    return `<section class="read-next" aria-label="Related articles" style="margin-top:3rem;border-top:var(--border-hairline);padding-top:1.5rem;">
+      <h2 class="read-next__heading" style="font-family:var(--font-display);font-size:1.1rem;font-weight:900;letter-spacing:0.06em;margin:0 0 1rem;">READ NEXT</h2>
+      <div class="read-next__grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.75rem;">${cards}</div>
+    </section>`;
+  }
+
   function initArticleReader() {
     const holder = document.getElementById("dynamicArticleMount");
     if (!holder || !DB) return;
@@ -301,6 +323,15 @@
         link.classList.remove("is-active");
       }
     });
+
+    /* As cópias a-<id>.html já vêm com o corpo gravado no HTML estático
+       (tools/meta-pages.js) para o Google ler sem JavaScript. Com conteúdo
+       pronto, título/breadcrumb/nav acima continuam valendo e só falta
+       neutralizar links; montar de novo apagaria o que está no HTML. */
+    if (holder.dataset.id && holder.innerHTML.trim()) {
+      neutralizeLinks(holder);
+      return;
+    }
 
     const box = article.affiliateBox;
     /* Post novo chega com affiliateBox: null; sem esta guarda a página inteira
@@ -397,6 +428,8 @@
         <div class="ad-slot-container__label">ADVERTISEMENT // GOOGLE ADSENSE & MEDIAVINE DISPLAY SLOT (ZERO-CLS RESERVED)</div>
         <div style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-secondary);">728x90 / Responsive In-Article Unit — High-RPM US Literature & Tech Contextual Placement</div>
       </div>
+
+      ${readNextHtml(article)}
     `;
     neutralizeLinks(holder);
   }
@@ -410,6 +443,13 @@
     const review = DB.reviews.find((r) => r.id === id) || (id ? null : DB.reviews[0]);
     if (!review) {
       renderNotFound(mount, "review");
+      return;
+    }
+
+    /* Mesma regra das matérias: as cópias r-<id>.html já vêm com o guia
+       completo gravado no HTML estático; aqui só neutralizamos links. */
+    if (mount.dataset.id && mount.innerHTML.trim()) {
+      neutralizeLinks(mount);
       return;
     }
 
@@ -660,22 +700,37 @@
         image: socialImage(article.image),
         type: "article",
       });
+      /* @graph com BreadcrumbList: mesma assinatura do tools/meta-pages.js,
+         para o JS não apagar o breadcrumb que veio gravado no HTML. */
+      const cat = String(article.category || "");
       writeJsonLd({
         "@context": "https://schema.org",
-        "@type": "NewsArticle",
-        headline: article.title,
-        description: article.dek,
-        image: absoluteUrl(article.image),
-        ...(isoDate(article.date) ? { datePublished: isoDate(article.date) } : {}),
-        articleSection: article.kicker,
-        author: { "@type": "Person", name: article.author },
-        publisher: {
-          "@type": "Organization",
-          name: "Homeworld Press",
-          url: SITE_ORIGIN,
-          logo: { "@type": "ImageObject", url: DEFAULT_OG_IMAGE },
-        },
-        mainEntityOfPage: { "@type": "WebPage", "@id": url },
+        "@graph": [
+          {
+            "@type": "NewsArticle",
+            headline: article.title,
+            description: article.dek,
+            image: absoluteUrl(article.image),
+            ...(isoDate(article.date) ? { datePublished: isoDate(article.date) } : {}),
+            articleSection: article.kicker,
+            author: { "@type": "Person", name: article.author },
+            publisher: {
+              "@type": "Organization",
+              name: "Homeworld Press",
+              url: SITE_ORIGIN,
+              logo: { "@type": "ImageObject", url: DEFAULT_OG_IMAGE },
+            },
+            mainEntityOfPage: { "@type": "WebPage", "@id": url },
+          },
+          {
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_ORIGIN}/` },
+              { "@type": "ListItem", position: 2, name: cat.charAt(0).toUpperCase() + cat.slice(1), item: `${SITE_ORIGIN}/${cat}.html` },
+              { "@type": "ListItem", position: 3, name: article.title, item: url },
+            ],
+          },
+        ],
       });
       return;
     }
