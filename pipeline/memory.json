@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-06T00:55:57.995Z",
+  "updated": "2026-11-05T22:44:27.873Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -34,7 +34,7 @@
       "slug": "nasas-hubble-and-webb-discover-ancient-worlds-that-remember-thei",
       "topic": "NASA's Hubble and Webb discover ancient worlds that remember their past",
       "outcome": "reprovada",
-      "at": "2026-11-02T16:14:40.973Z"
+      "at": "2026-11-05T22:44:27.873Z"
     },
     "https://www.space.com/space-exploration/on-this-day-in-space-october-30-2026": {
       "slug": "on-this-day-in-space-oct-30-1964-nasas-weird-lunar-landing-resea",
@@ -44,9 +44,24 @@
       "id": "nasa-lunar-landing-research-vehicle-test"
     },
     "https://www.space.com/space-exploration/artemis/do-we-know-how-many-starship-launches-spacex-will-need-to-get-nasa-astronauts-to-the-moon-no-will-its-refuelling-plan-be-simple-also-no": {
+      "slug": "do-we-know-how-many-starship-launches-spacex-will-need-to-get-na",
+      "topic": "Do we know how many Starship launches SpaceX will need to get NASA astronauts to the moon? No. Will its refuelling plan be simple? Also no.",
+      "outcome": "reprovada",
+      "at": "2026-11-03T15:04:46.908Z"
+    },
+    "https://www.sciencedaily.com/releases/2026/10/261028234703.htm": {
+      "slug": "physicists-created-a-tiny-universe-and-watched-time-emerge-witho",
+      "topic": "Physicists created a tiny universe and watched time emerge without a clock",
       "outcome": "publicada",
-      "at": "2026-11-06T00:55:57.995Z",
-      "id": "https-www-space-com-space-exploration-artemis-do-we-know-how-man"
+      "at": "2026-11-03T22:22:46.842Z",
+      "id": "physicists-watch-time-emerge-without-clocks"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261104012254.htm": {
+      "slug": "nasa-is-racing-against-time-to-save-the-hubble-space-telescope",
+      "topic": "NASA is racing against time to save the Hubble Space Telescope",
+      "outcome": "publicada",
+      "at": "2026-11-04T22:30:52.745Z",
+      "id": "nasa-fights-orbital-drag-to-prolong-hubble-survival"
     }
   },
   "publishes": [
@@ -76,8 +91,13 @@
       "score": 7.3
     },
     {
-      "id": "https-www-space-com-space-exploration-artemis-do-we-know-how-man",
-      "at": "2026-11-06T00:55:57.995Z",
+      "id": "physicists-watch-time-emerge-without-clocks",
+      "at": "2026-11-03T22:22:46.842Z",
+      "score": 6.9
+    },
+    {
+      "id": "nasa-fights-orbital-drag-to-prolong-hubble-survival",
+      "at": "2026-11-04T22:30:52.745Z",
       "score": 6.4
     }
   ]

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-06T00:55:57.494Z",
+  "updated": "2026-11-04T22:30:52.478Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -374,9 +374,9 @@
       "source": "auto",
       "date": "2026-11-02"
     },
-    "https-www-space-com-space-exploration-artemis-do-we-know-how-man": {
-      "score": 6.4,
-      "note": "6.4/10 — força em timeliness (fonte mais recente há 3 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",
+    "physicists-watch-time-emerge-without-clocks": {
+      "score": 6.9,
+      "note": "6.9/10 — força em timeliness (fonte mais recente há 5 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",
       "breakdown": {
         "evidence": {
           "pts": 0.8,
@@ -386,12 +386,12 @@
         "timeliness": {
           "pts": 1.5,
           "max": 1.5,
-          "why": "fonte mais recente há 3 dia(s)"
+          "why": "fonte mais recente há 5 dia(s)"
         },
         "novelty": {
           "pts": 2,
           "max": 2,
-          "why": "sobrepõe 6% com artemis-i-radiation-discrepancy"
+          "why": "sobrepõe 10% com quantum-timekeeping-interstellar-navigation-physics"
         },
         "craft": {
           "pts": 1.6,
@@ -404,13 +404,51 @@
           "why": "sem produto nem caixa de afiliado"
         },
         "judgment": {
-          "pts": 0.5,
+          "pts": 1,
           "max": 1,
-          "why": "The refueling plan has been redesigned twice and the second version leaves the tanker flight count classified"
+          "why": "Proves that emergent time from entanglement challenges traditional cosmological chronometry assumptions."
         }
       },
       "source": "auto",
-      "date": "2026-11-06"
+      "date": "2026-11-03"
+    },
+    "nasa-fights-orbital-drag-to-prolong-hubble-survival": {
+      "score": 6.4,
+      "note": "6.4/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 11% com nasa-lunar-landing-research-vehicle-test"
+        },
+        "craft": {
+          "pts": 1.6,
+          "max": 2,
+          "why": "ritmo e léxico medidos (80%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Proves that Hubble's core threat is aerodynamic and structural rather than financial, showing that uncrewed rendezvous poses higher risks th"
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-04"
     }
   }
 }

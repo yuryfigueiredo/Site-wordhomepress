@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-06T00:55:57.994Z",
+  "updated": "2026-11-04T22:30:52.744Z",
   "runs": {
     "analyst": {
-      "id": "https-www-space-com-space-exploration-artemis-do-we-know-how-man",
-      "date": "2026-11-06",
-      "opening_move": "scene",
-      "ending_move": "flat_statement",
-      "title_pattern": "artemis iv refueling plan",
+      "id": "nasa-fights-orbital-drag-to-prolong-hubble-survival",
+      "date": "2026-11-04",
+      "opening_move": "dated_fact",
+      "ending_move": "consequence",
+      "title_pattern": "nasa confronts orbital decay",
       "humor_lines": 0
     },
     "lab": null,
