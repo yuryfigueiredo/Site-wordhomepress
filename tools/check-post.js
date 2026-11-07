@@ -9,6 +9,7 @@
 const fs = require("fs");
 const path = require("path");
 const memLib = require("./lib/memory");
+const fotoLib = require("./lib/find-photo");
 
 const ROOT = path.resolve(__dirname, "..");
 const SLUG = process.argv[2];
@@ -101,6 +102,21 @@ if (!dateMatch) {
 if (!/^\d+\s*MIN READ$/i.test(draft.readTime || "")) reject("schema", `readTime fora do padrão "N MIN READ": ${draft.readTime}`);
 if (!/^[a-z0-9-]+$/.test(draft.id || "")) reject("schema", `id não é kebab-case: ${draft.id}`);
 if (DB.articles.some((a) => a.id === draft.id)) reject("schema", `id já publicado: ${draft.id}`);
+
+/* ── 1b. photoQuery — a frase que decide qual foto a matéria ganha ────── */
+/* Sem este campo a busca escreve a query sozinha a partir do título, e o banco
+   de imagem não entende manchete: "two trapped ions let a gauge field" trouxe
+   para o ar, em 07/11, um render genérico com a palavra QUANTUM escrito — não
+   uma foto de íons presos (blob af79d7c6, 102 987 B). A régua mora em
+   lib/find-photo.js e é importada aqui: foi ter duas versões de "query
+   decente" que deixou a matéria passar pelo editor com a manchete no lugar da
+   cena. */
+{
+  const pq = fotoLib.validaPhotoQuery(draft.photoQuery);
+  if (!pq.ok) {
+    reject("photo-query", `photoQuery ${pq.motivo}: ${JSON.stringify(draft.photoQuery || "")} — quero 3 a 6 palavras concretas da CENA que a foto deveria mostrar (ex.: "ion trap laser laboratory vacuum")`);
+  }
+}
 
 /* ── 2. tags permitidas no content ────────────────────────────────────── */
 const foreignTags = [...String(draft.content || "").matchAll(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g)]

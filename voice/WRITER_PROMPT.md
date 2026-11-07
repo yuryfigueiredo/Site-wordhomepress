@@ -48,6 +48,7 @@ If `sources` is empty, the model may write **only analysis and context**, with z
   "readTime": "N MIN READ",
   "image": "input image or null",
   "imageAlt": "one factual sentence describing what the image shows, or null",
+  "photoQuery": "3 to 6 English words naming what a photo of THIS piece would show",
   "bookCover": null,
   "content": "<p>...</p>",
   "affiliateBox": null,
@@ -76,6 +77,8 @@ If `sources` is empty, the model may write **only analysis and context**, with z
 For `reviews`, output the review schema instead: `id, title, kicker, score, award, updated, readTime, topPickName, priceRange, image, amazonUrl, secondaryCtaText, secondaryCtaUrl, summary, pros[], cons[], matrixTitle, matrixCaption, matrixRows[], secondaryPicks[], prose, sources[], fact_flags[]`.
 
 `content` and `prose` may contain only: `<p> <h2> <h3> <ul> <ol> <li> <blockquote> <strong> <em> <a href>`. No inline styles, no scripts, no images.
+
+`photoQuery` is the only field that decides which photograph the site buys for the piece, and it names a **scene, not a subject**. The image bank is a stock library: it has no idea what "a gauge field" or "refueling architecture" means, but it has forty photographs of a laser table in a dark lab. Write the photograph you would take if you were standing in the room the article is about — the object, the material, the light. Rules the pipeline checks: nouns a photographer could point a camera at, 3 to 6 words, no number words (`two`, `five`), no abstract nouns (`value`, `legacy`, `infrastructure`), no names of people, no article (`a`, `the`). Good: `ion trap laser laboratory vacuum`. Bad: `two trapped ions gauge field` (a number word and a physics abstraction — on 07/11 that headline-as-query bought a generic 3D render with the word QUANTUM on it), `Artemis IV refueling plan culture` (a headline, not a scene).
 
 `ranking.thesis_strength` is 0 (no thesis, summary of what is already known), 1 (a real argument, but a predictable one), or 2 (a claim a reader could have argued against before reading). It is the only judgment the model contributes to the site's ranking; `tools/score.js` computes the 0–10 note from measured evidence, timeliness, novelty, craft and commercial fit, and weights this field at 1.0 of 10. Never emit a `score` field — the model does not grade itself, and a declared score is rejected.
 
@@ -168,7 +171,7 @@ Return valid JSON only, matching the schema. No markdown fences, no commentary, 
 - [ ] Leu `voice/state/last_runs.json`, colocou a abertura e o fecho da última peça do registro no `must_avoid`, e proibiu os templates já gastos.
 - [ ] Pelo menos uma fonte primária para cada número pretendido.
 - [ ] `products[].tested` só é `true` com `test_notes` preenchido.
-- [ ] Imagem fornecida ou `null` (o modelo não escolhe imagem).
+- [ ] Imagem fornecida ou `null` (o modelo não escolhe imagem — quem escolhe é o banco de imagens, a partir do `photoQuery` que o modelo escreve).
 - [ ] `word_count` realista para o registro.
 
 ## 5. Rejection criteria (the pipeline must discard the output if any is true)
@@ -183,6 +186,7 @@ Return valid JSON only, matching the schema. No markdown fences, no commentary, 
 - `self_check.opening_move` ausente ou igual ao `opening_move` da última peça publicada no mesmo registro.
 - `self_check.humor_lines` > 2, ou > 0 em pauta de morte, desastre ou tragédia.
 - `self_check.shortest_sentence_words` ≥ 8 (falta a frase curta obrigatória).
+- `photoQuery` ausente ou vazio, com menos de 2 palavras concretas, com mais de 6 palavras, ou com número por extenso — o banco de imagens devolve foto de outro assunto e a matéria vai ao ar com a imagem errada.
 
 ## 6. Memória anti-repetição (o caller mantém)
 

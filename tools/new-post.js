@@ -159,6 +159,7 @@ const prompt = [
   "- Inclua exatamente um parágrafo de uma frase (1 a 7 palavras) e pelo menos um parágrafo com 4 ou mais frases.",
   "- Responda SOMENTE com o JSON do contrato acima, sem cercas de código.",
   `- Campo "date": copie exatamente "${brief.data_publicacao}". Não é a data da fonte e não é para inventar.`,
+  `- Campo "photoQuery": 3 a 6 palavras em inglês nomeando a CENA que a foto desta matéria deveria mostrar — o que uma câmera veria, não o assunto da notícia. É com ele que o banco de imagens escolhe a foto; sem ele a matéria vai ao ar com imagem de outro assunto.`,
   "- Preencha self_check com valores medidos no seu próprio texto, não estimados.",
   "- Se as fontes não sustentam um número, escreva sem o número e marque evidence_level corretamente.",
 ].join("\n");
