@@ -100,8 +100,9 @@ jobs:
           # e a matéria publicada se perderia no runner. Rebase resolve a corrida.
           # Conflito de verdade só existe onde duas mãos escreveram o mesmo trecho:
           # aqui, os arquivos que a rodada REGENERA (estado da capa, fallback do
-          # hero, HTML de índice/artigo, sitemap, TURNO.md) e que o próximo build
-          # refaz do zero. Nesses, favorece-se o commit da rodada.
+          # hero, HTML de índice/artigo, sitemap, as rewrites do vercel.json,
+          # TURNO.md) e que o próximo build refaz do zero. Nesses, favorece-se o
+          # commit da rodada.
           # `-X theirs` global foi o jeito fácil e era um risco maior que o
           # problema: o mesmo flag que conserta cover-state.json jogaria fora o
           # hunk do outro lado em js/articles-db.js ou pipeline/memory.json — ou
@@ -115,7 +116,7 @@ jobs:
             echo "rebase parou por conflito (tentativa $i): resolvendo só o que a rodada regenera"
             for f in $(git diff --name-only --diff-filter=U); do
               case "$f" in
-                TURNO.md|pipeline/state/*|index.html|culture.html|tech.html|science.html|sitemap.xml|a-*.html|r-*.html)
+                TURNO.md|pipeline/state/*|index.html|culture.html|tech.html|science.html|sitemap.xml|vercel.json|a-*.html|r-*.html)
                   git checkout --theirs -- "$f" && git add -- "$f" || true
                   echo "  conflito resolvido a favor da rodada: $f" ;;
                 *)

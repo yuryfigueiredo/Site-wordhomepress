@@ -54,6 +54,17 @@ function desfazerFotosDaRodada() {
   if (novas.length) say("fotos", `${novas.length} arquivo(s) descartado(s): foto baixada para uma matéria que não chegou ao ar`);
 }
 
+/* Rede para a saída que NÃO passa pelo finish: um throw sem catch (um
+   `JSON.parse` de arquivo que o provedor devolveu truncado, um `writeFileSync`
+   que estoura) derruba a rodada direto, sem desfazer a foto nem escrever
+   TURNO.md. No runner o `git clean -fdq` da rodada vermelha encobre isso; na
+   máquina do dono, a rodada crashada deixava o jpg de uma matéria que não
+   existe. O finish já limpou e `publicou` é a trava de sempre: depois de
+   publicar, nada é apagado. */
+process.on("exit", (code) => {
+  if (code !== 0 && !publicou) desfazerFotosDaRodada();
+});
+
 function run(script, args = []) {
   try {
     const out = execFileSync(process.execPath, [path.join(ROOT, "tools", script), ...args], { cwd: ROOT, stdio: "pipe", timeout: 900000 }).toString();
