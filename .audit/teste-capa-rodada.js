@@ -156,9 +156,27 @@ function carregarDB() {
 const pisoDaCapa = () =>
   require(path.join(ROOT, "tools", "lib", "cover-rules.js")).pisoDaCapa(JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8")));
 
-/* ── B. sete rodadas seguidas de build, mais um segundo build na última ──── */
-const DIAS = ["2026-12-01", "2026-12-01", "2026-12-01", "2026-12-01", "2026-12-01", "2026-12-01", "2026-12-02"];
-const HORAS = ["00:23", "04:23", "08:23", "12:23", "16:23", "20:23", "00:23"];
+/* ── B. um ciclo completo de build, mais um segundo build na última rodada ── */
+/* A janela é DERIVADA do acervo, não chumbada. Com N elegíveis o ciclo completo
+   tem N rodadas, então sete rodadas fixas só conseguem cobrir o acervo enquanto
+   ele tiver ≤7 peças — em 07/11, com oito elegíveis, o teste reprovava por
+   aritmética própria, não por defeito da regra. Duas voltas completas,
+   arredondadas para dias inteiros do check_hours, valem para qualquer tamanho
+   de catálogo. */
+const HORAS_DIA = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8")).check_hours;
+function rodadaEm(i) {
+  const dia = Math.floor(i / HORAS_DIA.length) + 1;
+  return { dia: `2026-12-${String(dia).padStart(2, "0")}`, hora: HORAS_DIA[i % HORAS_DIA.length] };
+}
+const nElegiveis = require(path.join(ROOT, "tools", "lib", "cover-rules.js")).elegiveis(carregarDB(), pisoDaCapa()).length;
+const JANELA = Math.ceil((2 * nElegiveis) / HORAS_DIA.length) * HORAS_DIA.length;
+const DIAS = [];
+const HORAS = [];
+for (let i = 0; i < JANELA; i++) {
+  const r = rodadaEm(i);
+  DIAS.push(r.dia);
+  HORAS.push(r.hora);
+}
 const sequencia = [];
 {
   let anterior = heroNoAr();
@@ -206,6 +224,9 @@ const sequencia = [];
   confere("nenhuma capa se repete em rodadas consecutivas", !rep, rep || "");
   const cobertas = new Set(ids);
   const elegiveis = require(path.join(ROOT, "tools", "lib", "cover-rules.js")).elegiveis(carregarDB(), pisoDaCapa());
+  /* Sem esta linha o "não cobriu tudo" podia ser aritmética do harness: janela
+     menor que o acervo não cobre, e isso não é defeito da rotação. */
+  confere(`a janela simulada (${sequencia.length} rodadas) cabe pelo menos uma volta do ciclo de ${elegiveis.length} elegíveis`, sequencia.length >= elegiveis.length, `janela ${sequencia.length} < acervo ${elegiveis.length}`);
   confere(`a rotação passou por TODAS as ${elegiveis.length} elegíveis em ${sequencia.length} rodadas`, cobertas.size === elegiveis.length, `foram ${cobertas.size}: ${[...cobertas].join(", ")}`);
 }
 
@@ -218,19 +239,22 @@ const sequencia = [];
      nada — `loadState` reinclui no conjunto tudo que aparece no log `changes`, e
      com razão: quem já foi capa tem registro. A matéria nova não tem em nenhum
      dos dois. */
-  const inedita = elegiveis[0].id;
+  const inedita = elegiveis.find((a) => a.id !== heroNoAr()).id;
   est.capaVistas = (est.capaVistas || []).filter((x) => x !== inedita);
   est.changes = (est.changes || []).filter((c) => c.id !== inedita);
-  if (est.currentCoverId === inedita) est.currentCoverId = elegiveis[1].id;
+  if (est.currentCoverId === inedita) est.currentCoverId = elegiveis.find((a) => a.id !== inedita).id;
   fs.writeFileSync(STATE, JSON.stringify(est, null, 2) + "\n");
-  setRelogio("2026-12-02", "04:23");
+  /* Rodada seguinte à janela do bloco B: dentro da janela toda rodada já tem
+     troca registrada, e a trava derrubaria o build antes da inédita. */
+  const rC = rodadaEm(JANELA);
+  setRelogio(rC.dia, rC.hora);
   const antes = heroNoAr();
   const { capa } = rodarBuild();
   const depois = heroNoAr();
   confere("matéria que ainda não foi capa toma a capa na hora", depois === inedita && antes !== inedita, `antes ${antes} · depois ${depois} · esperado ${inedita}`);
   confere("o build chama isso de capa do dia, não de rotação", /capa do dia:/.test(capa), capa);
   const registro = estadoNaDisco().changes.slice(-1)[0];
-  confere("a troca nova é registrada na rodada em curso", registro.rodada === "2026-12-02T04:23" && registro.id === inedita, JSON.stringify(registro));
+  confere("a troca nova é registrada na rodada em curso", registro.rodada === `${rC.dia}T${rC.hora}` && registro.id === inedita, JSON.stringify(registro));
 }
 
 /* ── D. acervo com 1 elegível: rodada NÃO pode se declarar servida ──────── */
