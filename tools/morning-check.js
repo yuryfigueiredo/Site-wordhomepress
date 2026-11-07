@@ -103,8 +103,9 @@ if (errosDoctor > 0) {
 if (rodadasHoje < metaCapa) {
   console.log(`Capa: ${rodadasHoje}/${metaCapa} rodada(s) servida(s). A troca é do build.js, chamado pelo turno.js`);
   console.log("    em TODA rodada, publique ou não — desde que existam matérias com");
-  console.log(`    nota medida >= ${cad.cover_baseline} e foto (uma a mais que o nº de rodadas para o ciclo não repetir). Não trocou? O motivo`);
-  console.log("    está em pipeline/state/cover-state.json e nas notas de pipeline/scores.json.");
+  console.log(`    nota medida >= ${cad.cover_baseline} e foto real. Quantas são elegíveis agora está`);
+  console.log("    na linha [cover] do doctor acima: com menos elegíveis que rodadas, uma");
+  console.log("    matéria volta ao hero no mesmo dia — nunca na rodada seguinte.");
 } else {
   console.log(`✓ Capa: ${rodadasHoje}/${metaCapa} rodadas servidas no dia — meta cumprida.`);
 }

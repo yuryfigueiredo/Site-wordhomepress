@@ -1,11 +1,11 @@
 /* teste-capa-rodada.js — prova de que a capa gira em TODA rodada.
    Relógio falso (Date global) + build.js re-requerido no mesmo processo, porque
    a rotação depende do instante e o Actions é quem chama o build.
-   Roda contra os arquivos reais e DEPOIS os restaura por `git checkout`: nada
-   aqui é para deixar rastro no repositório. */
+   Roda contra os arquivos reais e DEPOIS os restaura por instantâneo de bytes
+   tomado antes da primeira linha: nada aqui é para deixar rastro no repositório.
+   Não é `git checkout` — ver o bloco de restauração abaixo. */
 const fs = require("fs");
 const path = require("path");
-const { execFileSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..");
 const BUILD = path.join(ROOT, "tools", "build.js");
@@ -24,20 +24,44 @@ class FakeDate extends RealDate {
 }
 global.Date = FakeDate;
 
-/* O que já estava sujo ANTES do teste: documentação editada à mão, os próprios
-   tools. Nada disso volta por `git checkout` — o checkout é só para os
-   regeneráveis que o build tocou. (Na primeira versão do filtro, AGENTS.md foi
-   restaurado junto com o index.html e três ediçãozinhas de doc evaporaram.) */
-const linhaDeStatus = () =>
-  execFileSync("git", ["status", "--porcelain"], { cwd: ROOT })
-    .toString()
-    .split("\n")
-    .filter(Boolean)
-    /* só os MODIFICADOS: `??` é o próprio script de teste (e o que ele deixar em
-       pipeline/drafts), e `git checkout` num untracked é erro. */
-    .filter((l) => /^.{1,2}M/.test(l))
-    .map((l) => l.slice(3).trim());
-const sujosAntes = new Set(linhaDeStatus());
+/* Instantâneo de bytes ANTES de qualquer build, sobre tudo que o build escreve:
+   as páginas de `placements.json`, o fallback da capa e o estado. A primeira
+   versão restaurava por `git checkout` nos arquivos "que ficaram sujos durante
+   o teste", e isso tinha dois buracos do mesmo tamanho:
+
+   1. `index.html` está PERMANENTEMENTE marcado como modificado (core.autocrlf
+      reescreve CRLF; `git diff --quiet index.html` é 0, mas o status mente),
+      então ele nunca entrava na lista e o hero voltava ao lugar só porque a
+      última rodada simulada caía na mesma capa do HEAD. Correto por coincidência.
+   2. O checkout também jogaria fora edição sua, não commitada, de qualquer
+      arquivo que o teste tocar.
+
+   Bytes próprios, gravados de volta no `exit`, nos `signals` e na exceção sem
+   catch — o mesmo padrão de `turno.js` e `publish.js`. */
+const alvosDoBuild = [
+  ...Object.keys(JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "placements.json"), "utf8")).slots),
+  "pipeline/state/hero-fallback.html",
+  path.relative(ROOT, STATE).split(path.sep).join("/"),
+];
+const instantaneos = new Map(
+  alvosDoBuild
+    .filter((f) => fs.existsSync(path.join(ROOT, f)))
+    .map((f) => [f, fs.readFileSync(path.join(ROOT, f))])
+);
+let restaurado = false;
+function restaurar() {
+  if (restaurado) return;
+  restaurado = true;
+  for (const [f, bytes] of instantaneos) {
+    const p = path.join(ROOT, f);
+    const atual = fs.existsSync(p) ? fs.readFileSync(p) : null;
+    if (!atual || !atual.equals(bytes)) fs.writeFileSync(p, bytes);
+  }
+  global.Date = RealDate;
+}
+process.on("exit", restaurar);
+for (const s of ["SIGINT", "SIGTERM"]) process.on(s, () => { restaurar(); process.exit(130); });
+process.on("uncaughtException", (e) => { restaurar(); console.error(e); process.exit(1); });
 
 /* Instantâneo do relógio real para o resto do script (restauração, leitura). */
 const agoraReal = () => new RealDate();
@@ -245,11 +269,14 @@ const sequencia = [];
 /* ── restauração ────────────────────────────────────────────────────────── */
 offset = 0;
 global.Date = RealDate;
-const sujos = linhaDeStatus();
-const gerados = sujos.filter((f) => !sujosAntes.has(f));
-if (gerados.length) execFileSync("git", ["checkout", "--", ...gerados], { cwd: ROOT });
+restaurar();
+/* Conferir a própria restauração: um harness que devolve errado deixa o
+   repositório com uma capa de mentira apontando para matéria que o estado não
+   registra — e isso é invisível se ninguém comparar os bytes. */
+const sobrou = [...instantaneos.entries()].filter(([f, bytes]) => !bytes.equals(fs.readFileSync(path.join(ROOT, f))));
+confere(`a restauração devolveu byte a byte os ${instantaneos.size} arquivos do build`, sobrou.length === 0, sobrou.map(([f]) => f).join(", "));
 
-console.log(`\nteste de capa por rodada — ${checks.filter((c) => c.ok).length}/${checks.length} verificações verdes (relógio falso, arquivos restaurados${gerados.length ? `: ${gerados.join(", ")}` : ""})`);
+console.log(`\nteste de capa por rodada — ${checks.filter((c) => c.ok).length}/${checks.length} verificações verdes (relógio falso, ${instantaneos.size} arquivos restaurados por instantâneo de bytes)`);
 for (const c of checks.filter((x) => !x.ok)) console.log(`  ✗ ${c.descricao} ${c.detalhe}`);
 if (!falhas.length) console.log("  ✓ hero por rodada: " + sequencia.map((s) => `${s.rodada.slice(11)}→${s.depois.slice(0, 28)}`).join("  "));
 console.log(`\ndata real de volta: ${isoDe(agoraReal())}`);
