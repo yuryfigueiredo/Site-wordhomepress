@@ -95,7 +95,7 @@ window.HWP_DATABASE = {
       "readTime": "6 MIN READ",
       "isHeroLead": false,
       "image": "images/posts/two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere.jpg",
-      "imageAlt": "Two Trapped Ions Let a Gauge Field Decide Whether Matter Moves — Photo by Brett Jordan on Unsplash",
+      "imageAlt": "Two Trapped Ions Let a Gauge Field Decide Whether Matter Moves — Photo by Erfan Afshari on Unsplash",
       "bookCover": null,
       "dek": "An Oxford group built the smallest loop a lattice gauge theory allows, with matter and field sharing two ions. Flux, not force, stopped the particle.",
       "affiliateBox": null,

@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "theory-predicting-an-older-universe-without-dark-matter-or-dark",
+  "currentCoverId": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -16,10 +16,19 @@
       "id": "theory-predicting-an-older-universe-without-dark-matter-or-dark",
       "tipo": "do dia",
       "era": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a"
+    },
+    {
+      "at": "2026-11-07T22:13:37.529Z",
+      "dia": "2026-11-07",
+      "rodada": "2026-11-07T16:23",
+      "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
+      "tipo": "do dia",
+      "era": "theory-predicting-an-older-universe-without-dark-matter-or-dark"
     }
   ],
   "capaVistas": [
     "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
-    "theory-predicting-an-older-universe-without-dark-matter-or-dark"
+    "theory-predicting-an-older-universe-without-dark-matter-or-dark",
+    "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat"
   ]
 }
