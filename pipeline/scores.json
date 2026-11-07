@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-07T00:42:34.808Z",
+  "updated": "2026-11-07T18:17:09.763Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -521,6 +521,44 @@
           "pts": 1,
           "max": 1,
           "why": "Argues the paper's real result is an instrument that holds a chosen altitude, not new evidence of airborne plastic."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-07"
+    },
+    "theory-predicting-an-older-universe-without-dark-matter-or-dark": {
+      "score": 7.3,
+      "note": "7.3/10 — força em timeliness (fonte mais recente há 1 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 8% com quantum-timekeeping-interstellar-navigation-physics"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Diferencia o teste de consistência projetado dos independentes e nomeia a medição ausente que decidiria a disputa."
         }
       },
       "source": "auto",

@@ -1,7 +1,7 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-07T00:42:35.332Z",
+  "updated": "2026-11-07T18:17:10.586Z",
   "runs": {
     "analyst": {
       "id": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
@@ -11,7 +11,14 @@
       "title_pattern": "a drone sampler moves",
       "humor_lines": 1
     },
-    "lab": null,
+    "lab": {
+      "id": "theory-predicting-an-older-universe-without-dark-matter-or-dark",
+      "date": "2026-11-07",
+      "opening_move": "document",
+      "ending_move": "verification",
+      "title_pattern": "a universe 26.7 billion",
+      "humor_lines": 0
+    },
     "curator": null
   }
 }

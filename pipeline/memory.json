@@ -169,6 +169,11 @@
       "outcome": "publicada",
       "at": "2026-11-07T00:42:35.334Z",
       "id": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a"
+    },
+    "https://phys.org/news/2026-11-theory-older-universe-dark-energy.html": {
+      "outcome": "publicada",
+      "at": "2026-11-07T18:17:10.588Z",
+      "id": "theory-predicting-an-older-universe-without-dark-matter-or-dark"
     }
   },
   "publishes": [
@@ -216,6 +221,11 @@
       "id": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
       "at": "2026-11-07T00:42:35.334Z",
       "score": 7.8
+    },
+    {
+      "id": "theory-predicting-an-older-universe-without-dark-matter-or-dark",
+      "at": "2026-11-07T18:17:10.588Z",
+      "score": 7.3
     }
   ]
 }

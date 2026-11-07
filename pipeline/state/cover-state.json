@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
+  "currentCoverId": "theory-predicting-an-older-universe-without-dark-matter-or-dark",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -8,9 +8,18 @@
       "tipo": "publicacao",
       "era": null,
       "rodada": "2026-11-06T20:23"
+    },
+    {
+      "at": "2026-11-07T18:17:09.848Z",
+      "dia": "2026-11-07",
+      "rodada": "2026-11-07T12:23",
+      "id": "theory-predicting-an-older-universe-without-dark-matter-or-dark",
+      "tipo": "do dia",
+      "era": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a"
     }
   ],
   "capaVistas": [
-    "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a"
+    "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
+    "theory-predicting-an-older-universe-without-dark-matter-or-dark"
   ]
 }

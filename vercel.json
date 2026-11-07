@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "theory-predicting-an-older-universe-without-dark-matter-or-dark"
+        }
+      ],
+      "destination": "/a-theory-predicting-an-older-universe-without-dark-matter-or-dark.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a"
         }
       ],
