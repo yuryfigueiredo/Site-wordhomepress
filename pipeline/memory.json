@@ -155,10 +155,9 @@
       "at": "2026-11-07T14:01:57.292Z"
     },
     "https://phys.org/news/2026-11-paths-flux-ions-simulate-aharonovbohm.html": {
-      "slug": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
-      "topic": "Two paths, one flux: Trapped ions simulate Aharonov–Bohm interference in a lattice gauge theory",
-      "outcome": "falha_publicacao",
-      "at": "2026-11-07T18:45:30.154Z"
+      "outcome": "publicada",
+      "at": "2026-11-07T18:20:49.715Z",
+      "id": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere"
     },
     "https://phys.org/news/2026-11-method-microplastics-air-uncrewed-aerial.html": {
       "outcome": "publicada",
@@ -174,6 +173,11 @@
       "outcome": "publicada",
       "at": "2026-11-07T18:17:10.588Z",
       "id": "theory-predicting-an-older-universe-without-dark-matter-or-dark"
+    },
+    "https://doi.org/10.1038/s41567-026-03400-6": {
+      "outcome": "publicada",
+      "at": "2026-11-07T18:20:49.715Z",
+      "id": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere"
     }
   },
   "publishes": [
@@ -226,6 +230,11 @@
       "id": "theory-predicting-an-older-universe-without-dark-matter-or-dark",
       "at": "2026-11-07T18:17:10.588Z",
       "score": 7.3
+    },
+    {
+      "id": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
+      "at": "2026-11-07T18:20:49.715Z",
+      "score": 7.4
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-07T18:17:10.586Z",
+  "updated": "2026-11-07T18:20:49.713Z",
   "runs": {
     "analyst": {
       "id": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
@@ -12,11 +12,11 @@
       "humor_lines": 1
     },
     "lab": {
-      "id": "theory-predicting-an-older-universe-without-dark-matter-or-dark",
+      "id": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
       "date": "2026-11-07",
-      "opening_move": "document",
-      "ending_move": "verification",
-      "title_pattern": "a universe 26.7 billion",
+      "opening_move": "scene",
+      "ending_move": "admitted_limit",
+      "title_pattern": "two trapped ions let",
       "humor_lines": 0
     },
     "curator": null

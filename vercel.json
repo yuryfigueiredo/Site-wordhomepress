@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere"
+        }
+      ],
+      "destination": "/a-two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "theory-predicting-an-older-universe-without-dark-matter-or-dark"
         }
       ],

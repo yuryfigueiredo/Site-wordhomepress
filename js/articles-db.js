@@ -49,6 +49,41 @@ window.HWP_DATABASE = {
 
   articles: [
 {
+      "id": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
+      "title": "Two Trapped Ions Let a Gauge Field Decide Whether Matter Moves",
+      "kicker": "SCIENCE // QUANTUM",
+      "category": "science",
+      "subtopic": "concepts",
+      "author": "Dr. Aris Thorne",
+      "role": "Staff Writer",
+      "date": "Nov 7, 2026",
+      "readTime": "6 MIN READ",
+      "isHeroLead": false,
+      "image": "images/posts/two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere.jpg",
+      "imageAlt": "Two Trapped Ions Let a Gauge Field Decide Whether Matter Moves — Photo by Brett Jordan on Unsplash",
+      "bookCover": null,
+      "dek": "An Oxford group built the smallest loop a lattice gauge theory allows, with matter and field sharing two ions. Flux, not force, stopped the particle.",
+      "affiliateBox": null,
+      "content": "<p>Two strontium ions hang in a trap, and each one carries a qubit in two of its electronic levels. Lasers push on the ions' vibrational modes, and a single phonon in that shared motion stands for a particle of matter. That is the entire apparatus of a new simulation of a lattice gauge theory, reported this week in Nature Physics. The team is at the University of Oxford, with Sebastian Saner as first author.</p>\n<p>The interesting part is the division of labor. Gauge fields live in the electronic states. Matter lives in the vibration. One loop of two links is enough to make a flux decide whether the particle moves at all, which is the Aharonov-Bohm idea dressed in lattice clothing.</p>\n<h2>What the loop actually holds</h2>\n<p>A lattice gauge theory puts matter on the vertices of a grid and the field on the links between them. The Oxford geometry is a closed, quasi-two-dimensional loop. Its two links are encoded by a pair of entangled qubits, and those two links double as the particle's two paths.</p>\n<p>Nothing about the ions' positions sets the lattice. The geometry comes from which qubits and which vibrational modes are coupled to each other, so the dimensions the experiment uses are synthetic. That choice is what lets two ions carry a gauge theory at all.</p>\n<h2>The effect being chased</h2>\n<p>The Aharonov-Bohm effect says a charged particle's phase can change because of potentials in places the field never reaches. In a lattice version, the loop either encloses zero flux or it encloses one quantum of flux, a vison. The two states of the entangled link qubits are those two answers.</p>\n<p>With zero flux, the two paths interfere constructively and the particle keeps moving. With a vison, the paths cancel. The experiment reads the difference in whether tunneling happens, not in a force anyone measures directly.</p>\n<h2>One link, then two</h2>\n<p>With one ion and one link, the particle tunneled back and forth while the field line switched on and off. That bookkeeping is what the Z₂ form of Gauss's law requires, and it is the base case. Setting the energy cost of a field line to zero produced full oscillations.</p>\n<p>Add that cost and the oscillations came out faster but smaller, which suppresses tunneling. The report describes this as a precursor to confinement.</p>\n<p>Two ions and two links turned the flux knob on. With zero flux, the particle tunneled twice as fast as on a single link. In the vison state, tunneling was fully suppressed and the particle stayed put.</p>\n<h2>Why the geometry is the news</h2>\n<p>Earlier simulations of gauge theories ran on cold atoms and superconducting qubits, and most of them were one-dimensional. A one-dimensional path has no loop to enclose flux, so the effect this paper demonstrates cannot appear there. Some two-dimensional platforms did exist, but they left out matter fields.</p>\n<p>Without matter in the loop, flux has nothing to act on, and the measurement stays out of reach. \"The advantage is that matter fields can be stored much more efficiently in the vibrational modes,\" Saner says of the trapped-ion choice.</p>\n<h2>The classical check carries weight</h2>\n<p>The reported behavior is that flux stayed constant apart from a slow decay from decoherence. To connect that to the theory, the team ran noise-aware numerical simulations that included vibrational heating, and the simulations matched the data.</p>\n<p>Agreement between an experiment and a noise model built for it is where most of the interpretation lives. A reader who wants to judge the result needs both the raw counts and the heating assumptions, and the write-up points to the paper for the details.</p>\n<h2>What is not in the report</h2>\n<p>The report gives no error budget.</p>\n<p>No fidelity, circuit depth, runtime or error-rate figure appears in the summary of the work. Those numbers exist in a trapped-ion paper, and they decide how much of the cancellation at the vison is physics and how much is drift. The DOI below is where to look.</p>\n<h2>Where this stops being checkable</h2>\n<p>The loop is one cell, and a classical computer can still solve it. The report says so, which is the honest boundary of the claim. \"Even a relatively modest increase in lattice size could make the problem very difficult, if not impossible in practice,\" Saner says.</p>\n<p>The next rungs are named too: move from Z₂ to Zₙ theories, then toward the limit where n grows without bound. The engineering costs are controlling the hybrid interactions and building state preparation and readout that keep up. The entangled-qubit flux idea came out of a brainstorm in 2022. Saner calls it one of the particularly exciting moments of the project. He says the hardest part was combining all the different ingredients and translating the theoretical ideas into a feasible experiment.</p>\n<h2>What a reader should hold onto</h2>\n<p>Two ions demonstrated that a gauge field can gate the motion of matter in a loop, and that the gate is flux. The demonstration is small on purpose, and its honesty depends on the classical check that still solves it. The interesting moment comes when that check falls behind, and the loop has to be believed on its own terms. Until then the result is a working instrument, which is a real achievement and a smaller one than a proof.</p>",
+      "sources": [
+        {
+          "title": "Two paths, one flux: Trapped ions simulate Aharonov-Bohm interference in a lattice gauge theory",
+          "url": "https://phys.org/news/2026-11-paths-flux-ions-simulate-aharonovbohm.html",
+          "date": "2026-11-07",
+          "type": "secondary",
+          "claim": "Descrição do aparato (dois íons de estrôncio, qubits nos níveis eletrônicos, fonons como matéria, dimensões sintéticas), os resultados de um e dois links, as quatro citações de Sebastian Saner, a comparação com plataformas unidimensionais e os passos seguintes (Z2 para Zn, preparação e leitura de estado)."
+        },
+        {
+          "title": "Nature Physics: Aharonov-Bohm interference simulated with trapped ions in a Z2 lattice gauge theory",
+          "url": "https://doi.org/10.1038/s41567-026-03400-6",
+          "date": "2026-11-07",
+          "type": "primary",
+          "claim": "Documento primário por trás do resultado, citado no report e onde estão fidelidade, profundidade de circuito e orçamento de erro."
+        }
+      ],
+      "evidenceLevel": "sourced"
+    },
+{
       "id": "theory-predicting-an-older-universe-without-dark-matter-or-dark",
       "title": "A Universe 26.7 Billion Years Old Passes Three Tests and Skips the Deciding One",
       "kicker": "SCIENCE // CONCEPTS",
