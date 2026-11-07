@@ -29,6 +29,25 @@ function DB() {
   return global.window.HWP_DATABASE;
 }
 
+/* O par que o bloco TODAY'S PICKS mostra hoje, pela MESMA régua do build e do
+   doctor (lib/picks-rules): painel, build e manutenção veem a mesma lista. */
+function picksDeHoje() {
+  const rules = require("./lib/picks-rules");
+  const plc = read(path.join(ROOT, "pipeline", "placements.json"), { slots: {} });
+  const slot = (plc.slots["index.html"] || []).find((s) => s.rotacao === "dia");
+  if (!slot) return null;
+  const html = readText(path.join(ROOT, "index.html"), "");
+  const db = DB();
+  require("./lib/catalog-notes").aplicar(db, ROOT);
+  const pool = rules.poolDePicks(db.articles, slot, rules.excluidasDaRotacao(html));
+  return {
+    pares: rules.picksDoDia(pool, slot.limit || 2, rules.diaUtc()),
+    pool: pool.length,
+    noAr: [...rules.idsDaRegiao(html, slot.name)].join(", "),
+    minimo: rules.minimoParaRotacao(slot.limit || 2),
+  };
+}
+
 const SLUG_OK = (s) => /^[a-z0-9_-]+$/.test(String(s || ""));
 const URL_OK = (s) => /^https?:\/\/[^\s"'<>]+$/.test(String(s || ""));
 
@@ -137,6 +156,7 @@ function page() {
   const L = logs();
   const done = require("./lib/cadence").publishedToday(ROOT);
   const R = ranking();
+  const PK = picksDeHoje();
   const D = drafts();
   const LE = leads();
 
@@ -192,6 +212,7 @@ a{color:var(--tx)}
     <div class="grid">
       <div class="stat"><span>matérias no ar</span><b>${DB().articles.length}</b></div>
       <div class="stat"><span>capa atual</span><b style="font-size:.9rem">${esc(R.cover ? R.cover.title : (R.incumbent ? R.incumbent.title : "manual"))}</b><span class="note">${R.cover ? "escolhida por nota" : "capa escrita à mão — nenhuma matéria venceu a nota de base"}</span></div>
+      <div class="stat"><span>hoje no todays picks</span><b style="font-size:.9rem">${PK ? esc(PK.pares.map((a) => a.title).join(" · ") || "vazio") : "slot não declarado"}</b>${PK ? `<span class="note">${PK.pool} peça(s) no pool (mínimo ${PK.minimo} para girar 1x/dia) · ${PK.pares.map((a) => a.id).join(", ") === PK.noAr ? "publicado bate com a régua" : `no ar: ${esc(PK.noAr)} ≠ régua`}</span>` : ""}</div>
       <div class="stat"><span>rascunhos esperando</span><b>${D.filter((d) => !d.published && d.verdict !== "sem texto").length}</b></div>
       <div class="stat"><span>pautas coletadas</span><b>${LE.length}</b><span class="note">${L.seen} urls já vistas</span></div>
     </div>
@@ -222,11 +243,18 @@ a{color:var(--tx)}
   <section>
     <h2>Pautas coletadas (feeds gratuitos)</h2>
     ${LE.length ? `<table><thead><tr><th>título</th><th>fonte</th><th>pilar</th><th></th></tr></thead><tbody>
-    ${LE.slice(0, 25).map((l) => `<tr>
-      <td><a href="${esc(l.link)}" target="_blank" rel="noopener">${esc(l.title)}</a><br><span class="note">${esc((l.description || "").slice(0, 150))}</span></td>
-      <td class="note">${esc(new URL(l.link).hostname.replace("www.", ""))}<br>${esc(String(l.pubDate || "").slice(0, 16))}</td>
+    ${LE.slice(0, 25).map((l) => {
+      /* Os campos que o ingest.js escreve são url / summary / published. Ler
+         l.link / l.description / l.pubDate deixava href vazio e o new URL()
+         derrubava o servidor no primeiro GET da home do painel. */
+      const link = URL_OK(l.url) ? l.url : "";
+      const host = link ? new URL(link).hostname.replace(/^www\./, "") : "link ausente";
+      return `<tr>
+      <td>${link ? `<a href="${esc(link)}" target="_blank" rel="noopener">${esc(l.title)}</a>` : esc(l.title)}<br><span class="note">${esc(String(l.summary || "").slice(0, 150))}</span></td>
+      <td class="note">${esc(host)}<br>${esc(String(l.published || "").slice(0, 16))}</td>
       <td><span class="badge">${esc(l.pillar || "?")}</span><br><span class="note">${l.score != null ? "relevância " + l.score : ""}</span></td>
-      <td><button data-act="brief" data-url="${esc(l.link)}">criar brief</button></td></tr>`).join("")}
+      <td>${link ? `<button data-act="brief" data-url="${esc(link)}">criar brief</button>` : '<span class="note">sem link</span>'}</td></tr>`;
+    }).join("")}
     </tbody></table>` : '<p class="note">Nada coletado ainda. Use o botão Rodar coleta agora.</p>'}
   </section>
 

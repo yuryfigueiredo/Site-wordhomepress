@@ -165,6 +165,25 @@ if (fs.existsSync(path.join(ROOT, "sitemap.xml"))) {
   note("sitemap", `${idsOnDisk.size} URLs dinâmicas no sitemap.xml`);
 } else fail("sitemap-drift", "sitemap.xml não existe");
 
+/* ── 5b. feed.xml desatualizado ───────────────────────────────────────── */
+/* O RSS é como buscador e agregador ficam sabendo que saiu matéria nova, e
+   nada no pipeline regenerava o arquivo: commitado em 06/11, o feed ficou
+   parado no Hubble enquanto cinco matérias saíam — verde em todas as rodadas.
+   A régua é a MESMA função que escreve o arquivo (build-feed.js → buildItems),
+   então publish, doctor e qualquer leitura humana veem a mesma lista. */
+if (fs.existsSync(path.join(ROOT, "feed.xml"))) {
+  const { buildItems } = require("./build-feed");
+  const guidsNoAr = new Set([...read("feed.xml").matchAll(/<guid[^>]*>([^<]+)<\/guid>/g)].map((m) => m[1]));
+  const esperado = buildItems();
+  const faltando = esperado.filter((it) => !guidsNoAr.has(it.guid));
+  const sobrando = [...guidsNoAr].filter((g) => !esperado.some((it) => it.guid === g));
+  if (faltando.length)
+    fail("feed-stale", `feed.xml sem o(s) item(ns) mais recente(s) do catálogo: ${faltando.map((f) => f.title).join(" | ").slice(0, 200)} — rode node tools/build-feed.js (o publish.js já chama; se você está lendo isto, a etapa saiu do caminho)`);
+  if (sobrando.length)
+    warn("feed-stale", `feed.xml com ${sobrando.length} item(ns) fora dos 10 mais recentes que buildItems() escolhe: ${sobrando.slice(0, 3).join(", ")}${sobrando.length > 3 ? "…" : ""}`);
+  if (!faltando.length && !sobrando.length) note("feed", `${guidsNoAr.size} itens no feed.xml, batendo com buildItems()`);
+} else fail("feed-stale", "feed.xml não existe — nada no pipeline avisa agregador sobre matéria nova");
+
 /* ── 6. Aberturas repetidas (memória do catálogo publicado) ───────────── */
 function firstSentence(html) {
   const text = String(html || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
@@ -329,6 +348,13 @@ const {
         `saíram ${mediaPubs.toFixed(1)} publicações/dia nos 7 dias UTC ${diasUTC[0]}…${diasUTC[6]} (${pubs.join("/")}, o último ainda em curso) contra um teto de ${teto} — a agenda deu ${obs.porDia.toFixed(1)} rodadas/dia, então o que falta é pauta viável, nota acima do piso ou a rodada morre num travão de cadência`
       );
     else note("cadence-entrega", `${mediaPubs.toFixed(1)} publicações/dia em 7 dias UTC (teto ${teto} · ${obs.porDia.toFixed(1)} rodadas/dia)`);
+    /* Furar o teto é decisão humana e continua sendo decisão humana — mas tem
+       de ser contável. Com `forcada:true` no registro, a pergunta "quantas
+       matérias entraram por fora da cadência nesta semana" deixa de ser
+       arqueologia de TURNO.md e passa a ser uma linha da manutenção. */
+    const forçadas = memLib.ler(ROOT).publishes.filter((p) => p.forcada && diasUTC.includes(String(p.at || "").slice(0, 10)));
+    if (forçadas.length)
+      warn("cadence-override", `${forçadas.length} publicação(ões) dos últimos 7 dias entraram com --force-cadence (${forçadas.map((p) => p.id).join(", ")}) — o teto de ${teto}/dia não valeu para elas`);
   }
 }
 
@@ -388,6 +414,69 @@ const {
         "cover",
         `rodadas servidas no dia: ${coverState.rodadasServidasNoDia(estado)}/${metaCapa} (a rodada atual tem ${coverState.trocasNaRodada(estado)} troca(s)) · ${coverState.trocasNoDia(estado)} capa(s) ao ar no dia, ${estado.changes.length} trocas em ${coverState.DIA_LOG_DIAS} dias · capa atual ${estado.currentCoverId} · faltam ${elegiveis.filter((a) => !coverState.jaFoiCapa(estado, a.id)).length} inédita(s) para a rotação girar sozinha`
       );
+  }
+}
+
+/* ── 11c. Réguas do TODAY'S PICKS ─────────────────────────────────────── */
+/* O rótulo vende "as escolhas de HOJE", e o bloco era HTML escrito à mão com o
+   par de 29/out e 23/out: quinze dias verde com o mesmo par, a mesma classe de
+   defeito da capa que não girava. Desde 07/11 é slot com rotação por dia
+   (lib/picks-rules) e o cadence.json cobra picks_changes_per_day. O doctor
+   confere a régua, o mínimo de acervo para a troca ser possível por construção
+   e — o que fecha o ciclo — se o par publicado no index.html É o par que a
+   mesma função calcula para hoje. */
+{
+  const picksRules = require("./lib/picks-rules");
+  let cad12 = null;
+  let plc12 = null;
+  try {
+    cad12 = JSON.parse(read("pipeline/cadence.json"));
+  } catch {}
+  try {
+    plc12 = JSON.parse(read("pipeline/placements.json"));
+  } catch {}
+  if (cad12 && plc12) {
+    const metaPicks = cad12.picks_changes_per_day;
+    const slot = (plc12.slots["index.html"] || []).find((s) => s.rotacao === "dia");
+    if (metaPicks === undefined)
+      fail("picks", "pipeline/cadence.json sem picks_changes_per_day — a régua do bloco TODAY'S PICKS mora no arquivo, não na conversa");
+    else if (Number(metaPicks) !== 1)
+      fail("picks", `picks_changes_per_day = ${metaPicks}, mas o bloco se vende como "hoje": a régua é exatamente 1 troca de par por dia`);
+    if (!slot)
+      fail("picks", 'nenhum slot com "rotacao": "dia" em pipeline/placements.json → index.html — sem slot o bloco volta a ser HTML escrito à mão, e nada gira o par');
+    else {
+      const html = read("index.html");
+      const n = slot.limit || 2;
+      const pool = picksRules.poolDePicks(DB.articles, slot, picksRules.excluidasDaRotacao(html));
+      const minimo = picksRules.minimoParaRotacao(n);
+      if (pool.length < minimo)
+        fail("picks", `pool de "${slot.category}" com imagem = ${pool.length} peça(s); mínimo para trocar um par de ${n} todo dia é ${minimo} (lib/picks-rules.minimoParaRotacao) — com menos, o mesmo par sai hoje e amanhã e o rótulo "hoje" desmente a si mesmo`);
+      const esperado = picksRules.picksDoDia(pool, n, picksRules.diaUtc()).map((a) => a.id);
+      const noAr = [...picksRules.idsDaRegiao(html, slot.name)];
+      if (!esperado.length)
+        fail("picks", `nenhuma matéria ${slot.category} com imagem no catálogo — o bloco TODAY'S PICKS fica vazio`);
+      else if (noAr.join("|") !== esperado.join("|"))
+        fail("picks", `o index.html está com o par ${noAr.join(", ") || "(vazio)"} e a régua de hoje (dia UTC ${picksRules.diaUtc()}) manda ${esperado.join(", ")} — rode node tools/build.js; verde com o par velho no ar é exatamente o defeito de 15 dias que esta checagem existe para pegar`);
+      const manual = (html.match(/class="pick-item"/g) || []).length - (picksRules.regiao(html, slot.name).match(/class="pick-item"/g) || []).length;
+      if (manual > 0)
+        fail("picks", `${manual} card(es) class="pick-item" FORA dos marcadores hwp:auto:${slot.name} — o bloco escrito à mão voltou, e ele é o que não mudava`);
+      /* Duas conferências que NÃO espelham a função do build: se o pool de
+         rotação errar (capa repetida na tela, card sem foto), build e doctor
+         erram juntos e o espelho fica verde. Estas duas olham o HTML publicado
+         contra o catálogo, cada uma por um caminho próprio. */
+      const heroIds = picksRules.idsDaRegiao(html, "index-hero");
+      const repetida = noAr.filter((id) => heroIds.has(id));
+      if (repetida.length)
+        fail("picks", `o par de picks repete a capa que já está no hero (${repetida.join(", ")}) — na mesma tela a matéria aparece duas vezes`);
+      const semFoto = noAr.filter((id) => {
+        const a = DB.articles.find((x) => x.id === id);
+        return !a || !(a.bookCover || a.image);
+      });
+      if (semFoto.length)
+        fail("picks", `card(s) do bloco TODAY'S PICKS sem artigo no catálogo ou sem imagem: ${semFoto.join(", ")} — o card é feito em volta da foto`);
+      if (!manual && esperado.length && noAr.join("|") === esperado.join("|"))
+        note("picks", `par de hoje no ar: ${esperado.join(", ")} · pool ${pool.length} peça(s) de ${slot.category} com imagem · troca 1x/dia, offset ${(picksRules.diaUtc() % pool.length + pool.length) % pool.length} do ciclo de ${pool.length}`);
+    }
   }
 }
 
