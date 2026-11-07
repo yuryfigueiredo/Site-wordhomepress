@@ -147,9 +147,17 @@ function titulosFontesPublicadas(db) {
    Só a fonte citada não bastaria: o modelo pode citar o paper original e deixar
    a notícia do portal de fora — no dia seguinte o pick-lead reescolheria a mesma
    pauta e o portão não reclamaria de fonte repetida. */
-function registrarPublicacao(root, urls, id, score) {
+function registrarPublicacao(root, urls, id, score, forcada) {
   const store = ler(root);
-  store.publishes.push({ id, at: new Date().toISOString(), score: typeof score === "number" ? score : null });
+  /* `forcada: true` fica no registro: o furo do teto é decisão humana e tem de
+     ser legível dias depois — sem a marca, "quantas publicações furaram a
+     cadência" só é respondido por arqueologia de git log. */
+  store.publishes.push({
+    id,
+    at: new Date().toISOString(),
+    score: typeof score === "number" ? score : null,
+    ...(forcada ? { forcada: true } : {}),
+  });
   const at = new Date().toISOString();
   for (const u of [].concat(urls || [])) {
     const chave = urlChave(u);

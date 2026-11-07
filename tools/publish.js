@@ -119,6 +119,10 @@ if (!temFotoReal()) {
 const cadence = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8"));
 const mem = require("./lib/memory");
 const FORCAR = process.argv.includes("--force-cadence");
+/* O furo é decisão humana e precisa deixar rastro: `furos` acumula qual travão
+   teria barrado, sai no console (e portanto no TURNO.md) e vai marcado na
+   memória, onde o doctor.js consegue contar dias depois. */
+const furos = [];
 const doneToday = require("./lib/cadence").publishedToday(ROOT);
 if (doneToday >= cadence.max_publishes_per_day && !FORCAR) {
   console.error(`cadência: ${doneToday}/${cadence.max_publishes_per_day} publicação(ões) hoje.`);
@@ -126,6 +130,7 @@ if (doneToday >= cadence.max_publishes_per_day && !FORCAR) {
   console.error("Para publicar mesmo assim: node tools/publish.js " + SLUG + " --force-cadence");
   sairSemPublicar(1);
 }
+if (doneToday >= cadence.max_publishes_per_day) furos.push(`teto do dia (${doneToday}/${cadence.max_publishes_per_day})`);
 /* Com rodadas perto da meia-noite UTC, o teto do dia viraria licença para
    publicar duas peças em sequência: a distância mínima vale entre publicações,
    não dentro do dia. */
@@ -135,6 +140,7 @@ if (horasDesde !== null && minimoHoras && horasDesde < minimoHoras && !FORCAR) {
   console.error(`cadência: a última matéria está no ar há ${horasDesde.toFixed(1)}h (mínimo ${minimoHoras}h) — nada publicado.`);
   sairSemPublicar(1);
 }
+if (horasDesde !== null && minimoHoras && horasDesde < minimoHoras) furos.push(`distância mínima (${horasDesde.toFixed(1)}h < ${minimoHoras}h)`);
 
 try {
   execFileSync(process.execPath, [path.join(ROOT, "tools", "check-post.js"), SLUG, ...OFFLINE], { cwd: ROOT, stdio: "pipe" });
@@ -281,6 +287,10 @@ try {
   if (!temFotoReal()) buildLog += run("make-cover.js", ["--from-db", draft.id]);
   buildLog += run("build.js");
   buildLog += run("build-sitemap.js");
+  /* O feed RSS é o aviso que agregador e buscador recebem de que saiu matéria
+     nova. Ficar de fora desta lista é como o feed passou 5 publicações parado
+     no Hubble enquanto o doctor continuava verde: nada conferia o arquivo. */
+  buildLog += run("build-feed.js");
   buildLog += run("meta-pages.js");
 } catch (err) {
   abort(`build falhou: ${err.message}`);
@@ -325,7 +335,7 @@ const hoje = new Date().toISOString().slice(0, 10);
    Estourar aqui deixaria o artigo no ar sem registro — o teto leria 0/1 e a
    rodada seguinte repetiria a fonte. abort() desfaz a publicação em vez disso. */
 try {
-  mem.registrarPublicacao(ROOT, [BRIEF.meta && BRIEF.meta.lead_url, ...entry.sources.map((s) => s && s.url)], draft.id, score.score);
+  mem.registrarPublicacao(ROOT, [BRIEF.meta && BRIEF.meta.lead_url, ...entry.sources.map((s) => s && s.url)], draft.id, score.score, FORCAR && furos.length > 0);
 } catch (err) {
   abort(`registro na memória falhou: ${String(err.message).split("\n")[0]}`);
 }
@@ -374,4 +384,8 @@ console.log(`publicado localmente: ${draft.id} · nota ${score.score}/10`);
 console.log(buildLog.trim());
 console.log(commitNote);
 console.log(`cadência hoje: ${require("./lib/cadence").publishedToday(ROOT, hoje)}/${cadence.max_publishes_per_day}`);
+if (FORCAR && furos.length)
+  console.log(`⚠ cadência FURADA com --force-cadence: ${furos.join(" + ")} — registrado como forcada:true em pipeline/memory.json`);
+else if (FORCAR)
+  console.log("--force-cadence passado, mas nenhum travão estava ativo; nada foi furado.");
 console.log("deploy continua sendo decisão sua: nada foi enviado para nenhum servidor.");

@@ -8,9 +8,11 @@ const ROOT = path.resolve(__dirname, "..");
 const ORIGIN = "https://www.homeworldpress.com";
 const MONTHS = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
 
-/* Carrega o catálogo. */
-global.window = {};
-require(path.join(ROOT, "js", "articles-db.js"));
+/* Carrega o catálogo. O guard evita trocar o global.window que outra
+   ferramenta (doctor.js) já montou: articles-db.js fica no cache do require e
+   não voltaria a rodar, então o DB do chamado ficaria vazio. */
+global.window = global.window || {};
+if (!global.window.HWP_DATABASE) require(path.join(ROOT, "js", "articles-db.js"));
 const DB = global.window.HWP_DATABASE;
 
 const esc = (s) =>
@@ -99,6 +101,15 @@ ${itemXml}
 `;
 }
 
-const feedPath = path.join(ROOT, "feed.xml");
-fs.writeFileSync(feedPath, buildFeed());
-console.log(`feed.xml gerado: ${path.relative(ROOT, feedPath)}`);
+/* Gerar é uma coisa; conferir é outra. O doctor.js importa buildItems() para
+   comparar o feed.xml commitado com o que ESTA função escolheria — two
+   implementations of "quais são os 10 mais recentes" é exatamente a classe de
+   defeito que deixou o RSS parado no Hubble enquanto cinco matérias novas
+   saíam sem entrar no feed. */
+module.exports = { buildItems, buildFeed, ORIGIN };
+
+if (require.main === module) {
+  const feedPath = path.join(ROOT, "feed.xml");
+  fs.writeFileSync(feedPath, buildFeed());
+  console.log(`feed.xml gerado: ${path.relative(ROOT, feedPath)}`);
+}
