@@ -61,6 +61,16 @@ const sairSemPublicar = (code) => {
   process.exit(code);
 };
 
+/* Rede para o que NÃO passa por sairSemPublicar: uma exceção sem catch — um
+   JSON.parse de score.json quebrado, um write que estoura — derruba o processo
+   direto, e o jpg que o find-cover baixou ficava no disco como foto de matéria
+   que nunca existiu. `publicadoOk` vira true quando a matéria está no catálogo
+   E registrada: a partir daí a foto é devida e nada é apagado. */
+let publicadoOk = false;
+process.on("exit", (code) => {
+  if (!publicadoOk && code !== 0) limparImagensOrfas();
+});
+
 /* ── busca automática de foto real ────────────────────────────────────── */
 /* Sem foto real a publicação é abortada e o dono é avisado por issue no
    GitHub (o GitHub manda o e-mail). A placa SVG existia para não travar a
@@ -319,6 +329,10 @@ try {
 } catch (err) {
   abort(`registro na memória falhou: ${String(err.message).split("\n")[0]}`);
 }
+/* Daqui para frente a matéria está no ar e registrada: a foto é dela, e o
+   retrato de órfãs não apaga mais nada (o commit local, logo abaixo, só pode
+   falhar por lock de índice — e isso é AVISO, não desfazer publicação). */
+publicadoOk = true;
 
 /* Duas coisas no mesmo repositório ao mesmo tempo é normal no Actions: o job
    setup-node commita telemetria enquanto o robô publica, e o git trava o índice

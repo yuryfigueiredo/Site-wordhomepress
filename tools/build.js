@@ -313,7 +313,7 @@ function applySlot(file, slot) {
        efetivamente foi ao ar no hero. publish.js chamava recordPublish por
        conta própria e carimbava `currentCoverId` com a matéria publicada MESMO
        quando ela não passou do piso — a janela se declarava servida sem troca. */
-    if (!DRY && cover) coverState.registrarCapa(state, cover.id, escolha.motivo);
+    if (!DRY && cover) coverState.registrarCapa(state, cover.id, escolha.motivo, next !== src);
 
     return {
       file,

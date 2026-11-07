@@ -375,7 +375,7 @@ const {
     else
       note(
         "cover",
-        `janelas servidas hoje: ${coverState.janelasServidasNoDia(estado)}/${metaCapa} (a janela atual tem ${coverState.trocasNaJanela(estado)} troca(s)) · ${coverState.trocasNoDia(estado)} capa(s) ao ar hoje, ${estado.changes.length} trocas em 14 dias · capa atual ${estado.currentCoverId}`
+        `janelas servidas no dia: ${coverState.janelasServidasNoDia(estado)}/${metaCapa} (a janela atual tem ${coverState.trocasNaJanela(estado)} troca(s)) · ${coverState.trocasNoDia(estado)} capa(s) ao ar no dia, ${estado.changes.length} trocas em 14 dias · capa atual ${estado.currentCoverId}`
       );
   }
 }

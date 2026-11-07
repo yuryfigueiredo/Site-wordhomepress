@@ -18,6 +18,42 @@ const say = (stage, msg) => { log.push(`- **${stage}** — ${msg}`); console.log
 let posManutencao = false;
 let publicou = false;
 
+/* Retrato dos diretórios de imagem no INÍCIO da rodada. É aqui, e não no
+   publish.js, que a foto precisa ser desfeita: quem baixa o jpg é o
+   `garantirFoto()` desta etapa de texto, minutos antes de o publish.js existir
+   como processo — o retrato do publish já encontrava o arquivo no disco
+   e `limparImagensOrfas()` nunca o pegava. Em rodada verde sem publicação
+   (reprovada na terceira tentativa, quase-duplicata, teto) o `git add -A` do
+   workflow commiteava e empurrava a foto de uma matéria que nunca saiu.
+   Arquivos que já estavam no disco antes da rodada são todos preservados,
+   inclusive os que o dono deixou lá sem commitar. */
+const IMG_DIRS = ["images/posts", "images/covers"];
+const fotosDaRodada = new Set(
+  IMG_DIRS.flatMap((d) => {
+    try {
+      return fs.readdirSync(path.join(ROOT, d)).map((f) => `${d}/${f}`);
+    } catch {
+      return [];
+    }
+  }),
+);
+function desfazerFotosDaRodada() {
+  const novas = [];
+  for (const d of IMG_DIRS) {
+    let arquivos = [];
+    try {
+      arquivos = fs.readdirSync(path.join(ROOT, d));
+    } catch {}
+    for (const f of arquivos) if (!fotosDaRodada.has(`${d}/${f}`)) novas.push(path.join(ROOT, d, f));
+  }
+  for (const p of novas) {
+    try {
+      fs.rmSync(p, { force: true });
+    } catch {}
+  }
+  if (novas.length) say("fotos", `${novas.length} arquivo(s) descartado(s): foto baixada para uma matéria que não chegou ao ar`);
+}
+
 function run(script, args = []) {
   try {
     const out = execFileSync(process.execPath, [path.join(ROOT, "tools", script), ...args], { cwd: ROOT, stdio: "pipe", timeout: 900000 }).toString();
@@ -27,6 +63,9 @@ function run(script, args = []) {
   }
 }
 const finish = (why, codigo = 0) => {
+  /* Nada publicado = nenhuma foto devida. Desfaz-se primeiro, para o build da
+     capa não encontrar um jpg de matéria que não está no catálogo. */
+  if (!publicou) desfazerFotosDaRodada();
   /* Toda saída da rodada passa aqui. Se a manutenção passou e nada foi
      publicado, a troca de capa é devida — e um build quebrado fecha a rodada em
      vermelho, porque capa parada é a mesma falha de três semanas atrás. */
@@ -77,7 +116,19 @@ function girarCapa() {
     say("capa", `build da capa falhou (exit ${b.code}): ${b.out.trim().slice(-220) || "sem saída do build — rode node tools/build.js na mão"}`);
     return b.code;
   }
-  say("capa", linha || "build rodou, nenhuma linha de capa — confira pipeline/placements.json");
+  /* Exit 0 do build não quer dizer capa no ar: sem o marcador
+     `hwp:auto:index-hero` no HTML ele imprime "+0 (container não encontrado)" e
+     sai verde. Cobrar a linha é o que transforma "a capa girou" em algo medido
+     em vez de promessa — capa parada foi exatamente a falha de três semanas. */
+  if (!linha) {
+    say("capa", `build verde mas nenhuma linha de capa na saída — o slot index-hero não existe no HTML (confira pipeline/placements.json e os marcadores em index.html)`);
+    return 1;
+  }
+  if (/container não encontrado/.test(linha)) {
+    say("capa", `slot index-hero sem marcadores no HTML: ${linha} — nada trocado`);
+    return 1;
+  }
+  say("capa", linha);
   return 0;
 }
 

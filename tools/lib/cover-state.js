@@ -123,6 +123,18 @@ function loadState() {
     delete state.lastForcedChange;
     delete state.lastPublishPerWindow;
     delete state.lastForcedPerWindow;
+    /* Entradas anteriores a 2026-11-07 não têm `janela` nem `era`. Normaliza-se
+       na leitura para o build e o doctor verem um sistema só — e para a trava
+       "a mais nova é a que a rotação derrubou" não ficar cega. `era` deriva do
+       registro anterior porque o log só é escrito por registrarCapa, que acaba
+       de definir a capa: a troca seguinte derruba exatamente quem estava no ar.
+       Sem predecessor, era fica null e a trava não se aplica. */
+    let anterior = null;
+    for (const c of state.changes) {
+      if (!c.janela) c.janela = janelaDaEntrada(c);
+      if (c.era === undefined) c.era = anterior ? anterior.id : null;
+      anterior = c;
+    }
     return state;
   } catch {
     return { currentCoverId: null, changes: [] };
@@ -185,20 +197,23 @@ function shouldForceChange(state) {
    capa — em geral porque acabou de ser publicada). `era` é a capa que perdeu o
    lugar: sem ela, o build seguinte não sabe se a matéria mais nova é uma
    publicação nova ou apenas a capa que a rotação tinha acabado de derrubar. */
-function registrarCapa(state, articleId, tipo) {
+function registrarCapa(state, articleId, tipo, mudouHero = true) {
   const era = state.currentCoverId;
   state.currentCoverId = articleId;
-  registrarTroca(state, articleId, tipo, era);
+  /* Troca é o que o leitor vê. Repetir a mesma capa — o caso de uma matéria
+     elegível sozinha no catálogo, em que a "rotação forçada" não tem para onde
+     girar — não serve janela nenhuma, por mais que o build tenha rodado. */
+  if (mudouHero && era !== articleId) registrarTroca(state, articleId, tipo, era);
   saveState(state);
 }
 
-/* Quantas janelas do dia do fuso já tiveram troca — É A RÉGUA DA META
+/* Quantas janelas do dia já tiveram troca — É A RÉGUA DA META
    `cover_changes_per_day`, e o dia tem 2 janelas, então ela vai de 0 a 2.
    Contar entradas do histórico daria 3 num dia e 1 no seguinte, porque a troca
    da madrugada pertence à noite do dia anterior: o painel diria "3/2" ou
    "1/2" para um site que cumpriu a meta exatamente. */
 function janelasServidasNoDia(state, dia) {
-  const alvo = dia || noFuso(new Date()).dia;
+  const alvo = dia || diaDaJanelaAtual();
   const ids = new Set();
   for (const c of state.changes || []) {
     const id = janelaDaEntrada(c);
@@ -211,17 +226,20 @@ function janelasServidasNoDia(state, dia) {
    do número de janelas: publicar no meio de uma janela que já tinha troca é uma
    capa a mais, não uma meta a mais. */
 function trocasNoDia(state, dia) {
-  const alvo = dia || noFuso(new Date()).dia;
+  const alvo = dia || diaDaJanelaAtual();
   return (state.changes || []).filter((c) => {
     const id = janelaDaEntrada(c);
     return id ? id.startsWith(`${alvo}/`) : false;
   }).length;
 }
 
-/* Data de hoje no fuso do site — para as réguas não virarem a meia-noite de
-   Brasília duas horas depois do que o dono espera. */
-function hojeNoFuso() {
-  return noFuso(new Date()).dia;
+/* O dia que a meta de capa está cobrando agora. NÃO é o dia do relógio: a
+   janela da noite (13:00–02:59) atravessa a meia-noite, então às 00:23 de
+   Brasília o relógio já virou e o que ainda está em curso é o dia de ontem.
+   Ancorar no relógio fazia toda rodada da madrugada (a de 00:23 é uma das seis
+   do cron) mostrar 0/2 e o painel reclamar de um dia cujas janelas nem abriram. */
+function diaDaJanelaAtual(date = new Date()) {
+  return janelaId(date).split("/")[0];
 }
 
 module.exports = {
@@ -239,5 +257,5 @@ module.exports = {
   registrarCapa,
   trocasNoDia,
   janelasServidasNoDia,
-  hojeNoFuso,
+  diaDaJanelaAtual,
 };

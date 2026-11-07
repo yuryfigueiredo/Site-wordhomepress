@@ -32,7 +32,7 @@ const lido = (rel, fallback) => {
 
 const cad = lido("pipeline/cadence.json", {});
 const ontemUTC = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-const diaFuso = cover.hojeNoFuso();
+const diaMeta = cover.diaDaJanelaAtual();
 const teto = Number(cad.max_publishes_per_day) || 0;
 const metaCapa = Number(cad.cover_changes_per_day) || 0;
 
@@ -49,7 +49,7 @@ const fila = (() => {
   return { arquivos, pautas };
 })();
 const estado = cover.loadState();
-const janelasHoje = cover.janelasServidasNoDia(estado, diaFuso);
+const janelasHoje = cover.janelasServidasNoDia(estado);
 const trocasJanelaAtual = cover.trocasNaJanela(estado);
 const gap = cadence.horasDesdeUltimaPublicacao(ROOT);
 
@@ -65,15 +65,16 @@ const nums = saidaDoctor.match(/errors\s+(\d+)\s+\|.*?warnings\s+(\d+)/) || [];
 console.log(barra(64));
 console.log("  MANHÃ — Homeworld Press");
 console.log(barra(64));
-console.log(`Dia no fuso ${cad.timezone}: ${diaFuso} · janela ${cover.janelaId()} (abriu ${cover.windowStart()})`);
+console.log(`Dia das janelas ${cad.timezone}: ${diaMeta} · janela ${cover.janelaId()} (abriu ${cover.windowStart()})`);
 console.log("");
 /* Réguas em dias DIFERENTES de propósito, e dito aqui para não parecer bug:
    publicação conta o dia UTC (é o dia do commit `publish:` no Actions), capa
-   conta o dia do fuso (é o dia que o leitor vê). Às 21h de Brasília os dois já
-   são dias diferentes. */
+   conta o dia das janelas do fuso — 03:00 de um dia até 02:59 do seguinte,
+   porque a janela da noite atravessa a meia-noite e é ela que está em curso
+   na madrugada. Às 21h de Brasília os dois já são dias diferentes. */
 console.log(`Publicações — dia UTC: ontem ${mem.publicacoesNoDia(ROOT, ontemUTC)}/${teto} · hoje ${cadence.publishedToday(ROOT)}/${teto}`);
 console.log(`Última matéria no ar há ${gap === null ? "?" : gap.toFixed(1)}h (mínimo ${cad.min_hours_between_publishes}h entre peças)`);
-console.log(`Capa — janelas servidas hoje ${janelasHoje}/${metaCapa} · na janela atual ${trocasJanelaAtual} troca(s) · ${estado.changes.length} troca(s) em 14 dias`);
+console.log(`Capa — janelas servidas no dia ${janelasHoje}/${metaCapa} · na janela atual ${trocasJanelaAtual} troca(s) · ${estado.changes.length} troca(s) em 14 dias`);
 console.log(`Fila — ${fila.pautas.length} pauta(s) coletada(s) em ${fila.arquivos.length || 0} arquivo(s): ${fila.arquivos.join(", ") || "nenhum"}`);
 console.log("        ( leitura só do que está na fila: `node tools/ingest.js --show` — pick-lead.js NÃO é de ler:");
 console.log("         ele compromete a pauta com a rodada e a deixa fora da fila por lead_retry_hours)");
@@ -105,7 +106,7 @@ if (janelasHoje < metaCapa) {
   console.log(`    nota medida >= ${cad.cover_baseline} e foto. Não trocou? O motivo está em pipeline/state/cover-state.json`);
   console.log("    e nas notas de pipeline/scores.json.");
 } else {
-  console.log(`✓ Capa: ${janelasHoje}/${metaCapa} janelas servidas hoje — meta cumprida.`);
+  console.log(`✓ Capa: ${janelasHoje}/${metaCapa} janelas servidas no dia — meta cumprida.`);
 }
 console.log(barra(64));
 console.log("Painel de leitura: nada aqui publica ou empurra. O doctor acima reescreve");

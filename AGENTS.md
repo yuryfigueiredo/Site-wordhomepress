@@ -38,7 +38,7 @@ Passo a passo, que é o que `turno.js` executa — e é também o caminho manual
 9. `publish.js <slug>` — catálogo, feeds, sitemap, commit local `publish:`. **Nunca push.** Quem escreve `pipeline/state/cover-state.json` é o `build.js` que o publish chama, nunca o publish direto.
 10. Rodada que passou pela manutenção mas **não** publicou (teto, distância mínima, sem pauta, reprovado, duplicata): `turno.js` chama `build.js` para girar a capa, senão a meta `cover_changes_per_day` iria a zero em silêncio nos dias sem matéria. Se esse build falhar, a rodada fecha vermelha.
 
-A capa é pegadia dentro da janela (dia 03:00–12:59 / noite 13:00–02:59, fuso do `cadence.json`): um rebuild na mesma janela não troca se não houver matéria mais nova que a `era` registrada na última troca — foi o ping-pong que inflava a meta sem notícia. Publicações contam no **dia UTC**; trocas de capa contam no **dia do fuso** — é escolha documentada, não descuido.
+A capa é mantida dentro da janela (dia 03:00–12:59 / noite 13:00–02:59, fuso do `cadence.json`): um rebuild na mesma janela não troca se não houver matéria mais nova que a `era` registrada na última troca — foi o ping-pong que inflava a meta sem notícia. E troca só é registrada se o hero mudou de verdade para uma capa diferente: rodar build com uma matéria elegível sozinha no catálogo não serve janela. Publicações contam no **dia UTC**; a meta de capa conta o **dia das janelas** — 03:00 de um dia até 02:59 do seguinte, porque a janela da noite atravessa a meia-noite. É escolha documentada, não descuido.
 
 Cada etapa imprime uma linha legível em `TURNO.md`, que o workflow commita mesmo em rodada vermelha — inclusive a causa de um abort do `publish.js` (exit 1).
 
@@ -51,8 +51,8 @@ Cada etapa imprime uma linha legível em `TURNO.md`, que o workflow commita mesm
 | `cron_expression` ≠ workflow | `doctor.js` | erro `[cadence]` de régua dupla |
 | Cron ilegível ou workflow sem cron | `lib/schedule.js` via `doctor.js` | erro `[cadence]` — sem conferência o teto não vale nada, a rodada não publica |
 | Sem foto real | `publish.js` | abort + issue aberta por `notify-foto.js` |
-| Abort depois da busca de foto | `publish.js` → `sairSemPublicar()` | o jpg que o `find-cover.js` acabou de baixar é apagado: foto de matéria que não existe não entra no `git add images` |
-| Repetir a mesma capa | `lib/cover-state.js` | não conta como troca (rebuild na mesma janela é `mantida`, a meta não incha) |
+| Rodada que termina sem publicar | `turno.js` → `desfazerFotosDaRodada()` | toda imagem criada durante a rodada (jpg do `garantirFoto`, placa do `make-cover`) é apagada: foto de matéria que não saiu não entra no `git add -A` do workflow. `publish.js` tem o retrato e o gancho de exit dele mesmo, para quem roda o publish à mão |
+| Repetir a mesma capa | `lib/cover-state.js` | não conta como troca: `registrarCapa` só grava quando o hero mudou de verdade para outra matéria (rebuild na mesma janela é `mantida`, e uma elegível sozinha no catálogo não serve janela) |
 | Rodada que falha em etapa de publicação | `turno.js` | exit 1 (`publish.js` abortou, nenhum provedor armado, ou alerta registrado) — workflow fecha vermelho. Parar cedo **por cadência** é exit 0 por desenho: nada a publicar, rodada verde — desde que o `build.js` do passo 10 rode; capa quebrada é vermelha mesmo sem matéria nova |
 
 Para testar um gate, mute a entrada e veja a cor mudar — não confie na descrição dele.
