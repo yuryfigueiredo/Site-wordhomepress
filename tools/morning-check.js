@@ -32,7 +32,7 @@ const lido = (rel, fallback) => {
 
 const cad = lido("pipeline/cadence.json", {});
 const ontemUTC = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-const diaMeta = cover.diaDaJanelaAtual();
+const diaMeta = cover.diaDaMeta();
 const teto = Number(cad.max_publishes_per_day) || 0;
 const metaCapa = Number(cad.cover_changes_per_day) || 0;
 
@@ -49,8 +49,8 @@ const fila = (() => {
   return { arquivos, pautas };
 })();
 const estado = cover.loadState();
-const janelasHoje = cover.janelasServidasNoDia(estado);
-const trocasJanelaAtual = cover.trocasNaJanela(estado);
+const rodadasHoje = cover.rodadasServidasNoDia(estado);
+const trocasRodadaAtual = cover.trocasNaRodada(estado);
 const gap = cadence.horasDesdeUltimaPublicacao(ROOT);
 
 const saidaDoctor = (() => {
@@ -65,16 +65,16 @@ const nums = saidaDoctor.match(/errors\s+(\d+)\s+\|.*?warnings\s+(\d+)/) || [];
 console.log(barra(64));
 console.log("  MANHÃ — Homeworld Press");
 console.log(barra(64));
-console.log(`Dia das janelas ${cad.timezone}: ${diaMeta} · janela ${cover.janelaId()} (abriu ${cover.windowStart()})`);
+console.log(`Dia da meta ${cad.timezone}: ${diaMeta} · rodada em curso ${cover.rodadaId()} · ${cover.rodadasDoDia()} rodadas/dia (${(cad.check_hours || []).join(" ")})`);
 console.log("");
 /* Réguas em dias DIFERENTES de propósito, e dito aqui para não parecer bug:
    publicação conta o dia UTC (é o dia do commit `publish:` no Actions), capa
-   conta o dia das janelas do fuso — 03:00 de um dia até 02:59 do seguinte,
-   porque a janela da noite atravessa a meia-noite e é ela que está em curso
-   na madrugada. Às 21h de Brasília os dois já são dias diferentes. */
+   conta o dia do fuso — as rodadas vão de 00:23 a 20:23 no horário de Brasília,
+   todas dentro do mesmo dia do fuso. Às 21h de Brasília os dois dias já são
+   diferentes. */
 console.log(`Publicações — dia UTC: ontem ${mem.publicacoesNoDia(ROOT, ontemUTC)}/${teto} · hoje ${cadence.publishedToday(ROOT)}/${teto}`);
 console.log(`Última matéria no ar há ${gap === null ? "?" : gap.toFixed(1)}h (mínimo ${cad.min_hours_between_publishes}h entre peças)`);
-console.log(`Capa — janelas servidas no dia ${janelasHoje}/${metaCapa} · na janela atual ${trocasJanelaAtual} troca(s) · ${estado.changes.length} troca(s) em 14 dias`);
+console.log(`Capa — rodadas servidas no dia ${rodadasHoje}/${metaCapa} · na rodada atual ${trocasRodadaAtual} troca(s) · ${estado.changes.length} troca(s) em ${cover.DIA_LOG_DIAS} dias`);
 console.log(`Fila — ${fila.pautas.length} pauta(s) coletada(s) em ${fila.arquivos.length || 0} arquivo(s): ${fila.arquivos.join(", ") || "nenhum"}`);
 console.log("        ( leitura só do que está na fila: `node tools/ingest.js --show` — pick-lead.js NÃO é de ler:");
 console.log("         ele compromete a pauta com a rodada e a deixa fora da fila por lead_retry_hours)");
@@ -100,13 +100,13 @@ if (errosDoctor > 0) {
 } else {
   console.log("✓ Teto de publicações de hoje atingido — as próximas rodadas só coletam e checam.");
 }
-if (janelasHoje < metaCapa) {
-  console.log(`Capa: ${janelasHoje}/${metaCapa} janela(s) servida(s). A troca é do build.js, chamado pelo turno.js`);
-  console.log("    inclusive nas rodadas que não publicam nada, desde que existam 2+ matérias com");
-  console.log(`    nota medida >= ${cad.cover_baseline} e foto. Não trocou? O motivo está em pipeline/state/cover-state.json`);
-  console.log("    e nas notas de pipeline/scores.json.");
+if (rodadasHoje < metaCapa) {
+  console.log(`Capa: ${rodadasHoje}/${metaCapa} rodada(s) servida(s). A troca é do build.js, chamado pelo turno.js`);
+  console.log("    em TODA rodada, publique ou não — desde que existam matérias com");
+  console.log(`    nota medida >= ${cad.cover_baseline} e foto (uma a mais que o nº de rodadas para o ciclo não repetir). Não trocou? O motivo`);
+  console.log("    está em pipeline/state/cover-state.json e nas notas de pipeline/scores.json.");
 } else {
-  console.log(`✓ Capa: ${janelasHoje}/${metaCapa} janelas servidas no dia — meta cumprida.`);
+  console.log(`✓ Capa: ${rodadasHoje}/${metaCapa} rodadas servidas no dia — meta cumprida.`);
 }
 console.log(barra(64));
 console.log("Painel de leitura: nada aqui publica ou empurra. O doctor acima reescreve");

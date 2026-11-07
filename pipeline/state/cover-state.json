@@ -6,8 +6,11 @@
       "dia": "2026-11-06",
       "id": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
       "tipo": "publicacao",
-      "janela": "2026-11-06/night",
-      "era": null
+      "era": null,
+      "rodada": "2026-11-06T20:23"
     }
+  ],
+  "capaVistas": [
+    "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a"
   ]
 }

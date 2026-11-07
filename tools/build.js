@@ -216,15 +216,26 @@ function coverFloor() {
 }
 
 /* Capa, nesta ordem:
-   1. janela atual sem troca  → força a próxima matéria elegível (não a mais
-      nova): é assim que `cover_changes_per_day` cumpre 2 sem depender de sair
-      matéria nova;
-   2. janela já servida       → a capa fica onde está, SALVO se a matéria mais
-      nova for outra que não a que a troca forçada deixou para trás (`era`).
-      Sem isto, o segundo build da mesma janela desfazia a rotação:
-      `elegiveis[0]` continuava sendo a matéria que acabou de perder a capa, o
-      histórico contava troca sem publicação e o leitor via a capa em
-      ping-pong enquanto a meta seguia "cumprida".
+   1. rodada já servida e a capa ainda é elegível → nada muda no hero. A trava
+      vem ANTES da inédita: no dia em que a regra mudou, quase todo o acervo
+      ainda não tinha passado pelo hero, e cada rebuild da mesma rodada achava
+      "uma matéria nunca vista" e trocava de novo — medido com o relógio real,
+      dois builds na rodada 2026-11-06T20:23, duas trocas;
+   2. rodada aberta e matéria que AINDA NÃO passou pelo hero → ela toma a capa.
+      É o caminho de toda publicação nova (o build chamado pelo publish.js é
+      sempre o primeiro da rodada: o girarCapa() só roda quando nada foi
+      publicado, e a ordem é escolha da publicação, não da rotação);
+   3. rodada aberta e nada inédito → ROTACIONA: um passo na lista de elegíveis
+      (`proximaNaRotação`), voltando ao topo no fim do ciclo. É a regra que faz a
+      capa trocar 6 vezes por dia com matéria nova ou não — a capa é o que mais
+      chama atenção e o hero não pode ficar parado entre duas rodadas.
+   Se a capa registrada não está mais entre as elegíveis (nota caiu abaixo do
+   piso, perdeu a foto, saiu do catálogo) a rodada é servida de novo mesmo tendo
+   troca: o hero não pode continuar mostrando matéria que não pode ser capa.
+   A novidade é medida por ID (lib/cover-state.jaFoiCapa), não por data:
+   `a.date` do catálogo tem granularidade de dia, então "a mais nova do catálogo"
+   não distingue a matéria publicada agora da que a rotação acabou de derrubar —
+   era exatamente isso que desfazia a rotação no esquema antigo.
    O filtro "pode ser capa" está em lib/cover-rules, e o doctor.js usa o mesmo. */
 function pickCover(forceChange = false) {
   const coverState = require("./lib/cover-state");
@@ -233,21 +244,12 @@ function pickCover(forceChange = false) {
 
   const state = coverState.loadState();
   const atual = elegiveis.find((a) => a.id === state.currentCoverId) || null;
-  const maisNova = elegiveis[0];
+  if (!forceChange && atual) return { artigo: atual, motivo: "mantida" };
 
-  if (forceChange) {
-    const proxima = atual && elegiveis.length > 1 ? elegiveis.find((a) => a.id !== atual.id) || maisNova : atual || maisNova;
-    return { artigo: proxima, motivo: "forcada" };
-  }
+  const inedita = elegiveis.find((a) => !coverState.jaFoiCapa(state, a.id));
+  if (inedita) return { artigo: inedita, motivo: "do dia" };
 
-  if (atual && atual.id !== maisNova.id) {
-    /* A mais nova é justamente a capa que a troca desta janela derrubou? Então
-       não aconteceu nada desde a rotação: manter. Qualquer outra matéria mais
-       nova é novidade real (publicação ou peça escrita à mão) e toma a capa. */
-    const troca = coverState.ultimaTrocaNaJanela(state);
-    if (troca && troca.era === maisNova.id) return { artigo: atual, motivo: "mantida" };
-  }
-  return { artigo: maisNova, motivo: "do dia" };
+  return { artigo: coverState.proximaNaRotação(elegiveis, atual && atual.id), motivo: "rotacionada" };
 }
 
 const cache = new Map();
@@ -296,10 +298,10 @@ function applySlot(file, slot) {
       fs.writeFileSync(fb, region);
     }
 
-    /* A janela atual já teve troca de capa? Se não, esta rodada gira a capa. */
+    /* A rodada atual já teve troca de capa? Se não, este build gira a capa. */
     const coverState = require("./lib/cover-state");
     const state = coverState.loadState();
-    const window = coverState.janelaId();
+    const rodada = coverState.rodadaId();
     const forceChange = coverState.shouldForceChange(state);
 
     const escolha = pickCover(forceChange) || {};
@@ -312,7 +314,7 @@ function applySlot(file, slot) {
     /* Só o build escreve o estado da capa: ele é o único que sabe qual matéria
        efetivamente foi ao ar no hero. publish.js chamava recordPublish por
        conta própria e carimbava `currentCoverId` com a matéria publicada MESMO
-       quando ela não passou do piso — a janela se declarava servida sem troca. */
+       quando ela não passou do piso — a rodada se declarava servida sem troca. */
     if (!DRY && cover) coverState.registrarCapa(state, cover.id, escolha.motivo, next !== src);
 
     return {
@@ -320,7 +322,7 @@ function applySlot(file, slot) {
       slot: slot.name,
       added: cover ? 1 : 0,
       note: cover
-        ? `capa ${escolha.motivo}: ${cover.id} (${cover.rank}, ${cover.date}) · piso ${coverFloor()} · janela ${window}`
+        ? `capa ${escolha.motivo}: ${cover.id} (${cover.rank}, ${cover.date}) · piso ${coverFloor()} · rodada ${rodada}`
         : `capa manual mantida (nenhuma matéria do pipeline acima do piso ${coverFloor()})`,
     };
   }

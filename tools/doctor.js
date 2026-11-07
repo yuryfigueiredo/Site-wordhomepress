@@ -337,8 +337,12 @@ const {
    Actions: o estado mora em pipeline/state/, que era ignorado pelo git, então
    cada clone acordava com currentCoverId null e a troca "forçada" escolhia a
    matéria mais nova — que já era a capa. Além do arquivo versionado (agora),
-   a troca precisa de pelo menos duas matérias elegíveis: com uma só, não existe
-   para onde trocar, e a meta vira ruído permanente. */
+   a rotação precisa de pelo menos duas matérias elegíveis: com uma só, não
+   existe para onde girar, e a meta vira ruído permanente.
+   Desde 2026-11-07 a unidade da capa é a RODADA, não a janela: a meta vale o
+   número de horários do `check_hours`, e o doctor cobra que `cover_changes_per_day`
+   seja exatamente esse número — régua de capa descolada da agenda é a mesma
+   classe de defeito que produziu três semanas de verde sem publicar. */
 {
   const coverState = require("./lib/cover-state");
   let cad11 = null;
@@ -361,21 +365,28 @@ const {
     const elegiveis = coverRules.elegiveis(DB, piso);
     const melhor = Object.values(notas).reduce((m, r) => (r && typeof r.score === "number" && r.score > m ? r.score : m), 0);
     const metaCapa = Number(cad11.cover_changes_per_day) || 0;
-    if (metaCapa > 2)
-      fail("cover", `cover_changes_per_day = ${metaCapa} mas o dia só tem 2 janelas (dia 03:00-12:59 e noite 13:00-02:59) — a meta é inatingível por construção`);
+    const rodadas = coverState.horariosDasRodadas();
+    if (!rodadas.length)
+      fail("cover", `pipeline/cadence.json sem check_hours legível — sem agenda não há como saber quantas rodadas o dia tem, e a meta de capa de ${metaCapa} não é cobrada de nada`);
+    else if (metaCapa !== rodadas.length)
+      fail("cover", `cover_changes_per_day = ${metaCapa} mas o cron dispara ${rodadas.length} rodadas/dia (check_hours) — a regra é girar a capa em TODA rodada, então a meta tem de ser ${rodadas.length}`);
     if (!elegiveis.length)
       warn("cover", `nenhuma matéria passa do piso ${piso} da capa (melhor nota medida: ${melhor || "nenhuma"}) — a capa fica com o HTML escrito à mão e a meta de ${metaCapa} troca(s)/dia não é cobrada de ninguém`);
     else if (elegiveis.length < 2 && metaCapa > 0)
-      warn("cover", `só ${elegiveis.length} matéria elegível para a capa (${elegiveis[0].id}) — troca forçada precisa de pelo menos 2 para ter para onde trocar`);
-    else note("cover", `${elegiveis.length} matérias elegíveis para a capa (piso ${piso}) · janela atual ${coverState.janelaId()}, aberta ${coverState.windowStart()}`);
+      warn("cover", `só ${elegiveis.length} matéria elegível para a capa (${elegiveis[0].id}) — a rotação não tem para onde girar, então a meta de ${metaCapa} troca(s)/dia é impossível com este acervo`);
+    else {
+      note("cover", `${elegiveis.length} matérias elegíveis para a capa (piso ${piso}) · rodada atual ${coverState.rodadaId()} · ${rodadas.length} rodadas/dia`);
+      if (rodadas.length && elegiveis.length < rodadas.length)
+        note("cover", `ciclo de ${elegiveis.length} capa(s) para ${rodadas.length} rodadas/dia: cada matéria volta ao hero cerca de ${(rodadas.length / elegiveis.length).toFixed(1)}x por dia (nenhuma repetição em rodadas seguidas, que é o que a meta cobra)`);
+    }
     if (cad11.timezone && cad11.timezone !== coverState.FUSO)
-      warn("cover", `pipeline/cadence.json diz fuso "${cad11.timezone}" mas as janelas da capa são contadas em "${coverState.FUSO}" — duas réguas de relógio`);
+      warn("cover", `pipeline/cadence.json diz fuso "${cad11.timezone}" mas as rodadas da capa são contadas em "${coverState.FUSO}" — duas réguas de relógio`);
     const estado = coverState.loadState();
     if (!estado.changes.length) warn("cover", "pipeline/state/cover-state.json sem histórico de trocas — a meta de capa não está sendo medida (rode node tools/build.js uma vez para o arquivo entrar no repositório)");
     else
       note(
         "cover",
-        `janelas servidas no dia: ${coverState.janelasServidasNoDia(estado)}/${metaCapa} (a janela atual tem ${coverState.trocasNaJanela(estado)} troca(s)) · ${coverState.trocasNoDia(estado)} capa(s) ao ar no dia, ${estado.changes.length} trocas em 14 dias · capa atual ${estado.currentCoverId}`
+        `rodadas servidas no dia: ${coverState.rodadasServidasNoDia(estado)}/${metaCapa} (a rodada atual tem ${coverState.trocasNaRodada(estado)} troca(s)) · ${coverState.trocasNoDia(estado)} capa(s) ao ar no dia, ${estado.changes.length} trocas em ${coverState.DIA_LOG_DIAS} dias · capa atual ${estado.currentCoverId} · faltam ${elegiveis.filter((a) => !coverState.jaFoiCapa(estado, a.id)).length} inédita(s) para a rotação girar sozinha`
       );
   }
 }

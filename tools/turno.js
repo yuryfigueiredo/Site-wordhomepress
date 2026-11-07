@@ -81,6 +81,12 @@ const finish = (why, codigo = 0) => {
      publicado, a troca de capa é devida — e um build quebrado fecha a rodada em
      vermelho, porque capa parada é a mesma falha de três semanas atrás. */
   if (posManutencao && !publicou) codigo = Math.max(codigo, girarCapa() === 0 ? 0 : 1);
+  /* A prova final não é o exit do build, é o histórico: a capa TROCOU nesta
+     rodada? `registrarCapa` só grava quando o hero foi ao ar com outra matéria,
+     então rodada verde com a capa no mesmo lugar é vermelha a partir daqui — foi
+     exatamente assim que a meta viveu três semanas como promessa. Vale também
+     para a rodada que publicou: lá quem gira é o build chamado pelo publish.js. */
+  if (posManutencao && !capaServiuRodada()) codigo = Math.max(codigo, 1);
   if (why) say("fim", why);
   const head = `# Turno — ${new Date().toISOString().replace("T", " ").slice(0, 16)} UTC\n\n`;
   fs.writeFileSync(path.join(ROOT, "TURNO.md"), head + log.join("\n") + "\n");
@@ -130,9 +136,11 @@ function garantirFoto(slug) {
 /* Rodada que não publicou também tem de cumprir a meta de capa. Quem troca a
    capa é o build.js (slot index-hero + lib/cover-state.js), e até 2026-11-07 ele
    só era chamado pelo publish.js: parada por teto, por distância mínima ou por
-   falta de pauta não rodava build, a janela fechava sem troca nenhuma e a meta
-   de cover_changes_per_day ia a zero em silêncio — o commit que "força 2 trocas
-   por dia" só funcionava nos dias em que saía matéria. */
+   falta de pauta não rodava build, a rodada fechava sem troca nenhuma e a meta
+   de cover_changes_per_day ia a zero em silêncio — o commit que "força a troca"
+   só funcionava nos dias em que saía matéria. Desde 2026-11-07 a meta é UMA
+   TROCA POR RODADA (6/dia): sem matéria nova, o build caminha na lista de
+   elegíveis e põe outra matéria no hero. */
 function girarCapa() {
   const b = run("build.js");
   const linha = (b.out.match(/index-hero:[^\n]*/) || [""])[0].trim();
@@ -154,6 +162,30 @@ function girarCapa() {
   }
   say("capa", linha);
   return 0;
+}
+
+/* Lê o estado DA DISCO (o build acabou de escrever) e diz se a capa trocou na
+   rodada em curso. Não é redundância do `girarCapa`: o build pode sair 0 sem
+   trocar nada (uma matéria elegível sozinha no catálogo, nenhuma acima do piso,
+   ou um rebuild depois de a rodada já ter girado por outro caminho), e o que a
+   meta cobra é a troca, não o build. */
+function capaServiuRodada() {
+  const coverState = require("./lib/cover-state");
+  const estado = coverState.loadState();
+  if (coverState.trocaNaRodada(estado)) return true;
+  const cad = (() => {
+    try {
+      return JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8"));
+    } catch {
+      return {};
+    }
+  })();
+  say(
+    "capa",
+    `VERMELHO: nenhuma troca de capa registrada na rodada ${coverState.rodadaId()} — o hero continua em ${estado.currentCoverId || "capa escrita à mão"}. ` +
+      `A meta é ${cad.cover_changes_per_day}/dia (uma por rodada) e o piso é ${cad.cover_baseline}: confira quantas matérias do catálogo têm nota medida acima do piso e foto real em pipeline/scores.json`
+  );
+  return false;
 }
 
 /* 1. coleta */
