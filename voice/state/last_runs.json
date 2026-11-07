@@ -1,7 +1,7 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-07T18:20:49.713Z",
+  "updated": "2026-11-07T18:23:06.277Z",
   "runs": {
     "analyst": {
       "id": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
@@ -12,11 +12,11 @@
       "humor_lines": 1
     },
     "lab": {
-      "id": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
+      "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
       "date": "2026-11-07",
-      "opening_move": "scene",
-      "ending_move": "admitted_limit",
-      "title_pattern": "two trapped ions let",
+      "opening_move": "object",
+      "ending_move": "consequence",
+      "title_pattern": "two percent of the",
       "humor_lines": 0
     },
     "curator": null

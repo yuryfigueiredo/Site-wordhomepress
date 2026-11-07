@@ -49,6 +49,41 @@ window.HWP_DATABASE = {
 
   articles: [
 {
+      "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
+      "title": "Two Percent of the Moon's Mantle Took 150 Gigawatts of Tidal Heat",
+      "kicker": "SCIENCE // SPACE",
+      "category": "science",
+      "subtopic": "space",
+      "author": "Dr. Aris Thorne",
+      "role": "Staff Writer",
+      "date": "Nov 7, 2026",
+      "readTime": "6 MIN READ",
+      "isHeroLead": false,
+      "image": "images/posts/earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat.jpg",
+      "imageAlt": "Two Percent of the Moon's Mantle Took 150 Gigawatts of Tidal Heat — Photo by Sanni Sahil on Unsplash",
+      "bookCover": null,
+      "dek": "A convection model with one low-viscosity layer moves Earth's kneading to the core-mantle boundary, and that relocation is what makes young basalts survivable.",
+      "affiliateBox": null,
+      "content": "<p>The rock that starts this argument came back from Oceanus Procellarum. Samples returned by China's Chang'e-5 mission are basalts, and they date to about 2 billion years ago. That is young for a body that formed roughly 4.5 billion years ago from impact debris. The age is the fact every lunar model now has to carry.</p>\n<p>A new paper in the journal Planet offers an answer that does not add a heat source. Miao Chen, at the Chengdu University of Technology, led a team that put a low-viscosity rock layer between the lunar core and mantle. That layer sat inside a three-dimensional convection model. The claim is about where tidal energy went, not how much of it existed.</p>\n<h2>The cooling problem stated plainly</h2>\n<p>The Moon assembled from debris after a protoplanet struck the early Earth. That debris mass was about a quarter of Earth's size, and a quarter of a planet cools on a schedule. Physics gives the small body a short clock: heat escapes through the surface, and the surface-to-volume ratio works against retention.</p>\n<p>Geological quiet should have followed early. Lava that young should not exist, which is why the Chang'e-5 basalts are treated as an anomaly rather than as a routine datum.</p>\n<h2>Two suspects already cleared</h2>\n<p>Radioactive decay was the first candidate. Potassium and uranium in the mantle do produce heat, and the report on the new model says that route left too little of it to melt rock this late.</p>\n<p>Impacts were the second suspect. An asteroid strike makes a local thermal spike, and the heavy bombardment had ended well before the basalts formed. Neither route explains lava that is widespread and young at the same time.</p>\n<h2>What a parent planet does to an orbit</h2>\n<p>A body in an elliptical orbit is squeezed, stretched and kneaded by its parent's gravity. The friction of that flexing becomes heat. Jupiter does this to Io, and Io stays volcanic because of it.</p>\n<p>Around 2 billion years ago the Moon sat much closer to Earth. Its orbital period was 16 days instead of the current 27, and its orbit was far more eccentric than the one we see tonight. A stronger gradient and a tighter ellipse mean more kneading.</p>\n<h2>The change in the model is one thin layer</h2>\n<p>Earlier attempts treated the Moon as a mostly uniform sphere. Chen's team moved to a realistic three-dimensional mantle. They ran convection simulations on it. Between core and mantle they inserted a layer of low-viscosity rock.</p>\n<p>That single structural choice is where the result comes from. Energy that a uniform model spreads thin instead concentrated at two symmetric regions along the core-mantle boundary. The team calls them tidal heating anomaly zones, or THAZs.</p>\n<h2>Two percent of the volume, 150 gigawatts</h2>\n<p>Around 3.2 billion years ago the anomaly zones covered 2.5 percent of the mantle's volume. They received 150 gigawatts, which the report puts at more than four times the energy available from radioactive decay.</p>\n<p>Read the two numbers together.</p>\n<p>A volume that small holding heat that large is a plumbing result, not a budget increase. The mantle did not get more energy. The energy found a narrow place to go.</p>\n<h2>What the extra warmth buys</h2>\n<p>Three consequences come bundled. The lunar core stays warm longer than the cooling clock allows, which is the direct answer to the basalts.</p>\n<p>A warm core also keeps a dynamo running. The model predicts a magnetic field lasting longer than earlier work expected. That addresses a standing puzzle: Apollo samples appear to have formed in a strong field, in a Moon that should already have lost one.</p>\n<p>Plumes follow. With the base of the mantle heated in two places, large plumes rise toward the crust. Stranded pockets of that mantle material later melted, and the report ties those melts to the basalts Chang'e-5 brought back.</p>\n<h2>Where the theory stops</h2>\n<p>The report is explicit that the model is still only a theory. Much of lunar geological history remains unknown. The paper, as summarized, offers no temperature figures for the anomaly zones, only the power they received.</p>\n<p>That gap is checkable by sample rather than by argument. A mission can drill where the model says a stranded mantle pocket melted, and the chemistry of that rock either matches the prediction or does not. Planned lunar missions are the reason the report treats the question as open instead of settled.</p>\n<h2>What to do with the number</h2>\n<p>Treat the 150 gigawatts as a claim about geometry. If a low-viscosity layer at the core-mantle boundary focuses tidal heat into 2.5 percent of the mantle, then young lava and a long-lived field stop being two separate embarrassments for the cooling clock. The plumes come from the same place. The next sample return is the cheapest way to find out which part of that story survives contact with rock.</p>",
+      "sources": [
+        {
+          "title": "Earth's gravity may have kept the early moon's volcanic heart beating",
+          "url": "https://phys.org/news/2026-11-earth-gravity-early-moon-volcanic.html",
+          "date": "2026-11-07",
+          "type": "secondary",
+          "claim": "Formação da Lua há 4,5 bilhões de anos com detritos de um quarto da massa da Terra; basaltos do Chang'e-5 em Oceanus Procellarum datados de cerca de 2 bilhões de anos; descarte do decaimento radioativo e dos impactos; órbita de 16 dias contra 27 atuais e maior excentricidade; Io como exemplo de aquecimento por Júpiter; simulação 3D de convecção com camada de baixa viscosidade; as THAZs com 2,5% do volume do manto recebendo 150 gigawatts, mais de quatro vezes o calor radioativo; campo magnético mais longo, plumas e a ressalva de que ainda é só uma teoria."
+        },
+        {
+          "title": "Planet: Tidal Heating Anomaly Zone at the core-mantle boundary of the Moon",
+          "url": "https://doi.org/10.15302/planet.2026.26014",
+          "date": "2026-11-07",
+          "type": "primary",
+          "claim": "Documento primário de Miao Chen e colegas, com a configuração da simulação, as zonas de anomalia e as premissas que o resumo em prosa não lista."
+        }
+      ],
+      "evidenceLevel": "sourced"
+    },
+{
       "id": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
       "title": "Two Trapped Ions Let a Gauge Field Decide Whether Matter Moves",
       "kicker": "SCIENCE // QUANTUM",

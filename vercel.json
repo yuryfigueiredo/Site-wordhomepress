@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat"
+        }
+      ],
+      "destination": "/a-earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere"
         }
       ],

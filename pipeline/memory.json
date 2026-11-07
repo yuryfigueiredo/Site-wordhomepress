@@ -178,6 +178,16 @@
       "outcome": "publicada",
       "at": "2026-11-07T18:20:49.715Z",
       "id": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere"
+    },
+    "https://phys.org/news/2026-11-earth-gravity-early-moon-volcanic.html": {
+      "outcome": "publicada",
+      "at": "2026-11-07T18:23:06.279Z",
+      "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat"
+    },
+    "https://doi.org/10.15302/planet.2026.26014": {
+      "outcome": "publicada",
+      "at": "2026-11-07T18:23:06.279Z",
+      "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat"
     }
   },
   "publishes": [
@@ -234,6 +244,11 @@
     {
       "id": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
       "at": "2026-11-07T18:20:49.715Z",
+      "score": 7.4
+    },
+    {
+      "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
+      "at": "2026-11-07T18:23:06.279Z",
       "score": 7.4
     }
   ]
