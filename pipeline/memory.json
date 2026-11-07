@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-07T14:01:57.292Z",
+  "updated": "2026-11-07T18:45:30.154Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -153,6 +153,12 @@
       "topic": "NASA’s Swift telescope falls to Earth after nearly 22 years in space",
       "outcome": "reprovada",
       "at": "2026-11-07T14:01:57.292Z"
+    },
+    "https://phys.org/news/2026-11-paths-flux-ions-simulate-aharonovbohm.html": {
+      "slug": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
+      "topic": "Two paths, one flux: Trapped ions simulate Aharonov–Bohm interference in a lattice gauge theory",
+      "outcome": "falha_publicacao",
+      "at": "2026-11-07T18:45:30.154Z"
     }
   },
   "publishes": [
