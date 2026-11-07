@@ -12,23 +12,15 @@ const path = require("path");
 const ROOT = path.resolve(__dirname, "..");
 const DRY = process.argv.includes("--dry");
 const PLACEMENTS = path.join(ROOT, "pipeline", "placements.json");
+const coverRules = require("./lib/cover-rules");
 
 global.window = {};
 require(path.join(ROOT, "js", "articles-db.js"));
 const DB = global.window.HWP_DATABASE;
 
 /* As notas vêm de pipeline/scores.json (calculadas por tools/score.js).
-   Nenhum artigo do catálogo usa o campo rank, então nada é sobrescrito.
-   rankSource === "baseline" marca o acervo anterior ao pipeline: essas
-   matérias competem no feed, mas nunca viram capa gerada — o HTML escrito à
-   mão delas carrega detalhes (dek, alt, botão) que o catálogo não tem. */
-try {
-  const store = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "scores.json"), "utf8"));
-  for (const a of DB.articles) {
-    const rec = (store.scores || {})[a.id];
-    if (rec && typeof rec.score === "number") { a.rank = rec.score; a.rankNote = rec.note || ""; a.rankSource = rec.source || "auto"; }
-  }
-} catch {}
+   Nenhum artigo do catálogo usa o campo rank, então nada é sobrescrito. */
+require("./lib/catalog-notes").aplicar(DB, ROOT);
 
 const MONTHS = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
 const toTime = (s) => {
@@ -217,36 +209,45 @@ function pick(slot, takenIds) {
 /* Piso da capa: pipeline/cadence.json → cover_baseline. */
 function coverFloor() {
   try {
-    return Number(JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8")).cover_baseline) || 0;
+    return coverRules.pisoDaCapa(JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8")));
   } catch {
     return 0;
   }
 }
 
-/* Capa forçada: quando nenhuma matéria foi publicada na janela atual,
-   escolhe a próxima matéria elegível (não a mais recente) para garantir
-   que a capa troque pelo menos 2x por dia. */
+/* Capa, nesta ordem:
+   1. janela atual sem troca  → força a próxima matéria elegível (não a mais
+      nova): é assim que `cover_changes_per_day` cumpre 2 sem depender de sair
+      matéria nova;
+   2. janela já servida       → a capa fica onde está, SALVO se a matéria mais
+      nova for outra que não a que a troca forçada deixou para trás (`era`).
+      Sem isto, o segundo build da mesma janela desfazia a rotação:
+      `elegiveis[0]` continuava sendo a matéria que acabou de perder a capa, o
+      histórico contava troca sem publicação e o leitor via a capa em
+      ping-pong enquanto a meta seguia "cumprida".
+   O filtro "pode ser capa" está em lib/cover-rules, e o doctor.js usa o mesmo. */
 function pickCover(forceChange = false) {
-  const floor = coverFloor();
-  const elegiveis = DB.articles
-    .filter((a) => typeof a.rank === "number" && a.rankSource !== "baseline" && a.image && a.rank >= floor)
-    .sort((x, y) => toTime(y.date) - toTime(x.date) || y.rank - x.rank);
-
-  if (!forceChange || elegiveis.length === 0) {
-    return elegiveis[0] || null;
-  }
-
-  // Forçando: pula a capa atual e pega a próxima
   const coverState = require("./lib/cover-state");
-  const state = coverState.loadState();
-  const currentId = state.currentCoverId;
+  const elegiveis = coverRules.elegiveis(DB, coverFloor());
+  if (!elegiveis.length) return null;
 
-  if (currentId && elegiveis.length > 1) {
-    const next = elegiveis.find((a) => a.id !== currentId);
-    return next || elegiveis[0];
+  const state = coverState.loadState();
+  const atual = elegiveis.find((a) => a.id === state.currentCoverId) || null;
+  const maisNova = elegiveis[0];
+
+  if (forceChange) {
+    const proxima = atual && elegiveis.length > 1 ? elegiveis.find((a) => a.id !== atual.id) || maisNova : atual || maisNova;
+    return { artigo: proxima, motivo: "forcada" };
   }
 
-  return elegiveis[0] || null;
+  if (atual && atual.id !== maisNova.id) {
+    /* A mais nova é justamente a capa que a troca desta janela derrubou? Então
+       não aconteceu nada desde a rotação: manter. Qualquer outra matéria mais
+       nova é novidade real (publicação ou peça escrita à mão) e toma a capa. */
+    const troca = coverState.ultimaTrocaNaJanela(state);
+    if (troca && troca.era === maisNova.id) return { artigo: atual, motivo: "mantida" };
+  }
+  return { artigo: maisNova, motivo: "do dia" };
 }
 
 const cache = new Map();
@@ -295,33 +296,31 @@ function applySlot(file, slot) {
       fs.writeFileSync(fb, region);
     }
 
-    /* Força troca de capa se nenhuma matéria foi publicada na janela atual */
+    /* A janela atual já teve troca de capa? Se não, esta rodada gira a capa. */
     const coverState = require("./lib/cover-state");
     const state = coverState.loadState();
-    const window = coverState.currentWindow();
-    const forceChange = coverState.shouldForceChange(state, window);
+    const window = coverState.janelaId();
+    const forceChange = coverState.shouldForceChange(state);
 
-    const cover = pickCover(forceChange);
+    const escolha = pickCover(forceChange) || {};
+    const cover = escolha.artigo || null;
     const manual = resync ? region : fs.readFileSync(fb, "utf8");
     const content = cover ? `\n${TEMPLATES[slot.template](cover)}\n          ` : manual;
     const next = src.slice(0, i0) + content + src.slice(i1);
     if (next !== src) writeSrc(file, next);
 
-    /* Atualiza o estado da capa */
-    if (!DRY && cover) {
-      if (forceChange) {
-        coverState.recordForcedChange(state, cover.id);
-      } else {
-        coverState.recordPublish(state, cover.id);
-      }
-    }
+    /* Só o build escreve o estado da capa: ele é o único que sabe qual matéria
+       efetivamente foi ao ar no hero. publish.js chamava recordPublish por
+       conta própria e carimbava `currentCoverId` com a matéria publicada MESMO
+       quando ela não passou do piso — a janela se declarava servida sem troca. */
+    if (!DRY && cover) coverState.registrarCapa(state, cover.id, escolha.motivo);
 
     return {
       file,
       slot: slot.name,
       added: cover ? 1 : 0,
       note: cover
-        ? `capa ${forceChange ? "forçada" : "do dia"}: ${cover.id} (${cover.rank}, ${cover.date}) · piso ${coverFloor()} · janela ${window}`
+        ? `capa ${escolha.motivo}: ${cover.id} (${cover.rank}, ${cover.date}) · piso ${coverFloor()} · janela ${window}`
         : `capa manual mantida (nenhuma matéria do pipeline acima do piso ${coverFloor()})`,
     };
   }

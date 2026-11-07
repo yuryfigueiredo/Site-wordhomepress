@@ -13,6 +13,10 @@ const { execFileSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "..");
 const log = [];
 const say = (stage, msg) => { log.push(`- **${stage}** — ${msg}`); console.log(`[${stage}] ${msg}`); };
+/* A troca de capa só é cobrada depois da manutenção verde: rodar build com erro
+   aberto seria publicar por outro caminho. */
+let posManutencao = false;
+let publicou = false;
 
 function run(script, args = []) {
   try {
@@ -23,6 +27,10 @@ function run(script, args = []) {
   }
 }
 const finish = (why, codigo = 0) => {
+  /* Toda saída da rodada passa aqui. Se a manutenção passou e nada foi
+     publicado, a troca de capa é devida — e um build quebrado fecha a rodada em
+     vermelho, porque capa parada é a mesma falha de três semanas atrás. */
+  if (posManutencao && !publicou) codigo = Math.max(codigo, girarCapa() === 0 ? 0 : 1);
   if (why) say("fim", why);
   const head = `# Turno — ${new Date().toISOString().replace("T", " ").slice(0, 16)} UTC\n\n`;
   fs.writeFileSync(path.join(ROOT, "TURNO.md"), head + log.join("\n") + "\n");
@@ -56,6 +64,23 @@ function garantirFoto(slug) {
   };
 }
 
+/* Rodada que não publicou também tem de cumprir a meta de capa. Quem troca a
+   capa é o build.js (slot index-hero + lib/cover-state.js), e até 2026-11-07 ele
+   só era chamado pelo publish.js: parada por teto, por distância mínima ou por
+   falta de pauta não rodava build, a janela fechava sem troca nenhuma e a meta
+   de cover_changes_per_day ia a zero em silêncio — o commit que "força 2 trocas
+   por dia" só funcionava nos dias em que saía matéria. */
+function girarCapa() {
+  const b = run("build.js");
+  const linha = (b.out.match(/index-hero:[^\n]*/) || [""])[0].trim();
+  if (b.code !== 0) {
+    say("capa", `build da capa falhou (exit ${b.code}): ${b.out.trim().slice(-220) || "sem saída do build — rode node tools/build.js na mão"}`);
+    return b.code;
+  }
+  say("capa", linha || "build rodou, nenhuma linha de capa — confira pipeline/placements.json");
+  return 0;
+}
+
 /* 1. coleta */
 const ing = run("ingest.js");
 /* O resumo da fila e os feeds que falharam: mostrar só a última linha deixava
@@ -77,6 +102,7 @@ say("manutenção", docLine);
 /* Vermelho de propósito: dia inteiro com o CI verde e nenhuma publicação foi
    possível enquanto um erro aberto barrava a rodada no meio do caminho. */
 if (doc.code !== 0) finish("doctor terminou com erros — a rodada para aqui por segurança.", 1);
+posManutencao = true;
 
 /* 3. teto diário */
 const cad = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8"));
@@ -172,6 +198,9 @@ if (pub.code !== 0) {
      25 das 31 rodadas "success" terminaram sem publicar. */
   finish(`publicação abortada pelo publish.js: ${pub.out.trim().split("\n").filter(Boolean).slice(-3).join(" · ").slice(0, 400)}`, 1);
 }
+/* Daqui para frente a rodada publicou: o build do publish.js já colocou a
+   matéria no hero e registrou a troca, então a capa não é mais devida. */
+publicou = true;
 say("publicação", pub.out.split("\n").filter((l) => /publicado localmente|cadência hoje|^AVISO:/.test(l)).join(" · ") || pub.out.trim().split("\n").slice(0, 2).join(" · "));
 /* Um "AVISO:" aqui é contabilidade quebrada: a matéria está no ar, mas algo que
    o teto ou o histórico dependem não foi gravado. Rodada vermelha de propósito

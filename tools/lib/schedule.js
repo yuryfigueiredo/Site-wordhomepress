@@ -1,12 +1,13 @@
 /* schedule.js — uma régua só para "quantas publicações a agenda permite".
 
-   Medido no Actions entre 2026-10-30 e 2026-11-06: dos 5 horários do cron
-   (07, 10, 14, 17, 21 UTC), 07/10/17 nunca dispararam e os que dispararam
-   chegaram de 1 a 170 minutos atrasados. Com min_hours_between_publishes = 4,
-   a meta de 5 publicações por dia era impossível por construção: o teto media o
-   desejo, não a agenda. Este módulo converte o cron em número e o doctor
-   compara o número com o teto — o erro vira vermelho em vez de virar "rodada
-   verde sem publicação" pela terceira semana seguida.                           */
+   Medido no Actions entre 2026-10-30 e 2026-11-06 (34 rodadas): dos 5 horários
+   do cron daquela calibração (07, 10, 14, 17, 21 UTC), 07/10/17 nunca
+   dispararam e os que dispararam chegaram de 1 a 170 minutos atrasados. Com
+   min_hours_between_publishes = 4 e meta de 5 publicações/dia (os números
+   ANTERIORES de pipeline/cadence.json, hoje 3 e 4), a conta desta régua dava no
+   máximo 4: meta inatingível por construção, e o erro virava "rodada verde sem
+   publicação" semana após semana. Este módulo converte o cron em número e o
+   doctor compara o número com o teto — hoje em vermelho, não em aviso.          */
 const fs = require("fs");
 const path = require("path");
 const { execFileSync } = require("child_process");

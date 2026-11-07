@@ -20,6 +20,47 @@ const run = (script, args = []) => execFileSync(process.execPath, [path.join(ROO
 const DIR = path.join(ROOT, "pipeline", "drafts", SLUG);
 const draft = JSON.parse(fs.readFileSync(path.join(DIR, "draft.json"), "utf8"));
 
+/* Retrato dos diretórios de imagem ANTES de qualquer busca. O abort restaura
+   catálogo, HTML e notas, mas a foto baixada pelo find-cover.js e a placa
+   escrita pelo make-cover.js ficam no disco: `git add images` do publish
+   levaria a foto de uma matéria que nunca chegou ao ar. */
+const IMG_DIRS = ["images/posts", "images/covers"];
+const fotosAntes = new Set(
+  IMG_DIRS.flatMap((d) => {
+    try {
+      return fs.readdirSync(path.join(ROOT, d)).map((f) => `${d}/${f}`);
+    } catch {
+      return [];
+    }
+  }),
+);
+function limparImagensOrfas() {
+  const novas = [];
+  for (const d of IMG_DIRS) {
+    let arquivos = [];
+    try {
+      arquivos = fs.readdirSync(path.join(ROOT, d));
+    } catch {}
+    for (const f of arquivos) if (!fotosAntes.has(`${d}/${f}`)) novas.push(path.join(ROOT, d, f));
+  }
+  for (const p of novas) {
+    try {
+      fs.rmSync(p, { force: true });
+    } catch {}
+  }
+  if (novas.length) console.error(`imagens desta publicação desfeitas: ${novas.length} arquivo(s) órfão(s) removido(s)`);
+}
+
+/* Toda saída sem publicação DEPOIS da busca de foto passa por aqui. Sem isso,
+   um `check-post` reprovado ou um teto atingido deixava no disco o jpg que o
+   find-cover acabava de baixar — e o `images/posts/<slug>.jpg` órfão é a foto
+   de uma matéria que nunca existiu. No runner o `git clean -fdq` da rodada
+   vermelha disfarçava; na máquina do dono, não. */
+const sairSemPublicar = (code) => {
+  limparImagensOrfas();
+  process.exit(code);
+};
+
 /* ── busca automática de foto real ────────────────────────────────────── */
 /* Sem foto real a publicação é abortada e o dono é avisado por issue no
    GitHub (o GitHub manda o e-mail). A placa SVG existia para não travar a
@@ -61,7 +102,7 @@ if (!temFotoReal()) {
     console.error(`aviso por issue NÃO enviado: ${String(err.stdout || err.message).split("\n").filter(Boolean).slice(-1)[0]}`);
   }
   console.error(`sem foto real — publicação abortada, nada foi alterado no catálogo`);
-  process.exit(1);
+  sairSemPublicar(1);
 }
 
 /* ── teto de cadência: quantas matérias podem subir por dia ───────────── */
@@ -73,7 +114,7 @@ if (doneToday >= cadence.max_publishes_per_day && !FORCAR) {
   console.error(`cadência: ${doneToday}/${cadence.max_publishes_per_day} publicação(ões) hoje.`);
   console.error("O teto existe para o site não virar fábrica de conteúdo — o robô continua checando fontes nas próximas rodadas.");
   console.error("Para publicar mesmo assim: node tools/publish.js " + SLUG + " --force-cadence");
-  process.exit(1);
+  sairSemPublicar(1);
 }
 /* Com rodadas perto da meia-noite UTC, o teto do dia viraria licença para
    publicar duas peças em sequência: a distância mínima vale entre publicações,
@@ -82,14 +123,14 @@ const horasDesde = require("./lib/cadence").horasDesdeUltimaPublicacao(ROOT);
 const minimoHoras = Number(cadence.min_hours_between_publishes || 0);
 if (horasDesde !== null && minimoHoras && horasDesde < minimoHoras && !FORCAR) {
   console.error(`cadência: a última matéria está no ar há ${horasDesde.toFixed(1)}h (mínimo ${minimoHoras}h) — nada publicado.`);
-  process.exit(1);
+  sairSemPublicar(1);
 }
 
 try {
   execFileSync(process.execPath, [path.join(ROOT, "tools", "check-post.js"), SLUG, ...OFFLINE], { cwd: ROOT, stdio: "pipe" });
 } catch (err) {
   console.error("check-post reprovou — publicação abortada. Leia pipeline/drafts/" + SLUG + "/review.md");
-  process.exit(1);
+  sairSemPublicar(1);
 }
 
 /* ── a nota: calculada por rubrica, não declarada pelo modelo ─────────── */
@@ -107,13 +148,15 @@ try {
   scoreOut = run("score.js", ["--draft", SLUG, "--record"]);
 } catch (err) {
   console.error("score.js falhou — publicação abortada:\n" + (err.stdout || err.message));
-  process.exit(1);
+  restaurarNotas();
+  sairSemPublicar(1);
 }
 const score = JSON.parse(fs.readFileSync(path.join(DIR, "score.json"), "utf8"));
 if (score.duplicate) {
   console.error("nota calculada indica quase-duplicata de matéria já publicada — publicação abortada.");
   console.error(scoreOut);
-  process.exit(1);
+  restaurarNotas();
+  sairSemPublicar(1);
 }
 console.log(scoreOut.trim());
 
@@ -177,7 +220,7 @@ const serialized = JSON.stringify(entry, null, 2)
 const anchor = backup.match(/\n(\s*)articles:\s*\[/);
 if (!anchor) {
   console.error("não achei o array articles: em js/articles-db.js — nada foi alterado");
-  process.exit(1);
+  sairSemPublicar(1);
 }
 const insertAt = backup.indexOf("[", anchor.index) + 1;
 fs.writeFileSync(DB_FILE, backup.slice(0, insertAt) + `\n${serialized},` + backup.slice(insertAt));
@@ -197,13 +240,13 @@ try {
   }
   if (gravada.content !== entry.content) throw new Error("o corpo da matéria mudou durante a inserção");
 } catch (err) {
-  fs.writeFileSync(DB_FILE, backup);
-  restaurarNotas();
-  console.error(`inserção no catálogo rejeitada: ${err.message} — catálogo e notas restaurados, nada publicado`);
-  process.exit(1);
+  /* Mesmo caminho do abort: meia dúzia de linhas de restauração paralela foi o
+     que deixou HTML no ar sem catálogo em 2026-11-05. */
+  abort(`inserção no catálogo rejeitada: ${err.message}`);
 }
 
-const abort = (why) => {
+function abort(why) {
+  limparImagensOrfas();
   for (const [file, content] of snapshot) {
     const abs = path.join(ROOT, file);
     if (content === null) fs.rmSync(abs, { force: true });
@@ -318,13 +361,3 @@ console.log(buildLog.trim());
 console.log(commitNote);
 console.log(`cadência hoje: ${require("./lib/cadence").publishedToday(ROOT, hoje)}/${cadence.max_publishes_per_day}`);
 console.log("deploy continua sendo decisão sua: nada foi enviado para nenhum servidor.");
-
-/* Registra a publicação no estado da capa para forçar trocas quando
-   nenhuma matéria sair na janela atual. */
-try {
-  const coverState = require("./lib/cover-state");
-  const state = coverState.loadState();
-  coverState.recordPublish(state, draft.id);
-} catch (err) {
-  console.error(`aviso: estado da capa não atualizado: ${err.message}`);
-}

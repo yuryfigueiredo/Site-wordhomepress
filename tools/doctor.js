@@ -18,6 +18,9 @@ const PLACEHOLDER_TAG = "homeworldpres-20";
 global.window = {};
 require(path.join(ROOT, "js", "articles-db.js"));
 const DB = global.window.HWP_DATABASE;
+/* Mesma injeção de notas do build.js: sem ela, `a.rank` não existe aqui e a
+   régua da capa enxerga um catálogo sem nota. */
+require("./lib/catalog-notes").aplicar(DB, ROOT);
 
 const errors = [];
 const warnings = [];
@@ -281,12 +284,16 @@ const {
   if (cad) {
     const teto = Number(cad.max_publishes_per_day) || 0;
     const ag = cronDoWorkflow(ROOT);
+    /* Meta não conferida é meta inatingível: sem esta linha os dois travões
+       abaixo só existiam enquanto o cron fosse parseável, e um cron com range ou
+       step degradava tudo para aviso — a rodada seguia publicando contra um teto
+       que ninguém tinha conferido. */
     if (ag.error) {
-      warn("cadence", `não foi possível ler a agenda do workflow: ${ag.error}`);
+      fail("cadence", `não foi possível ler a agenda do workflow (${ag.error}) — com o teto de ${teto} sem conferência a rodada não publica; confira .github/workflows/turno.yml`);
     } else {
       const slots = parseCron(ag.cron);
       if (!slots) {
-        warn("cadence", `cron "${ag.cron}" num formato que a régua não sabe ler — confira o teto na mão`);
+        fail("cadence", `cron "${ag.cron}" num formato que a régua não sabe ler (precisa ser minuto fixo + lista de horas) — o teto de ${teto}/dia não pode ser conferido contra a agenda`);
       } else {
         if (ag.cron.trim() !== String(cad.cron_expression || "").trim())
           fail("cadence", `pipeline/cadence.json anuncia cron "${cad.cron_expression}" mas o workflow executa "${ag.cron}" — duas réguas de agenda divergindo`);
@@ -303,14 +310,25 @@ const {
           warn("cadence", `check_hours (${declaradas}) não bate com o cron no fuso ${cad.timezone} (${reais})`);
       }
     }
-    /* Entrega medida, não prometida: atraso de cron é do GitHub, então é aviso —
-       erro aqui faria o robô parar de publicar justamente quando o Actions está
-       lenta. Sem nenhum "turno:" no histórico, porém, o robô está desligado. */
+    /* Entrega medida, não prometida. Rodada não é publicação: uma rodada que
+       para no doctor, no teto ou na distância mínima conta como rodada e não
+       publica nada, então comparar rodadas/dia com o teto de publicações
+       acusava déficit onde só havia rodada de manutenção. Mede-se o que saiu
+       (pipeline/memory.json, dia UTC) contra o teto. Atraso de cron é do
+       GitHub, por isso é aviso — erro aqui faria o robô parar de publicar
+       justamente quando o Actions está lento. Sem nenhum "turno:" no histórico,
+       porém, o robô está desligado. */
     const obs = rodadasObservadas(ROOT, 7);
+    const diasUTC = [...Array(7)].map((_, i) => new Date(Date.now() - i * 86400000).toISOString().slice(0, 10)).reverse();
+    const pubs = diasUTC.map((d) => memLib.publicacoesNoDia(ROOT, d));
+    const mediaPubs = pubs.reduce((a, b) => a + b, 0) / 7;
     if (!obs) warn("cadence-entrega", "nenhum commit \"turno:\" nos últimos 7 dias — o robô não rodou nem no Actions nem aqui");
-    else if (obs.porDia < teto)
-      warn("cadence-entrega", `histórico: ${obs.porDia.toFixed(1)} rodadas/dia (total ${obs.rodadas} em ${obs.dias} dia(s) com rodada) contra um teto de ${teto} — o dia que tiver menos rodadas que o teto não publica o teto`);
-    else note("cadence-entrega", `${obs.porDia.toFixed(1)} rodadas/dia medidas no histórico (teto ${teto})`);
+    else if (mediaPubs < teto)
+      warn(
+        "cadence-entrega",
+        `saíram ${mediaPubs.toFixed(1)} publicações/dia nos 7 dias UTC ${diasUTC[0]}…${diasUTC[6]} (${pubs.join("/")}, o último ainda em curso) contra um teto de ${teto} — a agenda deu ${obs.porDia.toFixed(1)} rodadas/dia, então o que falta é pauta viável, nota acima do piso ou a rodada morre num travão de cadência`
+      );
+    else note("cadence-entrega", `${mediaPubs.toFixed(1)} publicações/dia em 7 dias UTC (teto ${teto} · ${obs.porDia.toFixed(1)} rodadas/dia)`);
   }
 }
 
@@ -328,7 +346,8 @@ const {
     cad11 = JSON.parse(read("pipeline/cadence.json"));
   } catch {}
   if (cad11) {
-    const piso = Number(cad11.cover_baseline) || 0;
+    const coverRules = require("./lib/cover-rules");
+    const piso = coverRules.pisoDaCapa(cad11);
     const notas = (() => {
       try {
         return JSON.parse(read("pipeline/scores.json")).scores || {};
@@ -336,10 +355,10 @@ const {
         return {};
       }
     })();
-    const elegiveis = DB.articles.filter((a) => {
-      const r = notas[a.id];
-      return r && typeof r.score === "number" && (r.source || "auto") !== "baseline" && a.image && r.score >= piso;
-    });
+    /* O MESMO filtro que o build.js usa para escolher a capa (lib/cover-rules).
+       Refazer a conta a partir de scores.json aqui dava verde numa régua e
+       vermelho na capa: dois critérios, dois resultados. */
+    const elegiveis = coverRules.elegiveis(DB, piso);
     const melhor = Object.values(notas).reduce((m, r) => (r && typeof r.score === "number" && r.score > m ? r.score : m), 0);
     const metaCapa = Number(cad11.cover_changes_per_day) || 0;
     if (metaCapa > 2)
@@ -348,12 +367,16 @@ const {
       warn("cover", `nenhuma matéria passa do piso ${piso} da capa (melhor nota medida: ${melhor || "nenhuma"}) — a capa fica com o HTML escrito à mão e a meta de ${metaCapa} troca(s)/dia não é cobrada de ninguém`);
     else if (elegiveis.length < 2 && metaCapa > 0)
       warn("cover", `só ${elegiveis.length} matéria elegível para a capa (${elegiveis[0].id}) — troca forçada precisa de pelo menos 2 para ter para onde trocar`);
-    else note("cover", `${elegiveis.length} matérias elegíveis para a capa (piso ${piso}) · janela atual ${coverState.currentWindow()}, aberta ${coverState.windowStart()}`);
+    else note("cover", `${elegiveis.length} matérias elegíveis para a capa (piso ${piso}) · janela atual ${coverState.janelaId()}, aberta ${coverState.windowStart()}`);
     if (cad11.timezone && cad11.timezone !== coverState.FUSO)
       warn("cover", `pipeline/cadence.json diz fuso "${cad11.timezone}" mas as janelas da capa são contadas em "${coverState.FUSO}" — duas réguas de relógio`);
     const estado = coverState.loadState();
     if (!estado.changes.length) warn("cover", "pipeline/state/cover-state.json sem histórico de trocas — a meta de capa não está sendo medida (rode node tools/build.js uma vez para o arquivo entrar no repositório)");
-    else note("cover", `trocas registradas: ${coverState.trocasNoDia(estado)} hoje, ${estado.changes.length} em 14 dias · capa atual ${estado.currentCoverId}`);
+    else
+      note(
+        "cover",
+        `janelas servidas hoje: ${coverState.janelasServidasNoDia(estado)}/${metaCapa} (a janela atual tem ${coverState.trocasNaJanela(estado)} troca(s)) · ${coverState.trocasNoDia(estado)} capa(s) ao ar hoje, ${estado.changes.length} trocas em 14 dias · capa atual ${estado.currentCoverId}`
+      );
   }
 }
 

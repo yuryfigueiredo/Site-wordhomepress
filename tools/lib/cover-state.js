@@ -1,12 +1,18 @@
-/* cover-state.js — gerencia o estado da capa para forçar trocas quando
-   nenhuma matéria foi publicada no período.
+/* cover-state.js — memória da capa: quem está no ar e quando a capa trocou.
 
    Janelas (horário de Brasília, fixo em UTC-3 desde 2019):
    - dia: 03:00 às 12:59
    - noite: 13:00 às 02:59
 
-   Se nenhuma matéria foi publicada na janela atual, a capa é trocada
-   forçadamente (escolhe a próxima matéria elegível, não a mais recente).
+   A meta é `cover_changes_per_day` (2): uma troca por janela. A régua é o log
+   `changes` — "capa trocou" é o que o leitor vê. Se a janela atual ainda não
+   teve troca, o build.js troca a capa forçadamente, pela próxima matéria
+   elegível, não pela mais recente. Publicar ou não publicar não entra aqui:
+   publicar não é capa (a nota pode ficar abaixo do piso) e o Actions faz vários
+   rebuilds por rodada. Cada entrada do histórico carrega a janela a que
+   pertence (`janela`), porque a janela da noite atravessa a meia-noite: sem
+   isso, uma troca às 01h contava para o dia seguinte e o painel mostrava 3/2
+   num dia que cumpriu a meta.
 
    O estado mora em pipeline/state/cover-state.json e PRECISA estar versionado:
    com o arquivo ignorado pelo git, cada rodada do Actions acordava sem memória,
@@ -67,6 +73,26 @@ function noFuso(date, tz = FUSO) {
   };
 }
 
+/* Identidade da janela que está no ar: "AAAA-MM-DD/day" ou ".../night", onde a
+   data é o dia do fuso em que a janela ABRIU. A janela night atravessa a
+   meia-noite (13:00 às 02:59), então uma troca às 01h pertence à noite do dia
+   anterior. Contar pela data do instante (como fazia esta régua até 2026-11-07)
+   dava 3 trocas num dia do fuso e 1 no seguinte, contra uma meta de 2: o painel
+   mentia sobre a meta sem que nada estivesse errado no site. */
+function janelaId(date = new Date()) {
+  const inicio = new Date(windowStart(date));
+  return `${noFuso(inicio).dia}/${currentWindow(inicio)}`;
+}
+
+/* Janela a que pertence uma entrada do histórico. Entradas antigas (pré-2026
+   -11-07) não têm o campo: deriva-se do instante, para a régua não contar dois
+   sistemas diferentes no mesmo arquivo. */
+function janelaDaEntrada(c) {
+  if (c.janela) return c.janela;
+  const t = Date.parse(c.at);
+  return Number.isNaN(t) ? null : janelaId(new Date(t));
+}
+
 function currentWindow(date = new Date()) {
   const h = noFuso(date).hora;
   return h >= HORA_DIA && h < HORA_NOITE ? "day" : "night";
@@ -86,16 +112,20 @@ function windowStart(date = new Date()) {
 function loadState() {
   try {
     const state = JSON.parse(fs.readFileSync(STATE_FILE, "utf8"));
-    state.lastPublishPerWindow = state.lastPublishPerWindow || {};
-    state.lastForcedPerWindow = state.lastForcedPerWindow || {};
     state.changes = Array.isArray(state.changes) ? state.changes : [];
-    /* Schema antigo (2026-11-06) tinha lastForcedChange solto: era uma segunda
-       régua de "última troca", lida só pelo force-daily-target.js que não
-       existe mais. Some do arquivo para não parecer estado vivo. */
+    /* Schemas antigos (2026-11-06/07) guardavam "última publicação da janela" e
+       "última troca forçada da janela" em dois dicionários. Eram duas réguas
+       mortas: `lastPublishPerWindow` era carimbada por QUALQUER build (o
+       `if (!forceChange) recordPublish` do build.js não sabia se havia saída de
+       matéria nova), então a janela se declarava "servida" sem a capa ter
+       mudado — e o publish.js também a escrevia, mesmo quando a matéria
+       publicada não virou capa. A régua agora é uma só: o log `changes`. */
     delete state.lastForcedChange;
+    delete state.lastPublishPerWindow;
+    delete state.lastForcedPerWindow;
     return state;
   } catch {
-    return { lastPublishPerWindow: {}, lastForcedPerWindow: {}, currentCoverId: null, changes: [] };
+    return { currentCoverId: null, changes: [] };
   }
 }
 
@@ -104,47 +134,88 @@ function saveState(state) {
   fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2) + "\n");
 }
 
-/* Registra a capa que acabou de ir ao ar. Repetir o mesmo id não conta como
-   troca: sem isso, cada build (e o Actions faz vários por rodada) inflaria o
-   histórico e a meta de 2 trocas por dia seria "cumprida" por rebuild. */
-function registrarTroca(state, articleId, tipo) {
+/* Registra a capa que acabou de ir ao ar, com o id de quem ela tirou o lugar
+   (`era`). Repetir a capa da janela não conta como troca: o Actions roda
+   build.js várias vezes por rodada. A trava é pela JANELA, não pelo registro
+   anterior, porque a rotação forçada A→B seguida de um build que devolvesse a
+   capa para A criaria uma segunda troca sem nada ter sido publicado — e A só
+   tinha registro na janela anterior, então o "não repita o id do último" não
+   pegava. */
+function registrarTroca(state, articleId, tipo, era = null) {
   const agora = new Date();
-  const ultimo = state.changes[state.changes.length - 1];
-  if (ultimo && ultimo.id === articleId) return;
-  state.changes.push({ at: agora.toISOString(), dia: noFuso(agora).dia, id: articleId, tipo });
+  const id = janelaId(agora);
+  const daJanela = (state.changes || []).filter((c) => janelaDaEntrada(c) === id);
+  if (daJanela.some((c) => c.id === articleId)) return;
+  state.changes.push({ at: agora.toISOString(), dia: noFuso(agora).dia, janela: id, id: articleId, tipo, era });
   const corte = Date.now() - 14 * DIA;
   state.changes = state.changes.filter((c) => Date.parse(c.at) >= corte);
 }
 
-function shouldForceChange(state, window) {
-  const lastPublish = state.lastPublishPerWindow[window];
-  const lastForced = state.lastForcedPerWindow[window];
-  if (!lastPublish && !lastForced) return true;
-  const inicio = windowStart();
-  const depois = (t) => t && Date.parse(t) >= Date.parse(inicio);
-  return !depois(lastPublish) && !depois(lastForced);
+/* A janela está servida quando a capa TROCOU dentro dela. Nada além disso:
+   "publicou na janela" não serve de régua, porque publicar não é capa (a nota
+   pode estar abaixo do piso) e "o build rodou na janela" não serve, porque o
+   rebuild do Actions roda várias vezes por rodada sem trocar nada. */
+function trocaNaJanela(state, date) {
+  const id = janelaId(date);
+  return (state.changes || []).some((c) => janelaDaEntrada(c) === id);
 }
 
-function recordPublish(state, articleId) {
-  const window = currentWindow();
-  state.lastPublishPerWindow[window] = new Date().toISOString();
+function trocasNaJanela(state, date = new Date()) {
+  const id = janelaId(date);
+  return (state.changes || []).filter((c) => janelaDaEntrada(c) === id).length;
+}
+
+/* Última troca da janela atual, ou null. build.js precisa dela para saber a
+   partir de QUE INSTANTE uma publicação nova toma a capa: sem isso, o build
+   seguinte ao da troca forçada voltava para "a matéria mais nova" — desfazia a
+   rotação e ainda registrava segunda troca sem nada ter sido publicado. */
+function ultimaTrocaNaJanela(state, date = new Date()) {
+  const id = janelaId(date);
+  const daJanela = (state.changes || []).filter((c) => janelaDaEntrada(c) === id);
+  return daJanela.length ? daJanela[daJanela.length - 1] : null;
+}
+
+function shouldForceChange(state) {
+  return !trocaNaJanela(state);
+}
+
+/* Quem escreve o estado é só o build.js, com o id que efetivamente foi ao ar no
+   slot index-hero. tipo = "forcada" (a janela não tinha troca e o build pulou
+   para a próxima elegível) ou "do dia" (a matéria mais nova do catálogo tomou a
+   capa — em geral porque acabou de ser publicada). `era` é a capa que perdeu o
+   lugar: sem ela, o build seguinte não sabe se a matéria mais nova é uma
+   publicação nova ou apenas a capa que a rotação tinha acabado de derrubar. */
+function registrarCapa(state, articleId, tipo) {
+  const era = state.currentCoverId;
   state.currentCoverId = articleId;
-  registrarTroca(state, articleId, "publicacao");
+  registrarTroca(state, articleId, tipo, era);
   saveState(state);
 }
 
-function recordForcedChange(state, articleId) {
-  const window = currentWindow();
-  state.lastForcedPerWindow[window] = new Date().toISOString();
-  state.currentCoverId = articleId;
-  registrarTroca(state, articleId, "forcada");
-  saveState(state);
+/* Quantas janelas do dia do fuso já tiveram troca — É A RÉGUA DA META
+   `cover_changes_per_day`, e o dia tem 2 janelas, então ela vai de 0 a 2.
+   Contar entradas do histórico daria 3 num dia e 1 no seguinte, porque a troca
+   da madrugada pertence à noite do dia anterior: o painel diria "3/2" ou
+   "1/2" para um site que cumpriu a meta exatamente. */
+function janelasServidasNoDia(state, dia) {
+  const alvo = dia || noFuso(new Date()).dia;
+  const ids = new Set();
+  for (const c of state.changes || []) {
+    const id = janelaDaEntrada(c);
+    if (id && id.startsWith(`${alvo}/`)) ids.add(id);
+  }
+  return ids.size;
 }
 
-/* Quantas capas trocaram no dia do fuso declarado (o dia que o leitor vê). */
+/* Quantas capas efetivamente foram ao ar nas janelas daquele dia. Pode passar
+   do número de janelas: publicar no meio de uma janela que já tinha troca é uma
+   capa a mais, não uma meta a mais. */
 function trocasNoDia(state, dia) {
   const alvo = dia || noFuso(new Date()).dia;
-  return state.changes.filter((c) => c.dia === alvo).length;
+  return (state.changes || []).filter((c) => {
+    const id = janelaDaEntrada(c);
+    return id ? id.startsWith(`${alvo}/`) : false;
+  }).length;
 }
 
 /* Data de hoje no fuso do site — para as réguas não virarem a meia-noite de
@@ -158,11 +229,15 @@ module.exports = {
   STATE_FILE,
   currentWindow,
   windowStart,
+  janelaId,
   loadState,
   saveState,
+  trocaNaJanela,
+  trocasNaJanela,
+  ultimaTrocaNaJanela,
   shouldForceChange,
-  recordPublish,
-  recordForcedChange,
+  registrarCapa,
   trocasNoDia,
+  janelasServidasNoDia,
   hojeNoFuso,
 };
