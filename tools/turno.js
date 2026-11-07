@@ -29,9 +29,46 @@ const finish = (why, codigo = 0) => {
   process.exit(codigo);
 };
 
+/* Mesmo teste de tools/publish.js: foto de banco vale, placa SVG nossa não. */
+const temFotoReal = (slug) => {
+  try {
+    const d = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "drafts", slug, "draft.json"), "utf8"));
+    const eh = (img) => img && /\.(jpg|jpeg|png|webp)$/i.test(img) && !String(img).startsWith("images/covers/");
+    return Boolean(eh(d.image) || eh(d.bookCover));
+  } catch {
+    return false;
+  }
+};
+
+/* Foto real primeiro, placa depois. publish.js exige foto de banco desde
+   2026-11-06 e make-cover.js já sai sem escrever nada quando o draft tem foto,
+   então essa ordem evita o SVG órfão que o `git add images` do workflow
+   commiteava. Buscar aqui também é o que faz a rodada avisar por issue a tempo,
+   em vez de morrer no portão do publish. */
+function garantirFoto(slug) {
+  if (temFotoReal(slug)) return { achada: true, ja: true, linha: "foto real já no draft" };
+  const foto = run("find-cover.js", [slug]);
+  const tail = foto.out.trim().split("\n").filter(Boolean).slice(-2).join(" · ").slice(0, 200);
+  return {
+    achada: foto.code === 0,
+    ja: false,
+    linha: foto.code === 0 ? (foto.out.match(/✓ foto encontrada.*/) || ["foto encontrada"])[0] : `nenhuma foto: ${tail}`,
+  };
+}
+
 /* 1. coleta */
 const ing = run("ingest.js");
-say("coleta", ing.code === 0 ? (ing.out.trim().split("\n").pop() || "ok") : `falhou: ${ing.out.slice(-200)}`);
+/* O resumo da fila e os feeds que falharam: mostrar só a última linha deixava
+   "2/12 feeds fora do ar" invisível no relatório — e pauta velha sem fonte nova
+   é o mesmo que robô desligado. */
+const fila = (ing.out.match(/fila: .*/g) || []).pop() || "";
+const feedsRuins = (ing.out.match(/^\s*! .*$/gm) || []).map((l) => l.trim().slice(2)).slice(0, 4);
+say(
+  "coleta",
+  ing.code === 0
+    ? [fila || "ok", feedsRuins.length ? `feeds fora: ${feedsRuins.join("; ")}` : ""].filter(Boolean).join(" · ")
+    : `falhou: ${ing.out.slice(-200)}`,
+);
 
 /* 2. manutenção: com erro aberto não se publica nada */
 const doc = run("doctor.js", ["--offline"]);
@@ -86,6 +123,7 @@ if (wrote.code !== 0) {
   finish(`o redator não entregou texto: ${wrote.out.trim().split("\n").slice(-8).join(" · ").slice(0, 900)}`);
 }
 say("texto", wrote.out.trim().split("\n")[0]);
+say("foto", garantirFoto(lead.slug).linha);
 const capa = run("make-cover.js", [lead.slug]);
 say("capa", capa.code === 0 ? capa.out.trim().split("\n")[0] : `falhou: ${capa.out.trim().slice(-200)}`);
 
@@ -101,6 +139,10 @@ for (let t = 1; t <= 3; t++) {
     `O editor mecânico reprovou seu draft. Corrija EXATAMENTE estes pontos e devolva o JSON completo de novo:\n${rejs}\nNão mude o que já estava aprovado.`);
   const fix = run("write.js", [lead.slug]);
   if (fix.code !== 0) { say("edição", "reescreva falhou: " + fix.out.trim().split("\n").slice(-1)[0]); break; }
+  /* O rascunho novo vem do modelo e perde a foto baixada: sem esta conferência
+     a rodada aprovava na edição e morria no portão de foto do publish. */
+  const refoto = garantirFoto(lead.slug);
+  if (!refoto.ja) say("foto", refoto.linha);
   run("make-cover.js", [lead.slug]);
 }
 if (check.code !== 0) {
@@ -124,7 +166,11 @@ if (pub.code !== 0) {
      re-tentativa de 24h punia a pauta certa por causa do relógio. */
   if (/cadência:/.test(pub.out)) finish(`publicação barrada pela cadência: ${pub.out.trim().split("\n").filter((l) => /cadência:/.test(l)).pop()}`);
   mem.registrar(ROOT, lead.url, "falha_publicacao");
-  finish(`publicação abortada pelo próprio publish.js: ${pub.out.trim().split("\n").slice(-2).join(" ")}`);
+  /* Vermelho de propósito: a pipeline inteira percorrida — pauta, brief, texto,
+     editor, nota — e ainda assim nada publicado. Foi o verde deste finish que
+     escondeu o travamento do portão de foto em 2026-11-06; medido no Actions,
+     25 das 31 rodadas "success" terminaram sem publicar. */
+  finish(`publicação abortada pelo publish.js: ${pub.out.trim().split("\n").filter(Boolean).slice(-3).join(" · ").slice(0, 400)}`, 1);
 }
 say("publicação", pub.out.split("\n").filter((l) => /publicado localmente|cadência hoje|^AVISO:/.test(l)).join(" · ") || pub.out.trim().split("\n").slice(0, 2).join(" · "));
 /* Um "AVISO:" aqui é contabilidade quebrada: a matéria está no ar, mas algo que

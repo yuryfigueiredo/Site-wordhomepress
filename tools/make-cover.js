@@ -40,6 +40,16 @@ if (FROM_DB) {
   try { brief = JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")); } catch {}
 }
 
+/* Matéria com foto real não tem placa para regerar — e é o caso normal desde
+   2026-11-06, quando o portão do publish passou a exigir foto de banco. Error
+   aqui era trava mortal: publish.js chamava esta regeragem, o exit 1 caía no
+   catch do build e o abort desfazia a publicação inteira. build.js já mostra a
+   foto quando a imagem não é uma placa nossa. */
+if (/\.(jpg|jpeg|png|webp)$/i.test(String(draft.image || "")) && !String(draft.image || "").startsWith("images/covers/")) {
+  console.log(`${SLUG} usa foto real (${draft.image}) — nenhuma placa gerada`);
+  process.exit(0);
+}
+
 /* Paleta = a do site (css/styles.css). Pilar sem cor própria cai no vermelho. */
 const CORES = {
   culture: "#E50914",
@@ -143,10 +153,6 @@ const corpoHero = `    ${meiotom}
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
 const base = FROM_DB ? path.basename(String(draft.image || ""), ".svg") : SLUG;
-if (FROM_DB && !String(draft.image || "").startsWith("images/covers/")) {
-  console.error(`${SLUG} não usa placa nossa (${draft.image}) — nada regerado`);
-  process.exit(1);
-}
 const rel = `images/covers/${base}.svg`;
 const relHero = `images/covers/${base}-hero.svg`;
 fs.writeFileSync(path.join(ROOT, rel), moldura(corpoFeed));

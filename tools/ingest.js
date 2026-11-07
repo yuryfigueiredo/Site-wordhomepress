@@ -143,7 +143,11 @@ async function main() {
       items = parseFeed(await res.text());
       fetched++;
     } catch (err) {
-      console.log(`  ! ${feed.source}: ${err.message}`);
+      /* "fetch failed" sozinho não diz se foi DNS, TLS, timeout ou bloqueio de
+         bot — e foi exatamente essa linha muda que fez 2/12 feeds sumirem da
+         rodada sem diagnóstico possível. */
+      const causa = err.cause ? ` (${err.cause.code || err.cause.message || err.cause})` : "";
+      console.log(`  ! ${feed.source}: ${err.message}${causa}`);
       continue;
     }
     for (const item of items) {

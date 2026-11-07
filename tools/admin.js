@@ -39,11 +39,16 @@ function run(script, args, cb) {
 }
 
 /* ── dados ────────────────────────────────────────────────────────────── */
+/* A fila que o ingest.js grava tem chave "leads"; "items" era o nome antigo e
+   deixava este painel com "pautas coletadas: 0" enquanto o pipeline via 3. */
 function leads() {
   const dir = path.join(ROOT, "pipeline", "leads");
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir).filter((f) => f.endsWith(".json")).sort().reverse().slice(0, 5)
-    .flatMap((f) => (read(path.join(dir, f), { items: [] }).items || []).map((it) => ({ ...it, file: f })));
+    .flatMap((f) => {
+      const d = read(path.join(dir, f), {});
+      return (d.leads || d.items || []).map((it) => ({ ...it, file: f }));
+    });
 }
 
 function drafts() {
@@ -126,7 +131,9 @@ const ACTIONS = {
 
 /* ── HTML ─────────────────────────────────────────────────────────────── */
 function page() {
-  const cad = read(path.join(ROOT, "pipeline", "cadence.json"), { max_publishes_per_day: 1, check_hours: [] });
+  /* Sem cadence.json legível o painel mostra "?" e não oferece o furo de teto:
+     a régua está no arquivo, não aqui. */
+  const cad = read(path.join(ROOT, "pipeline", "cadence.json"), {});
   const L = logs();
   const done = require("./lib/cadence").publishedToday(ROOT);
   const R = ranking();
@@ -177,7 +184,7 @@ a{color:var(--tx)}
 <header>
   <h1>Homeworld Press · Painel</h1>
   <span class="sub">127.0.0.1 somente · ${esc(new Date().toLocaleString("pt-BR"))}</span>
-  <span class="sub" style="margin-left:auto">publicações hoje: <strong>${done}/${cad.max_publishes_per_day}</strong> · verificações/dia: ${cad.checks_per_day || cad.check_hours.length}</span>
+  <span class="sub" style="margin-left:auto">publicações hoje: <strong>${done}/${cad.max_publishes_per_day ?? "?"}</strong> · verificações/dia: ${cad.checks_per_day ?? (cad.check_hours || []).length}</span>
 </header>
 <main>
   <section>
@@ -193,7 +200,7 @@ a{color:var(--tx)}
       <button data-act="doctor">Rodar manutenção (doctor)</button>
       <button data-act="rescore">Recalcular notas</button>
       <button data-act="rank">Ver ranking</button>
-      <span class="note">O agendador do Qoder já faz isso ${cad.checks_per_day || 5}x por dia; estes botões são para adiantar.</span>
+      <span class="note">O cron do GitHub Actions já faz isso ${(cad.checks_per_day ?? "?")}x por dia; estes botões são para adiantar.</span>
     </p>
   </section>
 
@@ -207,7 +214,7 @@ a{color:var(--tx)}
       <td class="row">
         <button data-act="check" data-slug="${esc(d.slug)}">checar</button>
         <button class="go" data-act="publish" data-slug="${esc(d.slug)}" ${d.verdict === "aprovado" && !d.published ? "" : "disabled"}>publicar</button>
-        ${done >= cad.max_publishes_per_day && !d.published ? '<button data-act="publish" data-slug="' + esc(d.slug) + '" data-force="1">forçar</button>' : ""}
+        ${done >= (cad.max_publishes_per_day ?? Infinity) && !d.published ? '<button data-act="publish" data-slug="' + esc(d.slug) + '" data-force="1">forçar</button>' : ""}
       </td></tr>`).join("")}
     </tbody></table>` : "<p class='note'>Nenhum rascunho. A coleta gera as pautas abaixo; o robô cria o brief e escreve o texto.</p>"}
   </section>

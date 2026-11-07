@@ -1,7 +1,15 @@
 # Rascunhos não publicados são editorial confidencial: fora do repositório público.
 pipeline/drafts/
 pipeline/leads/
-pipeline/state/
+# pipeline/state/ é lixo local EXCETO as duas réguas que o robô do Actions
+# precisa carregar entre rodadas: sem elas o clone nasce sem memória, a troca
+# forçada de capa escolhe sempre a matéria mais nova (meta de 2/dia nunca
+# cumprida lá) e a capa escrita à mão é sobrescrita sem como voltar.
+# `pipeline/state/` não dá: git não re-inclui arquivo dentro de diretório
+# excluído — por isso o asterisco.
+pipeline/state/*
+!pipeline/state/cover-state.json
+!pipeline/state/hero-fallback.html
 tools/reports/
 
 # Scratch de auditoria: só os scripts entram, capturas e perfis de Chrome não.

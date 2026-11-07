@@ -135,6 +135,10 @@ const BUILD_OUTPUTS = [
   "tech.html",
   "science.html",
   "pipeline/state/hero-fallback.html",
+  /* As duas réguas da capa entram no retrato porque build.js as reescreve a
+     cada rodada e elas agora são versionadas: sem isso, um abort deixaria o
+     estado dizendo que a capa trocou quando a troca foi desfeita. */
+  "pipeline/state/cover-state.json",
   "pipeline/memory.json",
   "voice/state/last_runs.json",
   "vercel.json",
@@ -216,9 +220,12 @@ const abort = (why) => {
 
 let buildLog = "";
 try {
-  /* Gera as placas SVG (feed + hero) antes de rebuildar os feeds, senão a capa
-     fica sem imagem (404) até alguém rodar make-cover.js manualmente. */
-  buildLog += run("make-cover.js", ["--from-db", draft.id]);
+  /* A placa SVG só existe para matéria sem foto de banco. Com foto real o card
+     e o hero usam o jpg baixado (build.js: se a imagem não é images/covers/,
+     ela vai direto), então chamar make-cover aqui só gerava trabalho — e até
+     2026-11-06 gerava abort: o portão dele saía com exit 1 e o catch desfazia a
+     publicação inteira. */
+  if (!temFotoReal()) buildLog += run("make-cover.js", ["--from-db", draft.id]);
   buildLog += run("build.js");
   buildLog += run("build-sitemap.js");
   buildLog += run("meta-pages.js");
@@ -292,7 +299,10 @@ function gitTenta(args, tentativas = 4) {
 let commitNote = "sem repositório git: commit pulado (rode git init quando quiser histórico)";
 try {
   gitTenta(["rev-parse", "--is-inside-work-tree"]);
-  const files = ["js/articles-db.js", "sitemap.xml", "voice/state/last_runs.json", "pipeline/scores.json", "pipeline/memory.json", "index.html", "culture.html", "tech.html", "science.html", "images", "vercel.json"];
+  /* As duas réguas da capa entram aqui porque build.js as reescreveu nesta
+     rodada: sem commit local, quem roda o robô na máquina e no Actions passa a
+     ver estados diferentes da mesma meta. */
+  const files = ["js/articles-db.js", "sitemap.xml", "voice/state/last_runs.json", "pipeline/scores.json", "pipeline/memory.json", "index.html", "culture.html", "tech.html", "science.html", "images", "vercel.json", "pipeline/state/cover-state.json", "pipeline/state/hero-fallback.html"];
   for (const f of files) gitTenta(["add", f]);
   /* glob como pathspec: o git expande e o commit cobre também órfão removido */
   gitTenta(["add", "--", "a-*.html", "r-*.html"]);

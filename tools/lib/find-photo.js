@@ -1,7 +1,8 @@
 /* find-photo.js — busca foto real para a matéria com fallback Unsplash → Pexels.
    Salva em images/posts/<slug>.jpg e retorna { url, author, credit }.
    Uso: const foto = await findPhotoSmart(slug, draft);
-   Requer: UNSPLASH_ACCESS_KEY e PEXELS_API_KEY no .env ou process.env. */
+   Chaves: UNSPLASH_ACCESS_KEY (armada no CI) e PEXELS_API_KEY (só local, via
+   .env). Falta chave é motivo devolvido, não exceção: quem chama decide o portão. */
 
 const fs = require("fs");
 const path = require("path");

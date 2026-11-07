@@ -1,135 +1,106 @@
-/* Pre-check matinal: verifica o estado do pipeline e mostra o que precisa ser feito.
-   Uso: node tools/morning-check.js  (rode ao acordar)
+/* morning-check.js — painel da manhã. Só lê réguas e diz o que falta.
 
-   Este script:
-   1. Verifica quantas publicações foram feitas ontem
-   2. Confirma que o teto de 5/dia está configurado
-   3. Roda o force-daily-target.js para completarar o que faltou
-   4. Mostra o estado da capa e das pautas coletadas
-   5. Lista qualquer erro ou warning pendente
+   Até 2026-11-07 este script existia em par com tools/force-daily-target.js,
+   que publicava no tapa com --force-cadence, media a capa por arqueologia de git
+   (quebrada: `c.split(" ")[1]` não é um sha) e escrevia
+   pipeline/state/hero-override.json — arquivo que nenhuma ferramenta de build
+   jamais leu. Nada disso estava agendado em lugar nenhum (0 de 374 tarefas do
+   Windows) e tudo terminava com exit 0. A régua da meta passou a ser a própria
+   rodada: tools/turno.js com o teto de pipeline/cadence.json, a troca forçada de
+   capa em tools/build.js + lib/cover-state.js e o portão de agenda do
+   tools/doctor.js. Aqui sobram só os números.
 
-   Saída clara: o que funcionou, o que falhou, o que precisa de atenção. */
-
+   Uso: node tools/morning-check.js        (morning.bat faz isso)             */
 const fs = require("fs");
 const path = require("path");
 const { execFileSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..");
+const mem = require("./lib/memory");
+const cadence = require("./lib/cadence");
+const cover = require("./lib/cover-state");
+const schedule = require("./lib/schedule");
 
-function yesterday() {
-  const d = new Date();
-  d.setDate(d.getDate() - 1);
-  return d.toISOString().slice(0, 10);
-}
-
-function today() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function publishedOn(root, date) {
-  let fromMemory = 0;
+const barra = (n) => "=".repeat(n);
+const lido = (rel, fallback) => {
   try {
-    const mem = JSON.parse(fs.readFileSync(path.join(root, "pipeline", "memory.json"), "utf8"));
-    fromMemory = (mem.publishes || []).filter((p) => p.at?.startsWith(date)).length;
-  } catch {}
-  let fromCommits = 0;
-  try {
-    const subjects = execFileSync("git", ["log", `--since=${date}T00:00:00Z`, `--until=${date}T23:59:59Z`, "--pretty=%s"], { cwd: root, stdio: "pipe" }).toString();
-    fromCommits = subjects.split("\n").filter((l) => l.startsWith("publish:")).length;
-  } catch {}
-  return Math.max(fromMemory, fromCommits);
-}
-
-function cadenceConfig(root) {
-  try {
-    return JSON.parse(fs.readFileSync(path.join(root, "pipeline", "cadence.json"), "utf8"));
+    return JSON.parse(fs.readFileSync(path.join(ROOT, rel), "utf8"));
   } catch {
-    return null;
+    return fallback;
   }
-}
+};
 
-function lastHeroChange(root) {
+const cad = lido("pipeline/cadence.json", {});
+const hojeUTC = new Date().toISOString().slice(0, 10);
+const ontemUTC = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+const diaFuso = cover.hojeNoFuso();
+const teto = Number(cad.max_publishes_per_day) || 0;
+const metaCapa = Number(cad.cover_changes_per_day) || 0;
+
+const ag = schedule.cronDoWorkflow(ROOT);
+const slots = ag.cron ? schedule.parseCron(ag.cron) : null;
+const possivel = slots ? schedule.maxPublicacoesPorAgenda(slots.minutos, cad.min_hours_between_publishes) : null;
+const obs = schedule.rodadasObservadas(ROOT, 7);
+/* A fila que o robô vê não é a de "hoje em UTC": pick-lead.js varre as 3 filas
+   mais recentes, e uma coleta feita madrugada afora grava no dia anterior. */
+const fila = (() => {
+  const dir = path.join(ROOT, "pipeline", "leads");
+  const arquivos = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith(".json")).sort().reverse().slice(0, 3) : [];
+  const pautas = arquivos.flatMap((f) => (lido(`pipeline/leads/${f}`, {}).leads || []));
+  return { arquivos, pautas };
+})();
+const estado = cover.loadState();
+const trocasHoje = cover.trocasNoDia(estado, diaFuso);
+const gap = cadence.horasDesdeUltimaPublicacao(ROOT);
+
+const saidaDoctor = (() => {
   try {
-    const override = JSON.parse(fs.readFileSync(path.join(root, "pipeline", "state", "hero-override.json"), "utf8"));
-    return { id: override.id, date: override.date, reason: override.reason };
-  } catch {
-    return null;
+    return execFileSync(process.execPath, [path.join(ROOT, "tools", "doctor.js"), "--offline"], { cwd: ROOT, stdio: "pipe" }).toString();
+  } catch (err) {
+    return `${err.stdout || ""}${err.stderr || ""}`;
   }
-}
+})();
+const nums = saidaDoctor.match(/errors\s+(\d+)\s+\|.*?warnings\s+(\d+)/) || [];
 
-function checkDoctor(root) {
-  try {
-    const output = execFileSync(process.execPath, [path.join(root, "tools", "doctor.js"), "--offline"], { cwd: root, stdio: "pipe" }).toString();
-    const match = output.match(/errors\s+(\d+)\s+\|\s+.*?warnings\s+(\d+)/);
-    return { errors: Number(match?.[1] || 0), warnings: Number(match?.[2] || 0) };
-  } catch (e) {
-    return { errors: 0, warnings: 0, error: e.message.split("\n")[0] };
-  }
-}
-
-const cad = cadenceConfig(ROOT);
-const yest = yesterday();
-const pubYest = publishedOn(ROOT, yest);
-const pubToday = publishedOn(ROOT, today());
-const hero = lastHeroChange(ROOT);
-const doc = checkDoctor(ROOT);
-
-console.log("=".repeat(60));
-console.log("  MORNING CHECK — Homeworld Press");
-console.log("=".repeat(60));
+console.log(barra(64));
+console.log("  MANHÃ — Homeworld Press");
+console.log(barra(64));
+console.log(`Dia no fuso ${cad.timezone}: ${diaFuso} · janela ${cover.currentWindow()} (abriu ${cover.windowStart()})`);
+console.log("");
+console.log(`Publicações — ontem ${mem.publicacoesNoDia(ROOT, ontemUTC)}/${teto} · agora ${cadence.publishedToday(ROOT)}/${teto} (dia UTC ${hojeUTC})`);
+console.log(`Última matéria no ar há ${gap === null ? "?" : gap.toFixed(1)}h (mínimo ${cad.min_hours_between_publishes}h entre peças)`);
+console.log(`Trocas de capa — hoje ${trocasHoje}/${metaCapa} · ${estado.changes.length} troca(s) nos últimos 14 dias`);
+console.log(`Fila — ${fila.pautas.length} pauta(s) coletada(s) em ${fila.arquivos.length || 0} arquivo(s): ${fila.arquivos.join(", ") || "nenhum"}`);
+console.log("        ( leitura só do que está na fila: `node tools/ingest.js --show` — pick-lead.js NÃO é de ler:");
+console.log("         ele compromete a pauta com a rodada e a deixa fora da fila por lead_retry_hours)");
+console.log(`Manutenção — ${nums[1] ?? "?"} erro(s), ${nums[2] ?? "?"} aviso(s)`);
+console.log("");
+console.log(`Agenda do Actions: ${ag.error || ag.cron}`);
+if (possivel !== null)
+  console.log(`  com ${cad.min_hours_between_publishes}h de distância entre peças, no máximo ${possivel} publicações/dia (teto declarado: ${teto})`);
+if (obs) console.log(`  entrega medida em 7 dias: ${obs.porDia.toFixed(1)} rodadas/dia (${obs.rodadas} rodadas)`);
 console.log("");
 
-console.log(`Data: ${today()}`);
-console.log(`Meta configurada: ${cad?.max_publishes_per_day || "?"} publicações/dia, ${cad?.cover_changes_per_day || "?"} trocas de capa/dia`);
-console.log(`Gap mínimo: ${cad?.min_hours_between_publishes || "?"}h entre publicações`);
-console.log("");
-
-console.log("--- Ontem (" + yest + ") ---");
-console.log(`Publicado: ${pubYest}/${cad?.max_publishes_per_day || 5}`);
-if (pubYest < (cad?.max_publishes_per_day || 5)) {
-  console.log(`⚠ Faltaram ${cad?.max_publishes_per_day - pubYest} publicações. Vou forçar agora.`);
+const errosDoctor = Number(nums[1] || 0);
+const falta = teto - cadence.publishedToday(ROOT);
+console.log(barra(64));
+if (errosDoctor > 0) {
+  console.log("ERRO ABERTO NO DOCTOR — com ele a rodada não publica nada. Leia:");
+  console.log("  node tools/doctor.js --offline");
+} else if (falta > 0) {
+  console.log(`Faltam ${falta} publicações para o teto de hoje. A rodada faz tudo sozinha:`);
+  console.log("  node tools/turno.js");
+  if (possivel !== null && teto > possivel)
+    console.log(`⚠ O teto (${teto}) passa do que a agenda entrega (${possivel}): ajuste pipeline/cadence.json ou o cron do workflow.`);
 } else {
-  console.log("✓ Meta atingida");
+  console.log("✓ Teto de publicações de hoje atingido — as próximas rodadas só coletam e checam.");
 }
-console.log("");
-
-console.log("--- Hoje (até agora) ---");
-console.log(`Publicado: ${pubToday}/${cad?.max_publishes_per_day || 5}`);
-console.log(`Última troca de capa: ${hero ? `${hero.id} (${hero.date})` : "nenhuma"}`);
-console.log("");
-
-console.log("--- Saúde do site ---");
-console.log(`Doctor: ${doc.errors} erros, ${doc.warnings} warnings`);
-if (doc.errors > 0) console.log("⚠ ERROS precisam de atenção antes de publicar");
-console.log("");
-
-if (pubYest < (cad?.max_publishes_per_day || 5) && doc.errors === 0) {
-  console.log("=== Faltaram publicações ontem ===");
-  console.log("O writer automático ainda não está integrado no force-daily-target.");
-  console.log("O turno normal (5 rodadas/dia) vai compensar hoje. Para forçar agora:");
-  console.log("  1. Rode o turno: node tools/turno.js");
-  console.log("  2. Ou use o prompt gerado em pipeline/drafts/<slug>/prompt.md");
-  console.log("     no chat, salve como draft.json, e rode:");
-  console.log("     node tools/force-daily-target.js --force-all");
-  console.log("");
-  console.log("Trocando a capa (isso funciona sozinho):");
-  try {
-    execFileSync(process.execPath, [path.join(ROOT, "tools", "force-daily-target.js"), "--force-all"], {
-      cwd: ROOT,
-      stdio: "pipe",
-    });
-    console.log("✓ Capa verificada");
-  } catch (e) {
-    console.log("⚠ Force-daily-target teve erros (ver acima)");
-  }
-} else if (doc.errors > 0) {
-  console.log("=== NÃO FORÇANDO: corrija os erros do doctor primeiro ===");
+if (trocasHoje < metaCapa) {
+  console.log(`Capa: ${trocasHoje}/${metaCapa} troca(s). build.js troca sozinho na próxima rodada, desde que exista`);
+  console.log(`    mais de uma matéria com nota medida >= ${cad.cover_baseline} e foto. Não trocou? O motivo está em`);
+  console.log("    pipeline/state/cover-state.json e nas notas de pipeline/scores.json.");
 } else {
-  console.log("=== Ontem atingiu a meta ===");
+  console.log(`✓ Capa: ${trocasHoje}/${metaCapa} troca(s) hoje — meta cumprida.`);
 }
-
-console.log("");
-console.log("=".repeat(60));
-console.log("  Próximo passo: rode o turno normal ao longo do dia.");
-console.log("  O teto de 5/dia e 2 trocas de capa estão ativos.");
-console.log("=".repeat(60));
+console.log(barra(64));
+console.log("Painel de leitura: nada aqui escreve, publica ou empurra.");

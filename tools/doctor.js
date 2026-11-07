@@ -258,7 +258,106 @@ if (memoria) {
   }
 }
 
-/* ── 11. Links externos (rede) ────────────────────────────────────────── */
+/* ── 11. Cadência × agenda do Actions ─────────────────────────────────── */
+/* O teto era desejo, não medida: com os horários de 07/10/14/17/21 UTC e
+   distância mínima de 4h, a régua calcula 4 publicações possíveis contra uma
+   meta declarada de 5 — e a rodada acordava verde sem publicar porque nada
+   conferia a promessa com a agenda. Aqui a promessa vira número. */
+const {
+  parseCron,
+  maxPublicacoesPorAgenda,
+  menorIntervaloEntreHorarios,
+  cronDoWorkflow,
+  rodadasObservadas,
+  horaNoFuso,
+} = require("./lib/schedule");
+{
+  let cad = null;
+  try {
+    cad = JSON.parse(read("pipeline/cadence.json"));
+  } catch (err) {
+    fail("cadence", `pipeline/cadence.json não é JSON válido: ${err.message}`);
+  }
+  if (cad) {
+    const teto = Number(cad.max_publishes_per_day) || 0;
+    const ag = cronDoWorkflow(ROOT);
+    if (ag.error) {
+      warn("cadence", `não foi possível ler a agenda do workflow: ${ag.error}`);
+    } else {
+      const slots = parseCron(ag.cron);
+      if (!slots) {
+        warn("cadence", `cron "${ag.cron}" num formato que a régua não sabe ler — confira o teto na mão`);
+      } else {
+        if (ag.cron.trim() !== String(cad.cron_expression || "").trim())
+          fail("cadence", `pipeline/cadence.json anuncia cron "${cad.cron_expression}" mas o workflow executa "${ag.cron}" — duas réguas de agenda divergindo`);
+        const possiveis = maxPublicacoesPorAgenda(slots.minutos, cad.min_hours_between_publishes);
+        if (teto > possiveis)
+          fail("cadence", `teto de ${teto} publicações/dia é inatingível com a agenda "${ag.cron}": respeitando ${cad.min_hours_between_publishes}h entre peças a agenda entrega no máximo ${possiveis}`);
+        else
+          note("cadence", `agenda "${ag.cron}" permite ${possiveis} publicações/dia (teto ${teto} · mínimo ${cad.min_hours_between_publishes}h · menor intervalo ${menorIntervaloEntreHorarios(slots.minutos)}h)`);
+        if (cad.checks_per_day && Number(cad.checks_per_day) !== slots.minutos.length)
+          warn("cadence", `checks_per_day diz ${cad.checks_per_day} mas o cron tem ${slots.minutos.length} horários`);
+        const declaradas = (cad.check_hours || []).map(String).sort().join(" ");
+        const reais = slots.minutos.map((m) => horaNoFuso(m, cad.timezone || "UTC")).sort().join(" ");
+        if (declaradas && declaradas !== reais)
+          warn("cadence", `check_hours (${declaradas}) não bate com o cron no fuso ${cad.timezone} (${reais})`);
+      }
+    }
+    /* Entrega medida, não prometida: atraso de cron é do GitHub, então é aviso —
+       erro aqui faria o robô parar de publicar justamente quando o Actions está
+       lenta. Sem nenhum "turno:" no histórico, porém, o robô está desligado. */
+    const obs = rodadasObservadas(ROOT, 7);
+    if (!obs) warn("cadence-entrega", "nenhum commit \"turno:\" nos últimos 7 dias — o robô não rodou nem no Actions nem aqui");
+    else if (obs.porDia < teto)
+      warn("cadence-entrega", `histórico: ${obs.porDia.toFixed(1)} rodadas/dia (total ${obs.rodadas} em ${obs.dias} dia(s) com rodada) contra um teto de ${teto} — o dia que tiver menos rodadas que o teto não publica o teto`);
+    else note("cadence-entrega", `${obs.porDia.toFixed(1)} rodadas/dia medidas no histórico (teto ${teto})`);
+  }
+}
+
+/* ── 11b. Réguas da capa ──────────────────────────────────────────────── */
+/* "2 trocas de capa por dia" foi commitado em 2026-11-06 e não funcionava no
+   Actions: o estado mora em pipeline/state/, que era ignorado pelo git, então
+   cada clone acordava com currentCoverId null e a troca "forçada" escolhia a
+   matéria mais nova — que já era a capa. Além do arquivo versionado (agora),
+   a troca precisa de pelo menos duas matérias elegíveis: com uma só, não existe
+   para onde trocar, e a meta vira ruído permanente. */
+{
+  const coverState = require("./lib/cover-state");
+  let cad11 = null;
+  try {
+    cad11 = JSON.parse(read("pipeline/cadence.json"));
+  } catch {}
+  if (cad11) {
+    const piso = Number(cad11.cover_baseline) || 0;
+    const notas = (() => {
+      try {
+        return JSON.parse(read("pipeline/scores.json")).scores || {};
+      } catch {
+        return {};
+      }
+    })();
+    const elegiveis = DB.articles.filter((a) => {
+      const r = notas[a.id];
+      return r && typeof r.score === "number" && (r.source || "auto") !== "baseline" && a.image && r.score >= piso;
+    });
+    const melhor = Object.values(notas).reduce((m, r) => (r && typeof r.score === "number" && r.score > m ? r.score : m), 0);
+    const metaCapa = Number(cad11.cover_changes_per_day) || 0;
+    if (metaCapa > 2)
+      fail("cover", `cover_changes_per_day = ${metaCapa} mas o dia só tem 2 janelas (dia 03:00-12:59 e noite 13:00-02:59) — a meta é inatingível por construção`);
+    if (!elegiveis.length)
+      warn("cover", `nenhuma matéria passa do piso ${piso} da capa (melhor nota medida: ${melhor || "nenhuma"}) — a capa fica com o HTML escrito à mão e a meta de ${metaCapa} troca(s)/dia não é cobrada de ninguém`);
+    else if (elegiveis.length < 2 && metaCapa > 0)
+      warn("cover", `só ${elegiveis.length} matéria elegível para a capa (${elegiveis[0].id}) — troca forçada precisa de pelo menos 2 para ter para onde trocar`);
+    else note("cover", `${elegiveis.length} matérias elegíveis para a capa (piso ${piso}) · janela atual ${coverState.currentWindow()}, aberta ${coverState.windowStart()}`);
+    if (cad11.timezone && cad11.timezone !== coverState.FUSO)
+      warn("cover", `pipeline/cadence.json diz fuso "${cad11.timezone}" mas as janelas da capa são contadas em "${coverState.FUSO}" — duas réguas de relógio`);
+    const estado = coverState.loadState();
+    if (!estado.changes.length) warn("cover", "pipeline/state/cover-state.json sem histórico de trocas — a meta de capa não está sendo medida (rode node tools/build.js uma vez para o arquivo entrar no repositório)");
+    else note("cover", `trocas registradas: ${coverState.trocasNoDia(estado)} hoje, ${estado.changes.length} em 14 dias · capa atual ${estado.currentCoverId}`);
+  }
+}
+
+/* ── 12. Links externos (rede) ────────────────────────────────────────── */
 async function checkExternal(url) {
   const headers = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/131 Safari/537.36", Accept: "*/*" };
   for (const method of ["HEAD", "GET"]) {
