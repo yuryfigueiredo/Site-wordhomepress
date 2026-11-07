@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-06T19:48:38.878Z",
+  "updated": "2026-11-07T14:01:57.292Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -147,6 +147,12 @@
       "topic": "The moon, Mars, and Jupiter shine in the heart of the Lion overnight on Nov. 1-2",
       "outcome": "em_andamento",
       "at": "2026-11-06T19:48:38.878Z"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261105224545.htm": {
+      "slug": "nasas-swift-telescope-falls-to-earth-after-nearly-22-years-in-sp",
+      "topic": "NASA’s Swift telescope falls to Earth after nearly 22 years in space",
+      "outcome": "reprovada",
+      "at": "2026-11-07T14:01:57.292Z"
     }
   },
   "publishes": [
