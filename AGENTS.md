@@ -17,6 +17,8 @@ Site estático (HTML + `js/articles-db.js`) com um pipeline editorial em Node pu
 
 Mudar uma destas linhas exige mudar o número no `cadence.json` — se divergirem, o doctor fecha vermelho e a rodada não publica.
 
+As réguas que `build.js` e `doctor.js` usam são módulos únicos, não cópia: `tools/lib/cover-rules.js` decide "qual matéria pode ser capa" (o painel, o build e o doctor veem a mesma lista) e `tools/lib/catalog-notes.js` injeta a nota medida de `pipeline/scores.json` no catálogo. Duas implementações paralelas foi o que fez o doctor acusar "nenhuma matéria passa do piso" com 7.8 no ar.
+
 ## Sequência de uma rodada
 
 ```bash
@@ -26,14 +28,17 @@ node tools/turno.js              # a rodada inteira, com o que estiver armado
 Passo a passo, que é o que `turno.js` executa — e é também o caminho manual:
 
 1. `ingest.js` → `doctor.js --offline`. **Erro aberto = a rodada para aí**, vermelha, e nada publica.
-2. Lê `cadence.json` + `pipeline/memory.json`: no teto do dia ou antes do intervalo mínimo, a rodada termina cedo (isso é comportamento correto, não falha).
+2. Lê `cadence.json` + `pipeline/memory.json`: no teto do dia ou antes do intervalo mínimo, a rodada termina cedo (isso é comportamento correto, não falha) — mas ainda gira a capa, ver passo 10.
 3. `pick-lead.js` escolhe a pauta (fonte que abre, não publicada, não tentada há menos de `lead_retry_hours`, com menos de `lead_max_age_days`). **Rodar isto à mão também compromete a pauta** (`em_andamento` em `memory.json`, fora da fila por 6h): para olhar a fila sem tocar nela, use `node tools/ingest.js --show`.
 4. `new-post.js` → brief + `pipeline/drafts/<slug>/prompt.md`. **O `prompt.md` é o contrato**: quem escreve é o `write.js` ou um humano, e o `draft.json` que sair precisa obedecê-lo.
 5. `write.js` escreve o `draft.json` (JSON puro, sem cercas de código, sem fonte/número/preço inventado além do brief).
 6. Foto real: `find-cover.js` → `publish.js` aborta sem foto. Placa SVG só entra quando a matéria não tem foto (`make-cover.js` sai com exit 0 quando já há foto).
 7. `check-post.js <slug>` — até 3 correções; reprovado na terceira, o rascunho fica para revisão humana e a pauta sai da fila por `reprovada` (72h).
 8. `score.js --draft <slug>` — nota medida; quase-duplicata (≥72% de sobreposição) barra.
-9. `publish.js <slug>` — catálogo, feeds, sitemap, `cover-state.json`, commit local `publish:`. **Nunca push.**
+9. `publish.js <slug>` — catálogo, feeds, sitemap, commit local `publish:`. **Nunca push.** Quem escreve `pipeline/state/cover-state.json` é o `build.js` que o publish chama, nunca o publish direto.
+10. Rodada que passou pela manutenção mas **não** publicou (teto, distância mínima, sem pauta, reprovado, duplicata): `turno.js` chama `build.js` para girar a capa, senão a meta `cover_changes_per_day` iria a zero em silêncio nos dias sem matéria. Se esse build falhar, a rodada fecha vermelha.
+
+A capa é pegadia dentro da janela (dia 03:00–12:59 / noite 13:00–02:59, fuso do `cadence.json`): um rebuild na mesma janela não troca se não houver matéria mais nova que a `era` registrada na última troca — foi o ping-pong que inflava a meta sem notícia. Publicações contam no **dia UTC**; trocas de capa contam no **dia do fuso** — é escolha documentada, não descuido.
 
 Cada etapa imprime uma linha legível em `TURNO.md`, que o workflow commita mesmo em rodada vermelha — inclusive a causa de um abort do `publish.js` (exit 1).
 
@@ -44,9 +49,11 @@ Cada etapa imprime uma linha legível em `TURNO.md`, que o workflow commita mesm
 | Manutenção vermelha | `doctor.js` | rodada para antes de escolher pauta |
 | Teto > agenda | `lib/schedule.js` via `doctor.js` | erro `[cadence]` (meta inatingível por construção foi o que produziu 3 semanas de verde sem publicar) |
 | `cron_expression` ≠ workflow | `doctor.js` | erro `[cadence]` de régua dupla |
+| Cron ilegível ou workflow sem cron | `lib/schedule.js` via `doctor.js` | erro `[cadence]` — sem conferência o teto não vale nada, a rodada não publica |
 | Sem foto real | `publish.js` | abort + issue aberta por `notify-foto.js` |
-| Repetir a mesma capa | `lib/cover-state.js` | não conta como troca (rebuild não infla a meta) |
-| Rodada que falha em etapa de publicação | `turno.js` | exit 1 (`publish.js` abortou, nenhum provedor armado, ou alerta registrado) — workflow fecha vermelho. Parar cedo **por cadência** é exit 0 por desenho: nada a publicar, rodada verde |
+| Abort depois da busca de foto | `publish.js` → `sairSemPublicar()` | o jpg que o `find-cover.js` acabou de baixar é apagado: foto de matéria que não existe não entra no `git add images` |
+| Repetir a mesma capa | `lib/cover-state.js` | não conta como troca (rebuild na mesma janela é `mantida`, a meta não incha) |
+| Rodada que falha em etapa de publicação | `turno.js` | exit 1 (`publish.js` abortou, nenhum provedor armado, ou alerta registrado) — workflow fecha vermelho. Parar cedo **por cadência** é exit 0 por desenho: nada a publicar, rodada verde — desde que o `build.js` do passo 10 rode; capa quebrada é vermelha mesmo sem matéria nova |
 
 Para testar um gate, mute a entrada e veja a cor mudar — não confie na descrição dele.
 
