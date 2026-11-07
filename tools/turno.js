@@ -87,6 +87,19 @@ const finish = (why, codigo = 0) => {
   process.exit(codigo);
 };
 
+/* Ctrl+C do dono e `timeout-minutes: 45` do Actions derrubam o processo por
+   SINAL, e listener de "exit" não roda em sinal: a rodada interrompida deixava
+   o jpg da matéria que não saiu no disco — e como ele passa a constar no
+   retrato das rodadas seguintes, nada mais o apaga, até o `git add images` de
+   uma publicação futura commitá-lo junto com outra matéria. Vai por `finish` de
+   propósito: desfaz as fotos, escreve o TURNO.md dizendo o que houve e sai
+   vermelho, porque interrupção não é rodada verde. Registrado DEPOIS do `finish`
+   porque ele é `const`: chamar antes da definição arremessa um
+   ReferenceError — medido nesta máquina. */
+for (const sig of ["SIGINT", "SIGTERM"]) {
+  process.on(sig, () => finish(`rodada interrompida por ${sig} — nada publicado`, 1));
+}
+
 /* Mesmo teste de tools/publish.js: foto de banco vale, placa SVG nossa não. */
 const temFotoReal = (slug) => {
   try {
