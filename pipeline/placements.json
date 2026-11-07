@@ -1,9 +1,10 @@
 {
   "version": 1,
-  "note": "Slots que o tools/build.js preenche automaticamente a partir de js/articles-db.js. Capa, picks e trending continuam curadoria manual: não liste aqui.",
+  "note": "Slots que o tools/build.js preenche automaticamente a partir de js/articles-db.js. Capa e trending continuam curadoria manual: não liste aqui. O bloco de picks virou slot em 07/11 porque o rótulo diz TODAY'S PICKS e o par escrito à mão não mudava há 15 dias; a régua de rotação está em tools/lib/picks-rules.js e o cadence.json cobra picks_changes_per_day.",
   "slots": {
     "index.html": [
       { "name": "index-hero", "mode": "replace", "template": "hero-lead", "fallback": "pipeline/state/hero-fallback.html" },
+      { "name": "index-picks", "container": { "tag": "div", "class": "pick-stack" }, "template": "pick-item", "category": "culture", "limit": 2, "rotacao": "dia" },
       { "name": "index-latest", "container": { "tag": "div", "class": "latest-list" }, "template": "latest-item", "limit": 4 },
       { "name": "index-culture", "container": { "tag": "div", "class": "wired-grid-3" }, "template": "article-card", "category": "culture", "limit": 6 },
       { "name": "index-tech", "container": { "tag": "div", "class": "compact-feed--tech" }, "template": "compact-card", "category": "tech", "limit": 3 },

@@ -13,6 +13,7 @@ const ROOT = path.resolve(__dirname, "..");
 const DRY = process.argv.includes("--dry");
 const PLACEMENTS = path.join(ROOT, "pipeline", "placements.json");
 const coverRules = require("./lib/cover-rules");
+const picksRules = require("./lib/picks-rules");
 
 global.window = {};
 require(path.join(ROOT, "js", "articles-db.js"));
@@ -193,9 +194,35 @@ ${
               </div>
             </div>
           </article>`,
+
+  /* TODAY'S PICKS: mesma estrutura e mesmas classes dos cards escritos à mão
+     que substituiu (index.html, coluna esquerda). Muda o par, não o desenho. */
+  "pick-item": (a) => `            <article class="pick-item">
+              <a href="${href(a.id)}" class="pick-item__media">
+                <img src="${esc(thumb(a))}" alt="${esc(a.imageAlt || a.title)}" width="400" height="250">
+              </a>
+              <span class="kicker kicker--${esc(a.category)}">${esc(a.kicker)}</span>
+              <h3 class="pick-item__title">
+                <a href="${href(a.id)}">${esc(a.title)}</a>
+              </h3>
+              <p class="pick-item__dek">${esc(a.dek)}</p>
+              <div class="meta-line">
+                <span>BY <strong>${byline(a)}</strong></span>
+                <span>•</span>${
+                  shop(a)
+                    ? `\n                <a href="${esc(shop(a))}" target="_blank" rel="nofollow sponsored noopener" style="color:var(--accent-wired-red-text);font-weight:700;">SHOP ON AMAZON →</a>`
+                    : `\n                <span>${esc(a.date)}</span>`
+                }
+              </div>
+            </article>`,
 };
 
 function pick(slot, takenIds) {
+  /* "TODAY'S PICKS" é por dia: o mesmo acervo, começando em outro ponto da
+     lista a cada dia (lib/picks-rules — a peneira, a ordem e o passo ficam lá,
+     e o doctor.js confere com a mesma função). Sem isto o bloco ficou 15 dias
+     com o mesmo par de 29/out e 23/out enquanto o rótulo dizia "hoje". */
+  if (slot.rotacao === "dia") return picksRules.picksDoDia(picksRules.poolDePicks(DB.articles, slot, takenIds), slot.limit || 2, picksRules.diaUtc());
   /* Feed automático é por data, não por nota: a região se vende como MOST
      RECENT, e matéria de 29/10 acima de 31/10 desmente o próprio rótulo. A nota
      continua sendo a peneira da capa (pickCover) e o desempate aqui. */
@@ -328,9 +355,16 @@ function applySlot(file, slot) {
   }
 
   const after = src.slice(src.indexOf(end));
-  const takenIds = new Set([...after.matchAll(/article\.html\?id=([^&"']+)/g)].map((m) => decodeURIComponent(m[1])));
+  const idsDe = (trecho) => new Set([...trecho.matchAll(/article\.html\?id=([^&"']+)/g)].map((m) => decodeURIComponent(m[1])));
   const before = src.slice(0, src.indexOf(start));
-  for (const m of before.matchAll(/article\.html\?id=([^&"']+)/g)) takenIds.add(decodeURIComponent(m[1]));
+  let takenIds;
+  if (slot.rotacao === "dia") {
+    /* O desconto é régua do bloco, não deste arquivo: lib/picks-rules diz que
+       só a região do hero desconta, e o doctor.js confere com a mesma função. */
+    takenIds = picksRules.excluidasDaRotacao(src);
+  } else {
+    takenIds = idsDe(after + before);
+  }
 
   const cards = pick(slot, takenIds).map(TEMPLATES[slot.template]);
   const block = cards.length ? `\n${cards.join("\n\n")}\n` : "\n";

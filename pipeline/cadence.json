@@ -6,6 +6,7 @@
   "max_publishes_per_day": 4,
   "min_hours_between_publishes": 3,
   "cover_changes_per_day": 6,
+  "picks_changes_per_day": 1,
   "lead_max_age_days": 7,
   "lead_retry_hours": {
     "em_andamento": 6,
