@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a"
+        }
+      ],
+      "destination": "/a-new-method-measures-microplastics-in-the-air-using-an-uncrewed-a.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "https-www-space-com-space-exploration-artemis-do-we-know-how-man"
         }
       ],

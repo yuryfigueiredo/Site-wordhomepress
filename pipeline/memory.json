@@ -159,6 +159,16 @@
       "topic": "Two paths, one flux: Trapped ions simulate Aharonov–Bohm interference in a lattice gauge theory",
       "outcome": "falha_publicacao",
       "at": "2026-11-07T18:45:30.154Z"
+    },
+    "https://phys.org/news/2026-11-method-microplastics-air-uncrewed-aerial.html": {
+      "outcome": "publicada",
+      "at": "2026-11-07T00:42:35.334Z",
+      "id": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a"
+    },
+    "https://doi.org/10.1038/s41598-026-74287-9": {
+      "outcome": "publicada",
+      "at": "2026-11-07T00:42:35.334Z",
+      "id": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a"
     }
   },
   "publishes": [
@@ -201,6 +211,11 @@
       "id": "https-www-space-com-space-exploration-artemis-do-we-know-how-man",
       "at": "2026-11-06T18:06:27.245Z",
       "score": 6.4
+    },
+    {
+      "id": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
+      "at": "2026-11-07T00:42:35.334Z",
+      "score": 7.8
     }
   ]
 }

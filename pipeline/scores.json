@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-06T18:06:26.709Z",
+  "updated": "2026-11-07T00:42:34.808Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -487,6 +487,44 @@
       },
       "source": "auto",
       "date": "2026-11-06"
+    },
+    "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a": {
+      "score": 7.8,
+      "note": "7.8/10 — força em timeliness (fonte mais recente há 1 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 1.3,
+          "max": 2.5,
+          "why": "2 fonte(s), 2 domínio(s), 1 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "assunto inédito no catálogo"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Argues the paper's real result is an instrument that holds a chosen altitude, not new evidence of airborne plastic."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-07"
     }
   }
 }
