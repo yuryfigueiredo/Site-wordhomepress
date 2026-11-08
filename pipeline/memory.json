@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-08T02:36:15.870Z",
+  "updated": "2026-11-08T10:33:29.157Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -195,6 +195,13 @@
       "outcome": "publicada",
       "at": "2026-11-08T02:36:15.870Z",
       "id": "james-webb-telescope-reveals-giant-exoplanet"
+    },
+    "https://www.space.com/space-exploration/missions/nasa-swift-space-telescope-crashes-to-earth": {
+      "slug": "nasas-swift-space-telescope-crashes-back-to-earth-after-failed-r",
+      "topic": "NASA's Swift space telescope crashes back to Earth after failed rescue attempt",
+      "outcome": "publicada",
+      "at": "2026-11-08T10:33:29.156Z",
+      "id": "swift-space-telescope-reentry-failure-analysis"
     }
   },
   "publishes": [
@@ -262,6 +269,11 @@
       "id": "james-webb-telescope-reveals-giant-exoplanet",
       "at": "2026-11-08T02:36:15.870Z",
       "score": 7.3
+    },
+    {
+      "id": "swift-space-telescope-reentry-failure-analysis",
+      "at": "2026-11-08T10:33:29.156Z",
+      "score": 6.8
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
+  "currentCoverId": "james-webb-telescope-reveals-giant-exoplanet",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -32,12 +32,21 @@
       "id": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
       "tipo": "do dia",
       "era": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat"
+    },
+    {
+      "at": "2026-11-08T10:33:28.856Z",
+      "dia": "2026-11-08",
+      "rodada": "2026-11-08T04:23",
+      "id": "james-webb-telescope-reveals-giant-exoplanet",
+      "tipo": "do dia",
+      "era": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere"
     }
   ],
   "capaVistas": [
     "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
     "theory-predicting-an-older-universe-without-dark-matter-or-dark",
     "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
-    "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere"
+    "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
+    "james-webb-telescope-reveals-giant-exoplanet"
   ]
 }

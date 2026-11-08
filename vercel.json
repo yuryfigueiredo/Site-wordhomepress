@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "swift-space-telescope-reentry-failure-analysis"
+        }
+      ],
+      "destination": "/a-swift-space-telescope-reentry-failure-analysis.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "james-webb-telescope-reveals-giant-exoplanet"
         }
       ],

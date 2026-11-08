@@ -1,15 +1,15 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-08T02:36:15.869Z",
+  "updated": "2026-11-08T10:33:29.156Z",
   "runs": {
     "analyst": {
-      "id": "james-webb-telescope-reveals-giant-exoplanet",
+      "id": "swift-space-telescope-reentry-failure-analysis",
       "date": "2026-11-08",
-      "opening_move": "object",
-      "ending_move": "flat_statement",
-      "title_pattern": "james webb telescope reveals",
-      "humor_lines": 0
+      "opening_move": "dated_fact",
+      "ending_move": "admitted_limit",
+      "title_pattern": "nasa loses swift after",
+      "humor_lines": 1
     },
     "lab": {
       "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",

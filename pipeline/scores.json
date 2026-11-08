@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-08T02:36:15.491Z",
+  "updated": "2026-11-08T10:33:28.798Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -673,6 +673,44 @@
           "pts": 1,
           "max": 1,
           "why": "Demonstrates how coronagraphic precision on JWST replaces indirect inference with direct thermal imaging for giant exoplanets."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-08"
+    },
+    "swift-space-telescope-reentry-failure-analysis": {
+      "score": 6.8,
+      "note": "6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 4 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 6% com https-www-space-com-space-exploration-artemis-do-we-know-how-man"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Argues that attempting bespoke salvage on unprepared legacy satellites creates greater systemic risk than accepting orbital loss and funding"
         }
       },
       "source": "auto",
