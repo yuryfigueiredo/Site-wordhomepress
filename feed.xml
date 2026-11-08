@@ -8,6 +8,14 @@
     <lastBuildDate>Sun, 08 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>NASA Loses Swift After Rescue Attempt Fails in Upper Atmosphere</title>
+      <link>https://www.homeworldpress.com/article.html?id=swift-space-telescope-reentry-failure-analysis</link>
+      <description>A failed docking effort seals the fate of an aging gamma-ray sentinel in low Earth orbit.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=swift-space-telescope-reentry-failure-analysis</guid>
+      <pubDate>Sun, 08 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>James Webb telescope reveals giant exoplanet through starlight suppression</title>
       <link>https://www.homeworldpress.com/article.html?id=james-webb-telescope-reveals-giant-exoplanet</link>
       <description>Coronagraphic imaging isolates a massive world from its host star's glare.</description>
@@ -78,14 +86,6 @@
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=nasa-lunar-landing-research-vehicle-test</guid>
       <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Artemis I data shows higher lunar radiation</title>
-      <link>https://www.homeworldpress.com/article.html?id=artemis-i-radiation-discrepancy</link>
-      <description>Unexpected particle flux near the Moon challenges existing deep-space shielding models.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=artemis-i-radiation-discrepancy</guid>
-      <pubDate>Sun, 01 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>

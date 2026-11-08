@@ -1,15 +1,14 @@
-# Turno — 2026-11-08 02:36 UTC
+# Turno — 2026-11-08 10:33 UTC
 
-- **coleta** — fila: 42 pautas (11/12 feeds ok) → pipeline/leads/2026-11-08.md · feeds fora: Publishing Perspectives: fetch failed (UND_ERR_SOCKET)
+- **coleta** — fila: 41 pautas (11/12 feeds ok) → pipeline/leads/2026-11-08.md · feeds fora: Publishing Perspectives: fetch failed (UND_ERR_SOCKET)
 - **manutenção** — errors 0 | ✗ warnings 1
-- **cadência** — 0/4 publicação(ões) hoje
-- **pauta** — Giant exoplanet emerges from the dark when the James Webb Space Telescope turns out the starlight (Space.com, score 4)
-- **brief** — pipeline/drafts/giant-exoplanet-emerges-from-the-dark-when-the-james-webb-space-/ criado
-- **texto** — escrito por gemini/gemma-4-26b-a4b-it: james-webb-detects-giant-exoplanet-starlight-suppression (1187 palavras)
-- **foto** — ✓ foto encontrada: images/posts/giant-exoplanet-emerges-from-the-dark-when-the-james-webb-space-.jpg (Photo by SpaceX on Unsplash)
-- **capa** — giant-exoplanet-emerges-from-the-dark-when-the-james-webb-space- usa foto real (images/posts/giant-exoplanet-emerges-from-the-dark-when-the-james-webb-space-.jpg) — nenhuma placa gerada
-- **edição** — tentativa 1 reprovada:   ✗ [rhythm] nenhum parágrafo de uma frase
-- **edição** — aprovado na tentativa 2
-- **nota** — 7.3/10 · 7.3/10 — força em timeliness (fonte mais recente há 2 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)
-- **publicação** — publicado localmente: james-webb-telescope-reveals-giant-exoplanet · nota 7.3/10 · cadência hoje: 1/4
+- **cadência** — 1/4 publicação(ões) hoje
+- **pauta** — NASA's Swift space telescope crashes back to Earth after failed rescue attempt (Space.com, score 4)
+- **brief** — pipeline/drafts/nasas-swift-space-telescope-crashes-back-to-earth-after-failed-r/ criado
+- **texto** — escrito por gemini/gemini-3.8-flash: swift-space-telescope-reentry-failure-analysis (989 palavras)
+- **foto** — ✓ foto encontrada: images/posts/nasas-swift-space-telescope-crashes-back-to-earth-after-failed-r.jpg (Photo by NASA on Unsplash)
+- **capa** — nasas-swift-space-telescope-crashes-back-to-earth-after-failed-r usa foto real (images/posts/nasas-swift-space-telescope-crashes-back-to-earth-after-failed-r.jpg) — nenhuma placa gerada
+- **edição** — aprovado na tentativa 1
+- **nota** — 6.8/10 · 6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)
+- **publicação** — publicado localmente: swift-space-telescope-reentry-failure-analysis · nota 6.8/10 · cadência hoje: 2/4
 - **fim** — rodada completa. O commit e o push são do workflow; o deploy é da Vercel.
