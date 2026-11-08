@@ -254,7 +254,7 @@ for (const link of contentLinks) {
   /* a mesma URL com barra no cabo ou utm_ não é outro link: comparar cru
     gastava uma das três reescritas por cosmética */
   const chave = memLib.urlChave(link);
-  const known = sources.some((s) => memLib.urlChave(s.url) === chave) || /amazon\.|audible\./.test(link) || link.startsWith("https://homeworldpress.com");
+  const known = sources.some((s) => memLib.urlChave(s.url) === chave) || /amazon\.|audible\./.test(link) || link.startsWith("https://www.homeworldpress.com");
   if (!known) reject("sources", `link no texto que não está nas fontes: ${link.slice(0, 90)}`);
 }
 const numbersInText = (text.match(/\d+(?:\.\d+)?%|\$\d[\d,.]*/g) || []).length;
