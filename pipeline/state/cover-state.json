@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "james-webb-telescope-reveals-giant-exoplanet",
+  "currentCoverId": "swift-space-telescope-reentry-failure-analysis",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -40,6 +40,14 @@
       "id": "james-webb-telescope-reveals-giant-exoplanet",
       "tipo": "do dia",
       "era": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere"
+    },
+    {
+      "at": "2026-11-08T17:03:50.448Z",
+      "dia": "2026-11-08",
+      "rodada": "2026-11-08T12:23",
+      "id": "swift-space-telescope-reentry-failure-analysis",
+      "tipo": "do dia",
+      "era": "james-webb-telescope-reveals-giant-exoplanet"
     }
   ],
   "capaVistas": [
@@ -47,6 +55,7 @@
     "theory-predicting-an-older-universe-without-dark-matter-or-dark",
     "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
     "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
-    "james-webb-telescope-reveals-giant-exoplanet"
+    "james-webb-telescope-reveals-giant-exoplanet",
+    "swift-space-telescope-reentry-failure-analysis"
   ]
 }
