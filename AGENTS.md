@@ -13,7 +13,9 @@ Site estático (HTML + `js/articles-db.js`) com um pipeline editorial em Node pu
 
 ## A régua mora nos arquivos, não na conversa
 
-`pipeline/cadence.json` é a única fonte de verdade de ritmo; `tools/lib/schedule.js` + `tools/doctor.js` conferem se o que está no JSON é fisicamente possível com o cron que o GitHub executa de verdade (`.github/workflows/turno.yml`). Hoje: 6 verificações/dia no cron `23 3,7,11,15,19,23 * * *` UTC (00, 04, 08, 12, 16 e 20 em Brasília), teto de 4 publicações/dia, mínimo de 3h entre peças, **1 troca de capa por rodada** (`cover_changes_per_day` 6 = número de horários do `check_hours`), piso de nota para a capa `cover_baseline` 6.5 e **1 troca do par de Today's Picks por dia** (`picks_changes_per_day` 1).
+`pipeline/cadence.json` é a única fonte de verdade de ritmo; `tools/lib/schedule.js` + `tools/doctor.js` conferem se o que está no JSON é fisicamente possível com o cron que o GitHub executa de verdade (`.github/workflows/turno.yml`). Hoje: 2 verificações/dia no cron `23 15,23 * * *` UTC (12:23 e 20:23 em Brasília), teto de 2 publicações/dia, mínimo de 3h entre peças, **1 troca de capa por rodada** (`cover_changes_per_day` 2 = número de horários do `check_hours`), piso de nota para a capa `cover_baseline` 6.5 e **1 troca do par de Today's Picks por dia** (`picks_changes_per_day` 1).
+
+**Limitação do GitHub Actions (medido em 08/11):** o scheduler do free tier entrega apenas 2 das 6 rodadas agendadas por dia — os outros 4 slots somem silenciosamente, sem aviso. O cron original (`23 3,7,11,15,19,23 * * *`) foi reduzido para os 2 horários que consistentemente dispararam (15:23 e 23:23 UTC). O teto de publicações/dia caiu de 4 para 2 para espelhar o que o relógio realmente entrega. O aviso `cadence-entrega` do doctor agora deve ficar silencioso: a régua bate com a realidade.
 
 Mudar uma destas linhas exige mudar o número no `cadence.json` — se divergirem, o doctor fecha vermelho e a rodada não publica.
 

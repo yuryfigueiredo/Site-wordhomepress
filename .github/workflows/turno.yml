@@ -2,15 +2,15 @@ name: turno editorial
 
 on:
   schedule:
-    # O cron do GitHub é SEMPRE UTC, não aceita fuso. Estas 6 horas viram
-    # 00, 04, 08, 12, 16 e 20 no horário de Brasília, de 4 em 4 horas.
-    # Minuto 23, não 0: medido em 34 rodadas (out-nov/2026), os horários
-    # 07/10/17 UTC nunca dispararam e os demais chegaram de 1 a 170 minutos
-    # atrasados — fora da fila das horas cheias, a entrega melhora e a folga de
-    # 1h por horário é o que mantém a distância mínima de 3h de
-    # pipeline/cadence.json de pé mesmo com atraso. O teto de publicação mora
-    # em pipeline/cadence.json, não aqui; o doctor confere os dois.
-    - cron: "23 3,7,11,15,19,23 * * *"
+    # O cron do GitHub é SEMPRE UTC, não aceita fuso. Estas 2 horas viram
+    # 12:23 e 20:23 no horário de Brasília. Minuto 23, não 0: medido em 41
+    # rodadas (out-nov/2026), o cron de 6 horários (03/07/11/15/19/23 UTC)
+    # entregava apenas 2 rodadas por dia — o scheduler do GitHub free tier
+    # deixa cair 4 dos 6 slots silenciosamente. Os que mais consistentemente
+    # dispararam foram 15:23 e 23:23 UTC (5 de 7 dias), então o cron agora
+    # tem só esses dois. O teto de publicação mora em pipeline/cadence.json,
+    # não aqui; o doctor confere os dois.
+    - cron: "23 15,23 * * *"
   workflow_dispatch:
 
 permissions:
