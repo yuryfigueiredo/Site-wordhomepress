@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "james-webb-telescope-reveals-giant-exoplanet"
+        }
+      ],
+      "destination": "/a-james-webb-telescope-reveals-giant-exoplanet.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat"
         }
       ],

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-07T18:23:05.660Z",
+  "updated": "2026-11-08T02:36:15.491Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -639,6 +639,44 @@
       },
       "source": "auto",
       "date": "2026-11-07"
+    },
+    "james-webb-telescope-reveals-giant-exoplanet": {
+      "score": 7.3,
+      "note": "7.3/10 — força em timeliness (fonte mais recente há 2 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 2 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 18% com james-webb-exoplanet-atmospheres-biosignatures-2026"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Demonstrates how coronagraphic precision on JWST replaces indirect inference with direct thermal imaging for giant exoplanets."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-08"
     }
   }
 }

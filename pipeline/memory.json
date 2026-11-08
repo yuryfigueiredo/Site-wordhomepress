@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-07T18:45:30.154Z",
+  "updated": "2026-11-08T02:36:15.870Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -188,6 +188,13 @@
       "outcome": "publicada",
       "at": "2026-11-07T18:23:06.279Z",
       "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat"
+    },
+    "https://www.space.com/astronomy/exoplanets/giant-exoplanet-emerges-from-the-dark-when-the-james-webb-space-telescope-turns-out-the-starlight": {
+      "slug": "giant-exoplanet-emerges-from-the-dark-when-the-james-webb-space-",
+      "topic": "Giant exoplanet emerges from the dark when the James Webb Space Telescope turns out the starlight",
+      "outcome": "publicada",
+      "at": "2026-11-08T02:36:15.870Z",
+      "id": "james-webb-telescope-reveals-giant-exoplanet"
     }
   },
   "publishes": [
@@ -250,6 +257,11 @@
       "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
       "at": "2026-11-07T18:23:06.279Z",
       "score": 7.4
+    },
+    {
+      "id": "james-webb-telescope-reveals-giant-exoplanet",
+      "at": "2026-11-08T02:36:15.870Z",
+      "score": 7.3
     }
   ]
 }
