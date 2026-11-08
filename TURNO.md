@@ -1,13 +1,15 @@
-# Turno — 2026-11-07 18:45 UTC
+# Turno — 2026-11-08 02:36 UTC
 
-- **coleta** — distribuição: {"science":31,"culture":12} · 4 pautas já estavam no ar (fonte repetida)
-- **manutenção** — errors 0 | ✓ warnings 0
-- **cadência** — 0/5 publicação(ões) hoje
-- **pauta** — Two paths, one flux: Trapped ions simulate Aharonov–Bohm interference in a lattice gauge theory (Phys.org, score 5)
-- **brief** — pipeline/drafts/two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere/ criado
-- **texto** — escrito por gemini/gemini-3.5-flash-lite: trapped-ions-simulate-aharonov-bohm-interference (514 palavras)
-- **capa** — capa criada: images/covers/two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere.svg + images/covers/two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere-hero.svg (3 linhas de título)
-- **edição** — tentativa 1 reprovada:   ✗ [rhythm] frase mais curta tem 8 palavras — falta a frase curta obrigatória ·   ✗ [rhythm] nenhum parágrafo de uma frase ·   ✗ [length] texto com 514 palavras para uma pauta de ~1100 — o piso é 770
+- **coleta** — fila: 42 pautas (11/12 feeds ok) → pipeline/leads/2026-11-08.md · feeds fora: Publishing Perspectives: fetch failed (UND_ERR_SOCKET)
+- **manutenção** — errors 0 | ✗ warnings 1
+- **cadência** — 0/4 publicação(ões) hoje
+- **pauta** — Giant exoplanet emerges from the dark when the James Webb Space Telescope turns out the starlight (Space.com, score 4)
+- **brief** — pipeline/drafts/giant-exoplanet-emerges-from-the-dark-when-the-james-webb-space-/ criado
+- **texto** — escrito por gemini/gemma-4-26b-a4b-it: james-webb-detects-giant-exoplanet-starlight-suppression (1187 palavras)
+- **foto** — ✓ foto encontrada: images/posts/giant-exoplanet-emerges-from-the-dark-when-the-james-webb-space-.jpg (Photo by SpaceX on Unsplash)
+- **capa** — giant-exoplanet-emerges-from-the-dark-when-the-james-webb-space- usa foto real (images/posts/giant-exoplanet-emerges-from-the-dark-when-the-james-webb-space-.jpg) — nenhuma placa gerada
+- **edição** — tentativa 1 reprovada:   ✗ [rhythm] nenhum parágrafo de uma frase
 - **edição** — aprovado na tentativa 2
-- **nota** — 6.4/10 · 6.4/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)
-- **fim** — publicação abortada pelo próprio publish.js: trapped-ions-aharonov-bohm-simulation não usa placa nossa (images/posts/two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere.jpg) — nada regerado  — catálogo, HTML, sitemap e notas restaurados, nada publicado
+- **nota** — 7.3/10 · 7.3/10 — força em timeliness (fonte mais recente há 2 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)
+- **publicação** — publicado localmente: james-webb-telescope-reveals-giant-exoplanet · nota 7.3/10 · cadência hoje: 1/4
+- **fim** — rodada completa. O commit e o push são do workflow; o deploy é da Vercel.
