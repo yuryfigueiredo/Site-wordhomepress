@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
+  "currentCoverId": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -24,11 +24,20 @@
       "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
       "tipo": "do dia",
       "era": "theory-predicting-an-older-universe-without-dark-matter-or-dark"
+    },
+    {
+      "at": "2026-11-08T02:19:54.146Z",
+      "dia": "2026-11-07",
+      "rodada": "2026-11-07T20:23",
+      "id": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
+      "tipo": "do dia",
+      "era": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat"
     }
   ],
   "capaVistas": [
     "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
     "theory-predicting-an-older-universe-without-dark-matter-or-dark",
-    "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat"
+    "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
+    "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere"
   ]
 }
