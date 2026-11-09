@@ -384,6 +384,21 @@ function applySlot(file, slot) {
     /* O desconto é régua do bloco, não deste arquivo: lib/picks-rules diz que
        só a região do hero desconta, e o doctor.js confere com a mesma função. */
     takenIds = picksRules.excluidasDaRotacao(src);
+  } else if (slot.dedup === "nenhum") {
+    /* Página de categoria: o feed é o acervo da matéria, e o spotlight e o
+       trending do topo são curadoria manual (AGENTS.md). Descontar os dois
+       deixava culture-feed em 5 de 8 e tech-feed em 1 de 8 com 10 e 5 peças
+       no catálogo — a régua punia a página por ela ter edição. Repetir
+       matéria entre a curadoria do topo e o feed é normal num índice de
+       categoria; o que não pode é a home mostrar a mesma peça duas vezes na
+       mesma tela, e para isso os slots da home continuam com dedup do arquivo. */
+    takenIds = new Set();
+  } else if (slot.dedup === "somente-automatico") {
+    /* Grade grande (CULTURE) numa página que também tem curadoria à mão: as
+       duas matérias do TRENDING // TOP 5 não podem continuar tirando vaga do
+       feed — com picks em 3 e o desconto do arquivo inteiro a grade caía para
+       5 e abria um buraco de 437px na última linha de uma grade de 3. */
+    takenIds = slotMarkup.idsDentroDasRegioes(src, slot.name);
   } else {
     takenIds = idsDe(after + before);
   }

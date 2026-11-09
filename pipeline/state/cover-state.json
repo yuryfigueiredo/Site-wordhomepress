@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "swift-space-telescope-reentry-failure-analysis",
+  "currentCoverId": "physicists-watch-time-emerge-without-clocks",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -48,6 +48,14 @@
       "id": "swift-space-telescope-reentry-failure-analysis",
       "tipo": "do dia",
       "era": "james-webb-telescope-reveals-giant-exoplanet"
+    },
+    {
+      "at": "2026-11-09T20:28:23.406Z",
+      "dia": "2026-11-09",
+      "rodada": "2026-11-09T12:23",
+      "id": "physicists-watch-time-emerge-without-clocks",
+      "tipo": "do dia",
+      "era": "swift-space-telescope-reentry-failure-analysis"
     }
   ],
   "capaVistas": [
@@ -56,6 +64,7 @@
     "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
     "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
     "james-webb-telescope-reveals-giant-exoplanet",
-    "swift-space-telescope-reentry-failure-analysis"
+    "swift-space-telescope-reentry-failure-analysis",
+    "physicists-watch-time-emerge-without-clocks"
   ]
 }

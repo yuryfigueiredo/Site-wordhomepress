@@ -441,7 +441,7 @@ const {
     if (metaPicks === undefined)
       fail("picks", "pipeline/cadence.json sem picks_changes_per_day — a régua do bloco TODAY'S PICKS mora no arquivo, não na conversa");
     else if (Number(metaPicks) !== 1)
-      fail("picks", `picks_changes_per_day = ${metaPicks}, mas o bloco se vende como "hoje": a régua é exatamente 1 troca de par por dia`);
+      fail("picks", `picks_changes_per_day = ${metaPicks}, mas o bloco se vende como "hoje": a régua é exatamente 1 troca do bloco por dia`);
     if (!slot)
       fail("picks", 'nenhum slot com "rotacao": "dia" em pipeline/placements.json → index.html — sem slot o bloco volta a ser HTML escrito à mão, e nada gira o par');
     else {
@@ -450,13 +450,13 @@ const {
       const pool = picksRules.poolDePicks(DB.articles, slot, picksRules.excluidasDaRotacao(html));
       const minimo = picksRules.minimoParaRotacao(n);
       if (pool.length < minimo)
-        fail("picks", `pool de "${slot.category}" com imagem = ${pool.length} peça(s); mínimo para trocar um par de ${n} todo dia é ${minimo} (lib/picks-rules.minimoParaRotacao) — com menos, o mesmo par sai hoje e amanhã e o rótulo "hoje" desmente a si mesmo`);
+        fail("picks", `pool de "${slot.category}" com imagem = ${pool.length} peça(s); mínimo para trocar um bloco de ${n} cards todo dia é ${minimo} (lib/picks-rules.minimoParaRotacao) — com menos, o mesmo bloco sai hoje e amanhã e o rótulo "hoje" desmente a si mesmo`);
       const esperado = picksRules.picksDoDia(pool, n, picksRules.diaUtc()).map((a) => a.id);
       const noAr = [...picksRules.idsDaRegiao(html, slot.name)];
       if (!esperado.length)
         fail("picks", `nenhuma matéria ${slot.category} com imagem no catálogo — o bloco TODAY'S PICKS fica vazio`);
       else if (noAr.join("|") !== esperado.join("|"))
-        fail("picks", `o index.html está com o par ${noAr.join(", ") || "(vazio)"} e a régua de hoje (dia UTC ${picksRules.diaUtc()}) manda ${esperado.join(", ")} — rode node tools/build.js; verde com o par velho no ar é exatamente o defeito de 15 dias que esta checagem existe para pegar`);
+        fail("picks", `o index.html está com o bloco ${noAr.join(", ") || "(vazio)"} e a régua de hoje (dia UTC ${picksRules.diaUtc()}) manda ${esperado.join(", ")} — rode node tools/build.js; verde com o bloco velho no ar é exatamente o defeito de 15 dias que esta checagem existe para pegar`);
       const manual = (html.match(/class="pick-item"/g) || []).length - (picksRules.regiao(html, slot.name).match(/class="pick-item"/g) || []).length;
       if (manual > 0)
         fail("picks", `${manual} card(es) class="pick-item" FORA dos marcadores hwp:auto:${slot.name} — o bloco escrito à mão voltou, e ele é o que não mudava`);
@@ -467,7 +467,7 @@ const {
       const heroIds = picksRules.idsDaRegiao(html, "index-hero");
       const repetida = noAr.filter((id) => heroIds.has(id));
       if (repetida.length)
-        fail("picks", `o par de picks repete a capa que já está no hero (${repetida.join(", ")}) — na mesma tela a matéria aparece duas vezes`);
+        fail("picks", `o bloco de picks repete a capa que já está no hero (${repetida.join(", ")}) — na mesma tela a matéria aparece duas vezes`);
       const semFoto = noAr.filter((id) => {
         const a = DB.articles.find((x) => x.id === id);
         return !a || !(a.bookCover || a.image);
@@ -475,8 +475,67 @@ const {
       if (semFoto.length)
         fail("picks", `card(s) do bloco TODAY'S PICKS sem artigo no catálogo ou sem imagem: ${semFoto.join(", ")} — o card é feito em volta da foto`);
       if (!manual && esperado.length && noAr.join("|") === esperado.join("|"))
-        note("picks", `par de hoje no ar: ${esperado.join(", ")} · pool ${pool.length} peça(s) de ${slot.category} com imagem · troca 1x/dia, offset ${(picksRules.diaUtc() % pool.length + pool.length) % pool.length} do ciclo de ${pool.length}`);
+        note("picks", `bloco de hoje no ar: ${esperado.join(", ")} · pool ${pool.length} peça(s) de ${slot.category} com imagem · troca 1x/dia, offset ${(picksRules.diaUtc() % pool.length + pool.length) % pool.length} do ciclo de ${pool.length}`);
     }
+  }
+}
+
+/* ── 11d. Markup solto: card de slot escrito à mão fora dos marcadores ─── */
+/* O TODAY'S PICKS foi o primeiro bloco a ganhar régua, e a mesma classe de
+   defeito estava viva no resto da home: 16 cards escritos à mão fora dos
+   hwp:auto em index.html (4 em MOST RECENT, 6 em CULTURE, 6 em TECH/SCIENCE)
+   e mais 12 nas páginas de categoria. Pior do que não mudar: o build conta os
+   ids que já aparecem no arquivo para não repetir matéria, então cada card
+   solto rouba uma vaga do próprio slot — a CULTURE tinha limit 6 e gerava 3.
+   Um card solto que aponta para fora do catálogo (o Dumarest restaurado em
+   dumarest/index.htm, por exemplo) continua sendo curadoria válida e não é
+   contado aqui. */
+{
+  const markup = require("./lib/slot-markup");
+  let plc14 = null;
+  try {
+    plc14 = JSON.parse(read("pipeline/placements.json"));
+  } catch {}
+  if (!plc14) {
+    fail("slot-stale", "pipeline/placements.json ilegível — sem a lista de slots o doctor não sabe o que é automático");
+  } else {
+    const noCatalogo = new Set(DB.articles.map((a) => a.id));
+    let conferidos = 0;
+    let curados = 0;
+    for (const [file, slots] of Object.entries(plc14.slots)) {
+      const html = read(file);
+      if (html === undefined) continue;
+      const regioes = markup.regioesDoArquivo(html, slots);
+      for (const slot of slots) {
+        const cls = markup.cardClassOf(slot.template);
+        const fora = markup.cardsPorClasse(html, cls, regioes).fora.map((p) => markup.idDoCard(html, p));
+        curados += fora.filter((id) => !id || !noCatalogo.has(id)).length;
+        const soltos = fora.filter((id) => id && noCatalogo.has(id));
+        if (soltos.length)
+          fail(
+            "slot-stale",
+            `${file}: ${soltos.length} card(es) class="${cls}" FORA dos marcadores hwp:auto:${slot.name} (${soltos.slice(0, 3).join(", ")}${soltos.length > 3 ? ", …" : ""}) — card de matéria escrito à mão não é regenerado por ninguém e ainda rouba vaga do slot, que é como a CULTURE ficou com 3 das 6 peças`,
+          );
+        const gerados = markup.cardsNaRegiao(html, slot);
+        if (slot.limit && gerados < slot.limit) {
+          const acervo = DB.articles.filter((a) => (slot.category ? a.category === slot.category : true)).length;
+          warn(
+            "slot-vazio",
+            `${file} · ${slot.name}: ${gerados} card(s) gerados contra um limit de ${slot.limit} (acervo elegível no catálogo: ${acervo} ${slot.category ? slot.category + " " : ""}peça(s)) — falta matéria ou o markup solto do arquivo ainda está descontando da fila`,
+          );
+        }
+        if (slot.count_pill) {
+          const alvo = slot.count_pill.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          const m = html.match(new RegExp(`<[^>]*${alvo}[^>]*>[^<()]*\\((\\d+)\\)`));
+          if (!m) fail("slot-stale", `${file}: rótulo com count_pill="${slot.count_pill}" não existe mais — o build não tem onde escrever o número da grade`);
+          else if (Number(m[1]) !== gerados)
+            fail("slot-stale", `${file}: o rótulo diz (${m[1]}) e a grade hwp:auto:${slot.name} tem ${gerados} card(s) — o número é consequência da grade; rode node tools/build.js`);
+        }
+        conferidos++;
+      }
+    }
+    if (conferidos)
+      note("slot-stale", `${conferidos} slot(s) automáticos conferidos em ${Object.keys(plc14.slots).length} arquivo(s): nenhum card de matéria fora dos marcadores · ${curados} card(s) curado(s) (fora do catálogo) mantido(s) à mão`);
   }
 }
 

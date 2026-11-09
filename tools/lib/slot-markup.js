@@ -66,4 +66,33 @@ function cardsNaRegiao(html, slot) {
   return cardsPorClasse(html, cardClassOf(slot.template), regioes).dentro.length;
 }
 
-module.exports = { CARD_CLASS, cardClassOf, marcador, regioesDoArquivo, cardsPorClasse, idDoCard, cardsNaRegiao };
+/* Ids que só os blocos automáticos do arquivo já carregam, ignorando a região
+   do próprio slot. É a peneira de "somente-automatico": a curadoria escrita à
+   mão (TRENDING // TOP 5) pode repetir uma matéria do feed sem que isso seja
+   defeito — o que não pode é a mesma peça aparecer duas vezes na MESMA tela,
+   e os blocos automáticos são justamente o que divide a tela com o slot. */
+function idsDentroDasRegioes(html, excetoNome) {
+  const st = /<!-- hwp:auto:([^:]+):start -->/g;
+  const out = new Set();
+  let m;
+  while ((m = st.exec(String(html)))) {
+    if (m[1] === excetoNome) continue;
+    const a = m.index + m[0].length;
+    const b = String(html).indexOf(marcador(m[1], "end"), a);
+    if (b < 0) continue;
+    for (const id of String(html).slice(a, b).matchAll(/article\.html\?id=([^&"']+)/g)) out.add(decodeURIComponent(id[1]));
+    st.lastIndex = b;
+  }
+  return out;
+}
+
+module.exports = {
+  CARD_CLASS,
+  cardClassOf,
+  marcador,
+  regioesDoArquivo,
+  cardsPorClasse,
+  idDoCard,
+  cardsNaRegiao,
+  idsDentroDasRegioes,
+};

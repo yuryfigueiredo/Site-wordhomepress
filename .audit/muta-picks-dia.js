@@ -97,7 +97,7 @@ const mutacoes = [
   { alvo: "cad", espera: "doctor", de: '"picks_changes_per_day": 1,', para: '"picks_changes_per_day": 3,', nome: "meta de picks vira 3 sem nada que gire 3x/dia" },
   { alvo: "cad", espera: "doctor", de: '"picks_changes_per_day": 1,', para: "", nome: "a régua sai do cadence.json (volta a morar na conversa)" },
   { alvo: "plc", espera: "doctor", de: '"rotacao": "dia"', para: '"rotacao": "nunca"', nome: "o slot perde a rotação (volta a ser bloco fixo)" },
-  { alvo: "plc", espera: "doctor", de: '"template": "pick-item", "category": "culture", "limit": 2', para: '"template": "pick-item", "category": "culture", "limit": 1', nome: "limit vira 1 com 2 cards publicados no ar" },
+  { alvo: "plc", espera: "doctor", de: '"template": "pick-item", "category": "culture", "limit": 3', para: '"template": "pick-item", "category": "culture", "limit": 1', nome: "limit vira 1 com 3 cards publicados no ar" },
   /* — o que está PUBLICADO — */
   { alvo: "idx", espera: "doctor", arquivo: idxParDeOntem, nome: "o build não girou e a home acorda com o par de ontem" },
   { alvo: "idx", espera: "doctor", arquivo: idxComCardManual, nome: "um card pick-item escrito à mão reaparece fora dos marcadores" },
