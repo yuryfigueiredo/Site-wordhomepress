@@ -273,6 +273,32 @@ const casos = [];
   });
 }
 
+/* 11. review também tem de estar na rede de alcance. Em 09/11 o §7 rodava só
+       sobre DB.articles e `r-<id>.html` nem era considerado: uma review sem
+       entrada em lugar nenhum passava verde. Aqui a mutação é o catálogo —
+       uma review nova que nenhuma página linka — porque os cards de review
+       estão espalhados por 30 páginas e matar um não mata a entrada. */
+{
+  const file = "js/articles-db.js";
+  const src = ler(file);
+  const abre = src.indexOf("reviews: [");
+  if (abre < 0) throw new Error("js/articles-db.js sem a lista `reviews: [` — reescrever o caso 11");
+  const i = abre + "reviews: [".length;
+  const idFake = "prova-de-portao-review-orfa";
+  const novo =
+    src.slice(0, i) +
+    `\n    {\n      id: "${idFake}",\n      title: "Prova de portão: review que nenhuma página linka",\n      updated: "UPDATED NOVEMBER 2026",\n      score: "9.0/10",\n      image: "images/posts/best-ereaders-2026.jpg",\n    },` +
+    src.slice(i);
+  casos.push({
+    nome: "uma review no catálogo que nenhuma página linka",
+    arquivo: file,
+    novo,
+    espera: "vermelho",
+    portao: "orphan",
+    marca: `review "${idFake}" não é linkada por nenhuma OUTRA página`,
+  });
+}
+
 /* 4. curadoria fora do catálogo NÃO é defeito: o portão não pode morder a
       lista TRENDING nem as placas do Dumarest */
 {

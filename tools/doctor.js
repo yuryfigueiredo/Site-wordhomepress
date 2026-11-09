@@ -221,10 +221,15 @@ for (const f of HTML_FILES.filter((x) => !NOINDEX_PAGES.includes(x))) {
   for (const m of String(read(f) || "").matchAll(/(?:article|review)\.html\?id=([^&"'\s<>]+)/g)) ids.add(decodeURIComponent(m[1]));
   idsLinkadosPorPagina.set(f, ids);
 }
+const alca = (id, propria) => [...idsLinkadosPorPagina].some(([f, ids]) => f !== propria && ids.has(id));
 for (const a of DB.articles) {
-  const propria = `a-${a.id}.html`;
-  const alcanca = [...idsLinkadosPorPagina].some(([f, ids]) => f !== propria && ids.has(a.id));
-  if (!alcanca) fail("orphan", `artigo "${a.id}" não é linkado por nenhuma OUTRA página — a própria página é o destino, não a entrada: sem clique para ela, só existe para a busca`);
+  if (!alca(a.id, `a-${a.id}.html`)) fail("orphan", `artigo "${a.id}" não é linkado por nenhuma OUTRA página — a própria página é o destino, não a entrada: sem clique para ela, só existe para a busca`);
+}
+/* Review tem a mesma régua: 09/11 deixou `r-<id>.html` fora do §7 e o `for` só
+   olhava DB.articles, então uma review sem entrada passava. O `rec-card` é
+   exatamente o markup que apodrece sem ninguém regenerar. */
+for (const r of DB.reviews) {
+  if (!alca(r.id, `r-${r.id}.html`)) fail("orphan", `review "${r.id}" não é linkada por nenhuma OUTRA página — mesma régua do artigo: sem clique, a review só existe para a busca`);
 }
 
 /* ── 8. Monetização honesta ───────────────────────────────────────────── */
@@ -557,12 +562,13 @@ const {
             );
         }
         if (slot.acervo) {
-          /* O cap de 8 cards foi o que escondeu a cauda do catálogo: com 15
-             peças science, a página listava 11 e as 4 mais velhas não entravam
-             — 2 delas sem link de entrada em lugar nenhum do site (medido no
-             HEAD 09/11). Com "acervo": true a página da editoria tem de listar
-             TODA a editoria — e o [orphan] de cima garante o mesmo pelo lado
-             do catálogo, não pelo lado do markup. */
+          /* O cap de 8 cards foi o que escondeu a cauda do catálogo: em 09/11,
+             com 15 peças science a página listava 11, e com 10 de cultura
+             listava 8 — as peças cortadas não eram as mais velhas, eram as que
+             o `slice` alcançava, e duas delas (uma de cada editoria) não
+             tinham link de entrada em lugar nenhum do site. Com "acervo": true
+             a página da editoria tem de listar TODA a editoria — e o [orphan]
+             de cima garante o mesmo pelo lado do catálogo, não pelo markup. */
           const daEditoria = DB.articles.filter((a) => (slot.category ? a.category === slot.category : true)).map((a) => a.id);
           const publicados = new Set(picksRules.idsDaRegiao(html, slot.name));
           const deFora = daEditoria.filter((id) => !publicados.has(id));
