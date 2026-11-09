@@ -12,13 +12,13 @@
       { "name": "index-science", "container": { "tag": "div", "class": "compact-feed--science" }, "template": "compact-card", "category": "science", "limit": 3 }
     ],
     "culture.html": [
-      { "name": "culture-feed", "container": { "tag": "div", "class": "cat-feed-list" }, "template": "cat-feed-item", "category": "culture", "limit": 8, "dedup": "nenhum" }
+      { "name": "culture-feed", "container": { "tag": "div", "class": "cat-feed-list" }, "template": "cat-feed-item", "category": "culture", "dedup": "prioridade-ineditas", "acervo": true }
     ],
     "tech.html": [
-      { "name": "tech-feed", "container": { "tag": "div", "class": "cat-feed-list" }, "template": "cat-feed-item", "category": "tech", "limit": 8, "dedup": "nenhum" }
+      { "name": "tech-feed", "container": { "tag": "div", "class": "cat-feed-list" }, "template": "cat-feed-item", "category": "tech", "dedup": "prioridade-ineditas", "acervo": true }
     ],
     "science.html": [
-      { "name": "science-feed", "container": { "tag": "div", "class": "cat-feed-list" }, "template": "cat-feed-item", "category": "science", "limit": 8, "dedup": "nenhum" }
+      { "name": "science-feed", "container": { "tag": "div", "class": "cat-feed-list" }, "template": "cat-feed-item", "category": "science", "dedup": "prioridade-ineditas", "acervo": true }
     ]
   }
 }

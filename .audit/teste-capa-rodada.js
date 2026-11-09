@@ -121,25 +121,46 @@ function confere(descricao, ok, detalhe = "") {
   if (!ok) falhas.push(`${descricao}${detalhe ? ` — ${detalhe}` : ""}`);
 }
 
+/* A agenda que o balde da rodada usa é a do pipeline/cadence.json — a mesma que
+   o doctor confere contra o cron do workflow. Chumbar "00:23, 04:23, ..." aqui é
+   o que deixou este script vermelho com a régua certa depois que o Actions foi
+   reduzido para 2 horários (08/11): a prova da capa virou defeito por snapshot. */
+const AGENDA = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8")).check_hours;
+const minutosDe = (hhmm) => {
+  const [h, m] = hhmm.split(":").map(Number);
+  return h * 60 + m;
+};
+const hhmmDe = (t) => `${String(Math.floor((((t % 1440) + 1440) % 1440) / 60)).padStart(2, "0")}:${String((((t % 1440) + 1440) % 1440) % 60).padStart(2, "0")}`;
+const maisMinutos = (hhmm, delta) => hhmmDe(minutosDe(hhmm) + delta);
+
 /* ── A. rodadaId: o balde da rodada ─────────────────────────────────────── */
 {
   const cover = require(path.join(ROOT, "tools", "lib", "cover-state.js"));
-  const esperado = { "00:23": "2026-12-01T00:23", "04:23": "2026-12-01T04:23", "08:23": "2026-12-01T08:23", "12:23": "2026-12-01T12:23", "16:23": "2026-12-01T16:23", "20:23": "2026-12-01T20:23" };
-  for (const [hora, id] of Object.entries(esperado)) {
+  const primeira = AGENDA[0];
+  const ultima = AGENDA[AGENDA.length - 1];
+  confere(`a agenda lida tem horários e o teste tem com o que contar (${AGENDA.join(", ")})`, AGENDA.length >= 1, AGENDA.join(","));
+  for (const hora of AGENDA) {
     setRelogio("2026-12-01", hora);
-    confere(`rodadaId no horário ${hora} = ${id}`, cover.rodadaId() === id, `veio ${cover.rodadaId()}`);
+    confere(`rodadaId no horário ${hora} = 2026-12-01T${hora}`, cover.rodadaId() === `2026-12-01T${hora}`, `veio ${cover.rodadaId()}`);
   }
   /* Rodada atrasada (medido no Actions: 1 a 170 min) pertence ao horário que
      deveria ter rodado, não ao minuto em que o node acordou. */
-  setRelogio("2026-12-01", "06:10");
-  confere("rodada das 04:23 arriving 1h47 tarde conta como 04:23", cover.rodadaId() === "2026-12-01T04:23", `veio ${cover.rodadaId()}`);
+  const atrasada = maisMinutos(primeira, 107);
+  setRelogio("2026-12-01", atrasada);
+  confere(`rodada das ${primeira} chegando ${atrasada} (1h47 tarde) conta como ${primeira}`, cover.rodadaId() === `2026-12-01T${primeira}`, `veio ${cover.rodadaId()}`);
   /* Antes da primeira rodada do dia ainda está em curso a última de ontem. */
-  setRelogio("2026-12-01", "00:10");
-  confere("00:10 pertence à rodada de 20:23 de ontem", cover.rodadaId() === "2026-11-30T20:23", `veio ${cover.rodadaId()}`);
-  setRelogio("2026-12-01", "00:22");
-  confere("00:22 (1 min antes) ainda é ontem", cover.rodadaId() === "2026-11-30T20:23", `veio ${cover.rodadaId()}`);
-  setRelogio("2026-12-01", "00:23");
-  confere("00:23 em ponto abre a rodada de hoje", cover.rodadaId() === "2026-12-01T00:23", `veio ${cover.rodadaId()}`);
+  setRelogio("2026-12-01", maisMinutos(primeira, -13));
+  confere(`${maisMinutos(primeira, -13)} pertence à rodada de ${ultima} de ontem`, cover.rodadaId() === `2026-11-30T${ultima}`, `veio ${cover.rodadaId()}`);
+  setRelogio("2026-12-01", maisMinutos(primeira, -1));
+  confere(`${maisMinutos(primeira, -1)} (1 min antes) ainda é ontem`, cover.rodadaId() === `2026-11-30T${ultima}`, `veio ${cover.rodadaId()}`);
+  setRelogio("2026-12-01", primeira);
+  confere(`${primeira} em ponto abre a rodada de hoje`, cover.rodadaId() === `2026-12-01T${primeira}`, `veio ${cover.rodadaId()}`);
+  if (AGENDA.length > 1) {
+    /* O vão entre duas rodadas não é rodada nova: é a anterior, ainda em curso. */
+    const noVao = maisMinutos(AGENDA[0], Math.floor((minutosDe(AGENDA[1]) - minutosDe(AGENDA[0])) / 2));
+    setRelogio("2026-12-01", noVao);
+    confere(`${noVao}, no vão entre ${AGENDA[0]} e ${AGENDA[1]}, é a rodada das ${AGENDA[0]}`, cover.rodadaId() === `2026-12-01T${AGENDA[0]}`, `veio ${cover.rodadaId()}`);
+  }
 }
 
 /* O catálogo com as notas aplicadas — exatamente o que o build.js enxerga:
@@ -163,7 +184,7 @@ const pisoDaCapa = () =>
    aritmética própria, não por defeito da regra. Duas voltas completas,
    arredondadas para dias inteiros do check_hours, valem para qualquer tamanho
    de catálogo. */
-const HORAS_DIA = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8")).check_hours;
+const HORAS_DIA = AGENDA;
 function rodadaEm(i) {
   const dia = Math.floor(i / HORAS_DIA.length) + 1;
   return { dia: `2026-12-${String(dia).padStart(2, "0")}`, hora: HORAS_DIA[i % HORAS_DIA.length] };
@@ -264,7 +285,7 @@ const sequencia = [];
      o turno inteiro, porque o portão é exatamente trocaNaRodada. O estado é
      inventado em memória, mas registrarCapa grava no STATE_FILE de verdade — daí
      o backup ao redor. */
-  setRelogio("2026-12-03", "00:23");
+  setRelogio("2026-12-03", AGENDA[0]);
   const backup = fs.readFileSync(STATE);
   const cover = require(path.join(ROOT, "tools", "lib", "cover-state.js"));
   try {
@@ -272,7 +293,7 @@ const sequencia = [];
     const registrou = cover.registrarCapa(state, "x", "rotacionada", true);
     confere("registrar a mesma capa não conta como troca", registrou === false && state.changes.length === 0, JSON.stringify(state.changes));
     const mudou = cover.registrarCapa(state, "y", "rotacionada", true);
-    confere("registrar outra matéria conta e carimba a era", mudou === true && state.changes[0].era === "x" && state.changes[0].rodada === "2026-12-03T00:23", JSON.stringify(state.changes));
+    confere("registrar outra matéria conta e carimba a era", mudou === true && state.changes[0].era === "x" && state.changes[0].rodada === `2026-12-03T${AGENDA[0]}`, JSON.stringify(state.changes));
     const heroIguais = cover.registrarCapa(state, "z", "rotacionada", false);
     confere("build que não escreveu nada no hero não serve a rodada", heroIguais === false && state.changes.length === 1, JSON.stringify(state.changes));
   } finally {
@@ -280,14 +301,17 @@ const sequencia = [];
   }
 }
 
-/* ── E. a troca da madrugada pertence à rodada de ontem ────────────────── */
+/* ── E. o minuto antes da primeira rodada do dia pertence à rodada de ontem ─ */
 {
   const cover = require(path.join(ROOT, "tools", "lib", "cover-state.js"));
-  setRelogio("2026-12-05", "00:05");
-  confere("00:05 está na rodada 20:23 de 04/12", cover.rodadaId() === "2026-12-04T20:23", cover.rodadaId());
+  const ultima = AGENDA[AGENDA.length - 1];
+  const antesDaPrimeira = maisMinutos(AGENDA[0], -13);
+  const instante = fuso("2026-12-05", antesDaPrimeira);
+  setRelogio("2026-12-05", antesDaPrimeira);
+  confere(`${antesDaPrimeira} está na rodada ${ultima} de 04/12`, cover.rodadaId() === `2026-12-04T${ultima}`, cover.rodadaId());
   confere("e o dia da meta é 04/12, não 05/12", cover.diaDaMeta() === "2026-12-04", cover.diaDaMeta());
-  const est = { changes: [{ at: "2026-12-05T03:05:00.000Z", id: "x" }] };
-  confere("uma troca da madrugada conta no dia da rodada", cover.trocasNoDia(est, "2026-12-04") === 1 && cover.trocasNoDia(est, "2026-12-05") === 0, JSON.stringify(cover.loadState && est.changes));
+  const est = { changes: [{ at: isoDe(instante), id: "x" }] };
+  confere(`uma troca às ${antesDaPrimeira} conta no dia da rodada`, cover.trocasNoDia(est, "2026-12-04") === 1 && cover.trocasNoDia(est, "2026-12-05") === 0, JSON.stringify(est.changes));
 }
 
 /* ── restauração ────────────────────────────────────────────────────────── */

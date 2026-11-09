@@ -239,7 +239,7 @@ ${
           </article>`,
 };
 
-function pick(slot, takenIds) {
+function pick(slot, takenIds, ineditasPrimeiro = false) {
   /* "TODAY'S PICKS" é por dia: o mesmo acervo, começando em outro ponto da
      lista a cada dia (lib/picks-rules — a peneira, a ordem e o passo ficam lá,
      e o doctor.js confere com a mesma função). Sem isto o bloco ficou 15 dias
@@ -248,11 +248,26 @@ function pick(slot, takenIds) {
   /* Feed automático é por data, não por nota: a região se vende como MOST
      RECENT, e matéria de 29/10 acima de 31/10 desmente o próprio rótulo. A nota
      continua sendo a peneira da capa (pickCover) e o desempate aqui. */
-  const pool = DB.articles
-    .filter((a) => (slot.category ? a.category === slot.category : true))
-    .filter((a) => !takenIds.has(a.id))
-    .sort((x, y) => toTime(y.date) - toTime(x.date) || (y.rank == null ? -1 : y.rank) - (x.rank == null ? -1 : x.rank));
-  return pool.slice(0, slot.limit || 6);
+  const porData = (x, y) => toTime(y.date) - toTime(x.date) || (y.rank == null ? -1 : y.rank) - (x.rank == null ? -1 : x.rank);
+  const naCategoria = DB.articles.filter((a) => (slot.category ? a.category === slot.category : true));
+  /* `acervo: true` no slot corta o cap: a página de editoria é o arquivo da
+     editoria. Com cap fixo em 8 e 15 peças em science, 4 delas não eram listadas
+     lá e 2 matérias do catálogo não tinham link de entrada em lugar nenhum —
+     entre elas a do radiotelescópio no lado escondido da Lua (medido no HEAD
+     09/11; o cap era o defeito, o `limit` de 8 estava na régua do doctor). */
+  const recorta = (pool) => (slot.acervo ? pool : pool.slice(0, slot.limit || 6));
+  if (ineditasPrimeiro) {
+    /* Feed de categoria é o acervo: tem de listar as 5 peças tech que existem,
+       e a curadoria do topo já mostra três delas. Descontá-las por completo —
+       o comportamento antigo — deixava o tech-feed com 1 card em 8, buraco
+       maior do que a repetição. A régua então é a ORDEM: inéditas primeiro,
+       repetição só afunda para o fim da lista. */
+    return recorta([
+      ...naCategoria.filter((a) => !takenIds.has(a.id)).sort(porData),
+      ...naCategoria.filter((a) => takenIds.has(a.id)).sort(porData),
+    ]);
+  }
+  return recorta(naCategoria.filter((a) => !takenIds.has(a.id)).sort(porData));
 }
 
 /* Piso da capa: pipeline/cadence.json → cover_baseline. */
@@ -380,19 +395,24 @@ function applySlot(file, slot) {
   const idsDe = (trecho) => new Set([...trecho.matchAll(/article\.html\?id=([^&"']+)/g)].map((m) => decodeURIComponent(m[1])));
   const before = src.slice(0, src.indexOf(start));
   let takenIds;
+  let ineditasPrimeiro = false;
   if (slot.rotacao === "dia") {
     /* O desconto é régua do bloco, não deste arquivo: lib/picks-rules diz que
        só a região do hero desconta, e o doctor.js confere com a mesma função. */
     takenIds = picksRules.excluidasDaRotacao(src);
-  } else if (slot.dedup === "nenhum") {
+  } else if (slot.dedup === "prioridade-ineditas") {
     /* Página de categoria: o feed é o acervo da matéria, e o spotlight e o
        trending do topo são curadoria manual (AGENTS.md). Descontar os dois
        deixava culture-feed em 5 de 8 e tech-feed em 1 de 8 com 10 e 5 peças
-       no catálogo — a régua punia a página por ela ter edição. Repetir
-       matéria entre a curadoria do topo e o feed é normal num índice de
-       categoria; o que não pode é a home mostrar a mesma peça duas vezes na
-       mesma tela, e para isso os slots da home continuam com dedup do arquivo. */
-    takenIds = new Set();
+       no catálogo — a régua punia a página por ela ter edição. Não descontar
+       nada (a primeira tentativa, revertida pelo supervisor em 09/11) fazia o
+       feed inteiro repetir a página: 8 cards de 8 apontando para algo que já
+       estava no topo. A régua certa é a ORDEM, e ela olha para CIMA: o leitor
+       desce, e o que ele acabou de ver no spotlight é justamente o que o
+       primeiro card do feed não pode ser. Repetição existe — com 5 peças tech
+       no catálogo e 3 curadas acima, não há como não repetir — mas afunda. */
+    takenIds = idsDe(before);
+    ineditasPrimeiro = true;
   } else if (slot.dedup === "somente-automatico") {
     /* Grade grande (CULTURE) numa página que também tem curadoria à mão: as
        duas matérias do TRENDING // TOP 5 não podem continuar tirando vaga do
@@ -403,7 +423,7 @@ function applySlot(file, slot) {
     takenIds = idsDe(after + before);
   }
 
-  const cards = pick(slot, takenIds).map(TEMPLATES[slot.template]);
+  const cards = pick(slot, takenIds, ineditasPrimeiro).map(TEMPLATES[slot.template]);
   const block = cards.length ? `\n${cards.join("\n\n")}\n` : "\n";
   const next = `${before}${start}${block}${end}${after.slice(end.length)}`;
   if (inserted || next !== src) {

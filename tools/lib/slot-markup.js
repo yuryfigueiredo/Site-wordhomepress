@@ -41,22 +41,30 @@ function regioesDoArquivo(html, slots) {
 }
 
 /* Posições de cada <article class="X"> do arquivo, separadas entre dentro e
-   fora das regiões automáticas. */
+   fora das regiões automáticas. A classe é conferida como TOKEN do atributo,
+   não como prefixo literal: um card `class="article-card is-featured"` é o
+   mesmo card de matéria, e procurá-lo pela aspa fechada o deixava invisível
+   para o portão — continuaria subtraindo vaga do slot sem nunca ser acusado. */
 function cardsPorClasse(html, cls, regioes) {
-  const alvo = `<article class="${cls}"`;
   const dentro = [];
   const fora = [];
-  let i = -1;
-  while ((i = String(html).indexOf(alvo, i + 1)) >= 0) {
-    (regioes.some(([a, b]) => i >= a && i < b) ? dentro : fora).push(i);
+  const abre = /<article\b[^>]*>/g;
+  let m;
+  while ((m = abre.exec(String(html)))) {
+    const atributo = m[0].match(/class="([^"]*)"/);
+    if (!atributo || !atributo[1].trim().split(/\s+/).some((c) => c === cls)) continue;
+    (regioes.some(([a, b]) => m.index >= a && m.index < b) ? dentro : fora).push(m.index);
   }
   return { dentro, fora };
 }
 
+/* O id que um card aponta — matéria OU review: uma review escrita à mão fora
+   dos marcadores é exatamente o mesmo defeito, e reconhecer só
+   article.html?id= a classificava como "curadoria". */
 const idDoCard = (html, pos) => {
   const fim = String(html).indexOf("</article>", pos);
   const trecho = String(html).slice(pos, fim > pos ? fim : pos + 900);
-  const m = trecho.match(/article\.html\?id=([^&"']+)/);
+  const m = trecho.match(/[a-z0-9-]+\.html\?id=([^&"']+)/i);
   return m ? decodeURIComponent(m[1]) : null;
 };
 

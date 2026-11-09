@@ -208,10 +208,23 @@ for (const a of DB.articles) {
 }
 
 /* ── 7. Conteúdo órfão ────────────────────────────────────────────────── */
-const staticText = HTML_FILES.filter((f) => !NOINDEX_PAGES.includes(f)).map(read).join("\n");
+/* Alcance é medido por LINK, não por menção. A versão anterior procurava
+   `id=<slug>` e `"<slug>"` no texto de todas as páginas juntas: contava a
+   própria página da matéria (que é o destino, não a entrada) e aceitava
+   qualquer string parecida — o supervisor provou em 09/11 que um
+   `<script>window.__LEGADO=["<slug>"]</script>` plantado na home apagava o
+   aviso sem criar um clique. Agora: só `article.html?id=` / `review.html?id=`,
+   e a própria página não vale. */
+const idsLinkadosPorPagina = new Map();
+for (const f of HTML_FILES.filter((x) => !NOINDEX_PAGES.includes(x))) {
+  const ids = new Set();
+  for (const m of String(read(f) || "").matchAll(/(?:article|review)\.html\?id=([^&"'\s<>]+)/g)) ids.add(decodeURIComponent(m[1]));
+  idsLinkadosPorPagina.set(f, ids);
+}
 for (const a of DB.articles) {
-  const linked = staticText.includes(`id=${a.id}`) || staticText.includes(`"${a.id}"`);
-  if (!linked) warn("orphan", `artigo "${a.id}" não é linkado por nenhuma página — só alcançável pela busca`);
+  const propria = `a-${a.id}.html`;
+  const alcanca = [...idsLinkadosPorPagina].some(([f, ids]) => f !== propria && ids.has(a.id));
+  if (!alcanca) fail("orphan", `artigo "${a.id}" não é linkado por nenhuma OUTRA página — a própria página é o destino, não a entrada: sem clique para ela, só existe para a busca`);
 }
 
 /* ── 8. Monetização honesta ───────────────────────────────────────────── */
@@ -492,6 +505,7 @@ const {
    contado aqui. */
 {
   const markup = require("./lib/slot-markup");
+  const picksRules = require("./lib/picks-rules");
   let plc14 = null;
   try {
     plc14 = JSON.parse(read("pipeline/placements.json"));
@@ -499,7 +513,7 @@ const {
   if (!plc14) {
     fail("slot-stale", "pipeline/placements.json ilegível — sem a lista de slots o doctor não sabe o que é automático");
   } else {
-    const noCatalogo = new Set(DB.articles.map((a) => a.id));
+    const noCatalogo = new Set([...DB.articles.map((a) => a.id), ...(DB.reviews || []).map((r) => r.id)]);
     let conferidos = 0;
     let curados = 0;
     for (const [file, slots] of Object.entries(plc14.slots)) {
@@ -523,6 +537,40 @@ const {
             "slot-vazio",
             `${file} · ${slot.name}: ${gerados} card(s) gerados contra um limit de ${slot.limit} (acervo elegível no catálogo: ${acervo} ${slot.category ? slot.category + " " : ""}peça(s)) — falta matéria ou o markup solto do arquivo ainda está descontando da fila`,
           );
+        }
+        if (slot.dedup === "prioridade-ineditas") {
+          /* O feed de categoria é o acervo e a curadoria do topo já mostrou
+             parte dele: repetir é inevitável com um catálogo fino, mas a ordem
+             é régua — o leitor desce, e o primeiro card não pode ser a matéria
+             que ele acabou de ler no spotlight. Verde com repetição no topo foi
+             o que o supervisor pegou em 09/11, depois do "dedup: nenhum". */
+          const i0 = html.indexOf(markup.marcador(slot.name, "start"));
+          const acima = new Set([...html.slice(0, i0).matchAll(/[a-z0-9-]+\.html\?id=([^&"']+)/gi)].map((x) => decodeURIComponent(x[1])));
+          const ordem = [...picksRules.idsDaRegiao(html, slot.name)];
+          const marcas = ordem.map((id) => (acima.has(id) ? 1 : 0));
+          const primeiroRepetido = marcas.indexOf(1);
+          const ultimaInedita = marcas.lastIndexOf(0);
+          if (primeiroRepetido >= 0 && ultimaInedita > primeiroRepetido)
+            fail(
+              "slot-stale",
+              `${file} · ${slot.name}: o card ${primeiroRepetido + 1} do feed repete matéria que já está acima dele, e há inédita mais abaixo (posições ${marcas.map((v, k) => (v === 0 ? k + 1 : 0)).filter(Boolean).join(",")}) — com dedup "prioridade-ineditas" a inédita vem primeiro e a repetição afunda; rode node tools/build.js`,
+            );
+        }
+        if (slot.acervo) {
+          /* O cap de 8 cards foi o que escondeu a cauda do catálogo: com 15
+             peças science, a página listava 11 e as 4 mais velhas não entravam
+             — 2 delas sem link de entrada em lugar nenhum do site (medido no
+             HEAD 09/11). Com "acervo": true a página da editoria tem de listar
+             TODA a editoria — e o [orphan] de cima garante o mesmo pelo lado
+             do catálogo, não pelo lado do markup. */
+          const daEditoria = DB.articles.filter((a) => (slot.category ? a.category === slot.category : true)).map((a) => a.id);
+          const publicados = new Set(picksRules.idsDaRegiao(html, slot.name));
+          const deFora = daEditoria.filter((id) => !publicados.has(id));
+          if (deFora.length)
+            fail(
+              "slot-stale",
+              `${file} · ${slot.name}: o slot é "acervo" mas faltam ${deFora.length} peça(s) da editoria na lista (${deFora.slice(0, 3).join(", ")}${deFora.length > 3 ? ", …" : ""}) — a página de editoria é o arquivo dela; rode node tools/build.js`,
+            );
         }
         if (slot.count_pill) {
           const alvo = slot.count_pill.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

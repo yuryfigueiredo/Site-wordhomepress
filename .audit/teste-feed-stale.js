@@ -83,10 +83,16 @@ console.log("\n[4] amarramento");
 const pubSrc = fs.readFileSync(path.join(ROOT, "tools", "publish.js"), "utf8");
 confere("publish.js regenera o feed na mesma etapa do sitemap", /run\("build-sitemap\.js"\)[\s\S]{0,400}run\("build-feed\.js"\)/.test(pubSrc), "a etapa saiu do caminho de build do publish");
 confere("rodar build-feed.js sozinho não exigir nada (idempotente)", (() => {
+  /* Comparar bytes com core.autocrlf ligado é comparar o checkout da máquina,
+     não o conteúdo: o build escreve LF e o git entrega CRLF, então a conferência
+     ficava vermelha em Windows com o feed byte a byte igual. Normaliza o EOL e
+     mede o que importa — o corpo do feed. */
+  const semData = (s) => s.replace(/\r\n/g, "\n").replace(/<lastBuildDate>[^<]*<\/lastBuildDate>/, "");
   const antes = fs.readFileSync(FEED, "utf8");
   execFileSync(process.execPath, [path.join(ROOT, "tools", "build-feed.js")], { cwd: ROOT, encoding: "utf8" });
   const depois = fs.readFileSync(FEED, "utf8");
-  return depois.replace(/<lastBuildDate>[^<]*<\/lastBuildDate>/, "") === antes.replace(/<lastBuildDate>[^<]*<\/lastBuildDate>/, "");
+  fs.writeFileSync(FEED, antes);
+  return semData(depois) === semData(antes);
 })());
 confere("requerer build-feed de outra ferramenta não reescreve o feed", (() => {
   const antes = fs.readFileSync(FEED, "utf8");
