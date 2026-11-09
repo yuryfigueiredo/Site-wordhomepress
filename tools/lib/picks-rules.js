@@ -35,7 +35,7 @@ const minimoParaRotacao = (n) => n + 1;
    está no index.html sem reimplementar a renderização. O Set devolve os ids na
    ordem em que aparecem, então comparar [...regiao] com o par calculado compara
    também a ordem dos cards. */
-const marcador = (name, kind) => `<!-- hwp:auto:${name}:${kind} -->`;
+const { marcador } = require("./slot-markup");
 const regiao = (html, name) => {
   const a = String(html).indexOf(marcador(name, "start"));
   const b = String(html).indexOf(marcador(name, "end"));

@@ -14,6 +14,7 @@ const DRY = process.argv.includes("--dry");
 const PLACEMENTS = path.join(ROOT, "pipeline", "placements.json");
 const coverRules = require("./lib/cover-rules");
 const picksRules = require("./lib/picks-rules");
+const slotMarkup = require("./lib/slot-markup");
 
 global.window = {};
 require(path.join(ROOT, "js", "articles-db.js"));
@@ -215,6 +216,27 @@ ${
                 }
               </div>
             </article>`,
+
+  /* Segunda e terceira peças da coluna central. Mesma classe e mesmo desenho do
+     card escrito à mão que substituiu; o que muda é que agora ele sai do
+     catálogo. A coluna central parada no mesmo Dune de 22/out era metade do vão
+     preto que o dono apontou na home. */
+  "center-subfeature": (a) => `          <article class="center-subfeature">
+            <a href="${href(a.id)}" class="center-subfeature__media">
+              <img src="${esc(thumb(a))}" alt="${esc(a.imageAlt || a.title)}" loading="lazy" decoding="async" width="220" height="145">
+            </a>
+            <div>
+              <span class="kicker kicker--${esc(a.category)}">${esc(a.kicker)}</span>
+              <h2 class="center-subfeature__title">
+                <a href="${href(a.id)}">${esc(a.title)}</a>
+              </h2>
+              <div class="meta-line" style="margin-top:0.45rem;">
+                <span>BY <strong>${byline(a)}</strong></span>
+                <span>•</span>
+                <span>${esc(a.date)}</span>
+              </div>
+            </div>
+          </article>`,
 };
 
 function pick(slot, takenIds) {
@@ -296,8 +318,8 @@ const writeSrc = (file, src) => {
 
 function applySlot(file, slot) {
   let src = readSrc(file);
-  const start = `<!-- hwp:auto:${slot.name}:start -->`;
-  const end = `<!-- hwp:auto:${slot.name}:end -->`;
+  const start = slotMarkup.marcador(slot.name, "start");
+  const end = slotMarkup.marcador(slot.name, "end");
   let inserted = false;
 
   if (!src.includes(start)) {
@@ -381,5 +403,31 @@ const results = [];
 for (const [file, slots] of Object.entries(config.slots)) {
   for (const slot of slots) results.push(applySlot(file, slot));
 }
+
+/* O número do rótulo é consequência da grade, não escolha de quem edita o HTML:
+   enquanto a CULTURE tinha cards escritos à mão, "ALL CULTURE (6)" convivia com
+   9 cards no ar. doctor.js confere com o mesmo cardsNaRegiao(). */
+function sincronizarContadores() {
+  const linhas = [];
+  for (const [file, slots] of Object.entries(config.slots)) {
+    for (const slot of slots) {
+      if (!slot.count_pill) continue;
+      const src = readSrc(file);
+      const n = slotMarkup.cardsNaRegiao(src, slot);
+      const alvo = slot.count_pill.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const re = new RegExp(`(<[^>]*${alvo}[^>]*>[^<()]*\\()\\d+(\\))`);
+      if (!re.test(src)) {
+        linhas.push(`${file} · ${slot.name}: pill "${slot.count_pill}" não encontrada — nada feito`);
+        continue;
+      }
+      const next = src.replace(re, `$1${n}$2`);
+      if (next !== src) writeSrc(file, next);
+      linhas.push(`${file} · ${slot.name}: pill ${n}`);
+    }
+  }
+  return linhas;
+}
+
+for (const linha of sincronizarContadores()) console.log(linha);
 for (const r of results) console.log(`${r.file} · ${r.slot}: +${r.added}${r.note ? ` (${r.note})` : ""}`);
 console.log(DRY ? "(dry run — nada gravado)" : "build aplicado.");
