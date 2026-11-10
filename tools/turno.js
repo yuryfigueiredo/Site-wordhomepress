@@ -1,7 +1,7 @@
 /* turno.js — uma rodada completa do robô, idêntica no seu PC e no GitHub Actions.
-   Coleta → manutenção → teto diário → pauta → brief → texto (provedores de
-   pipeline/providers.json) → capa → editor mecânico (até 3 tentativas) → nota →
-   publicação. Nunca faz push e nunca faz
+   Coleta → rotação diária → manutenção → teto diário → pauta → brief → texto
+   (provedores de pipeline/providers.json) → capa → editor mecânico (até 3
+   tentativas) → nota → publicação. Nunca faz push e nunca faz
    deploy: quem commita/envia é o workflow. Escreve TURNO.md, o relatório que
    substitui o painel quando o seu PC está desligado.
 
@@ -13,8 +13,9 @@ const { execFileSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "..");
 const log = [];
 const say = (stage, msg) => { log.push(`- **${stage}** — ${msg}`); console.log(`[${stage}] ${msg}`); };
-/* A troca de capa só é cobrada depois da manutenção verde: rodar build com erro
-   aberto seria publicar por outro caminho. */
+/* A troca de CAPA só é cobrada depois da manutenção verde: rodar o build
+   completo com erro aberto seria publicar por outro caminho. A rotação diária
+   do passo 2 não é capa — é o bloco que o doctor exige pronto para hoje. */
 let posManutencao = false;
 let publicou = false;
 
@@ -139,8 +140,9 @@ function garantirFoto(slug) {
    falta de pauta não rodava build, a rodada fechava sem troca nenhuma e a meta
    de cover_changes_per_day ia a zero em silêncio — o commit que "força a troca"
    só funcionava nos dias em que saía matéria. Desde 2026-11-07 a meta é UMA
-   TROCA POR RODADA (6/dia): sem matéria nova, o build caminha na lista de
-   elegíveis e põe outra matéria no hero. */
+   TROCA POR RODADA (`cover_changes_per_day`, que o doctor exige igual ao número
+   de horários do `check_hours` — o número mora no JSON, não aqui): sem matéria
+   nova, o build caminha na lista de elegíveis e põe outra matéria no hero. */
 function girarCapa() {
   const b = run("build.js");
   const linha = (b.out.match(/index-hero:[^\n]*/) || [""])[0].trim();
@@ -202,7 +204,19 @@ say(
     : `falhou: ${ing.out.slice(-200)}`,
 );
 
-/* 2. manutenção: com erro aberto não se publica nada */
+/* 2. rotação diária ANTES da manutenção. O doctor exige que o bloco TODAY'S
+   PICKS publicado seja o que a régua de hoje calcula, e quem produz esse bloco
+   é o build — que até 10/11 só rodava no fim da rodada (publish ou girarCapa).
+   Na virada do dia UTC o portão nascia vermelho por construção, a rodada parava
+   aqui, o bloco nunca girava e a rodada seguinte morria do mesmo jeito: três
+   rodadas seguidas assim no Actions, site congelado desde 08/11. `--daily` gira
+   só os blocos de rotação diária e não toca na capa, para a matéria inédita
+   ainda tomar o hero na primeira publicação da rodada. */
+const giro = run("build.js", ["--daily"]);
+say("rotação diária", giro.code === 0 ? (giro.out.trim().split("\n").pop() || "ok") : `build --daily falhou (exit ${giro.code}): ${giro.out.trim().slice(-220)}`);
+if (giro.code !== 0) finish("a rotação diária falhou — sem ela o bloco do dia fica velho no ar e o doctor barra a rodada seguinte.", 1);
+
+/* 3. manutenção: com erro aberto não se publica nada */
 const doc = run("doctor.js", ["--offline"]);
 const docLine = (doc.out.match(/errors \d+ \| .*warnings \d+/) || ["sem resumo"])[0];
 say("manutenção", docLine);
@@ -211,7 +225,7 @@ say("manutenção", docLine);
 if (doc.code !== 0) finish("doctor terminou com erros — a rodada para aqui por segurança.", 1);
 posManutencao = true;
 
-/* 3. teto diário */
+/* 4. teto diário */
 const cad = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline", "cadence.json"), "utf8"));
 const done = require("./lib/cadence").publishedToday(ROOT);
 say("cadência", `${done}/${cad.max_publishes_per_day} publicação(ões) hoje`);
@@ -228,14 +242,14 @@ if (horasDesde !== null && minimoHoras && horasDesde < minimoHoras) {
   finish(`cadência: a última matéria está no ar há ${horasDesde.toFixed(1)}h (mínimo ${minimoHoras}h) — esta rodada só coleta e checa.`);
 }
 
-/* 4. pauta */
+/* 5. pauta */
 const mem = require("./lib/memory");
 const pick = run("pick-lead.js");
 if (pick.code !== 0) finish(pick.out.trim() || "sem pauta nova.");
 const lead = JSON.parse(pick.out.trim().split("\n").pop());
 say("pauta", `${lead.topic} (${lead.source}, score ${lead.score})`);
 
-/* 5. brief */
+/* 6. brief */
 const briefArgs = ["--url", lead.url, "--pillar", lead.pillar, "--topic", lead.topic, "--slug", lead.slug];
 if (lead.published) briefArgs.push("--source-date", lead.published);
 const brief = run("new-post.js", briefArgs);
@@ -245,7 +259,7 @@ if (brief.code !== 0) {
 }
 say("brief", `pipeline/drafts/${lead.slug}/ criado`);
 
-/* 6. texto */
+/* 7. texto */
 const prov = require("./lib/providers");
 /* Sem chave no ambiente não é "dia sem notícia": é o robô desligado. Vermelho
    para o Actions não continuar verde com o site sem publicação por mês. */
@@ -260,7 +274,7 @@ say("foto", garantirFoto(lead.slug).linha);
 const capa = run("make-cover.js", [lead.slug]);
 say("capa", capa.code === 0 ? capa.out.trim().split("\n")[0] : `falhou: ${capa.out.trim().slice(-200)}`);
 
-/* 7. editor mecânico, até 3 tentativas com devolutiva */
+/* 8. editor mecânico, até 3 tentativas com devolutiva */
 let check = { code: 1, out: "" };
 for (let t = 1; t <= 3; t++) {
   check = run("check-post.js", [lead.slug]);
@@ -283,7 +297,7 @@ if (check.code !== 0) {
   finish("rascunho ficou reprovado depois de 3 tentativas — nada publicado, e a pauta fica 72h fora da fila (pipeline/memory.json).");
 }
 
-/* 8. nota */
+/* 9. nota */
 const sc = run("score.js", ["--draft", lead.slug]);
 const nota = (sc.out.match(/nota ([\d.]+)\/10/) || [])[1];
 say("nota", nota ? `${nota}/10 · ${(sc.out.split("\n")[1] || "").slice(0, 160)}` : sc.out.trim().split("\n")[0]);
@@ -292,7 +306,7 @@ if (/DUPLICATA/.test(sc.out)) {
   finish("nota calculada aponta quase-duplicata — nada publicado.");
 }
 
-/* 9. publicação */
+/* 10. publicação */
 const pub = run("publish.js", [lead.slug]);
 if (pub.code !== 0) {
   /* barrado pela cadência não é falha da pauta: sem este teste a janela de

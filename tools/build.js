@@ -5,12 +5,17 @@
    Uso:
      node tools/build.js            # aplica pipeline/placements.json
      node tools/build.js --dry      # mostra o que mudaria, sem gravar
+     node tools/build.js --daily    # só os blocos de rotação diária, sem tocar na capa
    Config dos slots: pipeline/placements.json                            */
 const fs = require("fs");
 const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
 const DRY = process.argv.includes("--dry");
+/* A rodada do cron precisa girar o bloco do dia ANTES do doctor, que exige o
+   bloco de hoje no ar. Sem este modo, o build completo giraria a capa também e
+   gastaria a troca da rodada antes de a matéria inédita tomar o hero. */
+const DAILY = process.argv.includes("--daily");
 const PLACEMENTS = path.join(ROOT, "pipeline", "placements.json");
 const coverRules = require("./lib/cover-rules");
 const picksRules = require("./lib/picks-rules");
@@ -291,8 +296,8 @@ function coverFloor() {
       publicado, e a ordem é escolha da publicação, não da rotação);
    3. rodada aberta e nada inédito → ROTACIONA: um passo na lista de elegíveis
       (`proximaNaRotação`), voltando ao topo no fim do ciclo. É a regra que faz a
-      capa trocar 6 vezes por dia com matéria nova ou não — a capa é o que mais
-      chama atenção e o hero não pode ficar parado entre duas rodadas.
+      capa trocar em toda rodada do cron com matéria nova ou não — a capa é o que
+      mais chama atenção e o hero não pode ficar parado entre duas rodadas.
    Se a capa registrada não está mais entre as elegíveis (nota caiu abaixo do
    piso, perdeu a foto, saiu do catálogo) a rodada é servida de novo mesmo tendo
    troca: o hero não pode continuar mostrando matéria que não pode ser capa.
@@ -324,11 +329,13 @@ const readSrc = (file) => {
 const writeSrc = (file, src) => {
   cache.set(file, src);
   if (DRY) return;
-  /* tmp+rename: um kill no meio do build não deixa feed truncado. */
+  /* tmp+rename: um kill no meio do build não deixa feed truncado. O rename passa
+     pelo lib/atomic-write porque no Windows o antivírus segura o alvo por um
+     instante e o EPERM matava a rodada sem defeito editorial nenhum (10/11). */
   const target = path.join(ROOT, file);
   const tmp = `${target}.tmp`;
   fs.writeFileSync(tmp, src);
-  fs.renameSync(tmp, target);
+  require("./lib/atomic-write").renomear(tmp, target);
 };
 
 function applySlot(file, slot) {
@@ -359,7 +366,11 @@ function applySlot(file, slot) {
     const resync = !fallbackExists || (incumbentId && regionIds[0] === incumbentId);
     if (!DRY && resync) {
       fs.mkdirSync(path.dirname(fb), { recursive: true });
-      fs.writeFileSync(fb, region);
+      /* tmp + rename pelo mesmo helper do writeSrc: o fallback é a capa escrita à
+         mão versionada, e truncá-lo num kill perderia a referência do dono. */
+      const tmpFb = `${fb}.tmp`;
+      fs.writeFileSync(tmpFb, region);
+      require("./lib/atomic-write").renomear(tmpFb, fb);
     }
 
     /* A rodada atual já teve troca de capa? Se não, este build gira a capa. */
@@ -436,7 +447,10 @@ function applySlot(file, slot) {
 const config = JSON.parse(fs.readFileSync(PLACEMENTS, "utf8"));
 const results = [];
 for (const [file, slots] of Object.entries(config.slots)) {
-  for (const slot of slots) results.push(applySlot(file, slot));
+  for (const slot of slots) {
+    if (DAILY && slot.rotacao !== "dia") continue;
+    results.push(applySlot(file, slot));
+  }
 }
 
 /* O número do rótulo é consequência da grade, não escolha de quem edita o HTML:
@@ -463,6 +477,6 @@ function sincronizarContadores() {
   return linhas;
 }
 
-for (const linha of sincronizarContadores()) console.log(linha);
+if (!DAILY) for (const linha of sincronizarContadores()) console.log(linha);
 for (const r of results) console.log(`${r.file} · ${r.slot}: +${r.added}${r.note ? ` (${r.note})` : ""}`);
-console.log(DRY ? "(dry run — nada gravado)" : "build aplicado.");
+console.log(DRY ? "(dry run — nada gravado)" : DAILY ? "rotação diária aplicada (capa intacta)." : "build aplicado.");

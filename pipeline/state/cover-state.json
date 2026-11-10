@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "physicists-watch-time-emerge-without-clocks",
+  "currentCoverId": "nasa-lunar-landing-research-vehicle-test",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -56,6 +56,14 @@
       "id": "physicists-watch-time-emerge-without-clocks",
       "tipo": "do dia",
       "era": "swift-space-telescope-reentry-failure-analysis"
+    },
+    {
+      "at": "2026-11-10T04:30:09.704Z",
+      "dia": "2026-11-09",
+      "rodada": "2026-11-09T20:23",
+      "id": "nasa-lunar-landing-research-vehicle-test",
+      "tipo": "do dia",
+      "era": "physicists-watch-time-emerge-without-clocks"
     }
   ],
   "capaVistas": [
@@ -65,6 +73,7 @@
     "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
     "james-webb-telescope-reveals-giant-exoplanet",
     "swift-space-telescope-reentry-failure-analysis",
-    "physicists-watch-time-emerge-without-clocks"
+    "physicists-watch-time-emerge-without-clocks",
+    "nasa-lunar-landing-research-vehicle-test"
   ]
 }

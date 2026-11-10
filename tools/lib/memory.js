@@ -78,7 +78,7 @@ function gravar(root, mem) {
     publishes: mem.publishes.slice(-MAX_PUBLISHES),
   };
   fs.writeFileSync(tmp, JSON.stringify(out, null, 2) + "\n");
-  fs.renameSync(tmp, alvo);
+  require("./atomic-write").renomear(tmp, alvo);
 }
 
 function registrar(root, url, outcome, extra = {}) {

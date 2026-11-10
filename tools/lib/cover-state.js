@@ -187,7 +187,12 @@ function loadState() {
 
 function saveState(state) {
   fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true });
-  fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2) + "\n");
+  /* tmp + rename: este arquivo é a memória da capa entre rodadas, e o loadState
+     engole JSON truncado devolvendo estado vazio — um kill no meio da escrita
+     direta zeraria a memória em silêncio e a capa voltaria ao começo do ciclo. */
+  const tmp = `${STATE_FILE}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(state, null, 2) + "\n");
+  require("./atomic-write").renomear(tmp, STATE_FILE);
 }
 
 /* Registra a capa que acabou de ir ao ar. Repetir a capa da rodada não conta como

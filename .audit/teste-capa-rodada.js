@@ -205,7 +205,11 @@ const sequencia = [];
     setRelogio(DIAS[i], HORAS[i]);
     const { capa, erro } = rodarBuild();
     if (erro) {
-      falhas.push(`build quebrou na rodada ${i + 1}: ${erro.message}`);
+      /* `falhas.push` sozinho escondia a causa: aquela lista só decide se o resumo
+         do ciclo é impresso, e o resumo final percorre `checks`. Um build que
+         estoura no meio do ciclo aparecia como dois vermelhos sem explicação lá
+         embaixo — foi assim que 10/11 pareceu defeito de rotação. */
+      confere(`o build da rodada ${i + 1} (${DIAS[i]}T${HORAS[i]}) roda sem estourar`, false, erro.message);
       break;
     }
     const agora = heroNoAr();

@@ -28,7 +28,7 @@ function gravar(root, dados) {
   const tmp = `${alvo}.tmp`;
   fs.mkdirSync(path.dirname(alvo), { recursive: true });
   fs.writeFileSync(tmp, JSON.stringify(dados, null, 2));
-  fs.renameSync(tmp, alvo);
+  require("./atomic-write").renomear(tmp, alvo);
 }
 
 module.exports = { ARQUIVO, ler, gravar };
