@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "nasa-lunar-landing-research-vehicle-test",
+  "currentCoverId": "artemis-i-radiation-discrepancy",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -64,6 +64,14 @@
       "id": "nasa-lunar-landing-research-vehicle-test",
       "tipo": "do dia",
       "era": "physicists-watch-time-emerge-without-clocks"
+    },
+    {
+      "at": "2026-11-10T21:27:19.837Z",
+      "dia": "2026-11-10",
+      "rodada": "2026-11-10T12:23",
+      "id": "artemis-i-radiation-discrepancy",
+      "tipo": "do dia",
+      "era": "nasa-lunar-landing-research-vehicle-test"
     }
   ],
   "capaVistas": [
@@ -74,6 +82,7 @@
     "james-webb-telescope-reveals-giant-exoplanet",
     "swift-space-telescope-reentry-failure-analysis",
     "physicists-watch-time-emerge-without-clocks",
-    "nasa-lunar-landing-research-vehicle-test"
+    "nasa-lunar-landing-research-vehicle-test",
+    "artemis-i-radiation-discrepancy"
   ]
 }
