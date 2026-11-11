@@ -1,10 +1,17 @@
-# Turno — 2026-11-10 21:27 UTC
+# Turno — 2026-11-11 03:02 UTC
 
-- **coleta** — fila: 45 pautas (12/12 feeds ok) → pipeline/leads/2026-11-10.md
+- **coleta** — fila: 45 pautas (11/12 feeds ok) → pipeline/leads/2026-11-11.md · feeds fora: Publishing Perspectives: fetch failed (UND_ERR_SOCKET)
 - **rotação diária** — rotação diária aplicada (capa intacta).
 - **manutenção** — errors 0 | ✗ warnings 1
 - **cadência** — 0/2 publicação(ões) hoje
-- **pauta** — NASA reveals bold new plan to return astronauts to the Moon in 2028 (Science Daily Astronomy, score 7)
-- **brief** — pipeline/drafts/nasa-reveals-bold-new-plan-to-return-astronauts-to-the-moon-in-2/ criado
-- **capa** — index-hero: +1 (capa do dia: artemis-i-radiation-discrepancy (6.9, Nov 1, 2026) · piso 6.5 · rodada 2026-11-10T12:23)
-- **fim** — o redator não entregou texto:   · gemini/gemini-3.1-pro-preview: HTTP 429 (cota do tier) ·   · gemini/gemma-4-26b-a4b-it: HTTP 500: INTERNAL · Internal error encountered. ·   · gemini/gemini-4-argon: HTTP 429 (cota do tier) ·   · gemini/gemini-3.7-flash: HTTP 503: UNAVAILABLE · This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. ·   · nvidia/openai/gpt-oss-20b: rede: The operation was aborted due to timeout ·   · nvidia-2/openai/gpt-oss-20b: rede: The operation was aborted due to timeout · sem chave (não tentados): groq (GROQ_API_KEY), cerebras (CEREBRAS_API_KEY), mistral (MISTRAL_API_KEY), openrouter (OPENROUTER_API_KEY) · A rodada termina aqui de propósito: sem texto não há o que checar nem publicar.
+- **pauta** — M John Harrison becomes first science fiction author to win the Booker prize (The Guardian SF, score 5)
+- **brief** — pipeline/drafts/m-john-harrison-becomes-first-science-fiction-author-to-win-the-/ criado
+- **texto** — escrito por gemini/gemini-3.5-flash-lite: m-john-harrison-booker-win-analysis (233 palavras)
+- **foto** — ✓ foto encontrada: images/posts/m-john-harrison-becomes-first-science-fiction-author-to-win-the-.jpg (Photo by Vitali Bozh on Unsplash)
+- **capa** — m-john-harrison-becomes-first-science-fiction-author-to-win-the- usa foto real (images/posts/m-john-harrison-becomes-first-science-fiction-author-to-win-the-.jpg) — nenhuma placa gerada
+- **edição** — tentativa 1 reprovada:   ✗ [length] texto com 233 palavras para uma pauta de ~1200 — o piso é 840
+- **edição** — tentativa 2 reprovada:   ✗ [rhythm] nenhum parágrafo de uma frase
+- **edição** — aprovado na tentativa 3
+- **nota** — 6.9/10 · 6.9/10 — força em timeliness (fonte mais recente há 2 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)
+- **publicação** — publicado localmente: m-john-harrison-booker-prize-win · nota 6.9/10 · cadência hoje: 1/2
+- **fim** — rodada completa. O commit e o push são do workflow; o deploy é da Vercel.

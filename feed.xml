@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 08 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 11 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>M John Harrison Breaks the Booker Prize Boundary for Science Fiction</title>
+      <link>https://www.homeworldpress.com/article.html?id=m-john-harrison-booker-prize-win</link>
+      <description>The selection of The End of Everything forces literary institutions to recognize speculative mechanics.</description>
+      <category>culture</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=m-john-harrison-booker-prize-win</guid>
+      <pubDate>Wed, 11 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>NASA Loses Swift After Rescue Attempt Fails in Upper Atmosphere</title>
       <link>https://www.homeworldpress.com/article.html?id=swift-space-telescope-reentry-failure-analysis</link>
@@ -78,14 +86,6 @@
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=physicists-watch-time-emerge-without-clocks</guid>
       <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>NASA Built A Dangerous Cage To Train Apollo Moon Landers</title>
-      <link>https://www.homeworldpress.com/article.html?id=nasa-lunar-landing-research-vehicle-test</link>
-      <description>On October 30, 1964, a steel-framed truss lifted off the desert floor to solve a mechanical problem that threatened the entire lunar program.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=nasa-lunar-landing-research-vehicle-test</guid>
-      <pubDate>Mon, 02 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>
