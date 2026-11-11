@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "m-john-harrison-booker-prize-win",
+  "currentCoverId": "guardian-september-roundup-one-category-2026",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -80,6 +80,14 @@
       "id": "m-john-harrison-booker-prize-win",
       "tipo": "do dia",
       "era": "artemis-i-radiation-discrepancy"
+    },
+    {
+      "at": "2026-11-11T22:16:29.653Z",
+      "dia": "2026-11-11",
+      "rodada": "2026-11-11T12:23",
+      "id": "guardian-september-roundup-one-category-2026",
+      "tipo": "do dia",
+      "era": "m-john-harrison-booker-prize-win"
     }
   ],
   "capaVistas": [
@@ -92,6 +100,7 @@
     "physicists-watch-time-emerge-without-clocks",
     "nasa-lunar-landing-research-vehicle-test",
     "artemis-i-radiation-discrepancy",
-    "m-john-harrison-booker-prize-win"
+    "m-john-harrison-booker-prize-win",
+    "guardian-september-roundup-one-category-2026"
   ]
 }

@@ -1,17 +1,17 @@
-# Turno — 2026-11-11 03:02 UTC
+# Turno — 2026-11-11 22:16 UTC
 
 - **coleta** — fila: 45 pautas (11/12 feeds ok) → pipeline/leads/2026-11-11.md · feeds fora: Publishing Perspectives: fetch failed (UND_ERR_SOCKET)
 - **rotação diária** — rotação diária aplicada (capa intacta).
 - **manutenção** — errors 0 | ✗ warnings 1
-- **cadência** — 0/2 publicação(ões) hoje
-- **pauta** — M John Harrison becomes first science fiction author to win the Booker prize (The Guardian SF, score 5)
-- **brief** — pipeline/drafts/m-john-harrison-becomes-first-science-fiction-author-to-win-the-/ criado
-- **texto** — escrito por gemini/gemini-3.5-flash-lite: m-john-harrison-booker-win-analysis (233 palavras)
-- **foto** — ✓ foto encontrada: images/posts/m-john-harrison-becomes-first-science-fiction-author-to-win-the-.jpg (Photo by Vitali Bozh on Unsplash)
-- **capa** — m-john-harrison-becomes-first-science-fiction-author-to-win-the- usa foto real (images/posts/m-john-harrison-becomes-first-science-fiction-author-to-win-the-.jpg) — nenhuma placa gerada
-- **edição** — tentativa 1 reprovada:   ✗ [length] texto com 233 palavras para uma pauta de ~1200 — o piso é 840
-- **edição** — tentativa 2 reprovada:   ✗ [rhythm] nenhum parágrafo de uma frase
-- **edição** — aprovado na tentativa 3
-- **nota** — 6.9/10 · 6.9/10 — força em timeliness (fonte mais recente há 2 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)
-- **publicação** — publicado localmente: m-john-harrison-booker-prize-win · nota 6.9/10 · cadência hoje: 1/2
-- **fim** — rodada completa. O commit e o push são do workflow; o deploy é da Vercel.
+- **cadência** — 1/2 publicação(ões) hoje
+- **pauta** — NASA reveals bold new plan to return astronauts to the Moon in 2028 (Science Daily Astronomy, score 7)
+- **brief** — pipeline/drafts/nasa-reveals-bold-new-plan-to-return-astronauts-to-the-moon-in-2/ criado
+- **texto** — escrito por gemini/gemini-3.5-flash-lite: nasa-returns-to-lunar-surface-plan (598 palavras)
+- **foto** — ✓ foto encontrada: images/posts/nasa-reveals-bold-new-plan-to-return-astronauts-to-the-moon-in-2.jpg (Photo by Mastars on Unsplash)
+- **capa** — nasa-reveals-bold-new-plan-to-return-astronauts-to-the-moon-in-2 usa foto real (images/posts/nasa-reveals-bold-new-plan-to-return-astronauts-to-the-moon-in-2.jpg) — nenhuma placa gerada
+- **edição** — tentativa 1 reprovada:   ✗ [rhythm] nenhum parágrafo de uma frase ·   ✗ [length] texto com 598 palavras para uma pauta de ~1100 — o piso é 770
+- **edição** — tentativa 2 reprovada:   ✗ [rhythm] nenhum parágrafo de uma frase ·   ✗ [length] texto com 680 palavras para uma pauta de ~1100 — o piso é 770
+- **edição** — tentativa 3 reprovada:   ✗ [banned-lexical] frase banida presente: "robust"
+- **fotos** — 1 arquivo(s) descartado(s): foto baixada para uma matéria que não chegou ao ar
+- **capa** — index-hero: +1 (capa do dia: guardian-september-roundup-one-category-2026 (6.8, Oct 29, 2026) · piso 6.5 · rodada 2026-11-11T12:23)
+- **fim** — rascunho ficou reprovado depois de 3 tentativas — nada publicado, e a pauta fica 72h fora da fila (pipeline/memory.json).
