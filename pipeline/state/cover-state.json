@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "artemis-i-radiation-discrepancy",
+  "currentCoverId": "m-john-harrison-booker-prize-win",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -72,6 +72,14 @@
       "id": "artemis-i-radiation-discrepancy",
       "tipo": "do dia",
       "era": "nasa-lunar-landing-research-vehicle-test"
+    },
+    {
+      "at": "2026-11-11T03:02:31.942Z",
+      "dia": "2026-11-10",
+      "rodada": "2026-11-10T20:23",
+      "id": "m-john-harrison-booker-prize-win",
+      "tipo": "do dia",
+      "era": "artemis-i-radiation-discrepancy"
     }
   ],
   "capaVistas": [
@@ -83,6 +91,7 @@
     "swift-space-telescope-reentry-failure-analysis",
     "physicists-watch-time-emerge-without-clocks",
     "nasa-lunar-landing-research-vehicle-test",
-    "artemis-i-radiation-discrepancy"
+    "artemis-i-radiation-discrepancy",
+    "m-john-harrison-booker-prize-win"
   ]
 }

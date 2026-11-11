@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "m-john-harrison-booker-prize-win"
+        }
+      ],
+      "destination": "/a-m-john-harrison-booker-prize-win.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "swift-space-telescope-reentry-failure-analysis"
         }
       ],

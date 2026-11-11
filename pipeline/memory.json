@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-10T21:27:19.788Z",
+  "updated": "2026-11-11T03:02:32.139Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -208,6 +208,13 @@
       "topic": "NASA reveals bold new plan to return astronauts to the Moon in 2028",
       "outcome": "falha_texto",
       "at": "2026-11-10T21:27:19.788Z"
+    },
+    "https://www.theguardian.com/books/2026/nov/09/m-john-harrison-the-end-of-everything-wins-2026-booker-prize": {
+      "slug": "m-john-harrison-becomes-first-science-fiction-author-to-win-the-",
+      "topic": "M John Harrison becomes first science fiction author to win the Booker prize",
+      "outcome": "publicada",
+      "at": "2026-11-11T03:02:32.139Z",
+      "id": "m-john-harrison-booker-prize-win"
     }
   },
   "publishes": [
@@ -280,6 +287,11 @@
       "id": "swift-space-telescope-reentry-failure-analysis",
       "at": "2026-11-08T10:33:29.156Z",
       "score": 6.8
+    },
+    {
+      "id": "m-john-harrison-booker-prize-win",
+      "at": "2026-11-11T03:02:32.139Z",
+      "score": 6.9
     }
   ]
 }

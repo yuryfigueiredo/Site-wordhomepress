@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-08T10:33:28.798Z",
+  "updated": "2026-11-11T03:02:31.904Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -715,6 +715,44 @@
       },
       "source": "auto",
       "date": "2026-11-08"
+    },
+    "m-john-harrison-booker-prize-win": {
+      "score": 6.9,
+      "note": "6.9/10 — força em timeliness (fonte mais recente há 2 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 2 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 13% com guardian-september-roundup-one-category-2026"
+        },
+        "craft": {
+          "pts": 1.6,
+          "max": 2,
+          "why": "ritmo e léxico medidos (80%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "It argues that Harrison's win forces a structural reevaluation of speculative mechanics within elite literary institutions."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-11"
     }
   }
 }
