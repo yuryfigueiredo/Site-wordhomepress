@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "m-john-harrison-booker-prize-win",
+  "currentCoverId": "little-red-dots-black-hole-hypothesis",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -96,6 +96,14 @@
       "id": "m-john-harrison-booker-prize-win",
       "tipo": "rotacionada",
       "era": "guardian-september-roundup-one-category-2026"
+    },
+    {
+      "at": "2026-11-12T21:52:47.267Z",
+      "dia": "2026-11-12",
+      "rodada": "2026-11-12T12:23",
+      "id": "little-red-dots-black-hole-hypothesis",
+      "tipo": "do dia",
+      "era": "m-john-harrison-booker-prize-win"
     }
   ],
   "capaVistas": [
@@ -109,6 +117,7 @@
     "nasa-lunar-landing-research-vehicle-test",
     "artemis-i-radiation-discrepancy",
     "m-john-harrison-booker-prize-win",
-    "guardian-september-roundup-one-category-2026"
+    "guardian-september-roundup-one-category-2026",
+    "little-red-dots-black-hole-hypothesis"
   ]
 }

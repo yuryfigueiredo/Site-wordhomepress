@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-12T04:03:20.281Z",
+  "updated": "2026-11-12T21:52:47.525Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -221,6 +221,13 @@
       "topic": "Astronomers discover hidden alien planet in James Webb images",
       "outcome": "reprovada",
       "at": "2026-11-12T04:03:20.281Z"
+    },
+    "https://www.space.com/astronomy/black-holes/are-the-james-webb-space-telescopes-mysterious-little-red-dots-actually-tiny-black-holes-left-over-from-the-big-bang-era": {
+      "slug": "are-the-james-webb-space-telescopes-mysterious-little-red-dots-a",
+      "topic": "Are the James Webb Space Telescope's mysterious Little Red Dots actually tiny black holes left over from the Big Bang era?",
+      "outcome": "publicada",
+      "at": "2026-11-12T21:52:47.524Z",
+      "id": "little-red-dots-black-hole-hypothesis"
     }
   },
   "publishes": [
@@ -298,6 +305,11 @@
       "id": "m-john-harrison-booker-prize-win",
       "at": "2026-11-11T03:02:32.139Z",
       "score": 6.9
+    },
+    {
+      "id": "little-red-dots-black-hole-hypothesis",
+      "at": "2026-11-12T21:52:47.524Z",
+      "score": 6.8
     }
   ]
 }

@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-11T03:02:32.138Z",
+  "updated": "2026-11-12T21:52:47.524Z",
   "runs": {
     "analyst": {
-      "id": "m-john-harrison-booker-prize-win",
-      "date": "2026-11-11",
-      "opening_move": "object",
-      "ending_move": "flat_statement",
-      "title_pattern": "m john harrison breaks",
+      "id": "little-red-dots-black-hole-hypothesis",
+      "date": "2026-11-12",
+      "opening_move": "dated_fact",
+      "ending_move": "consequence",
+      "title_pattern": "little red dots challenge",
       "humor_lines": 0
     },
     "lab": {

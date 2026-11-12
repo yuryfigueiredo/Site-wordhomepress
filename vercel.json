@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "little-red-dots-black-hole-hypothesis"
+        }
+      ],
+      "destination": "/a-little-red-dots-black-hole-hypothesis.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "m-john-harrison-booker-prize-win"
         }
       ],
