@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-11T22:16:29.622Z",
+  "updated": "2026-11-12T04:03:20.281Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -215,6 +215,12 @@
       "outcome": "publicada",
       "at": "2026-11-11T03:02:32.139Z",
       "id": "m-john-harrison-booker-prize-win"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261108233028.htm": {
+      "slug": "astronomers-discover-hidden-alien-planet-in-james-webb-images",
+      "topic": "Astronomers discover hidden alien planet in James Webb images",
+      "outcome": "reprovada",
+      "at": "2026-11-12T04:03:20.281Z"
     }
   },
   "publishes": [

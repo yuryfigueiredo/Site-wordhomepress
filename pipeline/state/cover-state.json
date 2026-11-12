@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "guardian-september-roundup-one-category-2026",
+  "currentCoverId": "m-john-harrison-booker-prize-win",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -88,6 +88,14 @@
       "id": "guardian-september-roundup-one-category-2026",
       "tipo": "do dia",
       "era": "m-john-harrison-booker-prize-win"
+    },
+    {
+      "at": "2026-11-12T04:03:20.327Z",
+      "dia": "2026-11-11",
+      "rodada": "2026-11-11T20:23",
+      "id": "m-john-harrison-booker-prize-win",
+      "tipo": "rotacionada",
+      "era": "guardian-september-roundup-one-category-2026"
     }
   ],
   "capaVistas": [
