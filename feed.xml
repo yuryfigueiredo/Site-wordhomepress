@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 11 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 12 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Little Red Dots challenge early universe models</title>
+      <link>https://www.homeworldpress.com/article.html?id=little-red-dots-black-hole-hypothesis</link>
+      <description>James Webb Space Telescope observations suggest compact, high-redshift objects that may be primordial black holes.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=little-red-dots-black-hole-hypothesis</guid>
+      <pubDate>Thu, 12 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>M John Harrison Breaks the Booker Prize Boundary for Science Fiction</title>
       <link>https://www.homeworldpress.com/article.html?id=m-john-harrison-booker-prize-win</link>
@@ -78,14 +86,6 @@
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=nasa-fights-orbital-drag-to-prolong-hubble-survival</guid>
       <pubDate>Wed, 04 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Physicists Watch Time Emerge Without Clocks in Artificial Universe</title>
-      <link>https://www.homeworldpress.com/article.html?id=physicists-watch-time-emerge-without-clocks</link>
-      <description>A new experimental paradigm demonstrates that temporal progression is a derived consequence of quantum entanglement rather than an absolute backdrop.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=physicists-watch-time-emerge-without-clocks</guid>
-      <pubDate>Tue, 03 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>
