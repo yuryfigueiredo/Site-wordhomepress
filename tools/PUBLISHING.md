@@ -3,16 +3,17 @@
 ## O fluxo, de ponta a ponta
 
 ```
-turno (GitHub Actions, 5x/dia)
-  └─ coleta pauta → Gemini escreve → check-post → nota → publish.js
+turno (timer local hwp-turno, 4x/dia — o Actions está desabilitado)
+  └─ coleta pauta → redator armado escreve → check-post → nota → publish.js
        └─ commita e faz push para main
             └─ Vercel detecta o push e publica sozinha
                  └─ homeworldpress.com no ar + analytics
 ```
 
-Nenhuma etapa tem upload manual. O `publish.js` já commita local, o workflow já faz
-push, e a Vercel publica a cada push em `main`. É o mesmo mecanismo que você já usa
-nos outros projetos.
+Nenhuma etapa tem upload manual. O `publish.js` já commita local e **nunca** faz push;
+quem empurra é o runner — `~/.local/bin/hwp-turno.sh` na máquina que hoje é o relógio,
+desde 13/11 — e a Vercel publica a cada push em `main`. É o mesmo mecanismo dos outros
+projetos.
 
 ## Por que Vercel e não Cloudflare Pages
 
@@ -79,10 +80,15 @@ deixar o workflow vermelho toda vez, escondendo que a rodada editorial deu certo
 Removido em 2026-10-30. Se um dia você ligar o Pages de propósito, não volte a job:
 o site duplicado em outro domínio compete com o seu.
 
-## O cron do GitHub é UTC
+## O relógio: duas agendas que têm de bater
 
-As 5 horas do workflow (`0 7,10,14,17,21`) são UTC: no seu fuso viram 04, 07, 11, 14
-e 18. Rodar de madrugada não quebra nada, mas se quiser as mesmas horas do cron da
-sua máquina, o valor é `0 10,13,17,20,0 * * *`. E saiba que o gatilho agendado do
-Actions é *best-effort*: há dias em que ele não dispara. `Run workflow` na aba
-Actions força uma rodada na hora.
+O cron de verdade é o de `.github/workflows/turno.yml` (`23 11,15,19,23 * * *`, sempre
+UTC) porque é dele que `tools/lib/schedule.js` e o `doctor.js` conferem a régua de
+`pipeline/cadence.json`. O workflow está desabilitado na aba Actions, e o que dispara
+hoje é o `OnCalendar=*-*-* 08,12,16,20:23:00` do `~/.config/systemd/user/hwp-turno.timer`
+— mesmo minutos, no fuso da máquina (America/Sao_Paulo, UTC−3).
+
+Mudar um sem o outro não quebra o portão: quebra o relógio, porque a régua passa a
+prometer troca de capa para rodadas que ninguém dispara. São três lugares para mexer
+juntos — o `cron_expression` do JSON, o cron do workflow e o `OnCalendar` do timer.
+Para forçar uma rodada agora: `systemctl --user start hwp-turno.service`.

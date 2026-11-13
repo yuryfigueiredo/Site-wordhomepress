@@ -10,7 +10,7 @@
    capa em tools/build.js + lib/cover-state.js e o portão de agenda do
    tools/doctor.js. Aqui sobram só os números.
 
-   Uso: node tools/morning-check.js        (morning.bat faz isso)             */
+   Uso: node tools/morning-check.js                                          */
 const fs = require("fs");
 const path = require("path");
 const { execFileSync } = require("child_process");
@@ -80,7 +80,7 @@ console.log("        ( leitura só do que está na fila: `node tools/ingest.js -
 console.log("         ele compromete a pauta com a rodada e a deixa fora da fila por lead_retry_hours)");
 console.log(`Manutenção — ${nums[1] ?? "?"} erro(s), ${nums[2] ?? "?"} aviso(s)`);
 console.log("");
-console.log(`Agenda do Actions: ${ag.error || ag.cron}`);
+console.log(`Agenda conferida (o cron do turno.yml — quem dispara hoje é o timer local hwp-turno): ${ag.error || ag.cron}`);
 if (possivel !== null)
   console.log(`  com ${cad.min_hours_between_publishes}h de distância entre peças, no máximo ${possivel} publicações/dia (teto declarado: ${teto})`);
 if (obs) console.log(`  entrega medida em 7 dias: ${obs.porDia.toFixed(1)} rodadas/dia (${obs.rodadas} rodadas)`);
