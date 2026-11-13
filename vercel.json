@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "candidate-neutron-star-mass-gap"
+        }
+      ],
+      "destination": "/a-candidate-neutron-star-mass-gap.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "nasa-stakes-ten-billion-dollars-lunar-infrastructure"
         }
       ],

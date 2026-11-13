@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-13T03:36:53.837Z",
+  "updated": "2026-11-13T21:46:48.317Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -235,6 +235,13 @@
       "outcome": "publicada",
       "at": "2026-11-13T03:36:53.837Z",
       "id": "nasa-stakes-ten-billion-dollars-lunar-infrastructure"
+    },
+    "https://phys.org/news/2026-11-supermassive-neutron-star-mass-gap.html": {
+      "slug": "a-likely-supermassive-neutron-star-might-shed-light-on-the-mass-",
+      "topic": "A likely supermassive neutron star might shed light on the mass gap between neutron stars and black holes",
+      "outcome": "publicada",
+      "at": "2026-11-13T21:46:48.316Z",
+      "id": "candidate-neutron-star-mass-gap"
     }
   },
   "publishes": [
@@ -322,6 +329,11 @@
       "id": "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
       "at": "2026-11-13T03:36:53.837Z",
       "score": 6.8
+    },
+    {
+      "id": "candidate-neutron-star-mass-gap",
+      "at": "2026-11-13T21:46:48.315Z",
+      "score": 7.3
     }
   ]
 }

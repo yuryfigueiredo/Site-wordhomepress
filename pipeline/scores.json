@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-13T03:36:53.455Z",
+  "updated": "2026-11-13T21:46:47.438Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -825,6 +825,44 @@
           "pts": 1,
           "max": 1,
           "why": "Demonstrates that NASA's infrastructure spending buys institutional survival and industrial lock-in rather than pure exploration."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-13"
+    },
+    "candidate-neutron-star-mass-gap": {
+      "score": 7.3,
+      "note": "7.3/10 — força em timeliness (fonte mais recente há 1 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 7% com apple-tv-hbo-scifi-book-adaptations-2026"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Argues a candidate mass matters only as a constraint, and that without a dynamical mass and spin it constrains nothing."
         }
       },
       "source": "auto",

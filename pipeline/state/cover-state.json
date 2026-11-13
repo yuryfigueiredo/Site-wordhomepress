@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
+  "currentCoverId": "candidate-neutron-star-mass-gap",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -112,6 +112,14 @@
       "id": "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
       "tipo": "do dia",
       "era": "little-red-dots-black-hole-hypothesis"
+    },
+    {
+      "at": "2026-11-13T21:46:47.629Z",
+      "dia": "2026-11-13",
+      "rodada": "2026-11-13T16:23",
+      "id": "candidate-neutron-star-mass-gap",
+      "tipo": "do dia",
+      "era": "nasa-stakes-ten-billion-dollars-lunar-infrastructure"
     }
   ],
   "capaVistas": [
@@ -127,6 +135,7 @@
     "m-john-harrison-booker-prize-win",
     "guardian-september-roundup-one-category-2026",
     "little-red-dots-black-hole-hypothesis",
-    "nasa-stakes-ten-billion-dollars-lunar-infrastructure"
+    "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
+    "candidate-neutron-star-mass-gap"
   ]
 }
