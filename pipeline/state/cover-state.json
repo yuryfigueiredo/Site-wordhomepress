@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "little-red-dots-black-hole-hypothesis",
+  "currentCoverId": "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -104,6 +104,14 @@
       "id": "little-red-dots-black-hole-hypothesis",
       "tipo": "do dia",
       "era": "m-john-harrison-booker-prize-win"
+    },
+    {
+      "at": "2026-11-13T03:36:53.521Z",
+      "dia": "2026-11-12",
+      "rodada": "2026-11-12T20:23",
+      "id": "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
+      "tipo": "do dia",
+      "era": "little-red-dots-black-hole-hypothesis"
     }
   ],
   "capaVistas": [
@@ -118,6 +126,7 @@
     "artemis-i-radiation-discrepancy",
     "m-john-harrison-booker-prize-win",
     "guardian-september-roundup-one-category-2026",
-    "little-red-dots-black-hole-hypothesis"
+    "little-red-dots-black-hole-hypothesis",
+    "nasa-stakes-ten-billion-dollars-lunar-infrastructure"
   ]
 }

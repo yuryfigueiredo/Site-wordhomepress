@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-12T21:52:47.219Z",
+  "updated": "2026-11-13T03:36:53.455Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -791,6 +791,44 @@
       },
       "source": "auto",
       "date": "2026-11-12"
+    },
+    "nasa-stakes-ten-billion-dollars-lunar-infrastructure": {
+      "score": 6.8,
+      "note": "6.8/10 — força em timeliness (fonte mais recente há 4 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 4 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 15% com nasa-lunar-landing-research-vehicle-test"
+        },
+        "craft": {
+          "pts": 1.5,
+          "max": 2,
+          "why": "ritmo e léxico medidos (75%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Demonstrates that NASA's infrastructure spending buys institutional survival and industrial lock-in rather than pure exploration."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-13"
     }
   }
 }

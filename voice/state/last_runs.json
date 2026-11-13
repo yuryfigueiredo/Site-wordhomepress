@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-12T21:52:47.524Z",
+  "updated": "2026-11-13T03:36:53.836Z",
   "runs": {
     "analyst": {
-      "id": "little-red-dots-black-hole-hypothesis",
-      "date": "2026-11-12",
-      "opening_move": "dated_fact",
-      "ending_move": "consequence",
-      "title_pattern": "little red dots challenge",
+      "id": "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
+      "date": "2026-11-13",
+      "opening_move": "object",
+      "ending_move": "flat_statement",
+      "title_pattern": "nasa stakes ten billion",
       "humor_lines": 0
     },
     "lab": {

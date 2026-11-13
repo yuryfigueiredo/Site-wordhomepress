@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "nasa-stakes-ten-billion-dollars-lunar-infrastructure"
+        }
+      ],
+      "destination": "/a-nasa-stakes-ten-billion-dollars-lunar-infrastructure.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "little-red-dots-black-hole-hypothesis"
         }
       ],

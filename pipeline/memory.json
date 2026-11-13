@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-12T21:52:47.525Z",
+  "updated": "2026-11-13T03:36:53.837Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -228,6 +228,13 @@
       "outcome": "publicada",
       "at": "2026-11-12T21:52:47.524Z",
       "id": "little-red-dots-black-hole-hypothesis"
+    },
+    "https://www.space.com/space-exploration/artemis/nasa-unveils-usd10-billion-in-moon-base-contracts-new-lunar-missions-and-the-promise-of-a-nuclear-powered-rover": {
+      "slug": "nasa-unveils-10-billion-in-moon-base-contracts-new-lunar-mission",
+      "topic": "NASA unveils $10 billion in moon base contracts, new lunar missions and the 'PROMISE' of a nuclear-powered rover",
+      "outcome": "publicada",
+      "at": "2026-11-13T03:36:53.837Z",
+      "id": "nasa-stakes-ten-billion-dollars-lunar-infrastructure"
     }
   },
   "publishes": [
@@ -309,6 +316,11 @@
     {
       "id": "little-red-dots-black-hole-hypothesis",
       "at": "2026-11-12T21:52:47.524Z",
+      "score": 6.8
+    },
+    {
+      "id": "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
+      "at": "2026-11-13T03:36:53.837Z",
       "score": 6.8
     }
   ]
