@@ -11,17 +11,9 @@ const https = require("https");
 const ROOT = path.resolve(__dirname, "../..");
 const OUT_DIR = path.join(ROOT, "images", "posts");
 
-/* Carrega .env manualmente (sem dependência dotenv). */
-const envFile = path.join(ROOT, ".env");
-if (fs.existsSync(envFile)) {
-  fs.readFileSync(envFile, "utf8")
-    .split("\n")
-    .filter((l) => l.trim() && !l.startsWith("#"))
-    .forEach((l) => {
-      const [k, ...v] = l.split("=");
-      if (k && v.length) process.env[k.trim()] = v.join("=").trim();
-    });
-}
+/* Carrega .env pelo carregador único do repo (era um bloco próprio aqui, que
+   só este módulo via: chave de redator no arquivo não chegava a lugar nenhum). */
+require("./load-env").load();
 
 /* ── candidatos de query ──────────────────────────────────────────────── */
 /* A busca antiga usava as 6 primeiras palavras do título e devolvia 0

@@ -12,6 +12,10 @@ const fs = require("fs");
 const path = require("path");
 const { rank, diversificar } = require("./rank-models");
 
+/* A chave pode vir do Secret do Actions ou do .env local; sem este carregador,
+   quem roda a rodada na máquina tinha a chave no disco e via vermelho. */
+require("./load-env").load();
+
 const ROOT = path.resolve(__dirname, "..", "..");
 const CONFIG = path.join(ROOT, "pipeline", "providers.json");
 

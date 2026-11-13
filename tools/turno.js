@@ -330,4 +330,4 @@ if (/AVISO:/.test(pub.out)) {
   say("alerta", "publicação registrada, mas a contabilidade falhou — leia a linha de publicação acima.");
   finish("rodada terminou com alerta.", 1);
 }
-finish("rodada completa. O commit e o push são do workflow; o deploy é da Vercel.");
+finish("rodada completa. O commit `turno:` e o push são do runner (Actions ou hwp-turno.sh); o deploy é da Vercel.");

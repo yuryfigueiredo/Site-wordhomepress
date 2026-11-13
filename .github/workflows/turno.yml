@@ -2,15 +2,17 @@ name: turno editorial
 
 on:
   schedule:
-    # O cron do GitHub é SEMPRE UTC, não aceita fuso. Estas 2 horas viram
-    # 12:23 e 20:23 no horário de Brasília. Minuto 23, não 0: medido em 41
-    # rodadas (out-nov/2026), o cron de 6 horários (03/07/11/15/19/23 UTC)
-    # entregava apenas 2 rodadas por dia — o scheduler do GitHub free tier
-    # deixa cair 4 dos 6 slots silenciosamente. Os que mais consistentemente
-    # dispararam foram 15:23 e 23:23 UTC (5 de 7 dias), então o cron agora
-    # tem só esses dois. O teto de publicação mora em pipeline/cadence.json,
-    # não aqui; o doctor confere os dois.
-    - cron: "23 15,23 * * *"
+    # O cron do GitHub é SEMPRE UTC, não aceita fuso. Estas 4 horas viram
+    # 08:23, 12:23, 16:23 e 20:23 no horário de Brasília. Minuto 23, não 0:
+    # medido em 41 rodadas (out-nov/2026), o cron de 6 horários entregava 2 e
+    # deixava 4 caírem em silêncio.
+    # DESDE 2026-11-13 este workflow está DESABILITADO na aba Actions e a rodada
+    # roda nesta máquina (timer de usuário `hwp-turno.timer`, systemd, fuso
+    # America/Sao_Paulo). O cron continua aqui e igual ao cron_expression de
+    # pipeline/cadence.json porque é o ARQUIVO que o doctor confere
+    # (tools/lib/schedule.js): sem par conferível, o portão [cadence] fecha
+    # vermelho e nenhuma rodada publica — desabilitar no site não muda isso.
+    - cron: "23 11,15,19,23 * * *"
   workflow_dispatch:
 
 permissions:
