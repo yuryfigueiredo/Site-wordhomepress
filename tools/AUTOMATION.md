@@ -58,13 +58,24 @@ Desde 13/11 o relógio do site **é** esta máquina: `~/.config/systemd/user/hwp
 As duas unidades estão fora do repositório de propósito: a proibição do AGENTS.md é *nenhum script de `tools/` chama push*, e quem empurra é o operador, não o repo. Conferir e mexer:
 
 ```bash
-systemctl --user list-timers hwp-turno.timer   # próxima elapse e última rodada
-systemctl --user start hwp-turno.service       # rodada agora, pelo caminho inteiro
+systemctl --user list-timers 'hwp-*'      # próxima elapse do turno e do vigia
+systemctl --user start hwp-turno.service  # rodada agora, pelo caminho inteiro
 journalctl --user -u hwp-turno.service -n 50   # o que a última rodada disse
+tail -20 ~/.local/state/hwp/avisos.log    # o que os portões avisaram (verde e vermelho)
 touch ~/.local/state/hwp/actions-desligado     # só depois de desabilitar na aba Actions
 ```
 
 O log é `~/.local/state/hwp/turno.log` (`StandardOutput=append:` do serviço), porque o `TURNO.md` commitado é a versão pública da mesma sequência. Diferenças que importam contra o runner da nuvem: o script **recusa árvore suja** antes de tocar em qualquer arquivo (o recuo geral da rodada vermelha é `git checkout HEAD -- .`, e num clone descartável isso é seguro; na sua máquina apagaria trabalho seu), e `Linger=yes` + `Persistent=true` existem para a rodada perder o horário e ainda assim ser feita no boot seguinte, em vez de sumir do dia — que era o defeito medido do scheduler do Actions.
+
+### Quem avisa, e quem confere se o aviso era preciso
+
+Ninguém abre `turno.log` todos os dias, e um relógio que é um portátil falha calado: tampa fechada, bateria no fim, rede fora do ar. Duas unidades a mais moram fora do repo por isso:
+
+- **`~/.local/bin/hwp-aviso.sh <origem> <mensagem>`** é a boca única. Escreve em `~/.local/state/hwp/avisos.log` **sempre** — é o registro que sobrevive — e tenta `notify-send` na área de trabalho, cujo fracasso é silencioso por desenho (sem sessão gráfica não há notificação, mas a linha fica). O `hwp-turno.sh` chama o aviso em toda saída vermelha (árvore suja, sem rede, dois relógios, redator desarmado, commit ou push que não passaram) e, na verde, quando o contador de publicações do dia subiu — a conta é `lib/cadence.publishedToday()`, a mesma função que o teto lê, não um palpite sobre o `TURNO.md`.
+- **`hwp-vigia.timer`** (uma olhada por hora, às :41 — nunca no minuto da rodada) roda `~/.local/bin/hwp-vigia.sh`, que lê a régua de `pipeline/cadence.json` e pergunta o que o doctor não pergunta: **a rodada do horário aconteceu?** A resposta vem de um cabeçalho `===== turno local …` no `turno.log`, com 90 min de folga (o `AccuracySec`, as 3 tentativas de rede e os 45 min de timeout do turno). Depois pergunta se ela chegou ao ar: `origin/main..HEAD` com commit local à frente é a peça escrita que o site não vê. E confere o fuso: o `OnCalendar` corre no fuso **do sistema**, enquanto `check_hours` declara um fuso — divergindo, os horários do timer não são os da régua, e o doctor continua verde porque ele compara o JSON com o cron do arquivo.
+- Uma rodada perdida é avisada **uma vez** (`~/.local/state/hwp/vigia-ultimo` guarda o slot já cobrado), para o vigia não virar spam de hora em hora. Rodada recusada por portão não passa duas vezes: o portão já avisou na saída, e o cabeçalho no log conta como tentativa.
+
+Prova das três saídas e das duas invarantes: `node .audit/teste-vigia-local.js` (20 conferências — servida e empurrada muda, rodada perdida avisa uma vez e não avisa de novo, push pendente contado, fuso divergente, slot dentro da folga calado, e nada do teste escreve no estado real da máquina).
 
 `pipeline/drafts/`, `pipeline/leads/`, `pipeline/state/seen.json` e `tools/reports/` são gitignored mas **persistem aqui**, o que não acontece no runner: lá cada rodada acordava com a fila de vistos vazia. A régua de repetição continua sendo `pipeline/memory.json` + as fontes do catálogo, que são versionadas e valem em qualquer lugar.
 
