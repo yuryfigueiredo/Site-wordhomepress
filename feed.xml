@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Thu, 12 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>NASA Stakes Ten Billion Dollars on Lunar Infrastructure Contracts</title>
+      <link>https://www.homeworldpress.com/article.html?id=nasa-stakes-ten-billion-dollars-lunar-infrastructure</link>
+      <description>New procurement documents outline multibillion-dollar investments for a permanent moon base and experimental nuclear propulsion systems.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=nasa-stakes-ten-billion-dollars-lunar-infrastructure</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Little Red Dots challenge early universe models</title>
       <link>https://www.homeworldpress.com/article.html?id=little-red-dots-black-hole-hypothesis</link>
@@ -78,14 +86,6 @@
       <category>culture</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=https-www-space-com-space-exploration-artemis-do-we-know-how-man</guid>
       <pubDate>Fri, 06 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>NASA Confronts Orbital Decay to Prolong Hubble Space Telescope Operations</title>
-      <link>https://www.homeworldpress.com/article.html?id=nasa-fights-orbital-drag-to-prolong-hubble-survival</link>
-      <description>Atmospheric drag and failing gyroscopes leave mission planners with diminishing mechanical options.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=nasa-fights-orbital-drag-to-prolong-hubble-survival</guid>
-      <pubDate>Wed, 04 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>
