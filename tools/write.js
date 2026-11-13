@@ -75,19 +75,20 @@ function gravar(draft, k) {
 
   if (CHECK_ONLY) {
     const sem = prov.desarmados();
-    console.log(`armados (chave no ambiente): ${armados.map((p) => p.nome).join(", ") || "nenhum"}`);
-    console.log(`sem chave, inertes: ${sem.map((p) => `${p.nome} (${p.chave_env})`).join(", ") || "nenhum"}`);
+    console.log(`armados (chave no ambiente, ou binário no disco): ${armados.map((p) => p.nome).join(", ") || "nenhum"}`);
+    console.log(`inertes, não tentados: ${sem.map((p) => `${p.nome} (falta ${prov.rotulo(p)})`).join(", ") || "nenhum"}`);
     for (const p of armados) {
       const d = await prov.descobrir(p);
-      console.log(`\n${p.nome}: ${d.modelos.length ? d.modelos.join(", ") : "— não achei modelo de texto"}`);
+      console.log(`\n${p.nome}: ${d.modelos.length ? d.modelos.join(", ") : "— não achei modelo de texto"}${p.tipo === "cli" ? `  [${p.bin}]` : ""}`);
       if (d.erro) console.log(`  ${d.erro}`);
     }
     process.exit(0);
   }
 
   if (!armados.length) {
-    console.error("nenhum provedor armado: nenhuma das chaves de pipeline/providers.json está no ambiente.");
-    console.error(`no Actions, guarde uma destas em Settings → Secrets: ${prov.configurados().map((p) => p.chave_env).join(", ")}`);
+    console.error("nenhum provedor armado: nem o CLI do app está no disco, nem alguma chave de pipeline/providers.json está no ambiente.");
+    console.error(`o que falta, por provedor: ${prov.configurados().map((p) => `${p.nome}→${prov.rotulo(p)}`).join(", ")}`);
+    console.error("no Actions, guarde uma destas em Settings → Secrets: " + prov.configurados().filter((p) => p.chave_env).map((p) => p.chave_env).join(", "));
     process.exit(2);
   }
   if (!fs.existsSync(PROMPT)) {
@@ -142,9 +143,13 @@ function gravar(draft, k) {
     let res;
     try {
       /* Com modelos ainda não tentados na fila, um modelo pendurado não pode
-         comer a fatia inteira: 2 min é o teto por chamada nesse caso. */
+         comer a fatia inteira: 2 min é o teto por chamada nesse caso. Quem
+         declara `chamada_max_ms` no JSON passa na frente — é o caso do CLI do
+         app, que recebe o prompt.md inteiro (contrato + brief + memória) e
+         escreve a matéria numa chamada só, sem fila de modelos para alternar. */
       const frescos = grupo.fila.filter((m) => !grupo.tentado.has(m)).length;
-      res = await prov.chamar(grupo.p, modelo, prompt, Math.min(prazo - Date.now(), frescos ? 120000 : 240000));
+      const teto = Number(grupo.p.chamada_max_ms) || (frescos ? 120000 : 240000);
+      res = await prov.chamar(grupo.p, modelo, prompt, Math.min(prazo - Date.now(), teto));
     } catch (err) {
       falhas.set(k, `rede: ${err.message}`);
       return "transitorio";
@@ -241,7 +246,7 @@ function gravar(draft, k) {
   console.error(`não saiu texto em ${MIN}min, em nenhum provedor armado. O que houve:`);
   for (const [k, f] of falhas) console.error(`  · ${k}: ${f}`);
   const sem = prov.desarmados();
-  if (sem.length) console.error(`sem chave (não tentados): ${sem.map((p) => `${p.nome} (${p.chave_env})`).join(", ")}`);
+  if (sem.length) console.error(`não tentados: ${sem.map((p) => `${p.nome} (falta ${prov.rotulo(p)})`).join(", ")}`);
   console.error("A rodada termina aqui de propósito: sem texto não há o que checar nem publicar.");
   process.exit(1);
 })();

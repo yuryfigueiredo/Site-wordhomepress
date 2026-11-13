@@ -5,11 +5,15 @@
    sem chave é ignorado em silêncio (é o estado normal de quem ainda não criou
    a conta lá).
 
-   Dois tipos bastam:
+   Três tipos:
      gemini  — API própria do Google (descoberta + generateContent)
-     openai  — qualquer endpoint compatível com /chat/completions          */
+     openai  — qualquer endpoint compatível com /chat/completions
+     cli     — um agente local chamado como subprocesso (o `qodercli` desta
+               máquina desde 13/11). Não tem chave: entra na fila se o binário
+               existe, e o prompt vai pelo stdin.                           */
 const fs = require("fs");
 const path = require("path");
+const { spawnSync } = require("child_process");
 const { rank, diversificar } = require("./rank-models");
 
 /* A chave pode vir do Secret do Actions ou do .env local; sem este carregador,
@@ -21,6 +25,35 @@ const CONFIG = path.join(ROOT, "pipeline", "providers.json");
 
 const NAO_ESCREVE = /embed|whisper|tts|guard|rerank|moderation|audio|image|vision|ocr|diffusion|transcribe/i;
 
+/* O binário do CLI muda de nome a cada versão do app (qodercli-1.1.87 →
+   qodercli-1.2.x), então caminho fixo não é régua: `bin` no JSON se existir,
+   senão o mais novo em ~/.qoder/bin/qodercli/, senão o que estiver no PATH.
+   Procurar toda vez é de propósito — o app se atualiza sozinho e a rodada não
+   pode acordar com o redator apontando para um binário que já foi apagado. */
+function localizar(p) {
+  if (p.bin && fs.existsSync(p.bin)) return p.bin;
+  const porEnv = process.env[p.bin_env || "QODER_CLI"];
+  if (porEnv && fs.existsSync(porEnv)) return porEnv;
+  const dir = path.join(process.env.HOME || "", ".qoder", "bin", "qodercli");
+  let maisNovo = null;
+  try {
+    for (const f of fs.readdirSync(dir)) {
+      if (!/^qodercli-\d+(\.\d+)*$/.test(f)) continue;
+      if (!fs.existsSync(path.join(dir, f))) continue;
+      if (!maisNovo || f.localeCompare(maisNovo, undefined, { numeric: true }) > 0) maisNovo = f;
+    }
+  } catch {}
+  if (maisNovo) return path.join(dir, maisNovo);
+  const nome = p.bin_nome || "qodercli";
+  for (const pedaço of String(process.env.PATH || "").split(":").filter(Boolean)) {
+    const candidato = path.join(pedaço, nome);
+    try {
+      if (fs.statSync(candidato).isFile()) return candidato;
+    } catch {}
+  }
+  return null;
+}
+
 function configurados() {
   let raw;
   try {
@@ -29,11 +62,31 @@ function configurados() {
     console.error(`pipeline/providers.json ilegível: ${err.message}`);
     return [];
   }
-  return ((raw && raw.provedores) || []).filter((p) => p && p.ativo !== false && p.nome && p.chave_env && p.endpoint);
+  return ((raw && raw.provedores) || []).filter(
+    (p) => p && p.ativo !== false && p.nome && (p.tipo === "cli" ? true : p.chave_env && p.endpoint)
+  );
 }
 
-const armados = () => configurados().map((p) => ({ ...p, chave: process.env[p.chave_env] })).filter((p) => p.chave);
-const desarmados = () => configurados().filter((p) => !process.env[p.chave_env]);
+/* O que "falta" para este provedor entrar na fila, dito numa boca só pelo log,
+   pelo painel e pelo pré-voice do runner: a variável de ambiente no HTTP, o
+   binário no CLI. Sem isto, o TURNO.md diria "arme GEMINI_API_KEY" numa máquina
+   onde o que não existe é o app. */
+const rotulo = (p) => (p.tipo === "cli" ? `CLI ${p.bin_nome || "qodercli"}` : p.chave_env);
+
+const armados = () =>
+  configurados()
+    .map((p) => {
+      if (p.tipo === "cli") {
+        const bin = localizar(p);
+        return bin ? { ...p, bin } : null;
+      }
+      const chave = process.env[p.chave_env];
+      return chave ? { ...p, chave } : null;
+    })
+    .filter(Boolean);
+
+const desarmados = () =>
+  configurados().filter((p) => (p.tipo === "cli" ? !localizar(p) : !process.env[p.chave_env]));
 
 function reason(bodyText) {
   try {
@@ -57,6 +110,10 @@ async function lista(p) {
 async function descobrir(p) {
   const teto = Number(p.modelos_por_rodada || 2);
   const reserva = Array.isArray(p.fila) ? p.fila : Array.isArray(p.reserva) ? p.reserva : [];
+  /* O CLI não tem listagem de modelos: quem usa o plano do app escreve com o
+     modelo que o plano dá, e a fila tem um item só. Declarar `fila` no JSON é o
+     jeito de passar `-m <modelo>` quando a conta tiver mais de um. */
+  if (p.tipo === "cli") return { modelos: reserva.length ? reserva.slice(0, teto) : ["plano-do-app"], erro: null };
   let json;
   try {
     json = await lista(p);
@@ -86,7 +143,54 @@ async function descobrir(p) {
   return { modelos: nomes, erro: null };
 }
 
+/* O mesmo contrato para os três tipos: um objeto com .ok, .status, .text() e
+   .json(). No CLI ele é fabricado a partir do subprocesso, para o write.js não
+   ter duas rotas de leitura. */
+function chamarCli(p, modelo, prompt, timeoutMs) {
+  const ms = Math.round(Math.max(30000, Math.min(600000, timeoutMs)));
+  const arg = [
+    "-p",
+    "--no-session-persistence",
+    /* Sem ferramentas, o redator não tem como escrever arquivo nem rodar
+       comando: ele devolve texto e só. O prompt.md já traz o contrato inteiro,
+       então o agente não precisa enxergar o repositório para escrever a matéria
+       — e não pode mexer nela. */
+    "--tools",
+    "",
+  ];
+  if (modelo && modelo !== "plano-do-app") arg.push("-m", modelo);
+  if (p.max_tokens) arg.push("--max-output-tokens", String(p.max_tokens));
+  const r = spawnSync(p.bin, arg, { input: prompt + CLI_CAUDA, cwd: ROOT, timeout: ms, encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
+  const saida = String(r.stdout || "");
+  const erro = String(r.stderr || "");
+  if (r.error) {
+    const motivo = /ETIMEDOUT/.test(r.error.code || "") || r.signal === "SIGTERM" ? `timeout de ${Math.round(ms / 1000)}s no CLI` : r.error.message;
+    return resposta(false, 500, "", motivo);
+  }
+  if (r.signal) return resposta(false, 500, saida, `o CLI foi morto por ${r.signal} (timeout de ${Math.round(ms / 1000)}s)`);
+  if (r.status !== 0) return resposta(false, /quota|limit exceeded|402|payment|credit|usage/i.test(erro + saida) ? 429 : 500, saida, `saiu com ${r.status}: ${(erro || saida).trim().slice(0, 300)}`);
+  if (!saida.trim()) return resposta(false, 500, "", "voltou sem texto nenhum");
+  return resposta(true, 200, saida, "");
+}
+
+const CLI_CAUDA =
+  "\n\nResponda SOMENTE com o JSON do output contract, sem cercas de código e sem comentário antes ou depois.";
+
+function resposta(ok, status, texto, motivo) {
+  return {
+    ok,
+    status,
+    async json() {
+      return ok ? { texto } : { erro: motivo };
+    },
+    async text() {
+      return ok ? texto : motivo;
+    },
+  };
+}
+
 function chamar(p, modelo, prompt, timeoutMs) {
+  if (p.tipo === "cli") return Promise.resolve(chamarCli(p, modelo, prompt, timeoutMs));
   /* AbortSignal.timeout recusa fração: a fatia de tempo sai de uma divisão. */
   const signal = AbortSignal.timeout(Math.round(Math.max(30000, Math.min(240000, timeoutMs))));
   if (p.tipo === "gemini") {
@@ -119,6 +223,10 @@ function chamar(p, modelo, prompt, timeoutMs) {
 /* {texto} ou {motivo}. O corte de cercas de código fica com quem chama. */
 function extrair(p, json) {
   if (!json) return { motivo: "resposta não era JSON" };
+  if (p.tipo === "cli") {
+    const texto = String(json.texto || "");
+    return texto.trim() ? { texto } : { motivo: String(json.erro || "voltou sem texto") };
+  }
   if (p.tipo === "gemini") {
     const cand = (json.candidates || [])[0] || {};
     if (!cand.content) {
@@ -138,4 +246,4 @@ function extrair(p, json) {
   return { texto };
 }
 
-module.exports = { configurados, armados, desarmados, descobrir, chamar, extrair, reason };
+module.exports = { configurados, armados, desarmados, descobrir, chamar, extrair, reason, rotulo, localizar };

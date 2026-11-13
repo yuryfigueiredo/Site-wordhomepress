@@ -261,9 +261,13 @@ say("brief", `pipeline/drafts/${lead.slug}/ criado`);
 
 /* 7. texto */
 const prov = require("./lib/providers");
-/* Sem chave no ambiente não é "dia sem notícia": é o robô desligado. Vermelho
-   para o Actions não continuar verde com o site sem publicação por mês. */
-if (!prov.armados().length) finish(`nenhum provedor de texto armado — sem chave no ambiente, o redator não roda. As chaves que valem são as de pipeline/providers.json: ${prov.configurados().map((p) => p.chave_env).join(", ")}.`, 1);
+/* Sem redator não é "dia sem notícia": é o robô desligado. Vermelho para o
+   runner não continuar verde com o site sem publicação por mês. O redator hoje é
+   o CLI do app (armado pelo binário no disco, não por chave); a mensagem diz o
+   que falta em cada provedor, porque "arme a chave" seria mentira numa máquina
+   onde o que sumiu foi o app. */
+if (!prov.armados().length)
+  finish(`nenhum provedor de texto armado — o redator não roda. O que falta: ${prov.configurados().map((p) => `${p.nome}→${prov.rotulo(p)}`).join(", ")}.`, 1);
 const wrote = run("write.js", [lead.slug]);
 if (wrote.code !== 0) {
   mem.registrar(ROOT, lead.url, "falha_texto");
