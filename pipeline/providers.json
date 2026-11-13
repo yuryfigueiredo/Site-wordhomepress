@@ -1,5 +1,5 @@
 {
-  "_leia": "Ordem em que o redator tenta os provedores. O arquivo NUNCA guarda chave: 'chave_env' é o nome do segredo. Provedor sem segredo no ambiente fica inerte — não quebra nada. Campos: 'peso' divide o tempo da rodada (o que sobra vai para o último), 'modelos_por_rodada' quantos modelos tentar, 'max_tokens' só para modelos que gastam o teto pensando, 'fila' a ordem preferida e 'ativo': false desliga sem apagar a chave. O tipo 'cli' não tem chave: entra na fila se o binário existe (procurado em 'bin', depois $QODER_CLI, depois ~/.qoder/bin/qodercli/qodercli-* mais novo, depois PATH) e recebe o prompt.md pelo stdin, sem ferramentas — quem escreve é o agente do app, e o HTTP abaixo fica armado como reserva se o plano mudar.",
+  "_leia": "Ordem em que o redator tenta os provedores. O arquivo NUNCA guarda chave: 'chave_env' é o nome do segredo. Provedor sem segredo no ambiente fica inerte — não quebra nada. Campos: 'peso' divide o tempo da rodada (o que sobra vai para o último), 'modelos_por_rodada' quantos modelos tentar, 'max_tokens' só para modelos que gastam o teto pensando, 'fila' a ordem preferida e 'ativo': false desliga sem apagar a chave. O tipo 'cli' não tem chave: entra na fila se o binário existe (procurado em 'bin', depois $QODER_CLI, depois ~/.qoder/bin/qodercli/qodercli-* mais novo, depois PATH) e recebe o prompt.md pelo stdin, sem ferramentas — quem escreve é o agente do app, e o HTTP abaixo fica armado como reserva se o plano mudar. Para o tipo 'cli', 'fila' são os NOMES que `qodercli --list-models` mostra e que viram `-m`; sem fila o CLI usa o padrão dele (Auto), que é o que cobra crédito. Efficient é o modo que o plano de hoje paga, então ele fica declarado: trocar de redator continua sendo uma linha.",
   "provedores": [
     {
       "nome": "qoder",
@@ -8,6 +8,7 @@
       "bin_nome": "qodercli",
       "bin_env": "QODER_CLI",
       "peso": 3,
+      "fila": ["Efficient"],
       "max_tokens": 8192,
       "chamada_max_ms": 300000
     },

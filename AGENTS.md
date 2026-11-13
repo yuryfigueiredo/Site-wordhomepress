@@ -9,7 +9,7 @@ Site estático (HTML + `js/articles-db.js`) com um pipeline editorial em Node pu
 | `git push` a partir de `tools/` | nenhum script de `tools/` chama push. Quem empurra é o runner, fora do repo: `~/.local/bin/hwp-turno.sh` nesta máquina desde 13/11 (e, até essa data, a etapa final do `.github/workflows/turno.yml` no runner do GitHub). Push nunca é `--force`, nunca é de rebase de commit alheio |
 | deploy / upload para servidor | não existe passo manual; a Vercel publica quando o runner empurra em `main` — hoje esse runner é o timer desta máquina, e o workflow está desabilitado na aba Actions |
 | editar `css/styles.css`, cabeçalho, rodapé ou identidade visual | nenhuma ferramenta escreve nesses arquivos; `doctor.js` quebra em `asset-*`/`meta-*` se uma referência sumir. Mudança de marca é decisão do dono |
-| criar contas, cadastros ou chamadas pagas | as chaves existentes são free tier (`pipeline/providers.json`, Secrets); provedor sem chave é pulado, não cadastrado. Desde 13/11 o redator principal é o `qodercli` do app nesta máquina, que gasta o **plano do app** em vez de cota de API — escolha do dono, com saída declarada: `"ativo": false` no provedor `cli` e uma chave no `.env` |
+| criar contas, cadastros ou chamadas pagas | as chaves existentes são free tier (`pipeline/providers.json`, Secrets); provedor sem chave é pulado, não cadastrado. Desde 13/11 o redator principal é o `qodercli` do app nesta máquina, que gasta o **plano do app** em vez de cota de API — no modo `Efficient`, declarado na `fila` de `pipeline/providers.json` (sem fila o CLI cai em `Auto`, que cobra crédito) — escolha do dono, com saída declarada: `"ativo": false` no provedor `cli` e uma chave no `.env` |
 
 ## A régua mora nos arquivos, não na conversa
 

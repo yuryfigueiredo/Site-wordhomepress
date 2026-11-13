@@ -92,6 +92,16 @@ function casca(nome, corpo) {
   confere("o prompt vai pelo stdin, não pela linha de comando", /PROMPT-VEIO-PELO-STDIN/.test(ex.texto || ""), (ex.texto || "").slice(0, 120));
   confere("a cauda de contrato (sem cercas de código) vai junto", /Responda SOMENTE com o JSON/.test(ex.texto || ""), (ex.texto || "").slice(-120));
 
+  /* O modelo não é o padrão do CLI: sem `-m`, o qodercli cai no Auto, e Auto é
+     o que cobra crédito do plano. A fila do providers.json é o que paga. */
+  const argv = casca("argv.sh", 'cat > /dev/null; echo "{\\"argv\\":\\"$@\\"}"');
+  r = await prov.chamar({ ...p, bin: argv, fila: ["Efficient"] }, "Efficient", "PROMPT", 60000);
+  const linha = (prov.extrair({ ...p, bin: argv }, await r.json()) || {}).texto || "";
+  confere("modelo declarado vira `-m` na linha de comando", /(?:^|\s)-m\s+Efficient(?=\s|"|$)/.test(linha), linha.slice(0, 160));
+  r = await prov.chamar({ ...p, bin: argv }, "plano-do-app", "PROMPT", 60000);
+  const linhaPadrao = (prov.extrair({ ...p, bin: argv }, await r.json()) || {}).texto || "";
+  confere("sem modelo declarado, nenhum `-m` é passado (padrão do app)", !/-m\s/.test(linhaPadrao), linhaPadrao.slice(0, 160));
+
   const vazio = casca("vazio.sh", "exit 0");
   r = await prov.chamar({ ...p, bin: vazio }, "plano-do-app", "PROMPT", 60000);
   confere("sem texto: 500, não uma resposta ok", !r.ok && r.status === 500, `${r.ok}/${r.status}`);
@@ -126,8 +136,10 @@ function casca(nome, corpo) {
   confere("os HTTP de reserva não perderam chave nem endpoint", cfg.filter((x) => x.tipo !== "cli").every((x) => x.chave_env && x.endpoint), "—");
   confere("desligar o CLI é uma linha, não um patch", cfg[0].ativo === true && typeof cfg[0].ativo === "boolean", String(cfg[0].ativo));
   /* O teto padrão por chamada (2 min) foi medido com API HTTP e fila de
-     modelos. O CLI recebe o prompt.md inteiro e não tem fila para alternar. */
+     modelos. O CLI recebe o prompt.md inteiro e a fila dele é o NOME do modelo
+     do plano — não uma lista para alternar depois. */
   confere("o CLI declara teto de chamada acima dos 2 min do HTTP", Number(cfg[0].chamada_max_ms) > 120000, String(cfg[0].chamada_max_ms));
+  confere("o CLI declara o modelo que o plano paga, não o Auto", Array.isArray(cfg[0].fila) && cfg[0].fila.length === 1 && !/plano-do-app/i.test(cfg[0].fila[0]), JSON.stringify(cfg[0].fila));
 
   console.log(`\n${verde} conferências verdes, ${falhas.length} vermelhas.`);
   if (falhas.length) {
