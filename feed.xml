@@ -8,6 +8,14 @@
     <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>A Candidate Neutron Star Crowds the Mass Gap</title>
+      <link>https://www.homeworldpress.com/article.html?id=candidate-neutron-star-mass-gap</link>
+      <description>One heavy object would test the equation of state that every neutron star obeys, if the mass can be measured properly.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=candidate-neutron-star-mass-gap</guid>
+      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>NASA Stakes Ten Billion Dollars on Lunar Infrastructure Contracts</title>
       <link>https://www.homeworldpress.com/article.html?id=nasa-stakes-ten-billion-dollars-lunar-infrastructure</link>
       <description>New procurement documents outline multibillion-dollar investments for a permanent moon base and experimental nuclear propulsion systems.</description>
@@ -78,14 +86,6 @@
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=new-method-measures-microplastics-in-the-air-using-an-uncrewed-a</guid>
       <pubDate>Sat, 07 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Artemis IV Refueling Plan Enters Its Second Redesign</title>
-      <link>https://www.homeworldpress.com/article.html?id=https-www-space-com-space-exploration-artemis-do-we-know-how-man</link>
-      <description>NASA's second architecture revision adds a classified number of tanker flights to a depot-to-lander rendezvous in final tanking orbit</description>
-      <category>culture</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=https-www-space-com-space-exploration-artemis-do-we-know-how-man</guid>
-      <pubDate>Fri, 06 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>
