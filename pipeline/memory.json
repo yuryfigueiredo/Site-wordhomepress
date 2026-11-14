@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14T15:29:06.280Z",
+  "updated": "2026-11-14T17:54:27.402Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -254,6 +254,12 @@
       "topic": "On this day in space! Nov. 14, 1969: NASA's Apollo 12 astronauts launch to the moon on a 'pinpoint landing' lunar mission",
       "outcome": "falha_texto",
       "at": "2026-11-14T15:29:06.280Z"
+    },
+    "https://phys.org/news/2026-11-hidden-master-bacteria-breach-body.html": {
+      "slug": "hidden-master-switch-allows-bacteria-to-breach-the-bodys-defense",
+      "topic": "Hidden 'master switch' allows bacteria to breach the body's defenses",
+      "outcome": "falha_texto",
+      "at": "2026-11-14T17:54:27.402Z"
     }
   },
   "publishes": [
