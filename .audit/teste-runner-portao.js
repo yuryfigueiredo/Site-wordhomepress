@@ -129,9 +129,115 @@ function roda(f) {
   confere("nenhum commit novo", git(f.dir, "log", "--oneline").trim().split("\n").length === 1, git(f.dir, "log", "--oneline").trim());
 }
 
-/* 5 — invariante: o estado desta máquina não foi tocado pela prova. */
+/* 5 — o portão do relógio: a nuvem não pode escrever junto com esta máquina,
+       e desde 14/11 há DUAS formas de ela estar morta. A prova local é a
+       primeira; a segunda mora no arquivo (o job carrega
+       `if: false # hwp:nuvem-inerte`), e existe porque um push que toque em
+       .github/workflows/turno.yml devolve o workflow a active sozinho — medido
+       em 13/11, com o commit 1381047 por cima da prova posta às 19:56Z. Com o
+       cinto lendo as duas coisas, active + inerte = a nuvem não escreve, e a
+       rodada acontece; active + marca ausente = duas mãos em memory.json, e a
+       rodada para. A API é trocada por um file:// (HWP_API_WORKFLOWS) para que
+       o estado seja plantado sem depender de rate limit nenhum.             */
+const MARCA = "    if: false # hwp:nuvem-inerte\n";
+function fixtureRelogio({ inerte = false, prova = true, corpo = '{"workflows":[{"name":"turno editorial","state":"active"}]}' } = {}) {
+  const raiz = fs.mkdtempSync(path.join(os.tmpdir(), "hwp-relogio-"));
+  const dir = path.join(raiz, "work");
+  const state = path.join(raiz, "state");
+  const avisos = path.join(raiz, "avisos.txt");
+  fs.mkdirSync(dir, { recursive: true });
+  fs.mkdirSync(state, { recursive: true });
+  git(dir, "init", "-q", ".");
+  git(dir, "config", "user.name", "prova");
+  git(dir, "config", "user.email", "prova@local");
+  fs.mkdirSync(path.join(dir, ".github", "workflows"), { recursive: true });
+  fs.writeFileSync(
+    path.join(dir, ".github", "workflows", "turno.yml"),
+    `name: turno editorial\non:\n  schedule:\n    - cron: "23 1,5,9,13,17,21 * * *"\njobs:\n  turno:\n${inerte ? MARCA : ""}    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n`,
+  );
+  fs.writeFileSync(path.join(dir, "TURNO.md"), "# Turno — baseline\n");
+  git(dir, "add", "-A");
+  git(dir, "commit", "-qm", "baseline");
+  git(dir, "branch", "-M", "main");
+  /* origin local: sem ele o runner gasta 3×60s esperando rede e a prova não
+     mede o portão, mede o sleep.                                              */
+  const bare = path.join(raiz, "origin.git");
+  execFileSync("git", ["init", "-q", "--bare", bare], { stdio: "ignore" });
+  git(dir, "remote", "add", "origin", bare);
+  git(dir, "push", "-q", "origin", "main");
+  if (prova) fs.writeFileSync(path.join(state, "actions-desligado"), "clicado na aba Actions pela prova\n");
+  const api = path.join(raiz, "workflow.json");
+  fs.writeFileSync(api, corpo);
+  const stub = path.join(raiz, "stub-aviso.sh");
+  fs.writeFileSync(stub, `#!/bin/bash\necho "$1|$2" >> "${avisos}"\n`, { mode: 0o755 });
+  return { dir, state, avisos, stub, raiz, api };
+}
+
+function rodaAgenda(f) {
+  let saida = "";
+  let codigo = 0;
+  try {
+    saida = execFileSync(RUNNER, [], {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        HWP_REPO: f.dir,
+        HWP_STATE: f.state,
+        HWP_AVISO: f.stub,
+        HWP_SO_AGENDA: "1",
+        HWP_API_WORKFLOWS: `file://${f.api}`,
+      },
+    });
+  } catch (e) {
+    saida = String(e.stdout || "") + String(e.stderr || "");
+    codigo = e.status ?? -1;
+  }
+  return {
+    saida,
+    codigo,
+    linha: (saida.split("\n").find((l) => l.startsWith("agenda:")) || "").trim(),
+    avisos: fs.existsSync(f.avisos) ? fs.readFileSync(f.avisos, "utf8").split("\n").filter(Boolean) : [],
+    provouQueLeu: fs.existsSync(path.join(f.state, "workflow.json")),
+  };
+}
+
 {
-  console.log("5. nada encostou no repo real nem no estado da máquina");
+  console.log("5. o portão do relógio: prova local, marca no arquivo e o cinto da API");
+  const semProva = rodaAgenda(fixtureRelogio({ prova: false, inerte: true }));
+  confere("sem a prova local a rodada para, mesmo com o job inerte", semProva.codigo === 1 && /falta a prova local/.test(semProva.saida), `${semProva.codigo} · ${semProva.saida.trim().slice(0, 160)}`);
+  confere("e a API não foi nem consultada (a prova é a primeira boca)", !semProva.provouQueLeu, semProva.linha);
+  confere("avisou na boca única", semProva.avisos.length === 1 && semProva.avisos[0].startsWith("rodada vermelha|"), JSON.stringify(semProva.avisos));
+
+  const ativa = rodaAgenda(fixtureRelogio({ inerte: false }));
+  confere("active sem a marca no arquivo barra a rodada", ativa.codigo === 1 && /voltou a ACTIVE/.test(ativa.saida), `${ativa.codigo} · ${ativa.linha}`);
+  confere("e a linha da agenda mostra as duas leituras", /job inerte no arquivo: nao/.test(ativa.linha), ativa.linha);
+
+  const inerte = rodaAgenda(fixtureRelogio({ inerte: true }));
+  confere("active COM a marca no arquivo deixa a rodada seguir — a nuvem não escreve", inerte.codigo === 0 && /agenda verde/.test(inerte.saida), `${inerte.codigo} · ${inerte.linha}`);
+  confere("a marca é lida do arquivo, não da aba", /job inerte no arquivo: sim/.test(inerte.linha), inerte.linha);
+  confere("nenhum aviso vermelho na rodada que passou", inerte.avisos.length === 0, JSON.stringify(inerte.avisos));
+
+  const desligado = rodaAgenda(fixtureRelogio({ inerte: false, corpo: '{"workflows":[{"name":"turno editorial","state":"disabled_manually"}]}' }));
+  confere("disabled sem marca não barra (o cinto não inventa bloqueio)", desligado.codigo === 0 && /agenda verde/.test(desligado.saida), `${desligado.codigo} · ${desligado.linha}`);
+
+  const quebrado = rodaAgenda(fixtureRelogio({ inerte: false, corpo: '{"workflows":[{"name":"turno' }));
+  confere("resposta ilegível NÃO barra — e mostra por quê", quebrado.codigo === 0 && /ilegivel/.test(quebrado.linha), `${quebrado.codigo} · ${quebrado.linha}`);
+  const semWorkflow = rodaAgenda(fixtureRelogio({ inerte: false, corpo: '{"workflows":[]}' }));
+  confere("workflow ausente da resposta não barra", semWorkflow.codigo === 0 && /sem o workflow na resposta/.test(semWorkflow.linha), `${semWorkflow.codigo} · ${semWorkflow.linha}`);
+  const semArquivoF = fixtureRelogio({ corpo: '{"workflows":[{"name":"turno editorial","state":"active"}]}' });
+  /* commitado, não só apagado do disco: com o arquivo deletado com mudanças na
+     árvore, quem morde primeiro é o portão da árvore, e esta conferência
+     mediria o portão errado.                                                 */
+  git(semArquivoF.dir, "rm", "-q", ".github/workflows/turno.yml");
+  git(semArquivoF.dir, "commit", "-qm", "baseline sem o workflow");
+  git(semArquivoF.dir, "push", "-q", "origin", "main");
+  const semArquivo = rodaAgenda(semArquivoF);
+  confere("arquivo de workflow apagado é dito como ilegível e barra com active", /arquivo ilegivel/.test(semArquivo.linha) && semArquivo.codigo === 1, `${semArquivo.codigo} · ${semArquivo.linha}`);
+}
+
+/* 6 — invariante: o estado desta máquina não foi tocado pela prova. */
+{
+  console.log("6. nada encostou no repo real nem no estado da máquina");
   const logReal = fs.readFileSync(path.join(os.homedir(), ".local", "state", "hwp", "turno.log"), "utf8");
   confere("o turno.log real não ganhou cabeçalho de prova", !/portão verde/.test(logReal), `${(logReal.match(/===== turno local /g) || []).length} cabeçalhos`);
   const avisosRealAgora = fs.readFileSync(path.join(os.homedir(), ".local", "state", "hwp", "avisos.log"), "utf8").split("\n").filter(Boolean).length;

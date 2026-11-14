@@ -81,7 +81,11 @@ confere("item fora dos 10 mais recentes = aviso", /aviso \[feed-stale\]/.test(d2
 /* ── [4] quem regenera o arquivo ─────────────────────────────────────── */
 console.log("\n[4] amarramento");
 const pubSrc = fs.readFileSync(path.join(ROOT, "tools", "publish.js"), "utf8");
-confere("publish.js regenera o feed na mesma etapa do sitemap", /run\("build-sitemap\.js"\)[\s\S]{0,400}run\("build-feed\.js"\)/.test(pubSrc), "a etapa saiu do caminho de build do publish");
+/* A janela de 400 caracteres foi o que tornou esta conferência falsa: entre o
+   sitemap e o feed mora a explicação do porquê o retrato é tirado na linha do
+   build-feed, e ela passa dos 400. O que se quer provar é a ORDEM e o retrato,
+   não a distância — então os três marcos aparecem na sequência, sem cap. */
+confere("publish.js regenera o feed na mesma etapa do sitemap, com retrato antes", /run\("build-sitemap\.js"\)[\s\S]*?snapshot\.set\("feed\.xml"[\s\S]*?run\("build-feed\.js"\)/.test(pubSrc), "a etapa (ou o retrato dela) saiu do caminho de build do publish");
 confere("rodar build-feed.js sozinho não exigir nada (idempotente)", (() => {
   /* Comparar bytes com core.autocrlf ligado é comparar o checkout da máquina,
      não o conteúdo: o build escreve LF e o git entrega CRLF, então a conferência
