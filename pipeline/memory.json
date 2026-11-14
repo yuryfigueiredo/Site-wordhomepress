@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14T17:54:27.402Z",
+  "updated": "2026-11-14T19:33:00.238Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -260,6 +260,12 @@
       "topic": "Hidden 'master switch' allows bacteria to breach the body's defenses",
       "outcome": "falha_texto",
       "at": "2026-11-14T17:54:27.402Z"
+    },
+    "https://phys.org/news/2026-11-cosmic-magnifying-glass-reveal-supernova.html": {
+      "slug": "a-cosmic-magnifying-glass-could-reveal-the-same-supernova-two-mo",
+      "topic": "A cosmic magnifying glass could reveal the same supernova two more times in roughly 70 years",
+      "outcome": "falha_texto",
+      "at": "2026-11-14T19:33:00.237Z"
     }
   },
   "publishes": [
