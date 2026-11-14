@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "little-red-dots-black-hole-hypothesis",
+  "currentCoverId": "m-john-harrison-booker-prize-win",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -136,6 +136,14 @@
       "id": "little-red-dots-black-hole-hypothesis",
       "tipo": "rotacionada",
       "era": "nasa-stakes-ten-billion-dollars-lunar-infrastructure"
+    },
+    {
+      "at": "2026-11-14T20:49:15.369Z",
+      "dia": "2026-11-14",
+      "rodada": "2026-11-14T16:23",
+      "id": "m-john-harrison-booker-prize-win",
+      "tipo": "rotacionada",
+      "era": "little-red-dots-black-hole-hypothesis"
     }
   ],
   "capaVistas": [

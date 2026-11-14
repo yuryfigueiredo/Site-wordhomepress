@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14T19:33:00.238Z",
+  "updated": "2026-11-14T20:49:16.029Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -264,8 +264,9 @@
     "https://phys.org/news/2026-11-cosmic-magnifying-glass-reveal-supernova.html": {
       "slug": "a-cosmic-magnifying-glass-could-reveal-the-same-supernova-two-mo",
       "topic": "A cosmic magnifying glass could reveal the same supernova two more times in roughly 70 years",
-      "outcome": "falha_texto",
-      "at": "2026-11-14T19:33:00.237Z"
+      "outcome": "publicada",
+      "at": "2026-11-14T20:49:16.027Z",
+      "id": "gravitational-lens-supernova-reappearance-time-delay"
     }
   },
   "publishes": [
@@ -358,6 +359,11 @@
       "id": "candidate-neutron-star-mass-gap",
       "at": "2026-11-13T21:46:48.315Z",
       "score": 7.3
+    },
+    {
+      "id": "gravitational-lens-supernova-reappearance-time-delay",
+      "at": "2026-11-14T20:49:16.027Z",
+      "score": 6.4
     }
   ]
 }

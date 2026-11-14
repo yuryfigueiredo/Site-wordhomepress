@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "gravitational-lens-supernova-reappearance-time-delay"
+        }
+      ],
+      "destination": "/a-gravitational-lens-supernova-reappearance-time-delay.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "candidate-neutron-star-mass-gap"
         }
       ],
