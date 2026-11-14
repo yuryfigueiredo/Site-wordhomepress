@@ -188,7 +188,7 @@ const repoAtras = fixtureRepo(path.join(fs.mkdtempSync(path.join(os.tmpdir(), "h
     grace: 60 * 24,
   });
   confere("nenhum aviso", c.disparados.length === 0, JSON.stringify(c.disparados));
-  confere("diz que está na folga", /ainda está na folga/.test(c.saida), c.saida.trim());
+  confere("diz que é a folga da rodada, com o prazo em que ela vence", /folga da rodada.*vence às \d\d:\d\d/.test(c.saida), c.saida.trim());
 }
 
 /* 7 — a rodada rodou e morreu no portão: cabeçalho no log não é rodada servida.
@@ -262,9 +262,148 @@ const SLOT_ONTENDEIRO = (() => { const d = new Date(ONTEM); d.setHours(20, 23, 3
   confere("a segunda olhada não repete o aviso", segundo.disparados.length === 0 && /já avisado/.test(segundo.saida), `${JSON.stringify(segundo.disparados)} · ${segundo.saida.trim()}`);
 }
 
-/* 10 — invariante: o estado real desta máquina não foi tocado. */
+/* 11 — a folga não é cega ao desfecho. Medido em 14/11 às 17:41: a rodada das
+        16:23 tinha morrido no redator às 16:33 — o VERMELHO estava escrito no
+        log havia 68 min — e o vigia cantou "ainda está na folga (-18 min para
+        o horário)", adiando a causa até as 17:53 e ainda por cima com minutos
+        negativos, que leem como defeito. A folga protege a rodada que PODE estar
+        em curso; com cabeçalho do horário e fim vermelho provado no disco, ela
+        não vale mais: o aviso sai na primeira olhada, com a mesma etiqueta e a
+        mesma chave de dedupe de sempre. O cabeçalho do fixture usa o formato do
+        runner (`date -u +%FT%TZ`), porque é exatamente esse grep que o vigia lê. */
+/* O instante de referência do caso 11 é relativo ao AGORA real, nunca a um
+   horário fixo: o vigia compara o relógio falsificado com o slot convertido no
+   fuso DA MÁQUINA (`date -d "HOJE hh:mm"`), e num fuso a oeste de Greenwich
+   (Los Angeles) qualquer hora da tarde UTC já passou de todos os check_hours
+   locais — o slot cobrado deixaria de ser o do cabeçalho. Então: o último slot
+   local já vencido antes do agora, mais 78 min (folga de 90 ainda correndo).
+   Abaixo das 09:30 locais não há slot vencido hoje; usa-se o 20:23 de ontem,
+   que é exatamente o que a virada do dia cobra (casos 8 e 9). */
+const HORARIOS_11 = require(path.join(REPO, "pipeline", "cadence.json")).check_hours;
+const AGORA_11 = Math.floor(Date.now() / 1000);
+const DIA_BASE_HOJE = (() => {
+  const d = new Date(AGORA_11 * 1000);
+  const p = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+})();
+const SLOT_E_ONTENDEIRO_11 = (() => {
+  let u = null;
+  for (const h of [...HORARIOS_11].sort()) {
+    const d = new Date(`${DIA_BASE_HOJE}T${h}:00`); // hora wall-clock no fuso da máquina
+    if (d.getTime() <= AGORA_11 * 1000) u = h;
+  }
+  if (u) return { slot: u, diaBase: DIA_BASE_HOJE };
+  return { slot: [...HORARIOS_11].sort().pop(), diaBase: (() => { const d = new Date(AGORA_11 * 1000 - 86400 * 1000); const p = (n) => String(n).padStart(2, "0"); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; })() };
+})();
+const alvoRodada11 = Math.floor(new Date(`${SLOT_E_ONTENDEIRO_11.diaBase}T${SLOT_E_ONTENDEIRO_11.slot}:00`).getTime() / 1000);
+const agoraSlot = alvoRodada11 + 78 * 60; // folga de 90 min ainda correndo
+const p11 = (n) => String(n).padStart(2, "0");
+const TS_RODADA = (() => {
+  const d = new Date(alvoRodada11 * 1000 + 28 * 1000); // o timer abre em HH:MM:2x, medido no log vivo
+  /* UTC de verdade, com getUTC* e não getters locais colados num "Z": o runner
+     escreve `date -u +%FT%TZ` e o vigia faz `date -d` no cabeçalho, que só
+     reconhece o Z. Medido nesta prova: com os campos locais dentro do sufixo
+     "Z", o cabeçalho mentia o instante em três horas (16:23-03 virava 16:23Z),
+     caía antes da janela ALVO−15min e o caso ficava mudo — o verde vinha de a
+     folga engolir tudo, não do atalho. */
+  return `${d.getUTCFullYear()}-${p11(d.getUTCMonth() + 1)}-${p11(d.getUTCDate())}T${p11(d.getUTCHours())}:${p11(d.getUTCMinutes())}:${p11(d.getUTCSeconds())}Z`;
+})();
 {
-  console.log("10. o estado real da máquina não foi tocado pela prova");
+  console.log(`11. dentro da folga (slot ${SLOT_E_ONTENDEIRO_11.slot} de ${SLOT_E_ONTENDEIRO_11.diaBase}), rodada já encerrada VERMELHA no log → aviso imediato`);
+  const c = cenario("11a. cabeçalho do slot + bloco encerrado no redator → causa agora, não quando a folga vencer", {
+    turnoLog: `===== turno local ${TS_RODADA} =====\n[fim] o redator não entregou texto: qoder/Efficient: HTTP 500: timeout de 540s no CLI\nVERMELHO: o redator não entregou texto: qoder/Efficient: HTTP 500: timeout de 540s no CLI\ntools/turno.js terminou com código 1\nrodada vermelha: árvore recuada, só TURNO.md e pipeline/memory.json ficaram\npush ok — HEAD abc1234, origem 0\t0\n`,
+    repo: repoLimpo,
+    grace: 90,
+    agora: agoraSlot,
+  });
+  confere("saiu 0 (o vigia avisa e sai)", c.codigo === 0, `código ${c.codigo}`);
+  confere("exatamente um aviso, sem esperar a folga vencer", c.disparados.length === 1, JSON.stringify(c.disparados));
+  confere("a etiqueta é 'rodada vermelha'", (c.disparados[0] || "").startsWith("rodada vermelha|"), c.disparados[0]);
+  confere("o texto segue a convenção: rodou e terminou VERMELHA", /rodou e terminou VERMELHA:/.test(c.disparados[0] || ""), c.disparados[0]);
+  confere("a causa do runner vai no aviso", /timeout de 540s no CLI/.test(c.disparados[0] || ""), c.disparados[0]);
+  confere("não canta a espera da folga", !/nada a conferir|a folga da rodada/.test(c.saida), c.saida.trim());
+  const chave = fs.existsSync(path.join(c.state, "vigia-ultimo")) ? fs.readFileSync(path.join(c.state, "vigia-ultimo"), "utf8").trim() : null;
+  confere("a chave de dedupe escrita é '<dia-base> <slot>', formato de sempre", new RegExp(`^${SLOT_E_ONTENDEIRO_11.diaBase} ${SLOT_E_ONTENDEIRO_11.slot}$`).test(chave || ""), String(chave));
+  const segunda = cenario("11b. mesma olhada, chave posta → calado (dedupe vale também na folga)", {
+    turnoLog: `===== turno local ${TS_RODADA} =====\nVERMELHO: o redator não entregou texto: qoder/Efficient: HTTP 500: timeout de 540s no CLI\ntools/turno.js terminou com código 1\n`,
+    repo: repoLimpo,
+    grace: 90,
+    agora: agoraSlot,
+    chavePronta: chave || "",
+  });
+  confere("a segunda olhada não repete o aviso", segunda.disparados.length === 0 && /já avisado/.test(segunda.saida), `${JSON.stringify(segunda.disparados)} · ${segunda.saida.trim()}`);
+
+  /* 12 — dentro da folga SEM fim provado, a folga continua valendo: cabeçalho
+          escrito no começo é prova de que a rodada abriu, não de que serviu — e
+          uma rodada em curso não pode virar "rodada vermelha" na metade. E a
+          mensagem da folga não imprime número negativo jamais: quem lê precisa
+          saber quando volta, não contar déficit. */
+  const tsRodando = (() => {
+    // O mesmo UTC de verdade do cabeçalho do caso 11: abrir há 4 min, no fuso real.
+    const d = new Date(agoraSlot * 1000 - 4 * 60 * 1000);
+    return `${d.getUTCFullYear()}-${p11(d.getUTCMonth() + 1)}-${p11(d.getUTCDate())}T${p11(d.getUTCHours())}:${p11(d.getUTCMinutes())}:${p11(d.getUTCSeconds())}Z`;
+  })();
+  const r12 = cenario("12a. cabeçalho do slot sem VERMELHO no bloco (rodada em curso) → silêncio", {
+    turnoLog: `===== turno local ${tsRodando} =====\n[coleta] fila: 3 pautas\n[brief] pipeline/drafts/a-cosmic-magnifying-glass/ criado\n`,
+    repo: repoLimpo,
+    grace: 90,
+    agora: agoraSlot,
+  });
+  console.log("12. dentro da folga sem fim provado → espera, e a mensagem declara o prazo");
+  confere("nenhum aviso: a rodada ainda pode estar escrevendo", r12.disparados.length === 0, JSON.stringify(r12.disparados));
+  confere("diz que é a folga da rodada", /folga da rodada/.test(r12.saida), r12.saida.trim());
+  confere("declara o prazo em que a folga vence (slot + 90 min)", (() => {
+    const m = r12.saida.match(/vence às (\d\d):(\d\d)/);
+    if (!m) return false;
+    const d = new Date((alvoRodada11 + 90 * 60) * 1000); // alvo + folga, no fuso da máquina
+    return Number(m[1]) === d.getHours() && Number(m[2]) === d.getMinutes();
+  })(), r12.saida.trim());
+  confere("nenhum número negativo na mensagem", !/-\s?\d/.test(r12.saida), r12.saida.trim());
+  confere("faltam minutos contados para cima, nunca zero quando falta", /faltam 12 min/.test(r12.saida), r12.saida.trim());
+  confere("não escreveu chave de dedupe (nada foi avisado)", !fs.existsSync(path.join(r12.state, "vigia-ultimo")), "vigia-ultimo apareceu");
+
+  const r12b = cenario("12b. log vazio dentro da folga → perdida só se cobra depois dela", {
+    turnoLog: "",
+    repo: repoLimpo,
+    grace: 90,
+    agora: agoraSlot,
+  });
+  confere("nenhum aviso com o log vazio na folga", r12b.disparados.length === 0, JSON.stringify(r12b.disparados));
+  confere("a mensagem de folga continua sem negativo", /folga da rodada/.test(r12b.saida) && !/-\s?\d/.test(r12b.saida), r12b.saida.trim());
+
+  /* 13 — mutação: sem o atalho novo, o mesmo log do caso 11 volta a cantar a
+          folga e engole a causa por mais de uma hora. É a prova de que o caso 11
+          mede a correção, não o acaso. */
+  const copia = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "hwp-muta-")), "hwp-vigia-sem-atalho.sh");
+  const fonte = fs.readFileSync(VIGIA, "utf8");
+  console.log("13. mutação: mesmo log, atalho removido → a folga engole a causa outra vez");
+  if (!fonte.includes('FIM_VERMELHO="$CAUSA_LINHA"')) {
+    confere("o atalho existe no script para poder ser mutado", false, fonte.slice(0, 200));
+  } else {
+    fs.writeFileSync(copia, fonte.replace('FIM_VERMELHO="$CAUSA_LINHA"', 'FIM_VERMELHO=""'), { mode: 0o755 });
+    let saida = "";
+    try {
+      saida = execFileSync(copia, [], {
+        encoding: "utf8",
+        env: {
+          ...process.env,
+          HWP_REPO: repoLimpo,
+          HWP_VIGIA_STATE: fs.mkdtempSync(path.join(os.tmpdir(), "hwp-muta-state-")),
+          HWP_VIGIA_GRACA: "90",
+          HWP_AVISO: path.join(os.tmpdir(), "stub-inexistente.sh"),
+          HWP_AGORA: String(agoraSlot),
+        },
+      });
+    } catch (e) {
+      saida = String(e.stdout || "") + String(e.stderr || "");
+    }
+    confere("sem o atalho, a folga engole a causa outra vez", /folga da rodada/.test(saida), saida.trim());
+  }
+}
+
+/* 14 — invariante: o estado real desta máquina não foi tocado. */
+{
+  console.log("14. o estado real da máquina não foi tocado pela prova");
   const real = path.join(os.homedir(), ".local", "state", "hwp");
   const chaveAgora = fs.existsSync(path.join(real, "vigia-ultimo")) ? fs.readFileSync(path.join(real, "vigia-ultimo"), "utf8") : null;
   confere("a prova não escreveu na chave de dedupe real", chaveAgora === CHAVE_REAL_ANTES, `${CHAVE_REAL_ANTES} → ${chaveAgora}`);
