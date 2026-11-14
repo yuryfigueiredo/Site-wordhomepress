@@ -1,6 +1,8 @@
 /* pick-lead.js — escolhe a próxima pauta sem interação humana.
    Imprime uma linha JSON {url, pillar, topic, slug} da melhor pauta do dia que
    ainda não tenha rascunho; exit 1 quando não há nenhuma (a rodada só coleta).
+   Uso: node tools/pick-lead.js          (COMPROMETE a pauta: em_andamento, 6h fora da fila)
+        node tools/pick-lead.js --dry    (a mesma escolha, nenhuma escrita)
 
    A fila é lida com três memórias, porque as três falham juntas:
    · fonte já publicada (js/articles-db.js) — a mesma notícia não pode subir
@@ -115,6 +117,11 @@ async function alcançavel(url) {
      porque cada sonda pode demorar 10s e a rodada tem relógio. */
   const orcamentoMs = 120000;
   const t0 = Date.now();
+  /* `--dry` é a olhada sem preço: a partir do registro abaixo a pauta fica
+     6h fora da fila (`em_andamento`), e uma fonte que não abre sai por 12h —
+     quem roda isto à mão para ver o que a próxima rodada pegaria pagava por
+     olhar. A seleção é a mesma, só nenhuma escrita acontece. */
+  const SECO = process.argv.includes("--dry");
   let sondadas = 0;
   let naoAbre = 0;
   for (const c of candidatas) {
@@ -126,12 +133,13 @@ async function alcançavel(url) {
     if (!(await alcançavel(c.url))) {
       console.error(`pauta descartada (fonte não abre): ${c.url}`);
       naoAbre++;
-      mem.registrar(ROOT, c.url, "fonte_inalcancavel", { slug: c.slug, topic: c.topic });
+      if (!SECO) mem.registrar(ROOT, c.url, "fonte_inalcancavel", { slug: c.slug, topic: c.topic });
       continue;
     }
     /* A partir daqui a pauta está comprometida com esta rodada: se o registro
        não for escrito, um turno que morre no meio volta nela para sempre. */
-    mem.registrar(ROOT, c.url, "em_andamento", { slug: c.slug, topic: c.topic });
+    if (!SECO) mem.registrar(ROOT, c.url, "em_andamento", { slug: c.slug, topic: c.topic });
+    if (SECO) console.error("pick-lead --dry: nada registrado — a fila está intacta");
     console.log(JSON.stringify(c));
     process.exit(0);
   }
