@@ -1,4 +1,10 @@
 {
-  "servidas": [],
-  "updated": "2026-11-14T23:15:00.000Z"
+  "servidas": [
+    {
+      "rodada": "2026-11-14T20:23",
+      "at": "2026-11-14T23:23:42.110Z",
+      "resultado": "cadência: a última matéria está no ar há 2.6h (mínimo 3h) — esta rodada só coleta e checa."
+    }
+  ],
+  "updated": "2026-11-14T23:23:42.110Z"
 }

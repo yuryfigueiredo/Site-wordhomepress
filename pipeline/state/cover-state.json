@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "m-john-harrison-booker-prize-win",
+  "currentCoverId": "james-webb-telescope-reveals-giant-exoplanet",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -144,6 +144,14 @@
       "id": "m-john-harrison-booker-prize-win",
       "tipo": "rotacionada",
       "era": "little-red-dots-black-hole-hypothesis"
+    },
+    {
+      "at": "2026-11-14T23:23:42.064Z",
+      "dia": "2026-11-14",
+      "rodada": "2026-11-14T20:23",
+      "id": "james-webb-telescope-reveals-giant-exoplanet",
+      "tipo": "rotacionada",
+      "era": "m-john-harrison-booker-prize-win"
     }
   ],
   "capaVistas": [
