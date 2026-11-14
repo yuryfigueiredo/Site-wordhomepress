@@ -289,7 +289,11 @@ try {
   buildLog += run("build-sitemap.js");
   /* O feed RSS é o aviso que agregador e buscador recebem de que saiu matéria
      nova. Ficar de fora desta lista é como o feed passou 5 publicações parado
-     no Hubble enquanto o doctor continuava verde: nada conferia o arquivo. */
+     no Hubble enquanto o doctor continuava verde: nada conferia o arquivo.
+     O retrato para o abort é tirado AQUI, e não no bloco lá em cima: esta é a
+     primeira linha que reescreve o feed na rodada, e um retrato nulo faria o
+     abort apagar o feed inteiro do disco. */
+  snapshot.set("feed.xml", fs.existsSync(path.join(ROOT, "feed.xml")) ? fs.readFileSync(path.join(ROOT, "feed.xml")) : null);
   buildLog += run("build-feed.js");
   buildLog += run("meta-pages.js");
 } catch (err) {
@@ -369,7 +373,7 @@ try {
   /* As duas réguas da capa entram aqui porque build.js as reescreveu nesta
      rodada: sem commit local, quem roda o robô na máquina e no Actions passa a
      ver estados diferentes da mesma meta. */
-  const files = ["js/articles-db.js", "sitemap.xml", "voice/state/last_runs.json", "pipeline/scores.json", "pipeline/memory.json", "index.html", "culture.html", "tech.html", "science.html", "images", "vercel.json", "pipeline/state/cover-state.json", "pipeline/state/hero-fallback.html"];
+  const files = ["js/articles-db.js", "sitemap.xml", "feed.xml", "voice/state/last_runs.json", "pipeline/scores.json", "pipeline/memory.json", "index.html", "culture.html", "tech.html", "science.html", "images", "vercel.json", "pipeline/state/cover-state.json", "pipeline/state/hero-fallback.html"];
   for (const f of files) gitTenta(["add", f]);
   /* glob como pathspec: o git expande e o commit cobre também órfão removido */
   gitTenta(["add", "--", "a-*.html", "r-*.html"]);

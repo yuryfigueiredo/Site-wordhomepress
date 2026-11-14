@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Fri, 13 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 14 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>A Gravitational Lens Schedules Two More Arrivals of One Supernova</title>
+      <link>https://www.homeworldpress.com/article.html?id=gravitational-lens-supernova-reappearance-time-delay</link>
+      <description>Seventy years between images is a hard test of a fitted mass model, and a stranger will run it.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=gravitational-lens-supernova-reappearance-time-delay</guid>
+      <pubDate>Sat, 14 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>A Candidate Neutron Star Crowds the Mass Gap</title>
       <link>https://www.homeworldpress.com/article.html?id=candidate-neutron-star-mass-gap</link>
@@ -77,14 +85,6 @@
       <description>A consistency paper drops dark matter and dark energy, then survives nucleosynthesis, 175 rotation curves and cosmic chronometers. The microwave background is still a promise.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=theory-predicting-an-older-universe-without-dark-matter-or-dark</guid>
-      <pubDate>Sat, 07 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>A Drone Sampler Moves Microplastics Measurement Off the Rooftop</title>
-      <link>https://www.homeworldpress.com/article.html?id=new-method-measures-microplastics-in-the-air-using-an-uncrewed-a</link>
-      <description>One 25-minute flight at 100 meters over two Colorado sites turned an aerosol instrument into a height-resolved plastic sampler.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=new-method-measures-microplastics-in-the-air-using-an-uncrewed-a</guid>
       <pubDate>Sat, 07 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
