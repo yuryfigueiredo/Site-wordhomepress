@@ -4,35 +4,54 @@
    Não publica nada: só decide o que merece ser escrito.
 
    Uso:
-     node tools/ingest.js              # atualiza a fila de hoje
-     node tools/ingest.js --limit 40   # corta a fila em 40 pautas
+     node tools/ingest.js              # acumula a fila de hoje (não reescreve a rodada anterior)
+     node tools/ingest.js --limit 40   # corta a fila acumulada em 40 pautas
      node tools/ingest.js --show       # só imprime a fila já gravada        */
 const fs = require("fs");
 const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
 const mem = require("./lib/memory");
-const LEAD_DIR = path.join(ROOT, "pipeline", "leads");
-const STATE_FILE = path.join(ROOT, "pipeline", "state", "seen.json");
+/* As três bocas abaixo são a boca de teste (.audit/teste-fila-acumulada.js), a
+   mesma convenção do HWP_REPO/HWP_STATE do ~/.local/bin/hwp-turno.sh: sem elas
+   a fila acumulada só poderia ser provada contra o repo real, gravando no
+   pipeline/leads/ e no seen.json desta máquina. Sem variável, os caminhos são
+   exatamente os de sempre. */
+const LEAD_DIR = process.env.HWP_LEAD_DIR ? path.resolve(process.env.HWP_LEAD_DIR) : path.join(ROOT, "pipeline", "leads");
+const STATE_FILE = process.env.HWP_SEEN_FILE ? path.resolve(process.env.HWP_SEEN_FILE) : path.join(ROOT, "pipeline", "state", "seen.json");
 const ARGS = process.argv.slice(2);
 const LIMIT = Number((ARGS.find((a) => a.startsWith("--limit=")) || "").split("=")[1] || (ARGS.includes("--limit") ? ARGS[ARGS.indexOf("--limit") + 1] : 0)) || 60;
 const PER_SOURCE_CAP = 8;
 
-/* Fontes: todas com RSS/Atom público e gratuito, sem cadastro. */
-const FEEDS = [
-  { url: "https://www.publishersweekly.com/rss/feature.xml", source: "Publishers Weekly", pillars: ["culture"] },
-  { url: "https://reactormag.com/feed/", source: "Reactor", pillars: ["culture"] },
-  { url: "https://www.theguardian.com/Books/science-fiction/rss", source: "The Guardian SF", pillars: ["culture"] },
-  { url: "https://publishingperspectives.com/feed/", source: "Publishing Perspectives", pillars: ["culture"] },
-  { url: "https://www.sfwa.org/feed/", source: "SFWA", pillars: ["culture"] },
-  { url: "https://arstechnica.com/feed/", source: "Ars Technica", pillars: ["tech"] },
-  { url: "https://www.theverge.com/rss/index.xml", source: "The Verge", pillars: ["tech"] },
-  { url: "https://hnrss.org/frontpage", source: "Hacker News", pillars: ["tech"] },
-  { url: "https://arstechnica.com/science/feed/", source: "Ars Technica Science", pillars: ["science", "tech"] },
-  { url: "https://www.sciencedaily.com/rss/space_time/astronomy.xml", source: "Science Daily Astronomy", pillars: ["science"] },
-  { url: "https://phys.org/rss-feed/", source: "Phys.org", pillars: ["science"] },
-  { url: "https://www.space.com/feeds/all", source: "Space.com", pillars: ["science"] },
-];
+/* Fontes: todas com RSS/Atom público e gratuito, sem cadastro. A boca
+   HWP_FEEDS_JSON existe para a prova não depender de rede — quem entra por ela
+   percorre o MESMO parseFeed, pontuação e fusão acima; é lista trocada, não
+   implementação paralela. */
+const FEEDS = (() => {
+  if (!process.env.HWP_FEEDS_JSON)
+    return [
+      { url: "https://www.publishersweekly.com/rss/feature.xml", source: "Publishers Weekly", pillars: ["culture"] },
+      { url: "https://reactormag.com/feed/", source: "Reactor", pillars: ["culture"] },
+      { url: "https://www.theguardian.com/Books/science-fiction/rss", source: "The Guardian SF", pillars: ["culture"] },
+      { url: "https://publishingperspectives.com/feed/", source: "Publishing Perspectives", pillars: ["culture"] },
+      { url: "https://www.sfwa.org/feed/", source: "SFWA", pillars: ["culture"] },
+      { url: "https://arstechnica.com/feed/", source: "Ars Technica", pillars: ["tech"] },
+      { url: "https://www.theverge.com/rss/index.xml", source: "The Verge", pillars: ["tech"] },
+      { url: "https://hnrss.org/frontpage", source: "Hacker News", pillars: ["tech"] },
+      { url: "https://arstechnica.com/science/feed/", source: "Ars Technica Science", pillars: ["science", "tech"] },
+      { url: "https://www.sciencedaily.com/rss/space_time/astronomy.xml", source: "Science Daily Astronomy", pillars: ["science"] },
+      { url: "https://phys.org/rss-feed/", source: "Phys.org", pillars: ["science"] },
+      { url: "https://www.space.com/feeds/all", source: "Space.com", pillars: ["science"] },
+    ];
+  try {
+    const j = JSON.parse(process.env.HWP_FEEDS_JSON);
+    if (!Array.isArray(j) || !j.length) throw new Error("não é uma lista");
+    return j.map((f, i) => ({ url: String(f.url), source: String(f.source || `feed-${i}`), pillars: Array.isArray(f.pillars) && f.pillars.length ? f.pillars : ["culture"] }));
+  } catch (err) {
+    console.error(`HWP_FEEDS_JSON ilegível (${err.message}) — a rodada parou antes de coletar: cair no padrão silencioso faria a prova conferir os feeds reais achando que conferia os da fixture.`);
+    process.exit(1);
+  }
+})();
 
 /* Vocabulário por pilar — as fronteiras rígidas do PROJECT_BLUEPRINT.md. */
 const KEYWORDS = {
@@ -118,6 +137,23 @@ function titleOverlap(a, b) {
   return shared / Math.min(wa.size, wb.size);
 }
 
+/* A fila do dia é acumulativa porque o visto-foi-coletado não volta atrás.
+   seen.json marca toda URL que entrou na fila (é o que impede a recoleta), e
+   até 14/11 cada rodada escrevia o arquivo do dia por cima: o item vivia o
+   tempo de uma rodada e morria com a escrita seguinte, deixando no disco um
+   arquivo de 1 pauta em dia de 4 rodadas (11-13 e 11-14) contra 19 num dia em
+   que a última ingestão foi a primeira (11-11). O pick-lead lê as 3 filas mais
+   recentes, então a cola onde a memória sobrevivia — o arquivo — era justamente
+   a peça jogada fora. */
+function leFilaAnterior(arquivo) {
+  try {
+    const j = JSON.parse(fs.readFileSync(arquivo, "utf8"));
+    return { leads: Array.isArray(j.leads) ? j.leads : [], geracoes: Number(j.rodadas) || 0, primeira: j.primeira_coleta || j.generated || null };
+  } catch {
+    return { leads: [], geracoes: 0, primeira: null };
+  }
+}
+
 async function main() {
   if (ARGS.includes("--show")) {
     const file = path.join(LEAD_DIR, `${new Date().toISOString().slice(0, 10)}.md`);
@@ -191,27 +227,75 @@ async function main() {
     byUrl.set(lead.url, lead);
     accepted.push(lead);
   }
+
+  /* A fusão começa pelo que o arquivo de hoje já tinha e só depois deixa a
+     rodada atual falar: um item velho repetido com URL nova tem de ser barrado
+     pela sobreposição de título contra o card que está no disco, não apenas
+     contra os novos. O `seen` continua marcando toda URL da fila — é ele que
+     impede a recoleta; o que muda é que nada é esquecido junto. */
+  const today = new Date().toISOString().slice(0, 10);
+  const arquivoJson = path.join(LEAD_DIR, `${today}.json`);
+  const anterior = leFilaAnterior(arquivoJson);
+  const agora = new Date().toISOString();
+  const acumuladas = [];
+  const urlsNaFila = new Set();
+  let descartadasNaFusao = 0;
+  for (const lead of [...anterior.leads, ...accepted]) {
+    const chave = mem.urlChave(lead.url);
+    if (!chave || !lead.title || urlsNaFila.has(chave)) continue;
+    if (acumuladas.some((l) => titleOverlap(l.title, lead.title) > 0.72)) {
+      descartadasNaFusao++;
+      continue;
+    }
+    urlsNaFila.add(chave);
+    acumuladas.push(lead);
+  }
+
   const perSource = {};
   const queue = [];
-  for (const lead of accepted.sort((a, b) => (b.fit === "direto") - (a.fit === "direto") || b.score - a.score)) {
+  for (const lead of acumuladas.sort((a, b) => (b.fit === "direto") - (a.fit === "direto") || b.score - a.score)) {
     perSource[lead.source] = (perSource[lead.source] || 0) + 1;
     if (perSource[lead.source] > PER_SOURCE_CAP) continue;
     queue.push(lead);
     if (queue.length >= LIMIT) break;
   }
-  const today = new Date().toISOString().slice(0, 10);
 
   fs.mkdirSync(LEAD_DIR, { recursive: true });
-  fs.writeFileSync(path.join(LEAD_DIR, `${today}.json`), JSON.stringify({ generated: new Date().toISOString(), feeds_ok: fetched, count: queue.length, leads: queue }, null, 2));
+  /* feeds_ok é desta coleta, não da fila: um arquivo pode carregar pautas de
+     uma rodada em que os 12 feeds abriram junto de pautas de uma em que só 5
+     responderam. Quem lê precisa saber o estado do cabo AGORA, senão um 12/12
+     mentiria sobre a última tentativa. primeira_coleta separa fila magra de
+     coleta recém-aberta: era isso que fazia 1 pauta parecer "o dia inteiro".
+
+     O card que já estava no arquivo entra na escrita com os campos dele e sem
+     `keywords`; a linha de termos acima leria undefined, e este repo tem
+     histórico de portão verde lendo texto de exceção (ver a trava de arquivo). */
+  const porUrl = new Map(queue.map((l) => [mem.urlChave(l.url), l]));
+  const cards = queue.map((l) => ({ ...porUrl.get(mem.urlChave(l.url)), keywords: l.keywords || [] }));
+  fs.writeFileSync(
+    arquivoJson,
+    JSON.stringify(
+      {
+        generated: agora,
+        primeira_coleta: anterior.primeira || agora,
+        rodadas: anterior.geracoes + 1,
+        feeds_ok: fetched,
+        count: cards.length,
+        leads: cards,
+      },
+      null,
+      2,
+    ),
+  );
   fs.writeFileSync(
     path.join(LEAD_DIR, `${today}.md`),
     [
       `# Fila de pautas — ${today}`,
       "",
-      `${queue.length} pautas de ${fetched}/${FEEDS.length} feeds. Gerado por \`tools/ingest.js\`; nada aqui foi publicado.`,
+      `${cards.length} pautas acumuladas em ${anterior.geracoes + 1} rodada(s) de coleta; nesta, ${fetched}/${FEEDS.length} feeds responderam. Gerado por \`tools/ingest.js\`; nada aqui foi publicado.`,
       "Score = nº de termos do pilar encontrados. `fit: direto` = a fonte bate com o pilar sugerido.",
       "",
-      ...queue.map((l, i) =>
+      ...cards.map((l, i) =>
         [
           `## ${String(i + 1).padStart(2, "0")} · [${l.pillar.toUpperCase()}] ${l.title}`,
           `- fonte: ${l.source} · score ${l.score} · fit ${l.fit} · registro sugerido: ${l.register}`,
@@ -225,7 +309,7 @@ async function main() {
   for (const lead of queue) seen.add(lead.url);
   saveSeen(seen);
 
-  console.log(`fila: ${queue.length} pautas (${fetched}/${FEEDS.length} feeds ok) → pipeline/leads/${today}.md`);
+  console.log(`fila: ${queue.length} pautas acumuladas em ${anterior.geracoes + 1} rodada(s) (${fetched}/${FEEDS.length} feeds ok nesta) → pipeline/leads/${today}.md${descartadasNaFusao ? ` · ${descartadasNaFusao} repetida(s) na fusão` : ""}`);
   const perPillar = {};
   for (const l of queue) perPillar[l.pillar] = (perPillar[l.pillar] || 0) + 1;
   console.log("distribuição:", JSON.stringify(perPillar), jaPublicadas ? `· ${jaPublicadas} pautas já estavam no ar (fonte repetida)` : "");
