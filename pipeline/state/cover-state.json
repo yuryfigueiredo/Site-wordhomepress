@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "candidate-neutron-star-mass-gap",
+  "currentCoverId": "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -120,6 +120,14 @@
       "id": "candidate-neutron-star-mass-gap",
       "tipo": "do dia",
       "era": "nasa-stakes-ten-billion-dollars-lunar-infrastructure"
+    },
+    {
+      "at": "2026-11-14T11:29:05.608Z",
+      "dia": "2026-11-14",
+      "rodada": "2026-11-14T08:23",
+      "id": "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
+      "tipo": "rotacionada",
+      "era": "candidate-neutron-star-mass-gap"
     }
   ],
   "capaVistas": [

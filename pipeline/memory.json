@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-13T21:46:48.317Z",
+  "updated": "2026-11-14T11:29:05.487Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -242,6 +242,12 @@
       "outcome": "publicada",
       "at": "2026-11-13T21:46:48.316Z",
       "id": "candidate-neutron-star-mass-gap"
+    },
+    "https://phys.org/news/2026-11-role-social-relationships-scaling-agricultural.html": {
+      "slug": "the-role-of-social-relationships-in-scaling-agricultural-innovat",
+      "topic": "The role of social relationships in scaling agricultural innovations: A dimension that remains underreported in research",
+      "outcome": "falha_texto",
+      "at": "2026-11-14T11:29:05.487Z"
     }
   },
   "publishes": [
