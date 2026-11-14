@@ -21,6 +21,14 @@ const VIGIA = path.join(os.homedir(), ".local", "bin", "hwp-vigia.sh");
 const REPO = process.argv[2] || "/home/yury/Documentos/Projeto/homeworldpress";
 const DIA_BASE_UTC = new Date().toISOString().slice(0, 10);
 
+/* Retrato do estado real ANTES da prova. A máquina é o relógio desde 13/11,
+   então o vigia de verdade escreve `vigia-ultimo` e linhas em `avisos.log` —
+   exigir que esses arquivos não existam seria o teste acusar o próprio sistema
+   de estar funcionando. O que importa é que a prova não os mexa. */
+const REAL = path.join(os.homedir(), ".local", "state", "hwp");
+const CHAVE_REAL_ANTES = fs.existsSync(path.join(REAL, "vigia-ultimo")) ? fs.readFileSync(path.join(REAL, "vigia-ultimo"), "utf8") : null;
+const AVISOS_REAIS_ANTES = fs.existsSync(path.join(REAL, "avisos.log")) ? fs.readFileSync(path.join(REAL, "avisos.log"), "utf8").split("\n").filter(Boolean).length : 0;
+
 let verde = 0;
 const falhas = [];
 function confere(nome, ok, detalhe) {
@@ -182,15 +190,44 @@ const repoAtras = fixtureRepo(path.join(fs.mkdtempSync(path.join(os.tmpdir(), "h
   confere("diz que está na folga", /ainda está na folga/.test(c.saida), c.saida.trim());
 }
 
-/* 7 — invariante: o estado real desta máquina não foi tocado. */
+/* 7 — a rodada rodou e morreu no portão: cabeçalho no log não é rodada servida.
+       Medido em 13/11 às 20:23 — o vigia cantou "servida e empurrada" numa
+       rodada VERMELHA, porque procurava o cabeçalho e não o desfecho. */
 {
+  const c = cenario("7. rodada do horário terminou VERMELHA → aviso com a causa, sem cantar verde", {
+    turnoLog: cabeçalho(20) + "VERMELHO: a árvore tem mudanças não commitadas — a rodada parou antes de tocar em qualquer arquivo.\n",
+    repo: repoLimpo,
+  });
+  confere("exatamente um aviso", c.disparados.length === 1, JSON.stringify(c.disparados));
+  confere("o aviso diz que a rodada terminou vermelha", /terminou VERMELHA/.test(c.disparados[0] || ""), c.disparados[0]);
+  confere("a causa escrita pelo runner vai no aviso", /mudanças não commitadas/.test(c.disparados[0] || ""), c.disparados[0]);
+  confere("a etiqueta é 'rodada vermelha', não 'rodada perdida'", (c.disparados[0] || "").startsWith("rodada vermelha|"), c.disparados[0]);
+  confere("não canta 'servida e empurrada'", !/servida e empurrada/.test(c.saida), c.saida.trim());
+  confere("gravou a chave de dedupe", fs.existsSync(path.join(c.state, "vigia-ultimo")), "sem vigia-ultimo");
+}
+
+/* 7b — a rodada vermelha de ontem não mancha a verde de hoje: o bloco lido é o
+        do cabeçalho do horário, não o arquivo inteiro. */
+{
+  const c = cenario("7b. VERMELHO de uma rodada anterior, cabeçalho de hoje verde → nenhum aviso", {
+    turnoLog: cabeçalho(600) + "VERMELHO: causa antiga, de outro horário.\n" + cabeçalho(20) + "[fim] rodada completa.\n",
+    repo: repoLimpo,
+  });
+  confere("nenhum aviso", c.disparados.length === 0, JSON.stringify(c.disparados));
+  confere("canta verde desta vez", /servida e empurrada/.test(c.saida), c.saida.trim());
+}
+
+/* 8 — invariante: o estado real desta máquina não foi tocado. */
+{
+  console.log("8. o estado real da máquina não foi tocado pela prova");
   const real = path.join(os.homedir(), ".local", "state", "hwp");
-  const tinhaChave = fs.existsSync(path.join(real, "vigia-ultimo"));
-  confere("nenhum vigia-ultimo no estado real", !tinhaChave, "o teste escreveu em ~/.local/state/hwp");
+  const chaveAgora = fs.existsSync(path.join(real, "vigia-ultimo")) ? fs.readFileSync(path.join(real, "vigia-ultimo"), "utf8") : null;
+  confere("a prova não escreveu na chave de dedupe real", chaveAgora === CHAVE_REAL_ANTES, `${CHAVE_REAL_ANTES} → ${chaveAgora}`);
   const logReal = fs.readFileSync(path.join(real, "turno.log"), "utf8");
   confere("o turno.log real continua com as rodadas dele", /turno local /.test(logReal), "sumiu");
-  const avisosReal = fs.existsSync(path.join(real, "avisos.log")) ? fs.readFileSync(path.join(real, "avisos.log"), "utf8") : "";
-  confere("nenhum aviso de teste no avisos.log real", !/rodada perdida/.test(avisosReal), avisosReal.split("\n").filter(Boolean).slice(-1)[0]);
+  const agora = fs.existsSync(path.join(real, "avisos.log")) ? fs.readFileSync(path.join(real, "avisos.log"), "utf8").split("\n").filter(Boolean) : [];
+  confere("o avisos.log real não ganhou linha", agora.length === AVISOS_REAIS_ANTES, `${AVISOS_REAIS_ANTES} → ${agora.length}`);
+  confere("nenhuma linha nova é de fixture", !agora.slice(AVISOS_REAIS_ANTES).some((l) => /fixture|prova|baseline/.test(l)), agora.slice(AVISOS_REAIS_ANTES).join(" · "));
 }
 
 console.log(`\n${verde} conferências verdes, ${falhas.length} vermelhas.`);
