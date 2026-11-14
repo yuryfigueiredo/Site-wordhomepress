@@ -2,17 +2,18 @@ name: turno editorial
 
 on:
   schedule:
-    # O cron do GitHub é SEMPRE UTC, não aceita fuso. Estas 4 horas viram
-    # 08:23, 12:23, 16:23 e 20:23 no horário de Brasília. Minuto 23, não 0:
-    # medido em 41 rodadas (out-nov/2026), o cron de 6 horários entregava 2 e
-    # deixava 4 caírem em silêncio.
-    # DESDE 2026-11-13 este workflow está DESABILITADO na aba Actions e a rodada
-    # roda nesta máquina (timer de usuário `hwp-turno.timer`, systemd, fuso
-    # America/Sao_Paulo). O cron continua aqui e igual ao cron_expression de
-    # pipeline/cadence.json porque é o ARQUIVO que o doctor confere
+    # O cron do GitHub é SEMPRE UTC, não aceita fuso. Estas 6 horas viram
+    # 02:23, 06:23, 10:23, 14:23, 18:23 e 22:23 no horário de Brasília. Minuto
+    # 23, não 0: medido em 41 rodadas (out-nov/2026), o cron de 6 horários
+    # entregava 2 e deixava 4 caírem em silêncio — quem entrega a rodada hoje é
+    # o timer desta máquina, e o número aqui só precisa bater com o
+    # cron_expression de pipeline/cadence.json para o par continuar conferível.
+    # DESDE 2026-11-13 este workflow está DESABILITADO na aba Actions e o job
+    # está inerte por construção ('if: false' abaixo). O cron continua aqui e
+    # igual ao cron_expression porque é o ARQUIVO que o doctor confere
     # (tools/lib/schedule.js): sem par conferível, o portão [cadence] fecha
     # vermelho e nenhuma rodada publica — desabilitar no site não muda isso.
-    - cron: "23 11,15,19,23 * * *"
+    - cron: "23 1,5,9,13,17,21 * * *"
   workflow_dispatch:
 
 permissions:
@@ -27,6 +28,16 @@ concurrency:
 
 jobs:
   turno:
+    # hwp:nuvem-inerte — o relógio do robô é esta máquina (hwp-turno.timer, com
+    # a mão de reserva da automação do app). O clique em "Disable workflow" não
+    # deixa rastro no repositório, e um push que toca neste arquivo devolve o
+    # estado a active sozinho (medido em 13/11: o commit 1381047 reabilitou o
+    # relógio da nuvem por cima da prova posta às 19:56Z). Inerte por construção
+    # é a versão da decisão que sobrevive ao push: o job não roda, então a nuvem
+    # não escreve em pipeline/memory.json nem quando a API diz active. Quem
+    # quiser a nuvem de volta tira esta linha, tira a marca do cinto em
+    # ~/.local/bin/hwp-turno.sh e religa na aba Actions.
+    if: false # hwp:nuvem-inerte
     runs-on: ubuntu-latest
     # A rodada pode chamar o escritor 4x (1 rascunho + 3 reescritas), 6 min cada
     # no pior caso. 25 min matava o processo antes do commit do relatório.
