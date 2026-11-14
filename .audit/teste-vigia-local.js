@@ -70,7 +70,7 @@ function fixtureRepo(dir, commitsLocais) {
   return dir;
 }
 
-function cenario(nome, { turnoLog, repo, grace = 0, fusoFalso, chavePronta }) {
+function cenario(nome, { turnoLog, repo, grace = 0, fusoFalso, chavePronta, agora }) {
   const raiz = fs.mkdtempSync(path.join(os.tmpdir(), "hwp-vigia-"));
   const state = path.join(raiz, "state");
   const avisos = path.join(raiz, "avisos.txt");
@@ -101,6 +101,7 @@ function cenario(nome, { turnoLog, repo, grace = 0, fusoFalso, chavePronta }) {
         HWP_VIGIA_GRACA: String(grace),
         HWP_AVISO: stub,
         PATH: pathEnv,
+        ...(agora ? { HWP_AGORA: String(agora) } : {}),
       },
     });
   } catch (e) {
@@ -217,9 +218,53 @@ const repoAtras = fixtureRepo(path.join(fs.mkdtempSync(path.join(os.tmpdir(), "h
   confere("canta verde desta vez", /servida e empurrada/.test(c.saida), c.saida.trim());
 }
 
-/* 8 — invariante: o estado real desta máquina não foi tocado. */
+/* 8 — a virada do dia. Medido em 14/11 às 00:41: sem horário de hoje vencido, a
+       conta antiga cobrava "ontem 08:23" (o PRIMEIRO de ontem), avisava uma
+       rodada já cobrada e lia o bloco de outra. O slot vencido é o ÚLTIMO de
+       ontem, e o relógio aqui é falsificado pela boca HWP_AGORA do próprio
+       script — a única maneira de conferir a meia-noite sem esperar por ela. */
+const AGORA_VIRADA = (() => { const d = new Date(); d.setHours(0, 41, 0, 0); return Math.floor(d.getTime() / 1000); })();
+const ONTEM = new Date(AGORA_VIRADA * 1000 - 24 * 3600 * 1000);
+function cabeçalhoEm(d) {
+  return `===== turno local ${d.toISOString().replace(/\.\d+Z$/, "Z")} =====\n`;
+}
+const SLOT_ONTENDEIRO = (() => { const d = new Date(ONTEM); d.setHours(20, 23, 32, 0); return d; })();
 {
-  console.log("8. o estado real da máquina não foi tocado pela prova");
+  console.log("8. virada do dia: o slot vencido é o último de ontem (20:23), não o primeiro (08:23)");
+  const c = cenario("8. 00:41, com a rodada das 20:23 de ontem verde no log", {
+    turnoLog: cabeçalhoEm(SLOT_ONTENDEIRO) + "[fim] rodada completa.\n",
+    repo: repoLimpo,
+    agora: AGORA_VIRADA,
+  });
+  confere("nenhum aviso (a rodada de ontem serviu)", c.disparados.length === 0, JSON.stringify(c.disparados));
+  confere("canta a hora certa, 20:23", /20:23/.test(c.saida), c.saida.trim());
+  confere("não canta 08:23", !/08:23/.test(c.saida), c.saida.trim());
+  confere("a data no aviso é a de ontem, uma vez só", !/20\d\d-.*20\d\d-/.test(c.saida), c.saida.trim());
+}
+
+/* 9 — na virada, sem rodada de ontem à noite: o aviso cobra 20:23 e a chave de
+       dedupe é escrita com o slot certo, para não avisar duas vezes. */
+{
+  const primeiro = cenario("9a. 00:41, sem cabeçalho nenhum → cobra 20:23 de ontem", {
+    turnoLog: "",
+    repo: repoLimpo,
+    agora: AGORA_VIRADA,
+  });
+  const chave = fs.readFileSync(path.join(primeiro.state, "vigia-ultimo"), "utf8").trim();
+  const segundo = cenario("9b. mesma virada, segunda olhada → calado", {
+    turnoLog: "",
+    repo: repoLimpo,
+    agora: AGORA_VIRADA,
+    chavePronta: chave,
+  });
+  confere("um aviso, e ele cobra as 20:23", primeiro.disparados.length === 1 && /20:23/.test(primeiro.disparados[0]), JSON.stringify(primeiro.disparados));
+  confere("a chave de dedupe é '<ontem> 20:23', sem data duplicada", /^\d{4}-\d\d-\d\d 20:23$/.test(chave), chave);
+  confere("a segunda olhada não repete o aviso", segundo.disparados.length === 0 && /já avisado/.test(segundo.saida), `${JSON.stringify(segundo.disparados)} · ${segundo.saida.trim()}`);
+}
+
+/* 10 — invariante: o estado real desta máquina não foi tocado. */
+{
+  console.log("10. o estado real da máquina não foi tocado pela prova");
   const real = path.join(os.homedir(), ".local", "state", "hwp");
   const chaveAgora = fs.existsSync(path.join(real, "vigia-ultimo")) ? fs.readFileSync(path.join(real, "vigia-ultimo"), "utf8") : null;
   confere("a prova não escreveu na chave de dedupe real", chaveAgora === CHAVE_REAL_ANTES, `${CHAVE_REAL_ANTES} → ${chaveAgora}`);
