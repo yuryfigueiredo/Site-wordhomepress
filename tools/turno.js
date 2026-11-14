@@ -5,7 +5,8 @@
    deploy: quem commita/envia é o workflow. Escreve TURNO.md, o relatório que
    substitui o painel quando o seu PC está desligado.
 
-   Uso: node tools/turno.js          (exit 0 mesmo quando a rodada para cedo)  */
+   Uso: node tools/turno.js          (exit 0 mesmo quando a rodada para cedo)
+        node tools/turno.js --force-slot  (ignora o portão de idempotência)    */
 const fs = require("fs");
 const path = require("path");
 const { execFileSync } = require("child_process");
@@ -13,6 +14,17 @@ const { execFileSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "..");
 const log = [];
 const say = (stage, msg) => { log.push(`- **${stage}** — ${msg}`); console.log(`[${stage}] ${msg}`); };
+
+/* Saída SEM percorrer a pipeline: só o diário e o exit code. O portão do
+   horário duplicado precisa sair por aqui porque uma rodada que não começou não
+   tem fotos para desfazer, capa para girar nem prova a cobrar — e o `finish()`
+   cobra a troca de capa em toda saída depois da manutenção.                */
+const saidaCurta = (why, codigo = 0) => {
+  if (why) say("fim", why);
+  const head = `# Turno — ${new Date().toISOString().replace("T", " ").slice(0, 16)} UTC\n\n`;
+  fs.writeFileSync(path.join(ROOT, "TURNO.md"), head + log.join("\n") + "\n");
+  process.exit(codigo);
+};
 /* A troca de CAPA só é cobrada depois da manutenção verde: rodar o build
    completo com erro aberto seria publicar por outro caminho. A rotação diária
    do passo 2 não é capa — é o bloco que o doctor exige pronto para hoje. */
@@ -110,6 +122,15 @@ const finish = (why, codigo = 0) => {
   }
   const head = `# Turno — ${new Date().toISOString().replace("T", " ").slice(0, 16)} UTC\n\n`;
   fs.writeFileSync(path.join(ROOT, "TURNO.md"), head + log.join("\n") + "\n");
+  /* O horário só é declarado servido na saída que DECIDE o desfecho — e aqui o
+     desfecho já está decidido: as fotos foram desfeitas, a capa cobrada e a
+     prova lida do disco. Marcar antes seria apagar a chance da mão seguinte:
+     rodada que morre no meio (exceção sem catch, sinal, exit não-zero deste
+     `finish`) deixa de servir o horário de propósito, porque com o portão
+     fechado a única coisa que ela garantiria é um buraco na agenda. Verde com
+     nada publicado também conta como servido — teto atingido, intervalo mínimo
+     e falta de pauta são o horário cumprido, não um horário perdido.         */
+  if (codigo === 0) roundLock.marcarServida({ resultado: why || "rodada verde" }, new Date(), ROOT);
   process.exit(codigo);
 };
 
@@ -207,6 +228,35 @@ function capaServiuRodada() {
       `A meta é ${cad.cover_changes_per_day}/dia (uma por rodada) e o piso é ${cad.cover_baseline}: confira quantas matérias do catálogo têm nota medida acima do piso e foto real em pipeline/scores.json`
   );
   return false;
+}
+
+/* 0. portão do horário: esta rodada do `check_hours` já foi servida?
+
+   Com a segunda mão no relógio (a automação agendada do app, além do timer do
+   systemd), o `flock -n` do runner não basta: ele serializa SOBREPOSIÇÃO, e a
+   invocação que acorda 45 min depois da primeira encontra o lock livre e roda a
+   rodada inteira dentro do MESMO horário — capa não pode girar (uma troca por
+   `rodadaId()`), nada pode publicar (o intervalo mínimo é o espaçamento dos
+   horários), e ainda assim o passo 5 queima uma pauta por 6h e o redator gasta
+   ~13 min do plano. É o preço de sempre do AGENTS.md ("olhar a fila não pode
+   custar pauta"), cobrado agora do próprio relógio.
+
+   Verde por desenho: mão duplicada não é defeito editorial, e vermelho faria o
+   recuo do runner desfazer o trabalho BOM da primeira mão do horário. O exit 0
+   também não engana o vigia: sem `VERMELHO` no bloco nem código não-zero, ele
+   lê "servida e empurrada" — que é exatamente o que aconteceu.
+
+   `--force-slot` é a saída deliberada para o caminho manual documentado em
+   AGENTS.md ("rode o passo a passo à mão"): uma rodada manual depois da do
+   manhã tem de poder rodar.                                            */
+const roundLock = require("./lib/round-lock");
+const FORCAR = process.argv.includes("--force-slot");
+if (FORCAR) {
+  say("horário", `portão de idempotência ignorado por --force-slot (${roundLock.chave()}) — o dono mandou rodar mesmo assim`);
+} else if (roundLock.jaServida(new Date(), ROOT)) {
+  saidaCurta(
+    `rodada duplicada: o horário ${roundLock.chave()} já foi servido nesta agenda — nada coletado, nenhuma pauta queimada, nenhum minuto de redator gasto.`
+  );
 }
 
 /* 1. coleta */
