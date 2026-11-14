@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
+  "currentCoverId": "little-red-dots-black-hole-hypothesis",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -128,6 +128,14 @@
       "id": "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
       "tipo": "rotacionada",
       "era": "candidate-neutron-star-mass-gap"
+    },
+    {
+      "at": "2026-11-14T15:29:06.424Z",
+      "dia": "2026-11-14",
+      "rodada": "2026-11-14T12:23",
+      "id": "little-red-dots-black-hole-hypothesis",
+      "tipo": "rotacionada",
+      "era": "nasa-stakes-ten-billion-dollars-lunar-infrastructure"
     }
   ],
   "capaVistas": [
