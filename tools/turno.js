@@ -81,14 +81,33 @@ const finish = (why, codigo = 0) => {
   /* Toda saída da rodada passa aqui. Se a manutenção passou e nada foi
      publicado, a troca de capa é devida — e um build quebrado fecha a rodada em
      vermelho, porque capa parada é a mesma falha de três semanas atrás. */
-  if (posManutencao && !publicou) codigo = Math.max(codigo, girarCapa() === 0 ? 0 : 1);
+  let causaVermelha = codigo !== 0 ? why : "";
+  if (posManutencao && !publicou) {
+    const rc = girarCapa();
+    if (rc !== 0) causaVermelha = causaVermelha || `o build da capa falhou (exit ${rc})`;
+    codigo = Math.max(codigo, rc === 0 ? 0 : 1);
+  }
   /* A prova final não é o exit do build, é o histórico: a capa TROCOU nesta
      rodada? `registrarCapa` só grava quando o hero foi ao ar com outra matéria,
      então rodada verde com a capa no mesmo lugar é vermelha a partir daqui — foi
      exatamente assim que a meta viveu três semanas como promessa. Vale também
      para a rodada que publicou: lá quem gira é o build chamado pelo publish.js. */
-  if (posManutencao && !capaServiuRodada()) codigo = Math.max(codigo, 1);
+  if (posManutencao && !capaServiuRodada()) {
+    causaVermelha = causaVermelha || "a rodada fechou sem troca de capa no hero";
+    codigo = Math.max(codigo, 1);
+  }
   if (why) say("fim", why);
+  /* O token é o que o vigia procura no bloco do turno.log. Quem barra a rodada
+     no runner já imprime "VERMELHO: …"; quando quem barra é o `turno.js`, a
+     causa morria no exit code e o vigia cantava "servida e empurrada" numa
+     rodada sem texto — medido 14/11, duas rodadas, zero publicações, aviso
+     verde. Para o diário, a linha vai escrita no fim, depois das etapas que
+     mostram o caminho percorrido. */
+  if (codigo !== 0) {
+    const linha = `VERMELHO: ${causaVermelha || why || "rodada vermelha sem causa declarada"}`;
+    log.push(`- **portão** — ${linha}`);
+    console.log(linha);
+  }
   const head = `# Turno — ${new Date().toISOString().replace("T", " ").slice(0, 16)} UTC\n\n`;
   fs.writeFileSync(path.join(ROOT, "TURNO.md"), head + log.join("\n") + "\n");
   process.exit(codigo);
@@ -255,7 +274,10 @@ if (lead.published) briefArgs.push("--source-date", lead.published);
 const brief = run("new-post.js", briefArgs);
 if (brief.code !== 0) {
   mem.registrar(ROOT, lead.url, "falha_brief");
-  finish(`brief falhou: ${brief.out.slice(-300)}`);
+  /* Vermelho: `new-post.js` só sai com exit != 0 quando arrebenta, e a pauta que
+     o passo 5 já marcou `em_andamento` morre ali — é a mesma conta do passo 7
+     abaixo: pipeline percorrida, nada no ar. */
+  finish(`brief falhou: ${brief.out.slice(-300)}`, 1);
 }
 say("brief", `pipeline/drafts/${lead.slug}/ criado`);
 
@@ -271,7 +293,12 @@ if (!prov.armados().length)
 const wrote = run("write.js", [lead.slug]);
 if (wrote.code !== 0) {
   mem.registrar(ROOT, lead.url, "falha_texto");
-  finish(`o redator não entregou texto: ${wrote.out.trim().split("\n").slice(-8).join(" · ").slice(0, 900)}`);
+  /* Vermelho desde 14/11. Fechando verde, o runner não fazia o recuo, commitava
+     `turno:` e empurrava, e o vigia — que procura `VERMELHO` no bloco da rodada
+     — anunciava "servida e empurrada": medido hoje nas rodadas das 08:23 e
+     12:23, ambas com `timeout de 300s no CLI`, zero publicações e aviso verde.
+     É a mesma conta do abort do publish.js (06/11), um estágio mais cedo. */
+  finish(`o redator não entregou texto: ${wrote.out.trim().split("\n").slice(-8).join(" · ").slice(0, 900)}`, 1);
 }
 say("texto", wrote.out.trim().split("\n")[0]);
 say("foto", garantirFoto(lead.slug).linha);
