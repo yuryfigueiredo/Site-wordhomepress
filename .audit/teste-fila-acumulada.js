@@ -132,11 +132,11 @@ function copia() {
    ingest morre nos 20s do AbortSignal com 0 pautas coletadas. Assíncrono o
    loop vive e a coleta sai em ~1s. Provado porta a porta nesta máquina:
    porta aberta dá timeout no síncrono e ECONNREFUSED no assíncrono.          */
-function rodaIngest(dir) {
+function rodaIngest(dir, args = []) {
   return new Promise((resolve) => {
     execFile(
       process.execPath,
-      [path.join(dir, "tools", "ingest.js")],
+      [path.join(dir, "tools", "ingest.js"), ...args],
       {
         cwd: dir,
         encoding: "utf8",
@@ -265,7 +265,31 @@ function rodaIngest(dir) {
     confere("o arquivo fino do defeito (1 pauta) não se repete na fixture", !tres.some((f) => JSON.parse(fs.readFileSync(path.join(LEADS, f), "utf8")).leads.length <= 1), tres.join(", "));
   }
 
-  console.log("\n6. falsificação: costurado de volta para escrever só a rodada, a fila desaba");
+  console.log("\n6. teto não é alavanca de esquecimento: o cap corta o novato, nunca o card que já estava no arquivo");
+  {
+    /* O defeito que a primeira versão do merge deixou entrar pela porta do cap:
+       a lista merged inteira era ordenada por fit/score e depois fatiada por
+       PER_SOURCE_CAP e LIMIT. Uma leva nova de score alto empurrava para fora
+       um card antigo de score baixo, e como o seen.json já tinha marcado a URL
+       dele na coleta que o trouxe, aquele card não voltava NUNCA — perda pura,
+       do mesmo tamanho do buraco que o merge tinha fechado. Aqui o LIMIT é
+       apertado de propósito para 1, menor que a fila: o arquivo tem de continuar
+       com as quatro pautas antigas e o novato tem de sair anunciado.           */
+    const dirCap = copia();
+    rodadaNovaItem = false;
+    const c1 = await rodaIngest(dirCap);
+    rodadaNovaItem = true;
+    const c2 = await rodaIngest(dirCap, ["--limit=1"]);
+    const urlsCap1 = (c1.fila?.leads || []).map((l) => l.url);
+    confere("a rodada normal monta a fila de 4", urlsCap1.length === 4, `foram ${urlsCap1.length}`);
+    confere("com LIMIT menor que a fila nenhum card antigo sai do arquivo", urlsCap1.every((u) => (c2.fila?.leads || []).some((l) => l.url === u)), `ficaram ${(c2.fila?.leads || []).length} de ${urlsCap1.length}`);
+    confere("o arquivo continua com as mesmas 4 (as vagas do teto já estavam ocupadas)", (c2.fila?.leads || []).length === 4, `ficaram ${(c2.fila?.leads || []).length}`);
+    confere("o novato cortado é anunciado no stdout, não engolido", /cortada/.test(c2.saida), c2.saida.split("\n").find((l) => l.startsWith("fila:")));
+    confere("o cortado não entra no seen — ele volta na rodada seguinte", !(c2.vistos || []).includes("http://proveniencia.local/a/fonte/exoplaneta"), `visto ${(c2.vistos || []).length}`);
+    confere("e o .md conta o que está no arquivo, não o que a coleta trouxe", c2.md.includes("4 pautas acumuladas"), c2.md.split("\n")[2]);
+  }
+
+  console.log("\n7. falsificação: costurado de volta para escrever só a rodada, a fila desaba");
   {
     const dirMutada = copia();
     const arq = path.join(dirMutada, "tools", "ingest.js");
@@ -275,9 +299,9 @@ function rodaIngest(dir) {
        mais depois. Se a frase mudar de forma, o confere abaixo quebra e é para
        quebrar mesmo — portão provado por mutação que não faz o que diz é pior
        do que não ter portão.                                                 */
-    const alvo = "for (const lead of acumuladas.sort";
-    const mutada = fonte.replace(alvo, "for (const lead of accepted.sort");
-    confere("a mutação encontrou a lista que a fusão acumula", mutada !== fonte && mutada.includes("accepted.sort"), "o texto da fusão mudou de forma — atualize a mutação");
+    const alvo = "for (const lead of anterior.leads) enfileira(lead);";
+    const mutada = fonte.replace(alvo, "for (const lead of []) enfileira(lead);");
+    confere("a mutação encontrou a herança da fila anterior", mutada !== fonte && mutada.includes("for (const lead of []) enfileira"), "o texto da fusão mudou de forma — atualize a mutação");
     fs.writeFileSync(arq, mutada);
     rodadaNovaItem = false;
     const m1 = await rodaIngest(dirMutada);
@@ -300,12 +324,13 @@ function rodaIngest(dir) {
     confere("o verde do caso 1 é justamente o que a mutação desfaz: mesmo total, cards diferentes", fila2.length === (m2.fila?.leads || []).length && sobraramDaRodada1 === 0, `${fila2.length} × ${(m2.fila?.leads || []).length} · sobraram ${sobraramDaRodada1}`);
   }
 
-  console.log("\n7. a boca trocada percorre o mesmo caminho, sem implementação paralela");
+  console.log("\n8. a boca trocada percorre o mesmo caminho, sem implementação paralela");
   {
-    /* 11 buscas: 2 feeds × (3 rodadas boas + 2 mutadas) + a sondagem do --show,
-       que abre o arquivo pronto e não busca nada. Contar requisições é o que
-       prova que quem correu foi o laço de sempre, não um atalho da fixture. */
-    confere("os dois feeds foram buscados pelo parseFeed/capitulação de sempre (10 buscas)", buscas === 10, `${buscas} buscas`);
+    /* 14 buscas: 2 feeds × (3 rodadas boas + 2 do teto apertado + 2 mutadas),
+       mais a sondagem do --show, que abre o arquivo pronto e não busca nada.
+       Contar requisições é o que prova que quem correu foi o laço de sempre,
+       não um atalho da fixture. */
+    confere("os dois feeds foram buscados pelo parseFeed/capitulação de sempre (14 buscas)", buscas === 14, `${buscas} buscas`);
     const fonte = fs.readFileSync(path.join(ROOT, "tools", "ingest.js"), "utf8");
     confere("a lista padrão de fontes continua sendo a de sempre, intocada pela boca", (fonte.match(/\{ url: "https:\/\/www\.publishersweekly\.com\/rss\/feature\.xml"/g) || []).length === 1 && fonte.includes("if (!process.env.HWP_FEEDS_JSON)"));
     confere("não há segunda implementação de coleta ao lado da original", (fonte.match(/async function main/g) || []).length === 1 && (fonte.match(/parseFeed\(await res\.text\(\)\)/g) || []).length === 1, "apareceu um caminho paralelo de fetch");
@@ -338,7 +363,7 @@ function rodaIngest(dir) {
     fs.rmSync(d, { recursive: true, force: true });
   }
 
-  console.log("\n8. invariante: nem o repo nem a máquina foram tocados pela prova");
+  console.log("\n9. invariante: nem o repo nem a máquina foram tocados pela prova");
   {
     const mexido = [];
     for (const [f, hash] of reaisAntes) if (sha(path.join(ROOT, f)) !== hash) mexido.push(f);

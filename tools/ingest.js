@@ -237,28 +237,46 @@ async function main() {
   const arquivoJson = path.join(LEAD_DIR, `${today}.json`);
   const anterior = leFilaAnterior(arquivoJson);
   const agora = new Date().toISOString();
-  const acumuladas = [];
+  /* A fusão é assimétrica de propósito, e a assimetria é a régua: o que já
+     estava no arquivo NUNCA sai, e quem é cortado é o novato. Capar a lista
+     merged (como fazia a primeira versão) reabre o buraco que o merge fechou
+     por outra porta — um card antigo, de score baixo, empurrado para fora por
+     uma leva nova de score alto não volta nunca mais: o `seen.json` já o
+     marcou na coleta que o trouxe, e a URL não é reofertada. O novato cortado
+     volta na rodada seguinte porque só entra no `seen` o que chegou ao arquivo.
+     Por isso o teto por fonte conta o que já está dentro, e o LIMIT é vagas
+     restantes, não uma fatia da lista inteira. */
+  const mantidas = [];
   const urlsNaFila = new Set();
-  let descartadasNaFusao = 0;
-  for (const lead of [...anterior.leads, ...accepted]) {
+  const porFonte = {};
+  const enfileira = (lead) => {
     const chave = mem.urlChave(lead.url);
-    if (!chave || !lead.title || urlsNaFila.has(chave)) continue;
-    if (acumuladas.some((l) => titleOverlap(l.title, lead.title) > 0.72)) {
+    if (!chave || !lead.title) return false;
+    if (urlsNaFila.has(chave)) return false;
+    if (mantidas.some((l) => titleOverlap(l.title, lead.title) > 0.72)) return false;
+    urlsNaFila.add(chave);
+    porFonte[lead.source] = (porFonte[lead.source] || 0) + 1;
+    mantidas.push(lead);
+    return true;
+  };
+  for (const lead of anterior.leads) enfileira(lead);
+  let descartadasNaFusao = anterior.leads.length - mantidas.length;
+  let cortadasPorCap = 0;
+  let vagas = Math.max(0, LIMIT - mantidas.length);
+  for (const lead of [...accepted].sort((a, b) => (b.fit === "direto") - (a.fit === "direto") || b.score - a.score)) {
+    const chave = mem.urlChave(lead.url);
+    if (!chave || urlsNaFila.has(chave) || mantidas.some((l) => l.title && lead.title && titleOverlap(l.title, lead.title) > 0.72)) {
       descartadasNaFusao++;
       continue;
     }
-    urlsNaFila.add(chave);
-    acumuladas.push(lead);
+    if (porFonte[lead.source] >= PER_SOURCE_CAP || vagas <= 0) {
+      cortadasPorCap++;
+      continue;
+    }
+    vagas--;
+    enfileira(lead);
   }
-
-  const perSource = {};
-  const queue = [];
-  for (const lead of acumuladas.sort((a, b) => (b.fit === "direto") - (a.fit === "direto") || b.score - a.score)) {
-    perSource[lead.source] = (perSource[lead.source] || 0) + 1;
-    if (perSource[lead.source] > PER_SOURCE_CAP) continue;
-    queue.push(lead);
-    if (queue.length >= LIMIT) break;
-  }
+  const queue = mantidas.sort((a, b) => (b.fit === "direto") - (a.fit === "direto") || b.score - a.score);
 
   fs.mkdirSync(LEAD_DIR, { recursive: true });
   /* feeds_ok é desta coleta, não da fila: um arquivo pode carregar pautas de
@@ -309,7 +327,7 @@ async function main() {
   for (const lead of queue) seen.add(lead.url);
   saveSeen(seen);
 
-  console.log(`fila: ${queue.length} pautas acumuladas em ${anterior.geracoes + 1} rodada(s) (${fetched}/${FEEDS.length} feeds ok nesta) → pipeline/leads/${today}.md${descartadasNaFusao ? ` · ${descartadasNaFusao} repetida(s) na fusão` : ""}`);
+  console.log(`fila: ${queue.length} pautas acumuladas em ${anterior.geracoes + 1} rodada(s) (${fetched}/${FEEDS.length} feeds ok nesta) → pipeline/leads/${today}.md${descartadasNaFusao ? ` · ${descartadasNaFusao} repetida(s) na fusão` : ""}${cortadasPorCap ? ` · ${cortadasPorCap} novata(s) cortada(s) por fonte/teto, voltam na próxima rodada` : ""}`);
   const perPillar = {};
   for (const l of queue) perPillar[l.pillar] = (perPillar[l.pillar] || 0) + 1;
   console.log("distribuição:", JSON.stringify(perPillar), jaPublicadas ? `· ${jaPublicadas} pautas já estavam no ar (fonte repetida)` : "");
