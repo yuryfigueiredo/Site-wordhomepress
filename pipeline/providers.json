@@ -1,5 +1,5 @@
 {
-  "_leia": "Ordem em que o redator tenta os provedores. O arquivo NUNCA guarda chave: 'chave_env' é o nome do segredo. Provedor sem segredo no ambiente fica inerte — não quebra nada. Campos: 'peso' divide o tempo da rodada (o que sobra vai para o último), 'modelos_por_rodada' quantos modelos tentar, 'max_tokens' só para modelos que gastam o teto pensando, 'fila' a ordem preferida e 'ativo': false desliga sem apagar a chave. O tipo 'cli' não tem chave: entra na fila se o binário existe (procurado em 'bin', depois $QODER_CLI, depois ~/.qoder/bin/qodercli/qodercli-* mais novo, depois PATH) e recebe o prompt.md pelo stdin, sem ferramentas — quem escreve é o agente do app, e o HTTP abaixo fica armado como reserva se o plano mudar. Para o tipo 'cli', 'fila' são os NOMES que `qodercli --list-models` mostra e que viram `-m`; sem fila o CLI usa o padrão dele (Auto), que é o que cobra crédito. Efficient é o modo que o plano de hoje paga, então ele fica declarado: trocar de redator continua sendo uma linha. Medido em 14/11 no prompt real de uma matéria: Efficient entrega em 445s, o Auto em 116s. Daí o chamada_max_ms de 540000 e o teto de parede de 12 min no write.js — com 300s a chamada era cortada viva, em plena entrega, e a rodada fechava sem texto.",
+  "_leia": "Ordem em que o redator tenta os provedores. O arquivo NUNCA guarda chave: 'chave_env' é o nome do segredo. Provedor sem segredo no ambiente fica inerte — não quebra nada. Campos: 'peso' divide o tempo da rodada (o que sobra vai para o último), 'modelos_por_rodada' quantos modelos tentar, 'max_tokens' só para modelos que gastam o teto pensando, 'fila' a ordem preferida e 'ativo': false desliga sem apagar a chave. O tipo 'cli' não tem chave: entra na fila se o binário existe (procurado em 'bin', depois $QODER_CLI, depois ~/.qoder/bin/qodercli/qodercli-* mais novo, depois PATH) e recebe o prompt.md pelo stdin, sem ferramentas — quem escreve é o agente do app, e o HTTP abaixo fica armado como reserva se o plano mudar. Para o tipo 'cli', 'fila' são os NOMES que `qodercli --list-models` mostra e que viram `-m`; sem fila o CLI usa o padrão dele (Auto), que é o que cobra crédito. Efficient é o modo que o plano de hoje paga, então ele fica declarado: trocar de redator continua sendo uma linha. Medido em 14/11 no prompt real de uma matéria: o Efficient do plano entregou em 445s (o Auto, que cobra crédito, em 116s) — mas nas rodadas das 14:44 e 16:23 a mesma chamada passou dos 540s sem fechar. Daí o chamada_max_ms de 780000 e o teto de parede de 14 min no write.js: com 300s, e depois com 540s, a chamada era cortada viva, em plena entrega, e a rodada fechava sem texto. Com o teto novo a mesma matéria saiu em 578s (14/11, 1448 palavras).",
   "provedores": [
     {
       "nome": "qoder",
@@ -10,7 +10,7 @@
       "peso": 3,
       "fila": ["Efficient"],
       "max_tokens": 8192,
-      "chamada_max_ms": 540000
+      "chamada_max_ms": 780000
     },
     {
       "nome": "gemini",

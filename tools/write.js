@@ -131,12 +131,13 @@ function gravar(draft, k) {
   }
 
   /* Teto de parede: sem ele, uma chave sem cota transforma a rodada em uma
-     espera até o timeout do Actions matar o processo no meio. Padrão 12 min
+     espera até o timeout do Actions matar o processo no meio. Padrão 14 min
      desde 14/11, e o número é medido, não generosidade: o Efficient do plano
-     entregou a matéria de 1231 palavras em 445s e o Auto em 116s. Com a parede
-     em 6 min a chamada era cortada viva no meio da entrega — duas rodadas
-     seguidas sem texto, e o verde do turno.js empurrando o nada. */
-  const MIN = Number(process.env.WRITE_MINUTES || 12);
+     entregou a matéria de 1231 palavras em 445s e o Auto em 116s, mas nas duas
+     rodadas de 14/11 a mesma chamada passou dos 540s sem fechar — com a parede
+     em 6 min, e depois em 12, a chamada era cortada viva no meio da entrega e a
+     rodada fechava sem texto (e verde, até o finish mudar de cor). */
+  const MIN = Number(process.env.WRITE_MINUTES || 14);
   const fim = Date.now() + MIN * 60000;
 
   /* Uma passada por modelo. "transitorio" (503, 429, rede) é o único caso em
