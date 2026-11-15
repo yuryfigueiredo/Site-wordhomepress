@@ -9,7 +9,12 @@
       "rodada": "2026-11-14T22:23",
       "at": "2026-11-15T01:38:40.939Z",
       "resultado": "rodada completa. O commit `turno:` e o push são do runner (Actions ou hwp-turno.sh); o deploy é da Vercel."
+    },
+    {
+      "rodada": "2026-11-15T02:23",
+      "at": "2026-11-15T05:44:36.607Z",
+      "resultado": "rascunho ficou reprovado depois de 3 tentativas — nada publicado, e a pauta fica 72h fora da fila (pipeline/memory.json)."
     }
   ],
-  "updated": "2026-11-15T01:38:40.939Z"
+  "updated": "2026-11-15T05:44:36.607Z"
 }
