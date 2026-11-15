@@ -37,7 +37,7 @@ const BRIEF = (() => {
   try { return JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")); } catch { return {}; }
 })();
 const alvo = Number(BRIEF.word_count || 0);
-const piso = alvo ? Math.round(alvo * 0.7) : 0;
+const piso = require("./lib/word-floor").piso(alvo);
 /* Plano B do comprimento: se nenhum modelo bate o piso, fica gravado o mais
    longo, para a reescrita expandir em vez de começar do zero outra vez. */
 let melhor = null;

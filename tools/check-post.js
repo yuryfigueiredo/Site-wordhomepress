@@ -372,10 +372,12 @@ const measured = words(text).length;
 let targetWords = 0;
 try { targetWords = Number(JSON.parse(fs.readFileSync(path.join(DIR, "brief.json"), "utf8")).word_count || 0); } catch {}
 /* Texto muito abaixo do combinado no brief é modelo preguiçoso, não estilo:
-   200 palavras onde a pauta pedia 1100 vira página fina no índice. O piso é
-   70% do alvo (770 para uma pauta de 1100), o mesmo número que o prompt pede. */
-if (targetWords && measured < targetWords * 0.7)
-  reject("length", `texto com ${measured} palavras para uma pauta de ~${targetWords} — o piso é ${Math.round(targetWords * 0.7)}`);
+   200 palavras onde a pauta pedia 1100 vira página fina no índice. O número é
+   o MESMO que o contrato do `new-post.js` escreve e o mesmo que o `write.js`
+   usa para escolher a ordem da reescrita — `lib/word-floor.js`, uma boca só. */
+const pisoPalavras = require("./lib/word-floor").piso(targetWords);
+if (targetWords && measured < pisoPalavras)
+  reject("length", `texto com ${measured} palavras para uma pauta de ~${targetWords} — o piso é ${pisoPalavras}`);
 fs.writeFileSync(
   path.join(DIR, "metrics.json"),
   JSON.stringify(
