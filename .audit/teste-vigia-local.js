@@ -5,9 +5,9 @@
    para isso, e um portão que não pode ser mutado é um portão que ninguém provou
    aberto — é a mesma régua do resto do repo: planta o defeito, vê a cor mudar.
 
-   Cada caso roda o script de verdade, com as cinco entradas de teste do próprio
-   script (HWP_REPO, HWP_VIGIA_STATE, HWP_VIGIA_GRACA, HWP_AVISO, PATH com
-   shim). Nada aqui toca o estado real: o log, a chave de dedupe e os avisos
+   Cada caso roda o script de verdade, com as entradas de teste do próprio
+   script (HWP_REPO, HWP_VIGIA_STATE, HWP_VIGIA_GRACA, HWP_AVISO, HWP_VIGIA,
+   PATH com shim). Nada aqui toca o estado real: o log, a chave de dedupe e os avisos
    vivem num diretório no /tmp, e o aviso é um stub que grava linha em arquivo
    em vez de notificar a área de trabalho.
 
@@ -33,7 +33,11 @@ const os = require("os");
 const path = require("path");
 const { execFileSync } = require("child_process");
 
-const VIGIA = path.join(os.homedir(), ".local", "bin", "hwp-vigia.sh");
+/* Qual vigia executar. O padrão é o da máquina, como sempre; a boca existe para
+   que uma correção seja conferida ANTES de tomar o lugar do script que dispara
+   de hora em hora — medido em 15/11, o portão novo de desfecho nasceu numa cópia
+   no /tmp e só depois foi instalado. */
+const VIGIA = process.env.HWP_VIGIA || path.join(os.homedir(), ".local", "bin", "hwp-vigia.sh");
 const REPO = process.argv[2] || "/home/yury/Documentos/Projeto/homeworldpress";
 const DIA_BASE_UTC = new Date().toISOString().slice(0, 10);
 
@@ -61,6 +65,35 @@ function cabeçalho(minutosAtras) {
   const t = new Date(Date.now() - minutosAtras * 60000).toISOString().replace(/\.\d+Z$/, "Z");
   return `===== turno local ${t} =====\n`;
 }
+
+/* As bocas de FIM que o runner escreve, copiadas do `hwp-turno.sh` de verdade
+   (linhas 204, 222, 234 e 238). Um fixture sem nenhuma delas não é "rodada
+   verde": é rodada morta por sinal no meio do trabalho, e é exatamente esse
+   formato que o portão de desfecho passou a cobrar em 15/11. */
+/* O flock do runner barra a segunda mão que chegou atrasada ao mesmo horário.
+   A linha é `VERMELHO ` (sem dois-pontos) e cai DENTRO do bloco da rodada que
+   ainda está no ar, porque a segunda mão escreve antes de abrir o próprio
+   cabeçalho. Contada como desfecho, ela mancharia de vermelho uma rodada que
+   entregou a peça. */
+const FLOCK_BARRADO = "VERMELHO 2026-11-15T05:45:00Z: já existe uma rodada em curso — esta não começou.\n";
+
+/* O que o runner escreve quando a rodada TERMINA. Um bloco com cabeçalho e
+   nenhuma destas bocas é rodada morta por fora — SIGKILL do TimeoutStartSec,
+   kill manual, o portátil dormindo no meio — e é exatamente isso que o portão
+   de desfecho do vigia passou a exigir em 15/11.
+   Medido no turno.log real desta máquina (13 blocos, 13 a 15/11): os SETE que
+   fecharam com código têm boca de fim, e os seis sem boca são os vermelhos do
+   dia 13/11, anteriores ao eco do runner — todos caem no ramo de cima, o de
+   VERMELHO. Nenhum bloco verde do disco ficou sem boca, então o portão novo
+   não acorda alarme em rodada que entregou. */
+const FIM_EMPURRADO = "tools/turno.js terminou com código 0\npush ok — HEAD 0056898, origem 0\t0\n";
+/* Fechou o laço de push e não empurrou: é a boca do `push recusado`, que só
+   aparece depois de o turno.js ter devolvido e o commit existir. */
+const FIM_SEM_PUSH = "tools/turno.js terminou com código 0\n[main abc1234] turno: 2026-11-15T02:23Z\npush recusado (tentativa 1): rebase sobre o que chegou\n";
+/* Terceira boca: o disco não mudou, o runner sai ANTES do laço de push. É
+   desfecho (a rodada terminou, não havia peça), mas não é empurrão — por isso
+   o `push pendente` é conferido pelo HEAD à frente, não por esta linha. */
+const FIM_SEM_COMMIT = "tools/turno.js terminou com código 0\nnada para commitar — a rodada não mudou o disco\n";
 
 /* A grade lida do JSON, não copiada aqui — é a mesma boca que o vigia usa. */
 const REGUA = require(path.join(REPO, "pipeline", "cadence.json"));
@@ -201,10 +234,12 @@ const repoViradaAtras = (() => {
   return fixtureRepo(dir, 2, fonte);
 })();
 
-/* 1 — rodada servida e empurrada: vigia verde e mudo. */
+/* 1 — rodada servida e empurrada: vigia verde e mudo. O bloco fecha com a boca
+        do runner (`push ok`), como fecha toda rodada que chegou ao fim — sem
+        ela seria rodada morta no meio, e o caso 15 cobra exatamente isso. */
 {
   const c = cenario("1. rodada do horário servida e empurrada → nenhum aviso", {
-    turnoLog: cabeçalho(20),
+    turnoLog: cabeçalho(20) + "[fim] rodada completa.\n" + FIM_EMPURRADO,
     repo: repoLimpo,
   });
   confere("saiu 0", c.codigo === 0, `código ${c.codigo}`);
@@ -242,14 +277,19 @@ const repoViradaAtras = (() => {
   confere("diz que já avisou", /já avisado/.test(c.saida), c.saida.trim());
 }
 
-/* 4 — a rodada rodou mas o push não chegou: o site no ar não vê a peça. */
+/* 4 — a rodada rodou mas o push não chegou: o site no ar não vê a peça.
+        A frase exata mudou em 15/11 ("fechou sem push ok"): o aviso antigo
+        dizia "o push não chegou" também quando o push tinha chegado e o dono
+        commitou depois — o caso 16b é o que segura a diferença agora, e o que
+        esta conferência cobra é a substância: queixa de push + a contagem. */
 {
   const c = cenario("4. rodada servida com commit local à frente do origin → aviso de push", {
-    turnoLog: cabeçalho(20),
+    turnoLog: cabeçalho(20) + FIM_SEM_PUSH,
     repo: repoAtras,
   });
   confere("exatamente um aviso", c.disparados.length === 1, JSON.stringify(c.disparados));
-  confere("o aviso conta os commits pendentes", /push não chegou.*2 commit/.test(c.disparados[0] || ""), c.disparados[0]);
+  confere("o aviso conta os commits pendentes", /push não chegou|sem push ok/.test(c.disparados[0] || "") && /2 commit/.test(c.disparados[0] || ""), c.disparados[0]);
+  confere("diz que o site no ar não vê o que a máquina escreveu", /não vê/.test(c.disparados[0] || ""), c.disparados[0]);
 }
 
 /* 5 — fuso da máquina ≠ fuso da régua: os horários do timer não são os do check_hours. */
@@ -294,7 +334,7 @@ const repoViradaAtras = (() => {
         do cabeçalho do horário, não o arquivo inteiro. */
 {
   const c = cenario("7b. VERMELHO de uma rodada anterior, cabeçalho de hoje verde → nenhum aviso", {
-    turnoLog: cabeçalho(600) + "VERMELHO: causa antiga, de outro horário.\n" + cabeçalho(20) + "[fim] rodada completa.\n",
+    turnoLog: cabeçalho(600) + "VERMELHO: causa antiga, de outro horário.\n" + cabeçalho(20) + "[fim] rodada completa.\n" + FIM_EMPURRADO,
     repo: repoLimpo,
   });
   confere("nenhum aviso", c.disparados.length === 0, JSON.stringify(c.disparados));
@@ -317,7 +357,7 @@ const repoViradaAtras = (() => {
   const diaBase = vencidos.length ? diaCaso : diaLocal(agoraCaso - 86400);
   const tsCabecalho = execFileSync("date", ["-u", "-d", `@${instanteSlot(diaBase, slotCobrado, 25)}`, "+%Y-%m-%dT%H:%M:%SZ"], { encoding: "utf8" }).trim();
   const c = cenario(`7c. rodada do horário cobrado (${slotCobrado}) publicada e verde → verde, e na hora certa`, {
-    turnoLog: `===== turno local ${tsCabecalho} =====\n[publicação] a-gravitational-lens-supernova-reappearance-time-delay no ar\n[fim] rodada completa.\n`,
+    turnoLog: `===== turno local ${tsCabecalho} =====\n[publicação] a-gravitational-lens-supernova-reappearance-time-delay no ar\n[fim] rodada completa.\n` + FIM_EMPURRADO,
     repo: repoLimpo,
   });
   confere("nenhum aviso para a rodada que entregou peça", c.disparados.length === 0, JSON.stringify(c.disparados));
@@ -350,7 +390,10 @@ for (const AGORA_VIRADA of VIRADAS) {
      janela ALVO−15min e o caso dava verde por inércia — a folga engolindo tudo
      — e não pelo desfecho. Medido nesta prova quando o caso era um instante só. */
   const TS_CABECALHO = execFileSync("date", ["-u", "-d", `@${instanteSlot(DIA_ONTENDEIRO, SLOT_ONTENDEIRO_HHMM, 32)}`, "+%Y-%m-%dT%H:%M:%SZ"], { encoding: "utf8" }).trim();
-  const turnoLog = `===== turno local ${TS_CABECALHO} =====\n[fim] rodada completa.\n`;
+  const turnoLog = `===== turno local ${TS_CABECALHO} =====\n[fim] rodada completa.\n` + FIM_EMPURRADO;
+  /* 8b precisa de um bloco que fecha SEM `push ok`: com push ok no ar, o que
+     estiver à frente do origin não é dívida da rodada (caso 16b). */
+  const turnoLogSemPush = `===== turno local ${TS_CABECALHO} =====\n[fim] rodada completa.\n` + FIM_SEM_PUSH;
   console.log(`8. virada (${rotulo}): o slot vencido é o último de ontem (${SLOT_ONTENDEIRO_HHMM}), não o primeiro (${PRIMEIRO_HORARIO})`);
   const c = cenario(`8. ${rotulo}, com a rodada das ${SLOT_ONTENDEIRO_HHMM} de ontem verde no log`, {
     turnoLog,
@@ -374,13 +417,13 @@ for (const AGORA_VIRADA of VIRADAS) {
           do bloco lido: se o vigia estivesse calado só por causa da folga, este
           caso continuaria mudo e o verde de 8 não diria nada sobre desfecho. */
   const c8b = cenario(`8b. ${rotulo}, rodada das ${SLOT_ONTENDEIRO_HHMM} de ontem verde mas com push pendente → aviso de push`, {
-    turnoLog,
+    turnoLog: turnoLogSemPush,
     repo: repoViradaAtras,
     agora: AGORA_VIRADA,
   });
   /* A boca do empurrão não nomeia o slot (é a mensagem de push, fixa), então a
      prova de que ele caiu no dia certo é a chave de dedupe escrita acima. */
-  confere(`[${rotulo}] o push pendente é cobrado depois de a rodada ser reconhecida`, c8b.disparados.length === 1 && /push não chegou/.test(c8b.disparados[0] || ""), `${JSON.stringify(c8b.disparados)} · ${c8b.saida.trim()}`);
+  confere(`[${rotulo}] o push pendente é cobrado depois de a rodada ser reconhecida`, c8b.disparados.length === 1 && /push não chegou|sem push ok/.test(c8b.disparados[0] || ""), `${JSON.stringify(c8b.disparados)} · ${c8b.saida.trim()}`);
   confere(`[${rotulo}] a chave de dedupe escrita é a do slot de ontem`, (() => {
     const k = path.join(c8b.state, "vigia-ultimo");
     return fs.existsSync(k) && fs.readFileSync(k, "utf8").trim() === `${DIA_ONTENDEIRO} ${SLOT_ONTENDEIRO_HHMM}`;
@@ -535,6 +578,153 @@ const TS_RODADA = (() => {
     }
     confere("sem o atalho, a folga engole a causa outra vez", /folga da rodada/.test(saida), saida.trim());
   }
+}
+
+/* 15 — rodada morta por sinal: o portão de desfecho.
+
+        O caso que o vigia NÃO via: a rodada abre (cabeçalho no log), nenhuma
+        etapa escreveu `VERMELHO:`, e ela não termina — o `TimeoutStartSec` do
+        systemd arranca o cgroup, um kill manual faz o mesmo, ou o portátil
+        dorme no meio. O bloco para no meio de uma etapa, o HEAD não se mexe e
+        o desfecho antigo lia isso como "servida e empurrada": verde com zero
+        publicações e o horário queimado.
+
+        Medido na máquina em 15/11 com a régua de seis horários: a folga (90)
+        fica ACIMA do teto do runner (65) e do serviço (78), então depois dela
+        um bloco sem boca de fim não é "pode estar escrevendo" — é morte. */
+{
+  console.log("15. rodada morta por sinal (cabeçalho, sem VERMELHO, sem boca de fim)");
+  /* O bloco é o MESMO na conferência e na mutação: a mutação tem de provar que
+     é o portão que segura o verde, e não outro detalhe do cenário. */
+  const LOG_MORTA = cabeçalho(20) + "[coleta] fila: 34 pautas acumuladas\n[manutenção] errors 0 | ✗ warnings 1\n[pauta] NASA reveals bold new plan to return astronauts to the Moon in 2028\n";
+  const c = cenario("15a. bloco cortado no meio do trabalho → aviso de rodada sem desfecho", {
+    turnoLog: LOG_MORTA,
+    repo: repoLimpo,
+  });
+  confere("saiu 0 (o vigia avisa e sai)", c.codigo === 0, `código ${c.codigo}`);
+  confere("exatamente um aviso", c.disparados.length === 1, JSON.stringify(c.disparados));
+  confere("a etiqueta é 'rodada sem desfecho'", (c.disparados[0] || "").startsWith("rodada sem desfecho|"), c.disparados[0]);
+  confere("o aviso diz que não havia boca de fim no bloco", /não deixou boca de fim/.test(c.disparados[0] || ""), c.disparados[0]);
+  confere("o aviso nomeia o TimeoutStartSec como suspeita", /TimeoutStartSec/.test(c.disparados[0] || ""), c.disparados[0]);
+  confere("não canta 'servida e empurrada'", !/servida e empurrada/.test(c.saida), c.saida.trim());
+  confere("gravou a chave de dedupe", fs.existsSync(path.join(c.state, "vigia-ultimo")), "sem vigia-ultimo");
+
+  const chave15 = fs.existsSync(path.join(c.state, "vigia-ultimo")) ? fs.readFileSync(path.join(c.state, "vigia-ultimo"), "utf8").trim() : "";
+  const segunda15 = cenario("15b. segunda olhada, chave posta → calado (sem spam de hora em hora)", {
+    turnoLog: cabeçalho(20) + "[coleta] fila: 34 pautas acumuladas\n",
+    repo: repoLimpo,
+    chavePronta: chave15,
+  });
+  confere("a segunda olhada não repete o aviso", segunda15.disparados.length === 0 && /já avisado/.test(segunda15.saida), `${JSON.stringify(segunda15.disparados)} · ${segunda15.saida.trim()}`);
+
+  /* 15c — dentro da folga o portão NÃO morde: a rodada pode estar escrevendo. */
+  const naFolga = cenario("15c. o mesmo bloco truncado, dentro da folga → silêncio por causa própria", {
+    turnoLog: cabeçalho(20) + "[coleta] fila: 34 pautas acumuladas\n[brief] pipeline/drafts/a-cosmic-magnifying-glass/ criado\n",
+    repo: repoLimpo,
+    grace: 90 * 24,
+  });
+  confere("nenhum aviso enquanto a rodada ainda pode estar no ar", naFolga.disparados.length === 0, JSON.stringify(naFolga.disparados));
+  confere("diz que é a folga, não que serviu", /folga da rodada/.test(naFolga.saida) && !/servida e empurrada/.test(naFolga.saida), naFolga.saida.trim());
+
+  /* 15d — a boca legítima que NÃO é push: `nada para commitar`. O runner sai
+            dela antes do laço de push, com o código do turno.js, e é desfecho
+            verdadeiro (a rodada terminou; não havia peça para publicar). O
+            portão não pode morder aqui — morderia seis rodadas por dia em dias
+            de teto cheio. */
+  const nadaCommitar = cenario("15d. bloco fechado em 'nada para commitar', HEAD no ar → verde", {
+    turnoLog: cabeçalho(20) + "[fim] sem texto nenhum\n" + FIM_SEM_COMMIT,
+    repo: repoLimpo,
+  });
+  confere("nenhum aviso: o runner fechou por boca própria", nadaCommitar.disparados.length === 0, JSON.stringify(nadaCommitar.disparados));
+  confere("canta 'servida e empurrada'", /servida e empurrada/.test(nadaCommitar.saida), nadaCommitar.saida.trim());
+  confere("não inventou desfecho", !/sem desfecho|rodada vermelha|push pendente/.test(nadaCommitar.saida), nadaCommitar.saida.trim());
+
+  /* 15e — a mutação: arrancado o portão, o mesmo bloco volta a cantar verde. */
+  const copia15 = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "hwp-muta-desfecho-")), "sem-portao.sh");
+  const fonte15 = fs.readFileSync(VIGIA, "utf8");
+  if (!fonte15.includes('if [ -z "$FECHAMENTO" ]; then')) {
+    confere("o portão de desfecho existe no script para poder ser mutado", false, fonte15.slice(0, 200));
+  } else {
+    fs.writeFileSync(copia15, fonte15.replace('if [ -z "$FECHAMENTO" ]; then', 'if [ -n "" ] && [ -z "$FECHAMENTO" ]; then'), { mode: 0o755 });
+    /* O estado da mutação precisa do MESMO log do caso 15a: com state vazio o
+       script não acha turno.log, cai no ramo de "rodada perdida" e a mutação
+       passaria verde por cenário quebrado, não pelo portão arrancado. */
+    const state15 = fs.mkdtempSync(path.join(os.tmpdir(), "hwp-muta15-state-"));
+    fs.writeFileSync(path.join(state15, "turno.log"), LOG_MORTA);
+    let saida15 = "";
+    try {
+      saida15 = execFileSync(copia15, [], {
+        encoding: "utf8",
+        env: {
+          ...process.env,
+          HWP_REPO: repoLimpo,
+          HWP_VIGIA_STATE: state15,
+          HWP_VIGIA_GRACA: "0",
+          HWP_AVISO: path.join(os.tmpdir(), "stub-inexistente-15.sh"),
+        },
+      });
+    } catch (e) {
+      saida15 = String(e.stdout || "") + String(e.stderr || "");
+    }
+    confere("sem o portão, a rodada morta volta a cantar 'servida e empurrada'", /servida e empurrada/.test(saida15), saida15.trim());
+    confere("e não sobra aviso de desfecho nenhum", !/sem desfecho|AVISOS/.test(saida15), saida15.trim());
+  }
+}
+
+/* 16 — o push que não chegou, conferido por boca de fim e não por HEAD.
+
+        Medido às 03:41Z de 15/11: a rodada das 22:23 empurrara (`push ok — HEAD
+        0056898`) e o HEAD estava à frente porque o DONO commitou documentação
+        depois dela. O vigia cantou "a rodada rodou mas o push não chegou"
+        contra uma rodada que havia entregado — e é assim que um aviso verdadeiro
+        morre de tanto gritar. Com `push ok` no bloco, o que estiver à frente não
+        é dívida da rodada: vai no próximo push do runner.
+        Sem `push ok`, à frente quer dizer exatamente o que a mensagem diz. */
+{
+  console.log("16. o HEAD à frente só é dívida da rodada quando o bloco não tem push ok");
+  const semPush = cenario("16a. bloco fechado em 'push recusado' com commits locais → push pendente", {
+    turnoLog: cabeçalho(20) + "[fim] rodada completa.\n" + FIM_SEM_PUSH,
+    repo: repoAtras,
+  });
+  confere("exatamente um aviso", semPush.disparados.length === 1, JSON.stringify(semPush.disparados));
+  confere("o aviso é de push e conta os dois commits", /push não chegou|sem push ok/.test(semPush.disparados[0] || "") && /2 commit/.test(semPush.disparados[0] || ""), semPush.disparados[0]);
+  confere("a etiqueta é 'push pendente'", (semPush.disparados[0] || "").startsWith("push pendente|"), semPush.disparados[0]);
+
+  const comPush = cenario("16b. mesma HEAD à frente, mas o bloco fechou com push ok → nenhum aviso", {
+    turnoLog: cabeçalho(20) + "[fim] rodada completa.\n" + FIM_EMPURRADO,
+    repo: repoAtras,
+  });
+  confere("nenhum aviso: o que está à frente não é da rodada", comPush.disparados.length === 0, JSON.stringify(comPush.disparados));
+  confere("a saída diz que os commits à frente não são dela", /não são dela/.test(comPush.saida), comPush.saida.trim());
+  confere("não escreveu chave de dedupe", !fs.existsSync(path.join(comPush.state, "vigia-ultimo")), "vigia-ultimo apareceu");
+}
+
+/* 17 — a segunda mão barrada no flock não mancha o bloco da rodada em curso.
+         O `VERMELHO …: já existe uma rodada em curso` é impresso ANTES de o
+         script escrever o próprio cabeçalho, então cai dentro do bloco de quem
+         está no ar. Contado como desfecho, uma rodada verde passava a vermelha
+         por causa de uma invocação que não queimou pauta nem escreveu arquivo. */
+{
+  console.log("17. invocação barrada no flock dentro do bloco da rodada que entregou");
+  const c = cenario("17a. bloco com push ok + VERMELHO de flock appended pela mão atrasada → nenhum aviso", {
+    turnoLog: cabeçalho(20) + "[fim] rodada completa.\n" + FIM_EMPURRADO + FLOCK_BARRADO,
+    repo: repoLimpo,
+  });
+  confere("nenhum aviso: o vermelho é de outra invocação", c.disparados.length === 0, JSON.stringify(c.disparados));
+  confere("canta 'servida e empurrada'", /servida e empurrada/.test(c.saida), c.saida.trim());
+  confere("a rodada barrada não serve de desfecho nem aberta", !/rodada vermelha|sem desfecho/.test(c.saida), c.saida.trim());
+
+  /* 17b — o mesmo VERMELHO de flock numa rodada que NÃO deixou boca de fim: o
+            desfecho cobrado é "sem desfecho", não "rodada vermelha". A causa é
+            a morte por fora; o vermelho filtrado é ruído de outra mão, e confun-
+            dir as duas trocaria um defeito de timeout por um defeito editorial
+            na lista do dono. */
+  const c17b = cenario("17b. só o VERMELHO de flock, sem boca de fim → sem desfecho, não vermelha", {
+    turnoLog: cabeçalho(20) + "[coleta] fila: 34 pautas acumuladas\n" + FLOCK_BARRADO,
+    repo: repoLimpo,
+  });
+  confere("a etiqueta é 'rodada sem desfecho'", (c17b.disparados[0] || "").startsWith("rodada sem desfecho|"), JSON.stringify(c17b.disparados));
+  confere("não canta rodada vermelha", !/rodada vermelha/.test(c17b.disparados.join("\n")), c17b.disparados[0]);
 }
 
 /* 14 — invariante: a régua desta máquina e o estado real dela. */
