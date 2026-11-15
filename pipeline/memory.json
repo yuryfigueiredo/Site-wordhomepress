@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14T20:49:16.029Z",
+  "updated": "2026-11-15T01:38:40.722Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -206,8 +206,9 @@
     "https://www.sciencedaily.com/releases/2026/11/261108233054.htm": {
       "slug": "nasa-reveals-bold-new-plan-to-return-astronauts-to-the-moon-in-2",
       "topic": "NASA reveals bold new plan to return astronauts to the Moon in 2028",
-      "outcome": "reprovada",
-      "at": "2026-11-11T22:16:29.622Z"
+      "outcome": "publicada",
+      "at": "2026-11-15T01:38:40.721Z",
+      "id": "deadline-without-dependency-list-lunar-return"
     },
     "https://www.theguardian.com/books/2026/nov/09/m-john-harrison-the-end-of-everything-wins-2026-booker-prize": {
       "slug": "m-john-harrison-becomes-first-science-fiction-author-to-win-the-",
@@ -363,6 +364,11 @@
     {
       "id": "gravitational-lens-supernova-reappearance-time-delay",
       "at": "2026-11-14T20:49:16.027Z",
+      "score": 6.4
+    },
+    {
+      "id": "deadline-without-dependency-list-lunar-return",
+      "at": "2026-11-15T01:38:40.721Z",
       "score": 6.4
     }
   ]

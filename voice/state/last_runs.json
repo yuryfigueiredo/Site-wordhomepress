@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-14T20:49:16.023Z",
+  "updated": "2026-11-15T01:38:40.719Z",
   "runs": {
     "analyst": {
-      "id": "gravitational-lens-supernova-reappearance-time-delay",
-      "date": "2026-11-14",
-      "opening_move": "object",
-      "ending_move": "small_observation",
-      "title_pattern": "a gravitational lens schedules",
+      "id": "deadline-without-dependency-list-lunar-return",
+      "date": "2026-11-15",
+      "opening_move": "document",
+      "ending_move": "verification",
+      "title_pattern": "a deadline alone cannot",
       "humor_lines": 1
     },
     "lab": {

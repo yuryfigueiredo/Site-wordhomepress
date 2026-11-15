@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "james-webb-telescope-reveals-giant-exoplanet",
+  "currentCoverId": "swift-space-telescope-reentry-failure-analysis",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -152,6 +152,14 @@
       "id": "james-webb-telescope-reveals-giant-exoplanet",
       "tipo": "rotacionada",
       "era": "m-john-harrison-booker-prize-win"
+    },
+    {
+      "at": "2026-11-15T01:38:40.040Z",
+      "dia": "2026-11-14",
+      "rodada": "2026-11-14T22:23",
+      "id": "swift-space-telescope-reentry-failure-analysis",
+      "tipo": "rotacionada",
+      "era": "james-webb-telescope-reveals-giant-exoplanet"
     }
   ],
   "capaVistas": [

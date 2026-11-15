@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 14 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 15 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>A deadline alone cannot carry astronauts back to the Moon</title>
+      <link>https://www.homeworldpress.com/article.html?id=deadline-without-dependency-list-lunar-return</link>
+      <description>The target year for a crewed return arrives with no dependency list, and the missing engineering answers are the story</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=deadline-without-dependency-list-lunar-return</guid>
+      <pubDate>Sun, 15 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>A Gravitational Lens Schedules Two More Arrivals of One Supernova</title>
       <link>https://www.homeworldpress.com/article.html?id=gravitational-lens-supernova-reappearance-time-delay</link>
@@ -77,14 +85,6 @@
       <description>An Oxford group built the smallest loop a lattice gauge theory allows, with matter and field sharing two ions. Flux, not force, stopped the particle.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere</guid>
-      <pubDate>Sat, 07 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>A Universe 26.7 Billion Years Old Passes Three Tests and Skips the Deciding One</title>
-      <link>https://www.homeworldpress.com/article.html?id=theory-predicting-an-older-universe-without-dark-matter-or-dark</link>
-      <description>A consistency paper drops dark matter and dark energy, then survives nucleosynthesis, 175 rotation curves and cosmic chronometers. The microwave background is still a promise.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=theory-predicting-an-older-universe-without-dark-matter-or-dark</guid>
       <pubDate>Sat, 07 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

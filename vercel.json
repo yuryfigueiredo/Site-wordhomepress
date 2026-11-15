@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "deadline-without-dependency-list-lunar-return"
+        }
+      ],
+      "destination": "/a-deadline-without-dependency-list-lunar-return.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "gravitational-lens-supernova-reappearance-time-delay"
         }
       ],
