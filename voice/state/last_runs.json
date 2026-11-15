@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-15T01:38:40.719Z",
+  "updated": "2026-11-15T06:00:00.053Z",
   "runs": {
     "analyst": {
-      "id": "deadline-without-dependency-list-lunar-return",
+      "id": "second-pass-webb-images-planet-never-hidden",
       "date": "2026-11-15",
-      "opening_move": "document",
-      "ending_move": "verification",
-      "title_pattern": "a deadline alone cannot",
+      "opening_move": "dry_contrast",
+      "ending_move": "small_observation",
+      "title_pattern": "second pass through webb",
       "humor_lines": 1
     },
     "lab": {

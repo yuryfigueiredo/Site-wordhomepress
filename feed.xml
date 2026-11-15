@@ -8,6 +8,14 @@
     <lastBuildDate>Sun, 15 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Second pass through Webb data finds a planet that was never hidden</title>
+      <link>https://www.homeworldpress.com/article.html?id=second-pass-webb-images-planet-never-hidden</link>
+      <description>The reduction moved a detection limit rather than the object, and that is exactly what the next paper has to confirm.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=second-pass-webb-images-planet-never-hidden</guid>
+      <pubDate>Sun, 15 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>A deadline alone cannot carry astronauts back to the Moon</title>
       <link>https://www.homeworldpress.com/article.html?id=deadline-without-dependency-list-lunar-return</link>
       <description>The target year for a crewed return arrives with no dependency list, and the missing engineering answers are the story</description>
@@ -77,14 +85,6 @@
       <description>A convection model with one low-viscosity layer moves Earth's kneading to the core-mantle boundary, and that relocation is what makes young basalts survivable.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat</guid>
-      <pubDate>Sat, 07 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Two Trapped Ions Let a Gauge Field Decide Whether Matter Moves</title>
-      <link>https://www.homeworldpress.com/article.html?id=two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere</link>
-      <description>An Oxford group built the smallest loop a lattice gauge theory allows, with matter and field sharing two ions. Flux, not force, stopped the particle.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere</guid>
       <pubDate>Sat, 07 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

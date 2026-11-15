@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T05:44:36.443Z",
+  "updated": "2026-11-15T06:00:00.055Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -220,8 +220,9 @@
     "https://www.sciencedaily.com/releases/2026/11/261108233028.htm": {
       "slug": "astronomers-discover-hidden-alien-planet-in-james-webb-images",
       "topic": "Astronomers discover hidden alien planet in James Webb images",
-      "outcome": "reprovada",
-      "at": "2026-11-15T05:44:36.442Z"
+      "outcome": "publicada",
+      "at": "2026-11-15T06:00:00.055Z",
+      "id": "second-pass-webb-images-planet-never-hidden"
     },
     "https://www.space.com/astronomy/black-holes/are-the-james-webb-space-telescopes-mysterious-little-red-dots-actually-tiny-black-holes-left-over-from-the-big-bang-era": {
       "slug": "are-the-james-webb-space-telescopes-mysterious-little-red-dots-a",
@@ -370,6 +371,11 @@
       "id": "deadline-without-dependency-list-lunar-return",
       "at": "2026-11-15T01:38:40.721Z",
       "score": 6.4
+    },
+    {
+      "id": "second-pass-webb-images-planet-never-hidden",
+      "at": "2026-11-15T06:00:00.055Z",
+      "score": 6.8
     }
   ]
 }

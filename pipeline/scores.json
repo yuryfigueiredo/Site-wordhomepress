@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T01:38:39.916Z",
+  "updated": "2026-11-15T05:59:59.236Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -939,6 +939,44 @@
           "pts": 1,
           "max": 1,
           "why": "Argues that an undated, unlisted deadline cannot be graded as aggressive or generous, only audited for its missing dependencies."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-15"
+    },
+    "second-pass-webb-images-planet-never-hidden": {
+      "score": 6.8,
+      "note": "6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 5 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 12% com james-webb-telescope-reveals-giant-exoplanet"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Reframes an archive Webb detection as a moved threshold, so the claim's value equals the new error budget, not a new object."
         }
       },
       "source": "auto",
