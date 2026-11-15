@@ -10,6 +10,7 @@
    Fonte única da verdade: pipeline/scores.json (versionado no git).          */
 const fs = require("fs");
 const path = require("path");
+const respostaJson = require("./lib/resposta-json");
 
 const ROOT = path.resolve(__dirname, "..");
 const SCORES_FILE = path.join(ROOT, "pipeline", "scores.json");
@@ -182,8 +183,15 @@ function record(store, id, res, source = "auto") {
 function readDraft(slug) {
   if (!/^[a-z0-9_-]+$/.test(slug)) { console.error("slug inválido"); process.exit(2); }
   const dir = path.join(ROOT, "pipeline", "drafts", slug);
-  const raw = fs.readFileSync(path.join(dir, "draft.json"), "utf8").replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, "");
-  const draft = JSON.parse(raw);
+  /* Mesma boca do `check-post.js` e do `write.js`: um `draft.json` cercado ou
+     com prosa ao redor é lido pelos três do mesmo jeito, ou a nota e o júri
+     divergiriam do texto que o redator devolveu. */
+  const leitura = respostaJson.parsear(fs.readFileSync(path.join(dir, "draft.json"), "utf8"));
+  if (!leitura.dados) {
+    console.error(`draft.json de ${slug} não é JSON válido: ${leitura.motivo}`);
+    process.exit(1);
+  }
+  const draft = leitura.dados;
   let metrics = null;
   try { metrics = JSON.parse(fs.readFileSync(path.join(dir, "metrics.json"), "utf8")); } catch {}
   return { draft, metrics, dir };

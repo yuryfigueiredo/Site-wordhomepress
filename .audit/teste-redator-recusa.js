@@ -161,11 +161,26 @@ console.log("\n1. a lista de tokens de transporte tem UMA boca no repo");
     [{ name: "Error", message: "connect ECONNRESET 10.0.0.1:443" }, "sem-rede", "conexão resetada"],
     [{ name: "TypeError", message: "fetch failed", cause: { message: "connect ECONNREFUSED 127.0.0.1:44444" } }, "sem-rede", "token SÓ no cause.message: a cadeia é descida"],
     [{ name: "TimeoutError", code: 23, message: "The operation was aborted due to timeout" }, "empacou", "AbortSignal com code NÚMERO"],
-    [{ message: "o binário /caminho/qodercli não está no disco" }, "sem-rede", "binário ausente é fato daqui"],
+    [{ message: "o binário /caminho/qodercli não está no disco" }, "outra", "fato de máquina NÃO é sintoma de pacote — saiu de SEM_REDE"],
     ["HTTP 500: servidor ocupado", "outra", "5xx com corpo é do destino"],
     ["timeout de 30s no CLI", "outra", "corte de parede NÃO é recusa: continua transitório"],
   ];
   for (const [alvo, esperado, porque] of TABELA) confere(`classe(${porque}) = ${esperado}`, transporte.classe(alvo) === esperado, transporte.classe(alvo));
+  /* O portão do 5xx, na boca única: «esperar isto cura alguma coisa?» depende
+     de QUEM escreveu o corpo, não do que ele contém. Medido 15/11 08:47: com o
+     token lido do corpo de um destino, um provedor vivo era abandonado em 0,1 s. */
+  const CURA = [
+    ["local", "o binário /caminho/qodercli não está no disco", false, "binário ausente: espera não cura"],
+    ["local", "o CLI não levantou: spawn EACCES", false, "spawn morto: espera não cura"],
+    ["local", "connect ECONNREFUSED 127.0.0.1:44444", false, "stderr do filho é fato daqui"],
+    ["local", "timeout de 30s no CLI", true, "corte de parede: pode ser só carga"],
+    ["remoto", "getaddrinfo failed para api.interna.exemplo", true, "prosa do DESTINO sobre a rede DELE"],
+    ["remoto", "upstream busy", true, "500 comum: espera é a resposta"],
+  ];
+  for (const [origem, corpo, esperado, porque] of CURA)
+    confere(`esperaCura(${origem}, «${corpo.slice(0, 24)}…») = ${esperado} — ${porque}`, transporte.esperaCura(origem, corpo) === esperado, transporte.esperaCura(origem, corpo));
+  confere("o write.js lê a decisão do módulo, não uma regex própria", /transporte\.esperaCura\(prov\.origem\(res\), porQue\)/.test(fs.readFileSync(path.join(ROOT, "tools/write.js"), "utf8")));
+  confere("e `origem()` é uma boca só: providers exporta, ninguém inspeciona o campo cru", /module\.exports = \{[^}]*\borgem\b/.test(fs.readFileSync(path.join(ROOT, "tools/lib/providers.js"), "utf8")) && !/res\.origem\b/.test(fs.readFileSync(path.join(ROOT, "tools/write.js"), "utf8")));
   const pick = fs.readFileSync(path.join(ROOT, "tools/pick-lead.js"), "utf8");
   confere("o pick-lead cita o módulo e não testa token nenhum", /require\("\.\/lib\/transporte"\)/.test(pick) && !/test\(sinal\)/.test(pick));
   const w = fs.readFileSync(path.join(ROOT, "tools/write.js"), "utf8");

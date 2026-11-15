@@ -489,8 +489,20 @@ function resposta(ok, status, texto, motivo) {
   };
 }
 
+/* Quem escreve o corpo de uma resposta do CLI é ESTA máquina: o spawn que não
+   levantou, a parede de tempo, o exit code do filho. Num provedor de HTTP o
+   corpo chega do DESTINO, e a prosa dele não é sintoma daqui. `origem()` é a
+   única boca que diz de quem é o corpo; o que cada origem prova — se espera
+   cura ou se é preciso passar a vez — mora em `lib/transporte.js`.          */
+async function marcarOrigem(promessa) {
+  const res = await promessa;
+  return { ...res, origem: "local" };
+}
+
+const origem = (res) => (res && res.origem === "local" ? "local" : "remoto");
+
 function chamar(p, modelo, prompt, timeoutMs) {
-  if (p.tipo === "cli") return chamarCli(p, modelo, prompt, timeoutMs);
+  if (p.tipo === "cli") return marcarOrigem(chamarCli(p, modelo, prompt, timeoutMs));
   /* AbortSignal.timeout recusa fração: a fatia de tempo sai de uma divisão. */
   const signal = AbortSignal.timeout(Math.round(Math.max(30000, Math.min(240000, timeoutMs))));
   if (p.tipo === "gemini") {
@@ -546,4 +558,4 @@ function extrair(p, json) {
   return { texto };
 }
 
-module.exports = { configurados, armados, desarmados, descobrir, chamar, extrair, reason, rotulo, localizar };
+module.exports = { configurados, armados, desarmados, descobrir, chamar, extrair, reason, rotulo, localizar, origem };

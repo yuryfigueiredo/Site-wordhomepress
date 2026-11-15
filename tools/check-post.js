@@ -10,6 +10,7 @@ const fs = require("fs");
 const path = require("path");
 const memLib = require("./lib/memory");
 const fotoLib = require("./lib/find-photo");
+const respostaJson = require("./lib/resposta-json");
 
 const ROOT = path.resolve(__dirname, "..");
 const SLUG = process.argv[2];
@@ -30,14 +31,17 @@ global.window = {};
 require(path.join(ROOT, "js", "articles-db.js"));
 const DB = global.window.HWP_DATABASE;
 
-const raw = fs.readFileSync(DRAFT_FILE, "utf8").replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, "");
-let draft;
-try {
-  draft = JSON.parse(raw);
-} catch (err) {
-  console.error(`draft.json não é JSON válido: ${err.message}`);
+/* A casca do `draft.json` é lida pela mesma boca do `write.js`: cerca com
+   rótulo em qualquer caixa, e prosa ao redor do payload, são defeito de
+   FORMATAÇÃO — dois júris que lessem o disco de formas diferentes dariam
+   vereditos diferentes para o mesmo arquivo. */
+const leituraDraft = respostaJson.parsear(fs.readFileSync(DRAFT_FILE, "utf8"));
+if (!leituraDraft.dados) {
+  console.error(`draft.json não é JSON válido: ${leituraDraft.motivo}`);
   process.exit(1);
 }
+if (leituraDraft.boca !== "inteiro") console.error(`draft.json: JSON lido ${leituraDraft.boca} (vinha cercado ou com prosa ao redor).`);
+const draft = leituraDraft.dados;
 
 const problems = [];
 const notes = [];

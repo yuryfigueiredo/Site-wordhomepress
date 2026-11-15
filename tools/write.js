@@ -24,6 +24,7 @@ if (!SLUG || (!CHECK_ONLY && !/^[a-z0-9_-]+$/.test(SLUG))) {
 
 const prov = require("./lib/providers");
 const transporte = require("./lib/transporte");
+const respostaJson = require("./lib/resposta-json");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const DIR = path.join(ROOT, "pipeline", "drafts", SLUG);
@@ -235,13 +236,9 @@ function gravar(draft, k) {
           } else {
             let lista = null;
             let contrato = true;
-            try {
-              const parseado = JSON.parse(lido.texto.replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, "").trim());
-              lista = parseado && parseado.edits;
-              contrato = Array.isArray(lista);
-            } catch {
-              contrato = false;
-            }
+            const leituraEdits = respostaJson.parsear(lido.texto);
+            lista = leituraEdits.dados && leituraEdits.dados.edits;
+            contrato = Array.isArray(lista);
             if (!contrato) {
               caiFora(`a resposta não é {"edits":[…]}: ${lido.texto.slice(0, 160)}`);
             } else if (lista.length) {
@@ -260,6 +257,15 @@ function gravar(draft, k) {
                 aplicadas++;
               }
               if (!aplicadas) caiFora(`nenhum "old" bateu com o texto (${dudas} tentativa(s))`);
+              /* Um lote a meio NÃO é reescrita concluída. O `old` que não bateu é
+                 justamente o ponto que o júri reprovou, e entregá-lo como se
+                 estivesse resolvido mandaria a mesma reprovação de volta com
+                 exit 0 — três ciclos desses e a pauta sai `reprovada` (72 h).
+                 A régua é a que tools/AUTOMATION.md já prometia: «`old` ambíguo
+                 ou ausente ⇒ cai no caminho antigo», e cair no caminho antigo
+                 quer dizer sair VERMELHO daqui, não sair verde com o defeito. */
+              else if (dudas) caiFora(`${dudas} de ${lista.length} "old" sem correspondência exata — o lote não é aplicado inteiro, e um ponto reprovado sobrando é o júri voltando ao mesmo texto`);
+              else if (corpo === anterior.content) caiFora('nenhuma troca mudou uma palavra do texto (`new` igual a `old`) — o ponto reprovado continua de pé');
               else if (contar(corpo) < piso) caiFora(`as trocas derrubariam o texto para ${contar(corpo)} palavras, sob o piso ${piso}`);
               else {
                 console.error(`reescrita cirúrgica: ${aplicadas} troca(s) aplicada(s)${dudas ? `, ${dudas} sem correspondência exata` : ""} sobre ${n} palavras (${Math.round(orcamento / 1000)}s de teto).`);
@@ -311,9 +317,14 @@ function gravar(draft, k) {
       const txt = await res.text().catch(() => "");
       const porQue = prov.reason(txt) || "serviço ocupado";
       falhas.set(k, `HTTP ${res.status}: ${porQue}`);
-      /* Mesma régua do catch, lida pela mesma boca: "o binário não está no
-         disco" e recusa de conexão não se curam com espera.                    */
-      if (transporte.classe(porQue) === "sem-rede") return "definitivo";
+      /* Um 5xx tem corpo, e o corpo é texto de LÁ: um provedor que escreve
+         «getaddrinfo failed» na própria mensagem está falando da rede DELE, e
+         abandoná-lo por causa disso é perder a única boca que podia entregar
+         (medido 15/11 08:47). Fato daqui, que espera nenhuma cura, é só o que
+         ESTA máquina escreveu no corpo — o CLI que não levantou, o binário que
+         não está no disco. A origem é `providers.origem()`, a decisão é
+         `transporte.esperaCura()`, e nenhuma das duas é repetida aqui.       */
+      if (!transporte.esperaCura(prov.origem(res), porQue)) return "definitivo";
       return "transitorio";
     }
     if (!res.ok) {
@@ -328,20 +339,27 @@ function gravar(draft, k) {
 
     const lido = prov.extrair(grupo.p, await res.json().catch(() => null));
     if (!lido.texto) { falhas.set(k, lido.motivo); return "definitivo"; }
-    const clean = lido.texto.replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, "").trim();
     /* Resposta rejeitada fica no rascunho para diagnóstico: sem isso, "JSON sem
        campos" é um mistério e a única saída é adivinhar o prompt. */
     const guardar = () => {
       try { fs.writeFileSync(path.join(DIR, `rejeitado-${k.replace(/[^a-z0-9]+/gi, "-")}.txt`), lido.texto); } catch {}
     };
+    /* A casca e o recorte do payload vivem em `lib/resposta-json.js` — o mesmo
+       módulo que `check-post.js` e `score.js` usam ao abrir o `draft.json`. Até
+       15/11 eram quatro cópias da mesma regex, e nenhuma delas conhecia a cerca
+       em maiúsculas nem a prosa antes do `{`: «Aqui está o artigo: {…}» caía
+       aqui como `resposta não é JSON`, veredito DEFINITIVO, e com um redator
+       armado só isso é peça perdida em 0,1 s + pauta fora da fila por 24 h por
+       um defeito de FORMATAÇÃO.                                                */
+    const leitura = respostaJson.parsear(lido.texto);
     let draft;
-    try {
-      draft = JSON.parse(clean);
-    } catch {
-      falhas.set(k, `resposta não é JSON: ${clean.slice(0, 200)}`);
+    if (!leitura.dados) {
+      falhas.set(k, `resposta não é JSON: ${lido.texto.slice(0, 200)}`);
       guardar();
       return "definitivo";
     }
+    draft = leitura.dados;
+    if (leitura.boca !== "inteiro") console.error(`${grupo.p.nome}/${modelo}: JSON lido ${leitura.boca} (resposta vinha cercada ou com prosa ao redor).`);
     const missing = ["id", "title", "dek", "content", "sources", "self_check"].filter((x) => draft[x] === undefined);
     if (missing.length) {
       falhas.set(k, `JSON sem campos: ${missing.join(", ")} (resposta em rejeitado-*.txt)`);

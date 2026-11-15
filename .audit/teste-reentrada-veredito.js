@@ -63,28 +63,57 @@ const MODELOS = {
   "sem-campos": (res) => { res.writeHead(200, { "content-type": "application/json" }); res.end(JSON.stringify({ choices: [{ message: { content: '{"id":"x"}' } }] })); },
 };
 
+/* Os dois modelos dos casos 6 e 7, registrados à parte para não entrarem na
+   contagem dos casos 2 e 3 (a lista que o servidor devolve em GET é `LISTA`,
+   trocada por quem roda): assim cada caso mede só o que declara.            */
+const PISO = require(path.join(ROOT, "tools/lib/word-floor")).piso(ALVO);
+const DRAFT_CERCADO =
+  '```JSON\nAqui está a matéria pedida:\n' +
+  JSON.stringify({
+    id: SLUG,
+    title: "A Fixture Que Chegou Cercada",
+    dek: "O que se mede aqui é a casca da resposta, não o texto.",
+    content: `<p>${"palavra ".repeat(PISO + 80).trim()}</p>`,
+    sources: [{ name: "Fixture Daily", url: "https://fixture.example", claim: "nada aqui é publicável" }],
+    self_check: "ok",
+  }) +
+  "\nEspero que sirva.```";
+const EXTRA = {
+  /* entrega VÁLIDA, mas com a cerca em caixa alta e prosa dentro dela: a
+     régua de casca das quatro cópias chamava isso de `resposta não é JSON` e
+     o veredito era DEFINITIVO — peça perdida, pauta fora da fila por 24 h. */
+  "cercado-caixa-alta": (res) => { res.writeHead(200, { "content-type": "application/json" }); res.end(JSON.stringify({ choices: [{ message: { content: DRAFT_CERCADO } }] })); },
+  /* 500 do DESTINO cuja prosa cita a rede DELES (`getaddrinfo`): corpo de
+     provedor não é fato desta máquina, e ler token de transporte nele abandona
+     em 0,1 s o único redator que respondeu. */
+  "corpo-getaddrinfo": (res) => { res.writeHead(500, { "content-type": "application/json" }); res.end(JSON.stringify({ error: { message: "getaddrinfo failed para api.interna.exemplo" } })); },
+};
+
+let LISTA = Object.keys(MODELOS);
+
 const server = http.createServer((req, res) => {
   let bruto = "";
-  req.on("data", (c) => (bruto += c));
+  req.on("data" , (c) => (bruto += c));
   req.on("end", () => {
     if (req.method === "GET") {
       /* `descobrir()` do providers.js lista antes de escrever; sem esta boca o
          provedor cai na fila de reserva E no cap de `modelos_por_rodada`, e a
          prova mediria dois modelos em vez de quatro. */
       res.writeHead(200, { "content-type": "application/json" });
-      res.end(JSON.stringify({ data: Object.keys(MODELOS).map((id) => ({ id })) }));
+      res.end(JSON.stringify({ data: LISTA.map((id) => ({ id })) }));
       return;
     }
     let modelo = "?";
     try { modelo = JSON.parse(bruto).model; } catch {}
     chamadas.set(modelo, (chamadas.get(modelo) || 0) + 1);
-    const trata = MODELOS[modelo];
+    const trata = MODELOS[modelo] || EXTRA[modelo];
     if (!trata) { res.writeHead(404, { "content-type": "application/json" }); res.end(JSON.stringify({ error: { message: "modelo de fixture inexistente" } })); return; }
     trata(res);
   });
 });
 
-function copia(provedores, mut) {
+function copia(provedores, mut, alvo) {
+  const destino = alvo || "tools/write.js";
   const dir = fs.mkdtempSync(path.join(tmp, "copia-")) + "/repo";
   fs.mkdirSync(path.dirname(dir), { recursive: true });
   spawnSync("cp", ["-a", `${ROOT}/.`, `${dir}/`], { stdio: "ignore" });
@@ -94,11 +123,11 @@ function copia(provedores, mut) {
   fs.writeFileSync(path.join(d, "prompt.md"), "CONTRATO DE FIXTURE: escreva a matéria em JSON puro.\n");
   fs.writeFileSync(path.join(d, "brief.json"), JSON.stringify({ word_count: ALVO, sources: [{ name: "Fixture Daily", url: "https://fixture.example" }] }, null, 2) + "\n");
   if (mut) {
-    const arq = path.join(dir, "tools", "write.js");
-    const fonte = fs.readFileSync(arq, "utf8");
+    const arquivo = path.join(dir, destino);
+    const fonte = fs.readFileSync(arquivo, "utf8");
     const nova = mut(fonte);
-    if (nova === fonte) throw new Error("a mutação não encontrou o token em tools/write.js");
-    fs.writeFileSync(arq, nova);
+    if (nova === fonte) throw new Error(`a mutação não encontrou o token em ${destino}`);
+    fs.writeFileSync(arquivo, nova);
   }
   return dir;
 }
@@ -209,7 +238,52 @@ async function main() {
     confere("e não escreve mais `rede:` para todo erro igual", !/caiFora\(`rede: \$\{err\.message\}`\)/.test(bloco), "ainda há um caiFora(`rede:`) incondicional");
   }
 
-  console.log("\n5. invariante: a máquina do dono não foi tocada");
+  console.log("\n5. a casca não é veredito: cerca em caixa alta com prosa dentro ENTREGA");
+  {
+    LISTA = ["cercado-caixa-alta"];
+    chamadas.clear();
+    const dir = copia([{ ...PROVEDOR, endpoint }]);
+    const r = await roda(dir);
+    confere("a peça sai do redator que respondeu torto", r.code === 0 && fs.existsSync(path.join(dir, "pipeline", "drafts", SLUG, "draft.json")), `exit ${r.code} · ${r.err.slice(-200)}`);
+    confere("e o diário avisa qual boca leu o JSON", /JSON lido prosa-ao-redor/.test(r.err), (r.err.match(/.*JSON lido.*/g) || ["sem aviso de boca"]).join(" ⏎ ").slice(0, 200));
+    confere("uma chamada só: a casca não é motivo de re-entrada", (chamadas.get("cercado-caixa-alta") || 0) === 1, `${chamadas.get("cercado-caixa-alta")} chamada(s)`);
+
+    /* Mutação no MÓDULO (não no chamador): arrancar o recorte balanceado
+       devolve o «resposta não é JSON» DEFINITIVO que perdia a peça em 0,1 s. */
+    const dirM = copia([{ ...PROVEDOR, endpoint }], (f) => f.replace("const recorte = corpoJson(casca);", "const recorte = casca;"), "tools/lib/resposta-json.js");
+    chamadas.clear();
+    const rm = await roda(dirM);
+    confere("sem o recorte do módulo a mesma resposta vera peça perdida", rm.code !== 0 && !fs.existsSync(path.join(dirM, "pipeline", "drafts", SLUG, "draft.json")), `exit ${rm.code}`);
+    confere("e o veredito registrado é o DEFINITIVO de sempre", /resposta não é JSON/.test(rm.err), (rm.err.match(/.*resposta não é JSON.*/g) || ["sem a frase"]).join(" ⏎ ").slice(0, 240));
+  }
+
+  console.log("\n6. corpo de DESTINO não é fato daqui: 500 com «getaddrinfo» espera, não abandona");
+  {
+    LISTA = ["corpo-getaddrinfo"];
+    chamadas.clear();
+    const dir = copia([{ ...PROVEDOR, endpoint }]);
+    const t0 = Date.now();
+    const r = await roda(dir);
+    const n = chamadas.get("corpo-getaddrinfo") || 0;
+    console.log(`    ${n} chamada(s) em ${((Date.now() - t0) / 1000).toFixed(0)}s · exit ${r.code}`);
+    confere("o 500 do destino é transitório: o modelo volta para a fila", n >= 2, `${n} chamada(s)`);
+    confere("e a escada de espera roda em cima dele", /esperando \d+s/.test(r.err), (r.err.match(/.*esperando.*/g) || ["sem linha de espera"]).join(" ⏎ ").slice(0, 240));
+    confere("nenhuma palavra de «inalcançável» sai de um corpo que respondeu", !/inalcanç/.test(r.err), (r.err.match(/.*inalcan.*/g) || []).join(" ⏎ ").slice(0, 240));
+
+    /* Mutação no MÓDULO: se `esperaCura()` voltasse a olhar o corpo sem saber
+       de quem ele é, o provedor que RESPONDEU seria abandonado na hora. */
+    const dirM = copia([{ ...PROVEDOR, endpoint }], (f) => f.replace("if (origemDoCorpo !== \"local\") return true;", "if (false) return true;"), "tools/lib/transporte.js");
+    chamadas.clear();
+    const t1 = Date.now();
+    const rm = await roda(dirM);
+    const nm = chamadas.get("corpo-getaddrinfo") || 0;
+    console.log(`    com o portão arrancado: ${nm} chamada(s) em ${((Date.now() - t1) / 1000).toFixed(0)}s`);
+    confere("com a mutação o modelo é enterrado na primeira tentativa", nm === 1, `${nm} chamada(s)`);
+    confere("e a rodada devolve o texto do destino como se fosse sintoma daqui", /HTTP 500: getaddrinfo/.test(rm.err) && !/esperando/.test(rm.err), (rm.err.match(/.*(HTTP 500|esperando).*/g) || ["sem linha"]).join(" ⏎ ").slice(0, 260));
+    LISTA = Object.keys(MODELOS);
+  }
+
+  console.log("\n7. invariante: a máquina do dono não foi tocada");
   {
     const depois = retrato();
     confere("nenhum rascunho de fixture entrou no pipeline/drafts real", !fs.existsSync(path.join(ROOT, "pipeline", "drafts", SLUG)));
