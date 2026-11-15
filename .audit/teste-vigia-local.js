@@ -11,6 +11,22 @@
    vivem num diretório no /tmp, e o aviso é um stub que grava linha em arquivo
    em vez de notificar a área de trabalho.
 
+   A grade de horários NÃO é literal nesta prova — ela vem de
+   pipeline/cadence.json (check_hours), porque a régua mora no JSON e a prova
+   tem de continuar valendo quando o dono a recalibra. Medido em 14/11: a
+   agenda passou de quatro horários (08:23/12:23/16:23/20:23) para seis de 4h
+   (02:23 … 22:23) e os casos que hard-codificavam "o último de ontem é 20:23"
+   passaram a cobrar uma hora que o vigia, lendo o JSON certo, já não cobra —
+   o verde mentiria na mesma proporção. O que se fixa aqui é a invariante:
+   na virada do dia o slot cobrado é o ÚLTIMO da grade de ontem, nunca o
+   primeiro. Os instantes dos casos falsificados (8, 9, 11, 12, 13) são
+   derivados dos horários lidos, no fuso da máquina, via `date -d` — a mesma
+   boca que o vigia usa, nunca um horário fixo: a prova de virada roda em dois
+   momentos (as 00:41, ainda na folga do último slot de ontem, e uma hora depois
+   do primeiro horário de hoje, com a folga já vencida), porque com seis
+   horários de 4h existe uma janela da manhã em que "hoje" já tem slot vencido
+   e a conta errada passaria verde numa olhada só.
+
    Uso: node .audit/teste-vigia-local.js                                     */
 const fs = require("fs");
 const os = require("os");
@@ -46,11 +62,58 @@ function cabeçalho(minutosAtras) {
   return `===== turno local ${t} =====\n`;
 }
 
+/* A grade lida do JSON, não copiada aqui — é a mesma boca que o vigia usa. */
+const REGUA = require(path.join(REPO, "pipeline", "cadence.json"));
+const HORARIOS = REGUA.check_hours;
+const ULTIMO_HORARIO = [...HORARIOS].sort().pop();
+const PRIMEIRO_HORARIO = [...HORARIOS].sort()[0];
+const pad2 = (n) => String(n).padStart(2, "0");
+const diaLocal = (epoch) => {
+  const d = new Date(epoch * 1000);
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+};
+/* O instante do slot hh:mm num dia wall-clock DA MÁQUINA, medido com o mesmo
+   `date -d` que o vigia usa (nunca Date.parse, que interpretaria como UTC). */
+function instanteSlot(dia, hhmm, segundos = 0) {
+  const out = execFileSync("date", ["-d", `${dia} ${hhmm}`, "+%s"], { encoding: "utf8" }).trim();
+  const n = Number(out);
+  if (!Number.isFinite(n)) throw new Error(`date -d falhou para "${dia} ${hhmm}"`);
+  return n + segundos;
+}
+
+/* O relógio falsificado dos casos de virada (8 e 9): os dois momentos em que a
+   meia-noite tem consequência. Às 00:41 a folga do último horário de ontem
+   ainda corre, então o vigia está calado por causa própria; uma hora depois do
+   primeiro horário de hoje a folga já venceu E as 00:41 ficaram para trás — é
+   aí que se vê qual dia ele cobre. Medido nesta prova: com o fixture herdando
+   a agenda real inteira, essa segunda olhada cobra "hoje 02:23" e três
+   conferências caem; com a grade fixa, o caso continua verde seja a que hora
+   o dono rodar a prova. */
+function viradas() {
+  const agora = Math.floor(Date.now() / 1000);
+  const alvos = [];
+  for (let d = 0; d < 3; d++) {
+    const dia = diaLocal(agora - d * 86400);
+    alvos.push(instanteSlot(dia, "00:41"));
+    alvos.push(instanteSlot(dia, PRIMEIRO_HORARIO, 60 * 60));
+  }
+  return alvos.filter((t) => t <= agora).sort((a, b) => a - b).slice(-2);
+}
+const VIRADAS = viradas();
+
 /* Um repo mínimo com pipeline/cadence.json, um commit empurrado e (opcional)
-   um commit local que o origin nunca viu — é o retrato do push que falhou. */
-function fixtureRepo(dir, commitsLocais) {
+   um commit local que o origin nunca viu — é o retrato do push que falhou.
+   O cadence do fixture vem por parâmetro porque os casos de virada (8 e 9)
+   precisam de uma grade própria: falsificar só o relógio sem fixar a grade
+   deixa o caso dependente da hora em que a prova roda — medido às 21:01 de
+   14/11, com a agenda nova de 4h o último slot vencido às 00:41 falsificadas
+   era o 22:23 DE HOJE (02:23 já tinha passado), não o de ontem, e o caso
+   cobrava a si mesmo. A grade do fixture é a régua real menos o primeiro
+   horário: o único slot vencido antes das 00:41 é sempre o último de ontem,
+   e a invariante conferida continua sendo a do vigia sobre o JSON dele. */
+function fixtureRepo(dir, commitsLocais, cadencePath) {
   fs.mkdirSync(path.join(dir, "pipeline"), { recursive: true });
-  fs.copyFileSync(path.join(REPO, "pipeline", "cadence.json"), path.join(dir, "pipeline", "cadence.json"));
+  fs.copyFileSync(cadencePath || path.join(REPO, "pipeline", "cadence.json"), path.join(dir, "pipeline", "cadence.json"));
   const git = (args, cwd) => execFileSync("git", ["-C", cwd, ...args], { encoding: "utf8" });
   execFileSync("git", ["init", "-q", "--bare", path.join(dir, "..", "orig.git")]);
   git(["init", "-q", "."], dir);
@@ -117,6 +180,26 @@ function cenario(nome, { turnoLog, repo, grace = 0, fusoFalso, chavePronta, agor
 
 const repoLimpo = fixtureRepo(path.join(fs.mkdtempSync(path.join(os.tmpdir(), "hwp-fix-")), "work"), 0);
 const repoAtras = fixtureRepo(path.join(fs.mkdtempSync(path.join(os.tmpdir(), "hwp-fix-")), "work"), 2);
+
+/* Repo dos casos de virada: a grade real sem o primeiro horário, para que às
+   00:41 falsificadas exista exatamente um slot vencido — o último de ontem. */
+const repoVirada = (() => {
+  const dir = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "hwp-fix-virada-")), "work");
+  const fonte = path.join(dir, "pipeline", "cadence.json");
+  fs.mkdirSync(path.dirname(fonte), { recursive: true });
+  fs.writeFileSync(fonte, JSON.stringify({ ...REGUA, check_hours: HORARIOS.slice(1) }, null, 2) + "\n");
+  return fixtureRepo(dir, 0, fonte);
+})();
+
+/* Idem, com dois commits locais que o origin nunca viu — é a boca do caso 8b:
+   o vigia tem de reconhecer a rodada de ontem E cobrar o push que não chegou. */
+const repoViradaAtras = (() => {
+  const dir = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "hwp-fix-virada-atras-")), "work");
+  const fonte = path.join(dir, "pipeline", "cadence.json");
+  fs.mkdirSync(path.dirname(fonte), { recursive: true });
+  fs.writeFileSync(fonte, JSON.stringify({ ...REGUA, check_hours: HORARIOS.slice(1) }, null, 2) + "\n");
+  return fixtureRepo(dir, 2, fonte);
+})();
 
 /* 1 — rodada servida e empurrada: vigia verde e mudo. */
 {
@@ -218,48 +301,108 @@ const repoAtras = fixtureRepo(path.join(fs.mkdtempSync(path.join(os.tmpdir(), "h
   confere("canta verde desta vez", /servida e empurrada/.test(c.saida), c.saida.trim());
 }
 
-/* 8 — a virada do dia. Medido em 14/11 às 00:41: sem horário de hoje vencido, a
-       conta antiga cobrava "ontem 08:23" (o PRIMEIRO de ontem), avisava uma
-       rodada já cobrada e lia o bloco de outra. O slot vencido é o ÚLTIMO de
-       ontem, e o relógio aqui é falsificado pela boca HWP_AGORA do próprio
-       script — a única maneira de conferir a meia-noite sem esperar por ela. */
-const AGORA_VIRADA = (() => { const d = new Date(); d.setHours(0, 41, 0, 0); return Math.floor(d.getTime() / 1000); })();
-const ONTEM = new Date(AGORA_VIRADA * 1000 - 24 * 3600 * 1000);
-function cabeçalhoEm(d) {
-  return `===== turno local ${d.toISOString().replace(/\.\d+Z$/, "Z")} =====\n`;
-}
-const SLOT_ONTENDEIRO = (() => { const d = new Date(ONTEM); d.setHours(20, 23, 32, 0); return d; })();
+/* 7c — o caso medido em 14/11 às 20:41, quando o repo ainda estava na grade de
+        quatro horários (08:23/12:23/16:23/20:23): a rodada das 18:23 publicou a
+        supernova e fechou com código 0, e o vigia cantou "a rodada das 16:23 não
+        aparece em turno.log" — cobrava um horário que a agenda nova já não tem,
+        porque a conta do slot vencido foi feita contra uma grade antiga. A
+        régua mora no JSON, então o fixture planta o cabeçalho do ÚLTIMO slot
+        vencido da grade lida (agora 18:23) e exige que o vigia cubra esse, sem
+        mencionar nenhum dos horários que já saíram da agenda. */
 {
-  console.log("8. virada do dia: o slot vencido é o último de ontem (20:23), não o primeiro (08:23)");
-  const c = cenario("8. 00:41, com a rodada das 20:23 de ontem verde no log", {
-    turnoLog: cabeçalhoEm(SLOT_ONTENDEIRO) + "[fim] rodada completa.\n",
+  const agoraCaso = Math.floor(Date.now() / 1000);
+  const diaCaso = diaLocal(agoraCaso);
+  const vencidos = HORARIOS.filter((h) => instanteSlot(diaCaso, h) <= agoraCaso);
+  const slotCobrado = vencidos.length ? [...vencidos].sort().pop() : ULTIMO_HORARIO;
+  const diaBase = vencidos.length ? diaCaso : diaLocal(agoraCaso - 86400);
+  const tsCabecalho = execFileSync("date", ["-u", "-d", `@${instanteSlot(diaBase, slotCobrado, 25)}`, "+%Y-%m-%dT%H:%M:%SZ"], { encoding: "utf8" }).trim();
+  const c = cenario(`7c. rodada do horário cobrado (${slotCobrado}) publicada e verde → verde, e na hora certa`, {
+    turnoLog: `===== turno local ${tsCabecalho} =====\n[publicação] a-gravitational-lens-supernova-reappearance-time-delay no ar\n[fim] rodada completa.\n`,
     repo: repoLimpo,
-    agora: AGORA_VIRADA,
   });
-  confere("nenhum aviso (a rodada de ontem serviu)", c.disparados.length === 0, JSON.stringify(c.disparados));
-  confere("canta a hora certa, 20:23", /20:23/.test(c.saida), c.saida.trim());
-  confere("não canta 08:23", !/08:23/.test(c.saida), c.saida.trim());
-  confere("a data no aviso é a de ontem, uma vez só", !/20\d\d-.*20\d\d-/.test(c.saida), c.saida.trim());
+  confere("nenhum aviso para a rodada que entregou peça", c.disparados.length === 0, JSON.stringify(c.disparados));
+  confere("canta 'servida e empurrada'", /servida e empurrada/.test(c.saida), c.saida.trim());
+  confere(`cobre o horário da grade lida (${slotCobrado}), não um slot fora de moda`, new RegExp(`das ${slotCobrado}`).test(c.saida), c.saida.trim());
+  for (const abandonado of ["08:23", "12:23", "16:23", "20:23"]) {
+    if (abandonado === slotCobrado) continue;
+    confere(`não cobra o horário ${abandonado}, que saiu da agenda em 14/11`, !new RegExp(abandonado).test(c.saida), c.saida.trim());
+  }
 }
 
-/* 9 — na virada, sem rodada de ontem à noite: o aviso cobra 20:23 e a chave de
-       dedupe é escrita com o slot certo, para não avisar duas vezes. */
-{
-  const primeiro = cenario("9a. 00:41, sem cabeçalho nenhum → cobra 20:23 de ontem", {
+/* 8 e 9 — a virada do dia, conferida nos dois instantes de VIRADAS. Medido em
+           14/11 às 00:41: sem horário de hoje vencido, a conta antiga cobrava
+           "ontem 08:23" (o PRIMEIRO da grade), avisava uma rodada já cobrada e
+           lia o bloco de outra. O slot vencido é o ÚLTIMO de ontem, e o relógio
+           aqui é falsificado pela boca HWP_AGORA do próprio script — a única
+           maneira de conferir a meia-noite sem esperar por ela. Os horários
+           vêm do JSON do fixture (ver repoVirada), não de literal, e o
+           cabeçalho verde do caso 8 é montado pelo MESMO `date -d` que o vigia
+           usa: as duas pontas da conta saem de bocas diferentes (o JS calcula
+           o instante, o bash do vigia o reconstrói a partir do "Z" no log). */
+const SLOT_ONTENDEIRO_HHMM = ULTIMO_HORARIO;
+for (const AGORA_VIRADA of VIRADAS) {
+  const rotulo = execFileSync("date", ["-d", `@${AGORA_VIRADA}`, "+%H:%M"], { encoding: "utf8" }).trim();
+  const DIA_ONTENDEIRO = diaLocal(AGORA_VIRADA - 86400);
+  /* O cabeçalho do fixture é UTC de verdade, no formato que o runner escreve
+     (`date -u +%FT%TZ`), e o instante vem do mesmo `date -d` que o vigia usa
+     para achar o slot: as duas pontas da conta saem de bocas diferentes. Com
+     getters locais colados num "Z" o cabeçalho mentia três horas, caía fora da
+     janela ALVO−15min e o caso dava verde por inércia — a folga engolindo tudo
+     — e não pelo desfecho. Medido nesta prova quando o caso era um instante só. */
+  const TS_CABECALHO = execFileSync("date", ["-u", "-d", `@${instanteSlot(DIA_ONTENDEIRO, SLOT_ONTENDEIRO_HHMM, 32)}`, "+%Y-%m-%dT%H:%M:%SZ"], { encoding: "utf8" }).trim();
+  const turnoLog = `===== turno local ${TS_CABECALHO} =====\n[fim] rodada completa.\n`;
+  console.log(`8. virada (${rotulo}): o slot vencido é o último de ontem (${SLOT_ONTENDEIRO_HHMM}), não o primeiro (${PRIMEIRO_HORARIO})`);
+  const c = cenario(`8. ${rotulo}, com a rodada das ${SLOT_ONTENDEIRO_HHMM} de ontem verde no log`, {
+    turnoLog,
+    repo: repoVirada,
+    agora: AGORA_VIRADA,
+  });
+  confere(`[${rotulo}] nenhum aviso (a rodada de ontem serviu)`, c.disparados.length === 0, JSON.stringify(c.disparados));
+  confere(`[${rotulo}] canta a hora certa, ${SLOT_ONTENDEIRO_HHMM}`, new RegExp(SLOT_ONTENDEIRO_HHMM).test(c.saida), c.saida.trim());
+  confere(`[${rotulo}] não canta ${PRIMEIRO_HORARIO} de hoje`, !new RegExp(`${PRIMEIRO_HORARIO} \\(${diaLocal(AGORA_VIRADA)}\\)`).test(c.saida), c.saida.trim());
+  confere(`[${rotulo}] o cabeçalho lido é o instante do slot de ontem, em UTC`, /\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ/.test(TS_CABECALHO) && Number(execFileSync("date", ["-d", TS_CABECALHO, "+%s"], { encoding: "utf8" })) === instanteSlot(DIA_ONTENDEIRO, SLOT_ONTENDEIRO_HHMM, 32), `${TS_CABECALHO} · ${c.saida.trim()}`);
+  /* O verde tem de vir do desfecho do bloco, não da folga engolindo tudo.
+     Sem esta, um cabeçalho que mentisse o instante (getters locais colados num
+     "Z") continuava verde: o caso passava a cobrar OUTRO slot, sem cabeçalho
+     nenhum ali e, com o relógio ainda dentro da folga daquele, calava por
+     causa própria — medido nesta prova quando o caso era um instante só. */
+  confere(`[${rotulo}] canta 'servida e empurrada', não a espera da folga`, /servida e empurrada/.test(c.saida) && !/folga da rodada/.test(c.saida), c.saida.trim());
+  confere(`[${rotulo}] a data no aviso é a de ontem, uma vez só`, !/20\d\d-.*20\d\d-/.test(c.saida), c.saida.trim());
+
+  /* 8b — o mesmo cabeçalho verde, agora sem o empurrão: o HEAD do fixture está
+          à frente do origin. É a boca que prova que a conferência de cima veio
+          do bloco lido: se o vigia estivesse calado só por causa da folga, este
+          caso continuaria mudo e o verde de 8 não diria nada sobre desfecho. */
+  const c8b = cenario(`8b. ${rotulo}, rodada das ${SLOT_ONTENDEIRO_HHMM} de ontem verde mas com push pendente → aviso de push`, {
+    turnoLog,
+    repo: repoViradaAtras,
+    agora: AGORA_VIRADA,
+  });
+  /* A boca do empurrão não nomeia o slot (é a mensagem de push, fixa), então a
+     prova de que ele caiu no dia certo é a chave de dedupe escrita acima. */
+  confere(`[${rotulo}] o push pendente é cobrado depois de a rodada ser reconhecida`, c8b.disparados.length === 1 && /push não chegou/.test(c8b.disparados[0] || ""), `${JSON.stringify(c8b.disparados)} · ${c8b.saida.trim()}`);
+  confere(`[${rotulo}] a chave de dedupe escrita é a do slot de ontem`, (() => {
+    const k = path.join(c8b.state, "vigia-ultimo");
+    return fs.existsSync(k) && fs.readFileSync(k, "utf8").trim() === `${DIA_ONTENDEIRO} ${SLOT_ONTENDEIRO_HHMM}`;
+  })(), "sem chave do slot certo");
+
+  /* 9 — na mesma virada, sem rodada de ontem à noite: o aviso cobra o último
+         slot da grade de ontem e a chave de dedupe é escrita com esse slot. */
+  const primeiro = cenario(`9a. ${rotulo}, sem cabeçalho nenhum → cobra ${SLOT_ONTENDEIRO_HHMM} de ontem`, {
     turnoLog: "",
-    repo: repoLimpo,
+    repo: repoVirada,
     agora: AGORA_VIRADA,
   });
   const chave = fs.readFileSync(path.join(primeiro.state, "vigia-ultimo"), "utf8").trim();
-  const segundo = cenario("9b. mesma virada, segunda olhada → calado", {
+  const segundo = cenario(`9b. ${rotulo}, segunda olhada → calado`, {
     turnoLog: "",
-    repo: repoLimpo,
+    repo: repoVirada,
     agora: AGORA_VIRADA,
     chavePronta: chave,
   });
-  confere("um aviso, e ele cobra as 20:23", primeiro.disparados.length === 1 && /20:23/.test(primeiro.disparados[0]), JSON.stringify(primeiro.disparados));
-  confere("a chave de dedupe é '<ontem> 20:23', sem data duplicada", /^\d{4}-\d\d-\d\d 20:23$/.test(chave), chave);
-  confere("a segunda olhada não repete o aviso", segundo.disparados.length === 0 && /já avisado/.test(segundo.saida), `${JSON.stringify(segundo.disparados)} · ${segundo.saida.trim()}`);
+  confere(`[${rotulo}] um aviso, e ele cobra as ${SLOT_ONTENDEIRO_HHMM}`, primeiro.disparados.length === 1 && new RegExp(SLOT_ONTENDEIRO_HHMM).test(primeiro.disparados[0]), JSON.stringify(primeiro.disparados));
+  confere(`[${rotulo}] a chave de dedupe é '<${DIA_ONTENDEIRO}> ${SLOT_ONTENDEIRO_HHMM}', sem data duplicada`, chave === `${DIA_ONTENDEIRO} ${SLOT_ONTENDEIRO_HHMM}`, chave);
+  confere(`[${rotulo}] a segunda olhada não repete o aviso`, segundo.disparados.length === 0 && /já avisado/.test(segundo.saida), `${JSON.stringify(segundo.disparados)} · ${segundo.saida.trim()}`);
 }
 
 /* 11 — a folga não é cega ao desfecho. Medido em 14/11 às 17:41: a rodada das
@@ -277,27 +420,20 @@ const SLOT_ONTENDEIRO = (() => { const d = new Date(ONTEM); d.setHours(20, 23, 3
    (Los Angeles) qualquer hora da tarde UTC já passou de todos os check_hours
    locais — o slot cobrado deixaria de ser o do cabeçalho. Então: o último slot
    local já vencido antes do agora, mais 78 min (folga de 90 ainda correndo).
-   Abaixo das 09:30 locais não há slot vencido hoje; usa-se o 20:23 de ontem,
-   que é exatamente o que a virada do dia cobra (casos 8 e 9). */
-const HORARIOS_11 = require(path.join(REPO, "pipeline", "cadence.json")).check_hours;
+   Antes do primeiro horário de hoje não há slot vencido; usa-se o ÚLTIMO de
+   ontem, que é exatamente o que a virada do dia cobra (casos 8 e 9). */
 const AGORA_11 = Math.floor(Date.now() / 1000);
-const DIA_BASE_HOJE = (() => {
-  const d = new Date(AGORA_11 * 1000);
-  const p = (n) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
-})();
+const DIA_BASE_HOJE = diaLocal(AGORA_11);
 const SLOT_E_ONTENDEIRO_11 = (() => {
   let u = null;
-  for (const h of [...HORARIOS_11].sort()) {
-    const d = new Date(`${DIA_BASE_HOJE}T${h}:00`); // hora wall-clock no fuso da máquina
-    if (d.getTime() <= AGORA_11 * 1000) u = h;
+  for (const h of [...HORARIOS].sort()) {
+    if (instanteSlot(DIA_BASE_HOJE, h) <= AGORA_11 * 1000) u = h;
   }
   if (u) return { slot: u, diaBase: DIA_BASE_HOJE };
-  return { slot: [...HORARIOS_11].sort().pop(), diaBase: (() => { const d = new Date(AGORA_11 * 1000 - 86400 * 1000); const p = (n) => String(n).padStart(2, "0"); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; })() };
+  return { slot: ULTIMO_HORARIO, diaBase: diaLocal(AGORA_11 - 86400) };
 })();
-const alvoRodada11 = Math.floor(new Date(`${SLOT_E_ONTENDEIRO_11.diaBase}T${SLOT_E_ONTENDEIRO_11.slot}:00`).getTime() / 1000);
+const alvoRodada11 = instanteSlot(SLOT_E_ONTENDEIRO_11.diaBase, SLOT_E_ONTENDEIRO_11.slot);
 const agoraSlot = alvoRodada11 + 78 * 60; // folga de 90 min ainda correndo
-const p11 = (n) => String(n).padStart(2, "0");
 const TS_RODADA = (() => {
   const d = new Date(alvoRodada11 * 1000 + 28 * 1000); // o timer abre em HH:MM:2x, medido no log vivo
   /* UTC de verdade, com getUTC* e não getters locais colados num "Z": o runner
@@ -306,7 +442,7 @@ const TS_RODADA = (() => {
      "Z", o cabeçalho mentia o instante em três horas (16:23-03 virava 16:23Z),
      caía antes da janela ALVO−15min e o caso ficava mudo — o verde vinha de a
      folga engolir tudo, não do atalho. */
-  return `${d.getUTCFullYear()}-${p11(d.getUTCMonth() + 1)}-${p11(d.getUTCDate())}T${p11(d.getUTCHours())}:${p11(d.getUTCMinutes())}:${p11(d.getUTCSeconds())}Z`;
+  return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}:${pad2(d.getUTCMinutes())}:${pad2(d.getUTCSeconds())}Z`;
 })();
 {
   console.log(`11. dentro da folga (slot ${SLOT_E_ONTENDEIRO_11.slot} de ${SLOT_E_ONTENDEIRO_11.diaBase}), rodada já encerrada VERMELHA no log → aviso imediato`);
@@ -341,7 +477,7 @@ const TS_RODADA = (() => {
   const tsRodando = (() => {
     // O mesmo UTC de verdade do cabeçalho do caso 11: abrir há 4 min, no fuso real.
     const d = new Date(agoraSlot * 1000 - 4 * 60 * 1000);
-    return `${d.getUTCFullYear()}-${p11(d.getUTCMonth() + 1)}-${p11(d.getUTCDate())}T${p11(d.getUTCHours())}:${p11(d.getUTCMinutes())}:${p11(d.getUTCSeconds())}Z`;
+    return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}:${pad2(d.getUTCMinutes())}:${pad2(d.getUTCSeconds())}Z`;
   })();
   const r12 = cenario("12a. cabeçalho do slot sem VERMELHO no bloco (rodada em curso) → silêncio", {
     turnoLog: `===== turno local ${tsRodando} =====\n[coleta] fila: 3 pautas\n[brief] pipeline/drafts/a-cosmic-magnifying-glass/ criado\n`,
@@ -401,9 +537,21 @@ const TS_RODADA = (() => {
   }
 }
 
-/* 14 — invariante: o estado real desta máquina não foi tocado. */
+/* 14 — invariante: a régua desta máquina e o estado real dela. */
 {
-  console.log("14. o estado real da máquina não foi tocado pela prova");
+  console.log("14. a grade lida pela prova é a do repo, e o estado real não foi tocado");
+  /* A prova lê a agenda do mesmo JSON que o vigia e que o doctor conferem; se
+     ela passasse a carregar uma grade própria (hard-code ou fixture solto),
+     verde aqui deixaria de dizer nada sobre a agenda em produção. Medido
+     nesta passada: com o fixture herdando a grade inteira, cinco conferências
+     da virada caem; contra um vigia mutado para cobrar o PRIMEIRO slot vencido,
+     caem as da folga e a do formato da chave. */
+  confere("a régua lida tem seis horários de 4h, como o cadence.json de 14/11", HORARIOS.length === 6 && REGUA.check_hours.join(",") === "02:23,06:23,10:23,14:23,18:23,22:23", `${HORARIOS.join(",")} · ${REGUA.check_hours.join(",")}`);
+  const nodeBin = process.env.HWP_NODE || "/usr/local/bin/node";
+  const gradeDoRepo = (dir) => execFileSync(nodeBin, ["-e", "console.log(require('./pipeline/cadence.json').check_hours.join(','))"], { cwd: dir, encoding: "utf8" }).trim();
+  const gradeVigia = gradeDoRepo(repoLimpo);
+  confere("a grade da prova é a grade do repo, na ordem do JSON", gradeVigia === REGUA.check_hours.join(","), `${gradeVigia} ≠ ${REGUA.check_hours.join(",")}`);
+  confere("o fixture de virada tem a grade fixada sem o primeiro horário — senão a olhada da manhã cobra hoje", HORARIOS.length > 1 && gradeDoRepo(repoVirada) === HORARIOS.slice(1).join(","), `${gradeDoRepo(repoVirada)} · ${HORARIOS.join(",")}`);
   const real = path.join(os.homedir(), ".local", "state", "hwp");
   const chaveAgora = fs.existsSync(path.join(real, "vigia-ultimo")) ? fs.readFileSync(path.join(real, "vigia-ultimo"), "utf8") : null;
   confere("a prova não escreveu na chave de dedupe real", chaveAgora === CHAVE_REAL_ANTES, `${CHAVE_REAL_ANTES} → ${chaveAgora}`);
