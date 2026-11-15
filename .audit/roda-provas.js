@@ -249,6 +249,19 @@ for (const sig of ["SIGINT", "SIGTERM", "SIGHUP"]) {
 }
 
 const placar = [];
+/* -1 = "a prova não disse", e é diferente de 0 = "zero vermelhas medidas". A
+   forma curta ("17 conferências verdes.") não traz contagem de vermelhas;
+   inventar 0 ali seria o ruído fixo desta doc em outra boca. Na forma `N/M
+   verificações verdes` o total vem do M, e as vermelhas são a diferença.
+   A discriminação é pelo texto do próprio match porque os dois grupos 2 significam
+   coisas diferentes (vermelhas numa, total na outra).                         */
+function duasFormasTotal(m) {
+  if (m[2] === undefined) return -1;
+  const verdes = Number(m[1]);
+  const outro = Number(m[2]);
+  return /verificações/.test(m[0]) ? outro - verdes : outro;
+}
+
 for (const arquivo of provas) {
   const antes = sujos();
   if (antes.length) restaurar(antes, `estado sujo achado antes de ${arquivo}`);
@@ -263,8 +276,18 @@ for (const arquivo of provas) {
   const sujo = sujos();
   const devolvidos = restaurar(sujo, `${arquivo} terminou com a árvore suja`);
   const saida = `${r.stdout || ""}${r.stderr || ""}`;
-  const verde = Number((saida.match(/(\d+) conferências verdes/) || [])[1] ?? -1);
-  const vermelhas = Number((saida.match(/(\d+) vermelhas/) || [])[1] ?? -1);
+  /* Uma boca de leitura só, com duas formas aceitas: "N conferências verdes,
+     M vermelhas" (a maioria) e "N/M verificações verdes" (o `teste-capa-rodada`).
+     Sem a segunda forma a linha do placar virava `exit 1` mudo, e quem lê o
+     resultado não sabia quantas conferências havia. O `-1` de "sem informação"
+     também não é mais impresso como se fosse contagem: `17 verdes / -1
+     vermelhas` lia-se como uma vermelha a menos, e ruído fixo é o que esconde
+     a vermelha de verdade.                                                       */
+  const duasFormas = saida.match(/(\d+) conferências verdes(?:, (\d+) vermelhas)?/) || saida.match(/(\d+)\/(\d+) verificações verdes/);
+  const verde = duasFormas ? Number(duasFormas[1]) : -1;
+  const vermelhas = duasFormas
+    ? duasFormasTotal(duasFormas)
+    : -1;
   const cortada = r.status === null || (r.error && r.error.code === "ETIMEDOUT");
   placar.push({
     arquivo,
@@ -283,7 +306,8 @@ for (const arquivo of provas) {
 /* 4. placar + invariante da árvore. */
 console.log("\n=== bateria ===");
 for (const p of placar) {
-  console.log(`  ${p.cor === "verde" ? "✓" : "✗"} ${p.arquivo.padEnd(36)} ${p.verde >= 0 ? `${p.verde} verdes / ${p.vermelhas} vermelhas` : `exit ${p.exit}`}${p.sujo ? ` · ${p.sujo} restaurados` : ""}${p.cortada ? " · CORTADA no teto de tempo" : ""}`);
+  const conta = p.verde < 0 ? `exit ${p.exit}` : `${p.verde} verdes${p.vermelhas >= 0 ? ` / ${p.vermelhas} vermelhas` : ""}`;
+  console.log(`  ${p.cor === "verde" ? "✓" : "✗"} ${p.arquivo.padEnd(36)} ${conta}${p.sujo ? ` · ${p.sujo} restaurados` : ""}${p.cortada ? " · CORTADA no teto de tempo" : ""}`);
 }
 /* O que restou sujo: resíduo de prova é vermelho, o arquivo que já era novo na
    entrada (este runner antes do commit, por exemplo) é só mencionado. */
