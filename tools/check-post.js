@@ -61,7 +61,16 @@ const round2 = (n) => Math.round(n * 100) / 100;
 
 const text = stripTags(draft.content || draft.prose);
 const paras = paragraphs(draft.content || draft.prose);
-const sents = sentences(text);
+/* Uma segmentação só para todo o gate de ritmo. `paras` — blocos cortados em
+   `</p>`, `</li>`, `</h2>`, `</h3>`, `</blockquote>` — é o que as outras quatro
+   réguas de ritmo já usam; medir `shortest`/`longest` (e a frase de abertura, o
+   fecho e a repetição) no texto INTEIRO colava o título de um `<h2>` sem ponto
+   final na primeira frase do parágrafo seguinte. Medido em 13/37 peças do
+   acervo, com Δ de até 9 palavras, e foi exatamente assim que a rodada das 02:23
+   de 15/11 reprovou um texto com "frase de 33 palavras": título de 7 + frase de
+   26. A régua ≤30 não afrouxa nada — uma frase longa DENTRO de um bloco continua
+   reprova, e a repetição fica mais sensível, não menos. */
+const sents = paras.flatMap((p) => sentences(p));
 
 /* Links do corpo, lidos da tag inteira e não por regex de texto: o valor de
    um atributo pode conter ">", e aí <a title="x>y" href="..."> escondia o
