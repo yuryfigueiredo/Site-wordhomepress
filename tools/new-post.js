@@ -154,7 +154,7 @@ const prompt = [
   "",
   "=== REGRAS DESTA CHAMADA ===",
   `- opening_move NÃO pode ser "${memory && memory.opening_move}". ending_move NÃO pode ser "${memory && memory.ending_move}".`,
-  `- O campo content tem de ter NO MÍNIMO ${Math.round(brief.word_count * 0.7)} palavras visíveis (alvo ${brief.word_count}). Se ficar abaixo, acrescente seções até atingir — texto curto é recusado pelo editor mecânico, não é estilo.`,
+  `- O campo content tem de ter NO MÍNIMO ${require("./lib/word-floor").piso(brief.word_count)} palavras visíveis (alvo ${brief.word_count}). Se ficar abaixo, acrescente seções até atingir — texto curto é recusado pelo editor mecânico, não é estilo.`,
   "- Estrutura do content: 6 a 9 seções <h2>, cada uma com 2 a 4 parágrafos de 50 a 110 palavras. Se o total não bater o piso, acrescente uma seção; não encurte as existentes.",
   "- Inclua exatamente um parágrafo de uma frase (1 a 7 palavras) e pelo menos um parágrafo com 4 ou mais frases.",
   "- Responda SOMENTE com o JSON do contrato acima, sem cercas de código.",
@@ -168,6 +168,15 @@ const dir = path.join(ROOT, "pipeline", "drafts", slug);
 fs.mkdirSync(dir, { recursive: true });
 fs.writeFileSync(path.join(dir, "brief.json"), JSON.stringify(brief, null, 2));
 fs.writeFileSync(path.join(dir, "prompt.md"), prompt);
+/* Prompt novo é contrato novo: o que respondia ao anterior perde a validade.
+   O `fix.md` é exatamente isso — a devolutiva do editor sobre um texto que
+   pode nem mais estar no disco. O `write.js` já se protege dele por idade
+   (guard de 1 s, 544babd), mas essa proteção é refém do relógio de parede: um
+   salto de NTP para trás maior que o intervalo entre o passo 6 e o passo 8
+   faria uma devolutiva legítima parecer de ontem, e o modelo ia reescrever a
+   matéria inteira — o caminho caro que a régua existe para evitar. Aqui a
+   mesma regra não usa relógio nenhum: o arquivo morre com o contrato.        */
+fs.rmSync(path.join(dir, "fix.md"), { force: true });
 
 console.log(`brief e prompt prontos em pipeline/drafts/${slug}/`);
 console.log(`pilar ${brief.pillar} · registro ${register} · byline ${brief.byline} · ~${brief.word_count} palavras`);
