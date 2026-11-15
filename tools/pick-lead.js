@@ -27,6 +27,7 @@ const ROOT = path.resolve(__dirname, "..");
 const LEADS = path.join(ROOT, "pipeline", "leads");
 const DRAFTS = path.join(ROOT, "pipeline", "drafts");
 const mem = require("./lib/memory");
+const transporte = require("./lib/transporte");
 const { idadeEmDias } = require("./lib/feeddate");
 
 const cadencia = (() => {
@@ -155,11 +156,13 @@ async function sonda(url) {
     });
     return res.ok ? "abre" : "nao-abre";
   } catch (e) {
-    const nome = (e && e.name) || "";
-    const codigo = `${(e && e.cause && e.cause.code) || (e && e.code) || ""}`;
-    const sinal = `${nome} ${codigo} ${(e && e.message) || ""}`;
-    if (/TimeoutError|due to timeout|ETIMEDOUT|UND_ERR_HEADERS_TIMEOUT|UND_ERR_BODY_TIMEOUT/i.test(sinal)) return "empacou";
-    return /ENOTFOUND|EAI_AGAIN|ECONNREFUSED|ECONNRESET|EHOSTUNREACH|ENETUNREACH|UND_ERR_CONNECT|getaddrinfo/i.test(sinal) ? "sem-rede" : "nao-abre";
+    /* A leitura dos tokens mora em `lib/transporte.js` — a MESMA boca que decide
+       se o `write.js` espera um provedor ocupado ou pula um que recusa a
+       conexão. Duas listas paralelas de tokens é o defeito que esta doc nomeia:
+       foi ela que deixou o `TimeoutError` do AbortSignal cair em `nao-abre` e
+       enterrar a fila inteira por 12h. */
+    const v = transporte.classe(e);
+    return v === "outra" ? "nao-abre" : v;
   }
 }
 

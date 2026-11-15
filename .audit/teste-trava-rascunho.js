@@ -53,7 +53,7 @@ const PISTAS = [
   { title: "Pauta de fixture tres sobre telescopios velhos", url: "https://fixture.example/tres", slug: "pauta-de-fixture-tres-sobre-telescopios-velhos" },
 ];
 
-function copia(memLeads, dirs, mut, fila) {
+function copia(memLeads, dirs, mut, fila, arquivo) {
   const dir = path.join(tmp, `copia-${mut ? "mut" : "ok"}-${verde}-${Math.random().toString(36).slice(2, 8)}`);
   fs.mkdirSync(path.dirname(dir), { recursive: true });
   execFileSync("cp", ["-a", `${ROOT}/.`, `${dir}/`], { stdio: "ignore" });
@@ -77,9 +77,15 @@ function copia(memLeads, dirs, mut, fila) {
   }
   fs.writeFileSync(path.join(dir, "pipeline", "memory.json"), JSON.stringify({ leads: memLeads, fontes: {} }, null, 2) + "\n");
   if (mut) {
-    const arq = path.join(dir, "tools", "pick-lead.js");
+    /* `arquivo` é o caminho do módulo que a mutação deve morder. Desde que os
+       tokens de transporte foram para `lib/transporte.js` (uma boca só), as
+       falsificações do veredito têm que entrar por lá: morder o `pick-lead.js`
+       seria morder um código que já não decide nada. */
+    const arq = path.join(dir, arquivo || "tools/pick-lead.js");
     const fonte = fs.readFileSync(arq, "utf8");
-    fs.writeFileSync(arq, mut(fonte));
+    const nova = mut(fonte);
+    if (nova === fonte) throw new Error(`a mutação não encontrou o token em ${path.relative(dir, arq)}`);
+    fs.writeFileSync(arq, nova);
   }
   return dir;
 }
@@ -211,12 +217,19 @@ console.log("\n6b. sem rede NÃO é pauta morta: a varredura inteira falha, nada
   confere("a mutação encontrou o portão de saída", !fs.readFileSync(path.join(semPortao, "tools/pick-lead.js"), "utf8").includes("if (!naoAbre && (semRede || empacou)) {"), "token não achado");
   const p = varre(semPortao);
   confere("arrancado o portão a mesma varredura diz 1 — a rodada trataria link caído como fila vazia", p.codigo === 1 && p.marcadas === 0, `codigo=${p.codigo}, marcou ${p.marcadas}`);
-  const semClasse = copia(travaViva, [PISTAS[0].slug], (fonte) =>
-    fonte.replace('/ENOTFOUND|EAI_AGAIN|ECONNREFUSED|ECONNRESET|EHOSTUNREACH|ENETUNREACH|UND_ERR_CONNECT|getaddrinfo/i.test(sinal) ? "sem-rede" : "nao-abre"', '"nao-abre"')
+  /* A falsificação da classificação morde agora `tools/lib/transporte.js`: o
+     `pick-lead.js` não tem mais lista de tokens nenhuma, e morder ele seria
+     morder um código que já não decide nada. */
+  const semClasse = copia(
+    travaViva,
+    [PISTAS[0].slug],
+    (fonte) => fonte.replace('if (SEM_REDE.test(sinal)) return "sem-rede";', ""),
+    null,
+    "tools/lib/transporte.js"
   );
-  confere("a mutação encontrou a classificação", !fs.readFileSync(path.join(semClasse, "tools/pick-lead.js"), "utf8").includes('"sem-rede" : "nao-abre"'), "o replace não alcançou a sonda");
+  confere("a mutação encontrou a classificação no módulo", !fs.readFileSync(path.join(semClasse, "tools/lib/transporte.js"), "utf8").includes("SEM_REDE.test(sinal)"), "o replace não alcançou o módulo");
   const m = varre(semClasse);
-  confere("com a classificação antiga as duas pautas vivas saem da fila por 12h", m.marcadas === 2 && m.codigo === 1, `marcou ${m.marcadas}, codigo ${m.codigo}`);
+  confere("com a classificação arrancada as duas pautas vivas saem da fila por 12h", m.marcadas === 2 && m.codigo === 1, `marcou ${m.marcadas}, codigo ${m.codigo}`);
 }
 
 console.log("\n6c. fonte que aceita a conexão e cala é fato do transporte: nada marcado, exit 2, e a 404 do lado continua pagando");
@@ -277,9 +290,11 @@ console.log("\n6c. fonte que aceita a conexão e cala é fato do transporte: nad
   confere("uma resposta HTTP na varredura prova que o link existe: sai 1", m.codigo === 1, `codigo=${m.codigo}`);
   confere("e só a fonte que devolveu 404 paga as 12h", m.marcadas === 1, `marcou ${m.marcadas} de 3`);
 
-  const LINHA_TIMEOUT = 'if (/TimeoutError|due to timeout|ETIMEDOUT|UND_ERR_HEADERS_TIMEOUT|UND_ERR_BODY_TIMEOUT/i.test(sinal)) return "empacou";';
-  const semClasseTimeout = copia({}, [], (fonte) => fonte.replace(LINHA_TIMEOUT, ""), FILA_BURACO);
-  confere("a mutação arrancou mesmo o classificador de timeout", !fs.readFileSync(path.join(semClasseTimeout, "tools/pick-lead.js"), "utf8").includes('return "empacou"'), "o replace não alcançou a linha");
+  /* As duas falsificações de veredito mordem o módulo compartilhado, não o
+     `pick-lead.js`: é lá que os tokens moram desde a boca única. */
+  const LINHA_TIMEOUT = 'if (EMPACA.test(sinal)) return "empacou";';
+  const semClasseTimeout = copia({}, [], (fonte) => fonte.replace(LINHA_TIMEOUT, ""), FILA_BURACO, "tools/lib/transporte.js");
+  confere("a mutação arrancou mesmo o classificador de timeout", !fs.readFileSync(path.join(semClasseTimeout, "tools/lib/transporte.js"), "utf8").includes("EMPACA.test(sinal)"), "o replace não alcançou o módulo");
   const g = varre(semClasseTimeout);
   confere("com o classificador arrancado as três voltam a ser enterradas por 12h", g.marcadas === 3 && g.codigo === 1, `marcou ${g.marcadas}, codigo ${g.codigo}`);
 

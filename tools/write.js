@@ -23,6 +23,7 @@ if (!SLUG || (!CHECK_ONLY && !/^[a-z0-9_-]+$/.test(SLUG))) {
 }
 
 const prov = require("./lib/providers");
+const transporte = require("./lib/transporte");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const DIR = path.join(ROOT, "pipeline", "drafts", SLUG);
@@ -181,6 +182,94 @@ function gravar(draft, k) {
   const MIN = Number(process.env.WRITE_MINUTES || 14);
   const fim = Date.now() + MIN * 60000;
 
+  /* Reescrita cirúrgica. Quando o texto já passou do piso, o que falta é uma
+     linha — e o contrato que conserta uma linha é um par {old,new}, não a
+     matéria de novo. Medido na rodada das 06:23 de 15/11: tentativa 1 reprovada
+     por UMA frase de 35 palavras, e o conserto tinha de devolver as 1044 palavras
+     inteiras para trocar doze. A parede é contada em tokens de saída, e a
+     devolutiva que estourou os 780s das 02:23 foi exatamente essa reescrita.
+     Aqui o prompt pede só as trocas, e elas são aplicadas no texto do disco com
+     uma conferência de unicidade: `old` precisa aparecer uma única vez. Em
+     QUALQUER outra resposta — JSON que não é edits, trecho que não está no texto,
+     trecho ambíguo, nada aplicado, rede, cota, HTTP errado — nada é gravado e a
+     rodada cai no caminho de sempre, com o texto inteiro no prompt. A fatia é
+     proporcional (20% do que resta, teto 150s) e só entra com 7 min de parede
+     ainda na mesa: um conserto nunca vale a rodada sem peça.                     */
+  if (fixTxt && anterior && anterior.content && contar(anterior.content) >= piso && fim - Date.now() > 420000) {
+    const grupo = grupos[0];
+    const modelo = grupo.fila.find((m) => !grupo.tentado.has(m));
+    const orcamento = Math.min(150000, Math.round((fim - Date.now()) * 0.2));
+    if (modelo) {
+      const k = `${grupo.p.nome}/${modelo}/patch`;
+      const n = contar(anterior.content);
+      const promptPatch =
+        promptBase +
+        "\n\n---\n" +
+        fixTxt +
+        `\n\n=== TEXTO ATUAL (${n} palavras; o piso é ${piso} e ele já foi cumprido) ===\n` +
+        anterior.content +
+        `\n\n=== REESCRITA CIRÚRGICA ===\nNão devolva a matéria inteira: devolva SOMENTE um JSON {"edits":[{"old":"...","new":"..."}]}, uma entrada por ponto reprovado.\n` +
+        `- "old" é cópia literal e exata do texto atual, com a mesma pontuação, entre 3 e 30 palavras, e precisa aparecer UMA única vez; se o trecho se repete, amplie-o até ficar único.\n` +
+        `- "new" é o mesmo trecho corrigido, resolvendo o que o editor reprovou.\n` +
+        `- Nada mais muda: sem título novo, sem fonte nova, sem JSON completo, sem cercas de código, sem comentário.\n`;
+      const caiFora = (motivo) => {
+        falhas.set(k, motivo);
+        console.error(`reescrita cirúrgica: ${motivo} — vou devolver o texto inteiro como antes.`);
+      };
+      let res = null;
+      try {
+        res = await prov.chamar(grupo.p, modelo, promptPatch, orcamento);
+      } catch (err) {
+        caiFora(`rede: ${err.message}`);
+      }
+      if (res) {
+        if (!res.ok) {
+          caiFora(`HTTP ${res.status}`);
+        } else {
+          const lido = prov.extrair(grupo.p, await res.json().catch(() => null));
+          if (!lido.texto) {
+            caiFora(lido.motivo || "sem texto");
+          } else {
+            let lista = null;
+            let contrato = true;
+            try {
+              const parseado = JSON.parse(lido.texto.replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, "").trim());
+              lista = parseado && parseado.edits;
+              contrato = Array.isArray(lista);
+            } catch {
+              contrato = false;
+            }
+            if (!contrato) {
+              caiFora(`a resposta não é {"edits":[…]}: ${lido.texto.slice(0, 160)}`);
+            } else if (lista.length) {
+              let corpo = anterior.content;
+              let aplicadas = 0;
+              let dudas = 0;
+              for (const e of lista) {
+                const old = String((e && e.old) || "");
+                const novo = String((e && e.new) || "");
+                const vezes = old ? corpo.split(old).length - 1 : 0;
+                if (vezes !== 1 || !novo) {
+                  dudas++;
+                  continue;
+                }
+                corpo = corpo.replace(old, () => novo);
+                aplicadas++;
+              }
+              if (!aplicadas) caiFora(`nenhum "old" bateu com o texto (${dudas} tentativa(s))`);
+              else if (contar(corpo) < piso) caiFora(`as trocas derrubariam o texto para ${contar(corpo)} palavras, sob o piso ${piso}`);
+              else {
+                console.error(`reescrita cirúrgica: ${aplicadas} troca(s) aplicada(s)${dudas ? `, ${dudas} sem correspondência exata` : ""} sobre ${n} palavras (${Math.round(orcamento / 1000)}s de teto).`);
+                gravar({ ...anterior, content: corpo }, k);
+                process.exit(0);
+              }
+            } else if (Array.isArray(lista)) caiFora("lista de edits vazia");
+          }
+        }
+      }
+    }
+  }
+
   /* Uma passada por modelo. "transitorio" (503, 429, rede) é o único caso em
      que esperar resolve; "definitivo" (nome morto, JSON ruim, chave recusada)
      pede outro modelo — ou outro provedor. */
@@ -197,13 +286,31 @@ function gravar(draft, k) {
       const teto = Number(grupo.p.chamada_max_ms) || (frescos ? 120000 : 240000);
       res = await prov.chamar(grupo.p, modelo, prompt, Math.min(prazo - Date.now(), teto));
     } catch (err) {
+      /* Recusa de conexão NÃO é "serviço ocupado". Medido 14/11 20:41 no
+         diário: `qoder: 1 modelo(s) ocupado(s); esperando 15s e voltando (178s
+         nesta fatia)` e a rodada fechou `não saiu texto em 12min` — a escada de
+         15→30→90 s em cima de um destino inalcançável come a parede inteira sem
+         nunca trocar de boca, porque o rótulo genérico `rede:` é justamente o
+         que a regex de re-entrada do `rodar()` rele. Quem pode resolver um
+         destino que não responde ao SYN é OUTRO provedor, não o mesmo daqui a
+         90 s. A leitura dos tokens mora em `lib/transporte.js`, a mesma boca do
+         `sonda()` do pick-lead.                                                            */
+      const natureza = transporte.classe(err);
+      if (natureza === "sem-rede") {
+        falhas.set(k, `inalcançável: ${transporte.motivo(err) || err.message}`);
+        return "definitivo";
+      }
       falhas.set(k, `rede: ${err.message}`);
       return "transitorio";
     }
     if (res.status === 429) { falhas.set(k, "HTTP 429 (cota do tier)"); return "transitorio"; }
     if (res.status >= 500) {
       const txt = await res.text().catch(() => "");
-      falhas.set(k, `HTTP ${res.status}: ${prov.reason(txt) || "serviço ocupado"}`);
+      const porQue = prov.reason(txt) || "serviço ocupado";
+      falhas.set(k, `HTTP ${res.status}: ${porQue}`);
+      /* Mesma régua do catch, lida pela mesma boca: "o binário não está no
+         disco" e recusa de conexão não se curam com espera.                    */
+      if (transporte.classe(porQue) === "sem-rede") return "definitivo";
       return "transitorio";
     }
     if (!res.ok) {

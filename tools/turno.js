@@ -376,8 +376,13 @@ for (let t = 1; t <= 3; t++) {
   const rejs = check.out.split("\n").filter((l) => l.includes("✗")).slice(0, 6).join("\n");
   say("edição", `tentativa ${t} reprovada: ${rejs.replace(/\n/g, " · ").slice(0, 220)}`);
   if (t === 3) break;
+  /* O `fix.md` NÃO diz em que formato devolver: quem decide é o `write.js`,
+     que olha o rascunho no disco. Com texto acima do piso ele pede só as trocas
+     (`{"edits":[{old,new}]}`), e um "devolva o JSON completo de novo" aqui por
+     cima mandaria a matéria inteira de volta — as 1044 palavras que estouraram a
+     parede das 02:23. O que falta ao texto é o que a ordem tem de dizer. */
   fs.writeFileSync(path.join(ROOT, "pipeline", "drafts", lead.slug, "fix.md"),
-    `O editor mecânico reprovou seu draft. Corrija EXATAMENTE estes pontos e devolva o JSON completo de novo:\n${rejs}\nNão mude o que já estava aprovado.`);
+    `O editor mecânico reprovou seu draft. Corrija EXATAMENTE estes pontos:\n${rejs}\nNão mude o que já estava aprovado.`);
   const fix = run("write.js", [lead.slug]);
   if (fix.code !== 0) {
     /* A causa vai inteira, como no passo 7: `slice(-1)` deixava no diário só a
