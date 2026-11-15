@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T09:32:11.004Z",
+  "updated": "2026-11-15T13:35:15.730Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -1015,6 +1015,44 @@
           "pts": 1,
           "max": 1,
           "why": "The piece argues the invasion frame fails as warning because its ending promises a fight, a method the emergency does not supply."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-15"
+    },
+    "sixty-years-turn-gemini-12-into-two-surnames-and-a-date": {
+      "score": 6.3,
+      "note": "6.3/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 5 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 10% com nasa-lunar-landing-research-vehicle-test"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 0.5,
+          "max": 1,
+          "why": "Argues the missing mission purpose is a template constraint rather than an editorial failure."
         }
       },
       "source": "auto",

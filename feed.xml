@@ -8,6 +8,14 @@
     <lastBuildDate>Sun, 15 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Sixty years turn a spaceflight into two surnames and a date</title>
+      <link>https://www.homeworldpress.com/article.html?id=sixty-years-turn-gemini-12-into-two-surnames-and-a-date</link>
+      <description>Space.com's November anniversary note keeps the launch date and the crew names. The problem the flight was sent to solve has no field in that format.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=sixty-years-turn-gemini-12-into-two-surnames-and-a-date</guid>
+      <pubDate>Sun, 15 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>Alien invasions promise a fight, and the warning has none</title>
       <link>https://www.homeworldpress.com/article.html?id=alien-invasions-promise-a-fight-and-the-warning-has-none</link>
       <description>A Guardian interview lends an alarming sentence to an alien-invasion frame. The frame is what breaks, and the ending is where to look.</description>
@@ -77,14 +85,6 @@
       <description>A failed docking effort seals the fate of an aging gamma-ray sentinel in low Earth orbit.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=swift-space-telescope-reentry-failure-analysis</guid>
-      <pubDate>Sun, 08 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>James Webb telescope reveals giant exoplanet through starlight suppression</title>
-      <link>https://www.homeworldpress.com/article.html?id=james-webb-telescope-reveals-giant-exoplanet</link>
-      <description>Coronagraphic imaging isolates a massive world from its host star's glare.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=james-webb-telescope-reveals-giant-exoplanet</guid>
       <pubDate>Sun, 08 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

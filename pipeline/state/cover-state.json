@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "alien-invasions-promise-a-fight-and-the-warning-has-none",
+  "currentCoverId": "second-pass-webb-images-planet-never-hidden",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -176,6 +176,14 @@
       "id": "alien-invasions-promise-a-fight-and-the-warning-has-none",
       "tipo": "do dia",
       "era": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a"
+    },
+    {
+      "at": "2026-11-15T13:35:15.910Z",
+      "dia": "2026-11-15",
+      "rodada": "2026-11-15T10:23",
+      "id": "second-pass-webb-images-planet-never-hidden",
+      "tipo": "do dia",
+      "era": "alien-invasions-promise-a-fight-and-the-warning-has-none"
     }
   ],
   "capaVistas": [
@@ -193,6 +201,7 @@
     "little-red-dots-black-hole-hypothesis",
     "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
     "candidate-neutron-star-mass-gap",
-    "alien-invasions-promise-a-fight-and-the-warning-has-none"
+    "alien-invasions-promise-a-fight-and-the-warning-has-none",
+    "second-pass-webb-images-planet-never-hidden"
   ]
 }

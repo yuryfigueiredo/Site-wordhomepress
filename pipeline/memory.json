@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T09:32:12.648Z",
+  "updated": "2026-11-15T13:35:16.750Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -276,6 +276,13 @@
       "outcome": "publicada",
       "at": "2026-11-15T09:32:12.647Z",
       "id": "alien-invasions-promise-a-fight-and-the-warning-has-none"
+    },
+    "https://www.space.com/space-exploration/on-this-day-in-space-november-11-2026": {
+      "slug": "on-this-day-in-space-nov-11-1966-nasa-launches-gemini-12-mission",
+      "topic": "On this day in space! Nov. 11, 1966: NASA launches Gemini 12 mission with astronaut icons Buzz Aldrin and Jim Lovell aboard",
+      "outcome": "publicada",
+      "at": "2026-11-15T13:35:16.749Z",
+      "id": "sixty-years-turn-gemini-12-into-two-surnames-and-a-date"
     }
   },
   "publishes": [
@@ -388,6 +395,11 @@
       "id": "alien-invasions-promise-a-fight-and-the-warning-has-none",
       "at": "2026-11-15T09:32:12.647Z",
       "score": 6.8
+    },
+    {
+      "id": "sixty-years-turn-gemini-12-into-two-surnames-and-a-date",
+      "at": "2026-11-15T13:35:16.749Z",
+      "score": 6.3
     }
   ]
 }
