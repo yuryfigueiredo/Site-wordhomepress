@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T06:00:00.055Z",
+  "updated": "2026-11-15T09:32:12.648Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -269,6 +269,13 @@
       "outcome": "publicada",
       "at": "2026-11-14T20:49:16.027Z",
       "id": "gravitational-lens-supernova-reappearance-time-delay"
+    },
+    "https://www.theguardian.com/books/2026/nov/11/m-john-harrison-booker-prize-winner-sci-fi-alien-invasion-kent": {
+      "slug": "we-are-dream-walking-into-a-desperate-situation-the-booker-prize",
+      "topic": "‘We are dream-walking into a desperate situation’: the Booker prize winner on his sci-fi alien invasion wakeup call",
+      "outcome": "publicada",
+      "at": "2026-11-15T09:32:12.647Z",
+      "id": "alien-invasions-promise-a-fight-and-the-warning-has-none"
     }
   },
   "publishes": [
@@ -375,6 +382,11 @@
     {
       "id": "second-pass-webb-images-planet-never-hidden",
       "at": "2026-11-15T06:00:00.055Z",
+      "score": 6.8
+    },
+    {
+      "id": "alien-invasions-promise-a-fight-and-the-warning-has-none",
+      "at": "2026-11-15T09:32:12.647Z",
       "score": 6.8
     }
   ]

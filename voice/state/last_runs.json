@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-15T06:00:00.053Z",
+  "updated": "2026-11-15T09:32:12.643Z",
   "runs": {
     "analyst": {
-      "id": "second-pass-webb-images-planet-never-hidden",
+      "id": "alien-invasions-promise-a-fight-and-the-warning-has-none",
       "date": "2026-11-15",
-      "opening_move": "dry_contrast",
-      "ending_move": "small_observation",
-      "title_pattern": "second pass through webb",
+      "opening_move": "dated_fact",
+      "ending_move": "verification",
+      "title_pattern": "alien invasions promise a",
       "humor_lines": 1
     },
     "lab": {

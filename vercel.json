@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "alien-invasions-promise-a-fight-and-the-warning-has-none"
+        }
+      ],
+      "destination": "/a-alien-invasions-promise-a-fight-and-the-warning-has-none.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "second-pass-webb-images-planet-never-hidden"
         }
       ],

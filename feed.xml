@@ -8,6 +8,14 @@
     <lastBuildDate>Sun, 15 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Alien invasions promise a fight, and the warning has none</title>
+      <link>https://www.homeworldpress.com/article.html?id=alien-invasions-promise-a-fight-and-the-warning-has-none</link>
+      <description>A Guardian interview lends an alarming sentence to an alien-invasion frame. The frame is what breaks, and the ending is where to look.</description>
+      <category>culture</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=alien-invasions-promise-a-fight-and-the-warning-has-none</guid>
+      <pubDate>Sun, 15 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>Second pass through Webb data finds a planet that was never hidden</title>
       <link>https://www.homeworldpress.com/article.html?id=second-pass-webb-images-planet-never-hidden</link>
       <description>The reduction moved a detection limit rather than the object, and that is exactly what the next paper has to confirm.</description>
@@ -78,14 +86,6 @@
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=james-webb-telescope-reveals-giant-exoplanet</guid>
       <pubDate>Sun, 08 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Two Percent of the Moon's Mantle Took 150 Gigawatts of Tidal Heat</title>
-      <link>https://www.homeworldpress.com/article.html?id=earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat</link>
-      <description>A convection model with one low-viscosity layer moves Earth's kneading to the core-mantle boundary, and that relocation is what makes young basalts survivable.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat</guid>
-      <pubDate>Sat, 07 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>

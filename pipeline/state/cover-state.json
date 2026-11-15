@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
+  "currentCoverId": "alien-invasions-promise-a-fight-and-the-warning-has-none",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -168,6 +168,14 @@
       "id": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
       "tipo": "rotacionada",
       "era": "swift-space-telescope-reentry-failure-analysis"
+    },
+    {
+      "at": "2026-11-15T09:32:11.236Z",
+      "dia": "2026-11-15",
+      "rodada": "2026-11-15T06:23",
+      "id": "alien-invasions-promise-a-fight-and-the-warning-has-none",
+      "tipo": "do dia",
+      "era": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a"
     }
   ],
   "capaVistas": [
@@ -184,6 +192,7 @@
     "guardian-september-roundup-one-category-2026",
     "little-red-dots-black-hole-hypothesis",
     "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
-    "candidate-neutron-star-mass-gap"
+    "candidate-neutron-star-mass-gap",
+    "alien-invasions-promise-a-fight-and-the-warning-has-none"
   ]
 }
