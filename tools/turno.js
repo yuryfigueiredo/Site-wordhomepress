@@ -311,6 +311,19 @@ if (horasDesde !== null && minimoHoras && horasDesde < minimoHoras) {
   finish(`cadência: a última matéria está no ar há ${horasDesde.toFixed(1)}h (mínimo ${minimoHoras}h) — esta rodada só coleta e checa.`);
 }
 
+/* 4.5 redator armado. A conferência vivia no passo 7, depois de o passo 5 já
+   ter marcado a pauta como `em_andamento` — 6h fora da fila para nenhuma
+   escrita, e o `pick-lead` ainda a dava como tomada pelo diretório de rascunho
+   que o passo 6 criaria. O cinto confere isto antes de chamar o turno, mas o
+   portão tem de estar AQUI também: `--force-slot` e o caminho manual do
+   AGENTS.md (`node tools/turno.js` à mão) não passam pelo preflight do runner.
+   Chegar aqui já quer dizer publicar: os dois travões de cadência do passo 4
+   encerram a rodada antes, então o verde de "dia sem matéria" não é atingido
+   por uma emergência de redator desarmado.                                      */
+const prov = require("./lib/providers");
+if (!prov.armados().length)
+  finish(`nenhum provedor de texto armado — o redator não roda, e nenhuma pauta foi queimada para descobrir isso. O que falta: ${prov.configurados().map((p) => `${p.nome}→${prov.rotulo(p)}`).join(", ")}.`, 1);
+
 /* 5. pauta */
 const mem = require("./lib/memory");
 const pick = run("pick-lead.js");
@@ -323,7 +336,7 @@ const briefArgs = ["--url", lead.url, "--pillar", lead.pillar, "--topic", lead.t
 if (lead.published) briefArgs.push("--source-date", lead.published);
 const brief = run("new-post.js", briefArgs);
 if (brief.code !== 0) {
-  mem.registrar(ROOT, lead.url, "falha_brief");
+  mem.registrar(ROOT, lead.url, "falha_brief", { slug: lead.slug, topic: lead.topic });
   /* Vermelho: `new-post.js` só sai com exit != 0 quando arrebenta, e a pauta que
      o passo 5 já marcou `em_andamento` morre ali — é a mesma conta do passo 7
      abaixo: pipeline percorrida, nada no ar. */
@@ -332,17 +345,11 @@ if (brief.code !== 0) {
 say("brief", `pipeline/drafts/${lead.slug}/ criado`);
 
 /* 7. texto */
-const prov = require("./lib/providers");
-/* Sem redator não é "dia sem notícia": é o robô desligado. Vermelho para o
-   runner não continuar verde com o site sem publicação por mês. O redator hoje é
-   o CLI do app (armado pelo binário no disco, não por chave); a mensagem diz o
-   que falta em cada provedor, porque "arme a chave" seria mentira numa máquina
-   onde o que sumiu foi o app. */
-if (!prov.armados().length)
-  finish(`nenhum provedor de texto armado — o redator não roda. O que falta: ${prov.configurados().map((p) => `${p.nome}→${prov.rotulo(p)}`).join(", ")}.`, 1);
+/* O redator já foi conferido no passo 4.5, antes de a pauta ser comprometida:
+   sem provedor armado a rodada para antes de gastar brief, texto e júri. */
 const wrote = run("write.js", [lead.slug]);
 if (wrote.code !== 0) {
-  mem.registrar(ROOT, lead.url, "falha_texto");
+  mem.registrar(ROOT, lead.url, "falha_texto", { slug: lead.slug, topic: lead.topic });
   /* Vermelho desde 14/11. Fechando verde, o runner não fazia o recuo, commitava
      `turno:` e empurrava, e o vigia — que procura `VERMELHO` no bloco da rodada
      — anunciava "servida e empurrada": medido hoje nas rodadas das 08:23 e
@@ -401,7 +408,7 @@ const sc = run("score.js", ["--draft", lead.slug]);
 const nota = (sc.out.match(/nota ([\d.]+)\/10/) || [])[1];
 say("nota", nota ? `${nota}/10 · ${(sc.out.split("\n")[1] || "").slice(0, 160)}` : sc.out.trim().split("\n")[0]);
 if (/DUPLICATA/.test(sc.out)) {
-  mem.registrar(ROOT, lead.url, "reprovada", { slug: lead.slug, motivo: "duplicata" });
+  mem.registrar(ROOT, lead.url, "reprovada", { slug: lead.slug, topic: lead.topic, motivo: "duplicata" });
   finish("nota calculada aponta quase-duplicata — nada publicado.");
 }
 
@@ -411,7 +418,7 @@ if (pub.code !== 0) {
   /* barrado pela cadência não é falha da pauta: sem este teste a janela de
      re-tentativa de 24h punia a pauta certa por causa do relógio. */
   if (/cadência:/.test(pub.out)) finish(`publicação barrada pela cadência: ${pub.out.trim().split("\n").filter((l) => /cadência:/.test(l)).pop()}`);
-  mem.registrar(ROOT, lead.url, "falha_publicacao");
+  mem.registrar(ROOT, lead.url, "falha_publicacao", { slug: lead.slug, topic: lead.topic });
   /* Vermelho de propósito: a pipeline inteira percorrida — pauta, brief, texto,
      editor, nota — e ainda assim nada publicado. Foi o verde deste finish que
      escondeu o travamento do portão de foto em 2026-11-06; medido no Actions,
