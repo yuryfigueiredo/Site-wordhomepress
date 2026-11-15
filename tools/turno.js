@@ -357,6 +357,7 @@ say("capa", capa.code === 0 ? capa.out.trim().split("\n")[0] : `falhou: ${capa.o
 
 /* 8. editor mecânico, até 3 tentativas com devolutiva */
 let check = { code: 1, out: "" };
+let reescritaMorta = "";
 for (let t = 1; t <= 3; t++) {
   check = run("check-post.js", [lead.slug]);
   if (check.code === 0) { say("edição", `aprovado na tentativa ${t}`); break; }
@@ -366,7 +367,15 @@ for (let t = 1; t <= 3; t++) {
   fs.writeFileSync(path.join(ROOT, "pipeline", "drafts", lead.slug, "fix.md"),
     `O editor mecânico reprovou seu draft. Corrija EXATAMENTE estes pontos e devolva o JSON completo de novo:\n${rejs}\nNão mude o que já estava aprovado.`);
   const fix = run("write.js", [lead.slug]);
-  if (fix.code !== 0) { say("edição", "reescreva falhou: " + fix.out.trim().split("\n").slice(-1)[0]); break; }
+  if (fix.code !== 0) {
+    /* A causa vai inteira, como no passo 7: `slice(-1)` deixava no diário só a
+       linha de rodapé do write.js ("a rodada termina aqui de propósito") e
+       jogava fora o que realmente matou a chamada — medido 15/11 às 05:44Z,
+       uma frase de 33 palavras custou a noite e ninguém leu por quê. */
+    reescritaMorta = fix.out.trim().split("\n").slice(-8).join(" · ").slice(0, 900);
+    say("edição", `reescreva falhou: ${reescritaMorta}`);
+    break;
+  }
   /* O rascunho novo vem do modelo e perde a foto baixada: sem esta conferência
      a rodada aprovava na edição e morria no portão de foto do publish. */
   const refoto = garantirFoto(lead.slug);
@@ -374,6 +383,15 @@ for (let t = 1; t <= 3; t++) {
   run("make-cover.js", [lead.slug]);
 }
 if (check.code !== 0) {
+  if (reescritaMorta) {
+    /* Quem morreu foi o redator, não o júri. Marcar `reprovada` enterrava a
+       pauta por 72h por causa de um timeout de texto — o triplo da janela de
+       `falha_texto` (24h em lead_retry_hours), que é justamente a classe deste
+       defeito. Vermelho pelo mesmo contrato do passo 7: sem texto entregue a
+       rodada não serve o horário, e a mão de reserva pode refazê-lo. */
+    mem.registrar(ROOT, lead.url, "falha_texto", { slug: lead.slug, topic: lead.topic });
+    finish(`a reescrita do editor não entregou texto: ${reescritaMorta}`, 1);
+  }
   mem.registrar(ROOT, lead.url, "reprovada", { slug: lead.slug, topic: lead.topic });
   finish("rascunho ficou reprovado depois de 3 tentativas — nada publicado, e a pauta fica 72h fora da fila (pipeline/memory.json).");
 }
