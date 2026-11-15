@@ -81,8 +81,8 @@ const isoDe = (d) => d.toISOString();
       verdade, feitas pelas rodadas do cron, continuam vivas no log de 14 dias e
       nada neste teste pode apagá-las. */
 const DIA_BASE = new RealDate(Date.UTC(2027, 0, 5, 12)).toISOString().slice(0, 10);
-const maisUmDia = (dia) => new RealDate(Date.parse(`${dia}T12:00:00Z`) + 86400000).toISOString().slice(0, 10);
-const ONTEM = () => maisUmDia(DIA_BASE);
+const menosUmDia = (dia) => new RealDate(Date.parse(`${dia}T12:00:00Z`) - 86400000).toISOString().slice(0, 10);
+const ONTEM = () => menosUmDia(DIA_BASE);
 const DE_DIAS = (n) => new RealDate(Date.parse(`${DIA_BASE}T12:00:00Z`) + n * 86400000).toISOString().slice(0, 10);
 
 /* fuso = UTC-3 fixo desde 2019: "04:23 de Brasília" é 07:23 UTC. O offset é
@@ -195,7 +195,7 @@ const maisMinutos = (hhmm, delta) => hhmmDe(minutosDe(hhmm) + delta);
      `dia - 1` chumbado: com a agenda terminando em 22:23 local (14/11) o
      instantâneo UTC daquela rodada já é o dia seguinte, e quem escreve
      `${ONTEM}T${ultima}` erra o balde por um dia inteiro. */
-  const bucketOntem = bucketDaRodada(DIA_BASE, ultima);
+  const bucketOntem = bucketDaRodada(ONTEM(), ultima);
   setRelogio(DIA_BASE, maisMinutos(primeira, -13));
   confere(`${maisMinutos(primeira, -13)} pertence à rodada ${bucketOntem}`, cover.rodadaId() === bucketOntem, `veio ${cover.rodadaId()}`);
   setRelogio(DIA_BASE, maisMinutos(primeira, -1));
@@ -291,12 +291,19 @@ for (let i = 0; i < JANELA; i++) {
       id: foraDoAcervo,
       tipo: "rotacionada",
       era: null,
-      rodada: `${ONTEM()}T${HORAS_DIA[HORAS_DIA.length - 1]}`,
+      rodada: bucketDaRodada(ONTEM(), HORAS_DIA[HORAS_DIA.length - 1]),
       dia: ONTEM(),
     },
   ];
   fs.writeFileSync(STATE, JSON.stringify(state, null, 2) + "\n");
-  confere(`a janela simulada (${JANELA - HORAS_DIA.length} rodadas) é o ciclo de ${nElegiveis} elegíveis menos uma`, JANELA - HORAS_DIA.length === nElegiveis - 1, `veio ${JANELA - HORAS_DIA.length}`);
+  /* A régua da janela é cobertura + minimality, não uma igualdade com N−1: com
+     14 ou 15 elegíveis e seis horários o ciclo fecha em 18 rodadas (três dias),
+     e `JANELA − HORAS === N − 1` mentia 12 ≠ 13 sem que a rotação estivesse
+     errada em nada. O que tem de valer é (a) a janela cobre o ciclo inteiro e
+     (b) um dia a menos não cobriria — é isso que faz "dias inteiros" ser a
+     unidade e não preguiça. A cobertura de verdade é conferida abaixo, no
+     histórico de heróis. */
+  confere(`a janela simulada (${JANELA} rodadas) cobre o ciclo de ${nElegiveis} elegíveis e um dia a menos não cobriria`, JANELA >= nElegiveis && JANELA - HORAS_DIA.length < nElegiveis, `veio ${JANELA} contra ${nElegiveis}`);
   confere("o estado plantado põe o herói fora do acervo e limpa o log", estadoNaDisco().currentCoverId === foraDoAcervo && !require(path.join(ROOT, "tools", "lib", "cover-rules.js")).elegiveis(carregarDB(), pisoDaCapa()).some((a) => a.id === foraDoAcervo), foraDoAcervo);
 }
 const sequencia = [];
