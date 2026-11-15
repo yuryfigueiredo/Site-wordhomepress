@@ -21,6 +21,7 @@ const path = require("path");
 const { execFileSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..");
+const { agendaRasa, medir } = require(path.join(__dirname, "agenda-rasa.js"));
 const fixtures = [];
 let verde = 0;
 const falhas = [];
@@ -88,27 +89,22 @@ function planta(opciones) {
   grava("publish.js", STUB["publish.js"]);
   if (opciones.diario === "falha") grava("build.js", STUB["build.js-daily-falha"]);
 
+  /* A mesa tem de estar rasa nas TRÊS fontes da régua de cadência, não numa só:
+     `pipeline/memory.json`, o portão do passo 0 (`round-lock.json`) e — o que o
+     `cp -a` trazia inteiro da máquina do dono — `git log --since=<hoje>T00:00Z`
+     filtrando `publish:`, segunda fonte de `lib/cadence.js`. Com a peça real das
+     22:38 no ar, a fixture parava no travão do passo 4 ("a última matéria está
+     no ar há 2.7h") antes de chegar ao redator: 8 das 21 conferências morriam
+     pela janela do relógio, não pelo contrato. Medido em 15/11. O caso `gap`
+     planta o travão DEPOIS, de propósito, e por isso a limpeza vem antes. */
+  agendaRasa(dir);
   const memArq = path.join(dir, "pipeline", "memory.json");
   const mem = JSON.parse(fs.readFileSync(memArq, "utf8"));
   if (opciones.gap) mem.publishes.push({ id: "fixture-publicada-agora", at: new Date().toISOString(), score: 7 });
   fs.writeFileSync(memArq, JSON.stringify(mem, null, 2) + "\n");
-  /* O `cp -a` traz o `round-lock.json` da máquina, e com o cron servindo 6
-     horários por dia o horário em curso estava quase sempre marcado como
-     servido: o portão do passo 0 devolvia `rodada duplicada` com exit 0 antes
-     de qualquer etapa, e os quatro casos abaixo — vermelho do redator, do brief,
-     do build diário e o verde da cadência — falhavam todos pela janela do
-     relógio, não pelo contrato (medido em 15/11 às 00:00, 11 vermelhas). A
-     fixture prova o desfecho da rodada, então declara o próprio horário como
-     não servido; os anteriores ficam, para a poda e o histórico continuarem os
-     de verdade. */
-  const lockArq = path.join(dir, "pipeline", "state", "round-lock.json");
-  if (fs.existsSync(lockArq)) {
-    const roundLock = require(path.join(ROOT, "tools", "lib", "round-lock.js"));
-    const lk = JSON.parse(fs.readFileSync(lockArq, "utf8"));
-    lk.servidas = (lk.servidas || []).filter((s) => s && s.rodada !== roundLock.chave());
-    fs.writeFileSync(lockArq, JSON.stringify(lk, null, 2) + "\n");
-    if (roundLock.jaServida(new Date(), dir)) throw new Error("a fixture não destravou o horário em curso");
-  }
+  const mesa = medir(dir);
+  if (mesa.servida || (!opciones.gap && (mesa.hoje !== 0 || (mesa.gap !== null && mesa.gap < mesa.min))))
+    throw new Error(`fixture com agenda suja: ${JSON.stringify(mesa)}`);
   return dir;
 }
 

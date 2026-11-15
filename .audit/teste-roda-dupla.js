@@ -49,6 +49,7 @@ const lockAntes = fs.existsSync(lockReal) ? fs.readFileSync(lockReal, "utf8") : 
 
 const roundLock = require(path.join(ROOT, "tools", "lib", "round-lock.js"));
 const coverState = require(path.join(ROOT, "tools", "lib", "cover-state.js"));
+const { agendaRasa, medir } = require(path.join(__dirname, "agenda-rasa.js"));
 const SLOT = roundLock.chave();
 
 /* O balde de ontem existe na agenda? Se a máquina acordar entre 00:00 e a
@@ -104,57 +105,18 @@ const OUTRO = (() => {
       Então as duas datas vão pelos meios de sempre, `GIT_AUTHOR_DATE` e
       `GIT_COMMITTER_DATE`.                                                   */
 function destravaAgenda(dir) {
-  const git = (args, env) =>
-    execFileSync("git", args, { cwd: dir, stdio: "ignore", env: { ...process.env, ...(env || {}) } });
-  const memP = path.join(dir, "pipeline", "memory.json");
-  const mem = JSON.parse(fs.readFileSync(memP, "utf8"));
-  mem.publishes = [];
-  fs.writeFileSync(memP, JSON.stringify(mem, null, 2) + "\n");
-  /* O portão de idempotência lê o `round-lock.json` que o `cp -a` acabou de
-     trazer da máquina do dono. Como o cron serve 6 horários por dia, qualquer
-     prova rodada nos ~45 min seguintes a uma rodada real herdava o horário em
-     curso como SERVIDO: o turno.js saía cedo no passo 0 e as asserções de pauta
-     queimada e de vermelho do redator falhavam pela janela do relógio, não pelo
-     contrato. Medido em 15/11 às 00:56, com a rodada das 22:23 no disco: 12
-     vermelhas. A fixture declara o próprio estado — o horário em curso sai da
-     lista, os anteriores ficam (a poda é em MAX_SERVIDAS, na leitura) para a
-     conta de histórico continuar real. Quem planta trava própria (`lock:`/
-     `semLock`) sobrescreve este arquivo depois, e continua no controle. */
-  const lockP = path.join(dir, "pipeline", "state", "round-lock.json");
-  if (fs.existsSync(lockP)) {
-    const lk = JSON.parse(fs.readFileSync(lockP, "utf8"));
-    lk.servidas = (lk.servidas || []).filter((s) => s && s.rodada !== SLOT);
-    fs.writeFileSync(lockP, JSON.stringify(lk, null, 2) + "\n");
-  }
-  for (const f of ["ORIG_HEAD", "MERGE_HEAD", "rebase-apply", "rebase-merge", "CHERRY_PICK_HEAD"])
-    fs.rmSync(path.join(dir, ".git", f), { recursive: true, force: true });
-  let assuntos = [];
-  try {
-    assuntos = execFileSync("git", ["log", "--pretty=%s"], { cwd: dir, stdio: "pipe" }).toString().split("\n").filter(Boolean).slice(0, 60);
-  } catch {}
-  git(["init", "-q"]);
-  git(["config", "user.name", "fixture"]);
-  git(["config", "user.email", "fixture@example.invalid"]);
-  git(["symbolic-ref", "HEAD", "refs/heads/fixture-rasa"]);
-  git(["add", "-A"]);
-  const ontem = new Date(Date.now() - 86400000).toISOString().replace("T", "T").slice(0, 10) + "T18:00:00Z";
-  git(["commit", "-q", "-m", `${assuntos[0] || "fixture"}\n\n${assuntos.slice(1).join("\n")}`], {
-    GIT_AUTHOR_DATE: ontem,
-    GIT_COMMITTER_DATE: ontem,
-  });
-  /* A travessa da prova inteira, conferida aqui e não presumida: se a agenda da
+  /* A mecânica é uma só para as duas provas que precisam de agenda rasa
+     (.audit/agenda-rasa.js): memória, round-lock e o histórico do git. O que
+     fica aqui é a TRAVESSA CONFERIDA na mesa, não presumida — se a agenda da
      fixture não estiver livre, as asserções de preço de rodada ("queimou pauta",
-     "chamou o redator") morrem no passo 4 e passam verdes pela razão errada. */
-  const cadence = require(path.join(ROOT, "tools", "lib", "cadence.js"));
-  const hoje = cadence.publishedToday(dir);
-  const gap = cadence.horasDesdeUltimaPublicacao(dir);
-  const min = Number(JSON.parse(fs.readFileSync(path.join(dir, "pipeline", "cadence.json"), "utf8")).min_hours_between_publishes);
+     "chamou o redator") morrem no passo 4 e passariam verdes pela razão errada.
+     Quem planta trava própria (`lock:`/`semLock`) sobrescreve o lock depois, e
+     continua no controle. */
+  agendaRasa(dir, { chave: SLOT });
+  const { hoje, gap, min, servida } = medir(dir);
   confere("00.a agenda da fixture está destravada (0 publicações hoje)", hoje === 0, `lido: ${hoje}`);
   confere("00.b o intervalo mínimo não trava a fixture", gap === null || gap >= min, `gap: ${gap === null ? "sem publicação" : gap.toFixed(2) + "h"} / mín ${min}h`);
-  /* A travessa do portão, conferida na mesa e não presumida: sem isto a fixture
-     herdaria a rodada servida da máquina e cada caso abaixo morreria no passo 0
-     com `rodada duplicada` — vermelhos que acusam o relógio, não o contrato. */
-  confere("00.c o horário em curso não consta como servido na fixture", !roundLock.jaServida(new Date(), dir), `chave lida: ${roundLock.chave()} · servidas na cópia: ${JSON.stringify(roundLock.ler(dir).servidas.map((s) => s.rodada))}`);
+  confere("00.c o horário em curso não consta como servido na fixture", !servida, `chave lida: ${SLOT} · servidas na cópia: ${JSON.stringify(roundLock.ler(dir).servidas.map((s) => s.rodada))}`);
   return dir;
 }
 
