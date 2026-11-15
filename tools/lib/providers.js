@@ -164,7 +164,20 @@ function chamarCli(p, modelo, prompt, timeoutMs) {
   ];
   if (modelo && modelo !== "plano-do-app") arg.push("-m", modelo);
   if (p.max_tokens) arg.push("--max-output-tokens", String(p.max_tokens));
-  const r = spawnSync(p.bin, arg, { input: prompt + CLI_CAUDA, cwd: ROOT, timeout: ms, encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
+  /* O filho não pode herdar a marca de sessão do SDK. Medido em 15/11, 01:40:
+     com `QODER_AGENT_SDK_ENTRYPOINT` no ambiente, o mesmo `qodercli` 1.1.87
+     responde `sdk_worker_removed: SDK worker sessions are no longer supported`,
+     sai 42 e não escreve uma linha; removida só essa variável ele devolve
+     texto. Sob systemd o manager do usuário não tem a variável — é por isso que
+     a rodada do timer escreve desde 13/11. Lançado de dentro de uma sessão do
+     app (o LOOP R, mão de reserva 22 min depois de cada horário, ou um
+     `node tools/turno.js` na mão do dono) o redator estaria morto, a rodada
+     fecharia vermelha no passo 7 e a pauta iria para `falha_texto`. O `bin` já
+     foi resolvido pelo `localizar()` acima, então limpar o ambiente do filho não
+     muda qual executável roda. */
+  const ambiente = { ...process.env };
+  delete ambiente.QODER_AGENT_SDK_ENTRYPOINT;
+  const r = spawnSync(p.bin, arg, { input: prompt + CLI_CAUDA, cwd: ROOT, timeout: ms, encoding: "utf8", maxBuffer: 32 * 1024 * 1024, env: ambiente });
   const saida = String(r.stdout || "");
   const erro = String(r.stderr || "");
   if (r.error) {
