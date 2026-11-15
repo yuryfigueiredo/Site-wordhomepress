@@ -17,7 +17,16 @@
    recebeu e devolve nada. O que se confere é o prompt montado pelo write.js —
    não a resposta do modelo, que não existe aqui. A falsificação (última seção)
    reintroduz a ordem única na cópia e exige que o pedido de expansão volte a
-   aparecer num rascunho que já passou do piso.                                              */
+   aparecer num rascunho que já passou do piso.
+
+   A segunda família conferida (3b, 3b-ii, 3c) é a IDADE do `fix.md`: o
+   `falha_texto` criado em 15/11 devolve a pauta à fila em 24h, o `new-post.js`
+   refaz o `prompt.md` por cima e o `fix.md` de ontem continua no diretório do
+   rascunho — lido como se fosse de hoje, cola uma reprovação velha e o rascunho
+   velho como "SEU TEXTO ATUAL", a forma exata da chamada que estoura o teto. O
+   guard tem de ser direcional COM tolerância: um `fix > prompt` seco descarta a
+   devolutiva legítima escrita no mesmo tique do prompt (3b-ii foi assim que
+   nasceu), e é esse o caso que a comparação ingênua matava.                                              */
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
@@ -78,6 +87,7 @@ function plantaTexto(fx, palavras) {
   );
 }
 
+let stderrUltimo = "";
 function captura(fx, rotulo) {
   const arquivo = path.join(tmp, `prompt-${rotulo}.txt`);
   try {
@@ -87,9 +97,11 @@ function captura(fx, rotulo) {
       timeout: 120000,
       env: { ...process.env, HWP_CASCA_CAPTURE: arquivo },
     });
+    stderrUltimo = "";
   } catch (err) {
     /* O exit 1 é esperado: a casca não devolve rascunho. O que interessa é o
-       prompt que ficou no disco. */
+       prompt que ficou no disco — e o que o write.js avisou pelo stderr. */
+    stderrUltimo = String(err.stderr || "");
     if (!fs.existsSync(arquivo)) throw err;
   }
   return fs.readFileSync(arquivo, "utf8");
@@ -125,6 +137,67 @@ console.log("\n3. sem rascunho anterior (reescrita com o texto perdido): só a d
   confere("a devolutiva do editor continua no prompt", /\[rhythm\] frase com 33 palavras/.test(p), (p.match(/rhythm[^\n]*/) || ["ausente"])[0]);
   confere("não há bloco de texto atual", !/SEU TEXTO ATUAL/.test(p), "bloco presente");
   confere("nem ordem de expansão", !/ACRESCENTE seções/.test(p), "ordem presente");
+}
+
+console.log("\n3b. fix.md MAIS VELHO que o prompt.md: a mesma pauta voltando com brief novo");
+{
+  /* É o caminho que o próprio `falha_texto` abriu em 15/11: a rodada que perde
+     texto por timeout devolve a pauta à fila em 24h, o `new-post.js` refaz o
+     `prompt.md` e o `fix.md` de ontem continua no diretório do rascunho. Lido
+     como se fosse de hoje, ele cola uma reprovação antiga e o rascunho velho no
+     papel de "SEU TEXTO ATUAL" — texto inflado, a mesma forma da chamada que
+     estoura o `chamada_max_ms`. O guard é na leitura: o arquivo fica no disco,
+     só não vale mais. */
+  const fx = fixture();
+  plantaTexto(fx, 1146);
+  const fix = path.join(fx.drafts, "fix.md");
+  const prompt = path.join(fx.drafts, "prompt.md");
+  const ontem = new Date(Date.now() - 86400000);
+  fs.utimesSync(fix, ontem, ontem);
+  confere("o fixture tem mesmo o fix mais velho que o prompt", fs.statSync(fix).mtimeMs < fs.statSync(prompt).mtimeMs);
+  const p = captura(fx, "fix-velho");
+  confere("nenhuma reprovação de ontem entra no contrato novo", !/frase com 33 palavras/.test(p), (p.match(/rhythm[^\n]*/) || ["ausente"])[0]);
+  confere("nem o rascunho velho é apresentado como SEU TEXTO ATUAL", !/SEU TEXTO ATUAL/.test(p), "bloco presente");
+  confere("e nenhuma ordem de reescrita é colada", !/ACRESCENTE seções|NÃO acrescente seções/.test(p), (p.slice(-260)).replace(/\n/g, " ⏎ "));
+  confere("o write.js avisa que ignorou o fix velho", /de um brief anterior/.test(stderrUltimo), stderrUltimo.slice(0, 200));
+  confere("o fix.md continua no disco, para quem olhar o rascunho", fs.existsSync(fix), "foi apagado");
+}
+
+console.log("\n3b-ii. fix do MESMO instante do prompt: a devolutiva vale (a tolerância não é afrouxamento)");
+{
+  /* O contrário do caso acima: dentro de uma rodada o `fix.md` nasce a segundos
+     — por vezes no mesmo tique — do `prompt.md`. Se o guard comparasse `>` seco,
+     essa devolutiva seria jogada fora e o modelo reescreveria a matéria inteira
+     do zero, que é o caminho caro que a régua existe para evitar. */
+  const fx = fixture();
+  plantaTexto(fx, 1146);
+  const fix = path.join(fx.drafts, "fix.md");
+  const mesmo = new Date(fs.statSync(path.join(fx.drafts, "prompt.md")).mtime);
+  fs.utimesSync(fix, mesmo, mesmo);
+  /* O `utimesSync` com `Date` trunca ao milissegundo, então o prompt fica
+     alguns décimos de ms MAIS novo que o fix: a forma exata que um `fix >
+     prompt` seco leria como "brief refeito" e jogaria a devolutiva fora. */
+  const delta = fs.statSync(path.join(fx.drafts, "prompt.md")).mtimeMs - fs.statSync(fix).mtimeMs;
+  confere("o fixture tem o prompt mais novo que o fix por menos de um tique", delta >= 0 && delta < 1000, `delta=${delta}ms`);
+  const p = captura(fx, "mesmo-tique");
+  confere("a devolutiva entra no prompt", /frase com 33 palavras/.test(p), (p.match(/rhythm[^\n]*/) || ["ausente"])[0]);
+  confere("com a ordem proporcional de conserto", /NÃO reescreva do zero e NÃO acrescente seções/.test(p), (p.slice(-260)).replace(/\n/g, " ⏎ "));
+}
+
+console.log("\n3c. falsificação: voltar a aceitar o fix sem olhar a data");
+{
+  const fx = fixture();
+  plantaTexto(fx, 1146);
+  const arq = path.join(fx.dir, "tools", "write.js");
+  const fonte = fs.readFileSync(arq, "utf8");
+  confere("a cópia tem o guard de idade para ser mutado", fonte.includes("idadePrompt > 1000"), fonte.match(/idadePrompt[^\n]*/)?.[0] || "token ausente");
+  fs.writeFileSync(arq, fonte.replace("idadePrompt > 1000", "false"));
+  const fix = path.join(fx.drafts, "fix.md");
+  const ontem = new Date(Date.now() - 86400000);
+  fs.utimesSync(fix, ontem, ontem);
+  const p = captura(fx, "sem-guard");
+  confere("sem o guard, a reprovação de ontem volta para dentro do brief novo", /frase com 33 palavras/.test(p), (p.match(/rhythm[^\n]*/) || ["ausente"])[0]);
+  confere("e o rascunho velho reassume o papel de texto atual", /SEU TEXTO ATUAL/.test(p), "bloco ausente");
 }
 
 console.log("\n4. falsificação: a ordem única de antes, colada de volta na cópia");

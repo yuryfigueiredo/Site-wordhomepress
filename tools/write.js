@@ -96,7 +96,24 @@ function gravar(draft, k) {
     process.exit(2);
   }
   const promptBase = fs.readFileSync(PROMPT, "utf8");
-  const fixTxt = fs.existsSync(FIX) ? fs.readFileSync(FIX, "utf8") : "";
+  /* `fix.md` é resposta AO prompt que está no disco. Se o brief foi reescrito
+     depois dele — a mesma pauta voltando 24h depois de um `falha_texto`, com o
+     `new-post.js` refazendo o `prompt.md` por cima — a reprovação de ontem não
+     vale para o contrato de hoje: ela arrastaria junto o rascunho antigo no
+     bloco "SEU TEXTO ATUAL", e texto velho + ordem de expandir é exatamente a
+     chamada que estoura o `chamada_max_ms`. A régua é DIRECIONAL com um segundo
+     de tolerância, e não `fix > prompt`: dentro de uma rodada o `fix.md` nasce
+     segundos (às vezes no mesmo tique) depois do prompt, e um guard cego à
+     igualdade jogaria fora a devolutiva legítima — o modelo reescreveria do
+     zero, que é justamente o caminho caro. Um prompt mais novo que o fix por
+     mais de um segundo só acontece quando o brief foi refeito. O arquivo fica no
+     disco para quem olhar o rascunho; só sai da leitura. */
+  let fixTxt = "";
+  if (fs.existsSync(FIX)) {
+    const idadePrompt = fs.statSync(PROMPT).mtimeMs - fs.statSync(FIX).mtimeMs;
+    if (idadePrompt > 1000) console.error(`${path.relative(ROOT, FIX)} é de um brief anterior (o prompt.md nasceu ${Math.round(idadePrompt / 1000)}s depois) — ignorado.`);
+    else fixTxt = fs.readFileSync(FIX, "utf8");
+  }
   let anterior = null;
   try { anterior = JSON.parse(fs.readFileSync(path.join(DIR, "draft.json"), "utf8")); } catch {}
 
