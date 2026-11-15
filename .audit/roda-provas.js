@@ -53,12 +53,14 @@ const flagVal = (nome) => {
 const FORCAR = ARGS.includes("--forcar");
 const TIMEOUT_MS = Number(flagVal("timeout") || 15 * 60 * 1000);
 
-/* A bateria: o que existe em .audit com nome de prova, na ordem — as de mutação
-   (`muta-*`, `verify`) conferem portões e são as que sujam o repo, então vêm
-   antes de as provas longas de redator gastarem parede. */
+/* A bateria: o que existe em .audit com nome de prova. Ficam fora da lista os
+   braços visuais herdados da outra máquina — `verify.js`, `cdp*.js`, `shoot.js`
+   e companhia — que exigem Chrome num caminho `C:/Program Files/…` e um servidor
+   em :8080. Não são portões do pipeline, e uma boca vermelha permanente no
+   placar é exatamente o ruído que esconde a vermelha de verdade. */
 const BATERIA = fs
   .readdirSync(AUDIT)
-  .filter((f) => /^(teste|muta)-.*\.js$/.test(f) || f === "verify.js")
+  .filter((f) => /^(teste|muta)-.*\.js$/.test(f))
   .sort();
 
 const VALOR = new Set();
