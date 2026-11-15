@@ -291,7 +291,48 @@ console.log("\n11. falsificação: arrancar a folga de parede põe o patch dentr
 }
 
 /* ——— invariante ——— */
-console.log("\n12. invariante: a máquina do dono não foi tocada");
+/* ——— 12. lote a meio: um `old` exato e um ambíguo NÃO é reescrita concluída ——— */
+console.log("\n12. lote misto: o `old` que não bate devolve o texto inteiro, não um rascunho a meio");
+{
+  const misto = JSON.stringify({
+    edits: [
+      { old: "Beta beta beta cauda-única-de-teste", new: "Beta beta beta cauda corrigida de teste" },
+      { old: "Gamma fragmento repetível", new: "GAMMA agora único" },
+    ],
+  });
+  const c = fx({ rascunho: corpo(1128), respostas: [misto] });
+  const r = roda(c);
+  confere("o patch foi tentado primeiro", /REESCRITA CIRÚRGICA/.test(r.prompts[0] || ""), (r.prompts[0] || "").slice(0, 120));
+  confere("e o diário conta o lote a meio, não uma troca aceita", /1 de 2 "old" sem correspondência exata/.test(r.stderr), r.stderr.slice(-300));
+  confere("a segunda chamada é o texto inteiro (o fallback não custa a peça)", r.prompts.length === 2 && /mesmo comprimento|SEU TEXTO ATUAL|ACRESCENTE/.test(r.prompts[1] || ""), `${r.prompts.length} chamada(s)`);
+  confere("a rodada sai 0 pela boca velha", r.code === 0, `codigo ${r.code}`);
+  confere("nenhum fragmento do lote parcial ficou no disco", !/cauda corrigida de teste/.test(r.rascunho.content), r.rascunho.content.slice(0, 220));
+  confere("e o corpo no disco é o da chamada inteira, não o da troca a meio", r.rascunho.content === corpo(1128), String(r.rascunho.content).slice(0, 220));
+
+  /* Mutação: arrancar o portão do lote devolve o defeito — o ponto que o júri
+     reprovou continua de pé, com exit 0 e uma chamada gasta. */
+  const c2 = fx({ rascunho: corpo(1128), respostas: [misto], mut: (f) => f.replace('else if (dudas) caiFora(', 'else if (false) caiFora(') });
+  const r2 = roda(c2);
+  confere("com o portão arrancado o lote parcial passa por reescrita", r2.prompts.length === 1 && r2.code === 0, `${r2.prompts.length} chamada(s), codigo ${r2.code}`);
+  confere("a troca boa entra, a reprovada fica", /cauda corrigida de teste/.test(r2.rascunho.content) && /Gamma fragmento repetível\. Gamma fragmento repetível\./.test(r2.rascunho.content), r2.rascunho.content.slice(0, 220));
+}
+
+/* ——— 13. `new` igual a `old`: nada mudou, e o ponto reprovado continua de pé ——— */
+console.log("\n13. no-op: o modelo devolve a mesma frase e isso não é conserto");
+{
+  const noOp = JSON.stringify({ edits: [{ old: "Beta beta beta cauda-única-de-teste", new: "Beta beta beta cauda-única-de-teste" }] });
+  const c = fx({ rascunho: corpo(1128), respostas: [noOp] });
+  const r = roda(c);
+  confere("o diário diz que nenhuma palavra mudou", /new` igual a `old/.test(r.stderr), r.stderr.slice(-300));
+  confere("e a chamada inteira vem em seguida", r.prompts.length === 2 && /REESCRITA CIRÚRGICA/.test(r.prompts[0] || ""), `${r.prompts.length} chamada(s)`);
+  confere("a peça sai pela boca velha", r.code === 0 && r.rascunho.content === corpo(1128), `codigo ${r.code}`);
+
+  const c2 = fx({ rascunho: corpo(1128), respostas: [noOp], mut: (f) => f.replace('else if (corpo === anterior.content) caiFora(', 'else if (false) caiFora(') });
+  const r2 = roda(c2);
+  confere("sem o guard o no-op sai verde com o texto idêntico", r2.code === 0 && r2.prompts.length === 1 && r2.rascunho.content === corpo(1128), `${r2.prompts.length} chamada(s), codigo ${r2.code}`);
+}
+
+console.log("\n14. invariante: a máquina do dono não foi tocada");
 {
   const gitDepois = execFileSync("git", ["-C", ROOT, "status", "--porcelain", "-uno"], { encoding: "utf8" });
   confere("o repo real está como estava", gitDepois === gitAntes, gitDepois.split("\n").join(" ⏎ "));
