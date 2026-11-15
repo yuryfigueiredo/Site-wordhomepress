@@ -220,7 +220,10 @@ function gravar(draft, k) {
       try {
         res = await prov.chamar(grupo.p, modelo, promptPatch, orcamento);
       } catch (err) {
-        caiFora(`rede: ${err.message}`);
+        /* O diário desta boca também lê `lib/transporte.js`: um destino que
+           recusa a conexão não é «rede» genérica, é a mesma frase que o laço
+           principal escreve para o mesmo sintoma.                                */
+        caiFora(transporte.classe(err) === "sem-rede" ? `inalcançável: ${transporte.motivo(err) || err.message}` : `rede: ${err.message}`);
       }
       if (res) {
         if (!res.ok) {
@@ -360,22 +363,34 @@ function gravar(draft, k) {
   }
 
   /* Varre a fila de um provedor antes de dormir: custa segundos e separa "nome
-     morto" de "serviço sobrecarregado". Só no segundo caso vale esperar. */
+     morto" de "serviço sobrecarregado". Só no segundo caso vale esperar.
+
+     Quem volta para a fila é a lista `ocupados` desta passada — o VEREDITO que
+     `tentar()` acabou de devolver — e nunca o rótulo do diário. Até 15/11 a
+     re-entrada relia `falhas` com uma regex das palavras do diário, que é uma
+     segunda implementação da mesma régua e erra nos dois sentidos: um `definitivo` cujo
+     texto cita «rede» («resposta não é JSON: A rede social …» — caso banal em
+     português) pagava a escada de 15→30→90 s numa chamada já condenada, e um
+     `transitorio` legítimo de HTTP 500 «upstream busy» não voltava, contra o que
+     tools/AUTOMATION.md jura (503/429 é tentado de novo) — a passada dormia e
+     devolvia sem segunda tentativa. Prova: .audit/teste-reentrada-veredito.js.
+     A lista é por passada, então uma tentativa velha não fica reentrando para
+     sempre: só volta quem foi ocupado AGORA.                                      */
   async function rodar(grupo, ate) {
     let espera = 15000;
     for (;;) {
-      let transitorios = 0;
+      const ocupados = [];
       for (const modelo of [...grupo.fila]) {
         if (grupo.tentado.has(modelo)) continue;
         if (ate - Date.now() < 15000) break;
         grupo.tentado.add(modelo);
-        if ((await tentar(grupo, modelo, ate)) === "transitorio") transitorios++;
+        if ((await tentar(grupo, modelo, ate)) === "transitorio") ocupados.push(modelo);
       }
-      if (!transitorios || ate - Date.now() < espera + 15000) return;
-      console.error(`${grupo.p.nome}: ${transitorios} modelo(s) ocupado(s); esperando ${Math.round(espera / 1000)}s e voltando (${Math.round((ate - Date.now()) / 1000)}s nesta fatia).`);
+      if (!ocupados.length || ate - Date.now() < espera + 15000) return;
+      console.error(`${grupo.p.nome}: ${ocupados.length} modelo(s) ocupado(s); esperando ${Math.round(espera / 1000)}s e voltando (${Math.round((ate - Date.now()) / 1000)}s nesta fatia).`);
       await sleep(Math.min(espera, Math.max(0, ate - Date.now() - 15000)));
       espera = Math.min(espera * 2, 90000);
-      for (const m of [...grupo.tentado]) if (/ocupado|429|rede/.test(falhas.get(`${grupo.p.nome}/${m}`) || "")) grupo.tentado.delete(m);
+      for (const m of ocupados) grupo.tentado.delete(m);
     }
   }
 

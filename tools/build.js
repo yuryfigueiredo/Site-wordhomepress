@@ -306,7 +306,7 @@ function coverFloor() {
    não distingue a matéria publicada agora da que a rotação acabou de derrubar —
    era exatamente isso que desfazia a rotação no esquema antigo.
    O filtro "pode ser capa" está em lib/cover-rules, e o doctor.js usa o mesmo. */
-function pickCover(forceChange = false) {
+function pickCover(forceChange = false, noAr = null) {
   const coverState = require("./lib/cover-state");
   const elegiveis = coverRules.elegiveis(DB, coverFloor());
   if (!elegiveis.length) return null;
@@ -315,10 +315,26 @@ function pickCover(forceChange = false) {
   const atual = elegiveis.find((a) => a.id === state.currentCoverId) || null;
   if (!forceChange && atual) return { artigo: atual, motivo: "mantida" };
 
-  const inedita = elegiveis.find((a) => !coverState.jaFoiCapa(state, a.id));
+  /* Quem JÁ ESTÁ NA TELA não é novidade nem rotação. `jaFoiCapa` consulta a
+     memória da capa (`currentCoverId` + `capaVistas`), e essa memória pode
+     divergir do HTML: o recuo do cinto alcança `index.html` e
+     `pipeline/state/cover-state.json` por portas diferentes num push conflitante,
+     e uma capa colada à mão idem. Medido em 15/11 com o estado plantado pela
+     `.audit/teste-capa-rodada.js`: a "inédita" escolhida era o card que o leitor
+     já via, o build escrevia byte igual, `registrarCapa` recusava a troca (com
+     razão: repetir a capa não é troca) e a rodada queimava o horário — o build
+     seguinte, agora com o id na memória, é que girava de verdade. Um horário
+     servido por dois builds é o defeito; a régua é um por rodada.               */
+  const inedita = elegiveis.find((a) => a.id !== noAr && !coverState.jaFoiCapa(state, a.id));
   if (inedita) return { artigo: inedita, motivo: "do dia" };
 
-  return { artigo: coverState.proximaNaRotação(elegiveis, atual && atual.id), motivo: "rotacionada" };
+  const rotacionada = coverState.proximaNaRotação(elegiveis, atual && atual.id);
+  /* Mesma régua no passo da rotação: se ele devolve exatamente o que está no ar
+     (uma única elegível no catálogo, ou o ciclo enrolando para o incumbente),
+     não há para onde girar — dizer `mantida` é o retrato honesto, onde antes
+     saía `capa rotacionada: X` com X já no hero.                                */
+  if (rotacionada && rotacionada.id === noAr) return { artigo: rotacionada, motivo: "mantida" };
+  return { artigo: rotacionada, motivo: "rotacionada" };
 }
 
 const cache = new Map();
@@ -379,7 +395,10 @@ function applySlot(file, slot) {
     const rodada = coverState.rodadaId();
     const forceChange = coverState.shouldForceChange(state);
 
-    const escolha = pickCover(forceChange) || {};
+    /* `regionIds[0]` é o que o LEITOR vê agora — a boca já calculada acima, para
+       a ressincronização do fallback. `pickCover` precisa dela porque a memória
+       da capa e o HTML podem divergir (ver o comentário da função).            */
+    const escolha = pickCover(forceChange, regionIds[0] || null) || {};
     const cover = escolha.artigo || null;
     const manual = resync ? region : fs.readFileSync(fb, "utf8");
     const content = cover ? `\n${TEMPLATES[slot.template](cover)}\n          ` : manual;
