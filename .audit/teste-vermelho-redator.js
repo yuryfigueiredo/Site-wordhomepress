@@ -192,7 +192,7 @@ console.log("\n5. falsificação: tirar o exit 1 do passo 7 devolve o verde mudo
   confere("a mutação encontrou a linha do redator", i >= 0, `linha ${i}`);
   /* `\s$` porque a árvore de trabalho desta máquina é CRLF e o blob é LF: a
      mesma asserção precisaria valer nos dois. */
-  linhas[i] = linhas[i].replace(/, 1\);(\s*)$/, ");$1");
+  if (i >= 0) linhas[i] = linhas[i].replace(/, 1\);(\s*)$/, ");$1");
   fs.writeFileSync(arq, linhas.join("\n"));
   confere("o exit 1 saiu da linha (a mutação pegou, não ficou lenda)", !/, 1\);/.test(linhas[i]), JSON.stringify(linhas[i]));
   const r = roda(dir);
@@ -252,7 +252,7 @@ console.log("\n8. falsificação A: desligado o ramo da reescrita, volta o verde
   const linhas = fs.readFileSync(arq, "utf8").split("\n");
   const i = linhas.findIndex((l) => l.includes("if (reescritaMorta) {"));
   confere("a mutação encontrou o ramo da reescrita", i >= 0, `linha ${i}`);
-  linhas[i] = linhas[i].replace("if (reescritaMorta) {", "if (reescritaMorta && null) {");
+  if (i >= 0) linhas[i] = linhas[i].replace("if (reescritaMorta) {", "if (reescritaMorta && null) {");
   fs.writeFileSync(arq, linhas.join("\n"));
   confere("a mutação pegou (o ramo está desligado no arquivo)", linhas[i].includes("&& null"), JSON.stringify(linhas[i]));
   const r = roda(dir);
@@ -276,10 +276,12 @@ console.log("\n9. falsificação B: causa cortada na última linha devolve o di�
   confere("mas o timeout desapareceu do token: sobra a linha de rodapé", !/900s/.test(r.out) && /termina aqui de propósito/.test(r.out), r.out.split("\n").filter((l) => /VERMELHO/.test(l)).join(" ⏎ "));
 }
 
-/* Varre antes de conferir: uma asserção de limpeza feita depois da própria
-   limpeza não prova nada, e um resíduo de corrida antiga não pode colocar a
-   prova de hoje vermelha. */
-for (const dir of new Set([...fixtures, ...fs.readdirSync(os.tmpdir()).filter((d) => d.startsWith("hwp-vermelho-")).map((d) => path.join(os.tmpdir(), d))])) {
+/* Varre só as fixtures DESTA corrida. A versão anterior passava o prefixo no
+   os.tmpdir() e apagava também as cópias de quem estivesse rodando a mesma
+   prova ao mesmo tempo — nesta máquina um revisor audita enquanto o dono
+   trabalha, e o estrago aparecia como vermelho no código do dono. Cada `planta()`
+   já registra o próprio caminho em `fixtures`.                                */
+for (const dir of fixtures) {
   fs.rmSync(dir, { recursive: true, force: true });
 }
 

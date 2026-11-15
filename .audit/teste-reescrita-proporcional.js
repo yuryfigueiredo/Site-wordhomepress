@@ -228,9 +228,11 @@ console.log("\n5. invariante: a máquina do dono não foi tocada");
   confere("nenhum rascunho de fixture entrou no pipeline/drafts real", !fs.existsSync(path.join(ROOT, "pipeline", "drafts", SLUG)), "diretório de fixture apareceu no repo");
 }
 
-for (const sobra of fs.readdirSync(os.tmpdir()).filter((d) => d.startsWith("hwp-reescrita-"))) {
-  fs.rmSync(path.join(os.tmpdir(), sobra), { recursive: true, force: true });
-}
+/* Limpeza só do diretório DESTA corrida. A versão anterior varria o /tmp pelo
+   prefixo, e numa máquina onde um revisor audita enquanto o dono trabalha isso
+   apaga as fixtures alheias no meio da corrida alheia — falso vermelho que
+   parece defeito do código.                                                    */
+fs.rmSync(tmp, { recursive: true, force: true });
 
 console.log(`\n${verde} conferências verdes, ${falhas.length} vermelhas${falhas.length ? ": " + falhas.join(" | ") : ""}.`);
 process.exit(falhas.length ? 1 : 0);
