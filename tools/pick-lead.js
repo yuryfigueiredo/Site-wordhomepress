@@ -45,13 +45,38 @@ const fontesUsadas = mem.fontesPublicadas(DB);
 const colunasJaCobertas = mem.titulosFontesPublicadas(DB);
 const tentadas = mem.ler(ROOT).leads;
 
+/* O diretório de rascunho é a trava de "a rodada está trabalhando nisto", não
+   uma sentença. Quem diz se ainda está trabalhando é a mesma régua usada
+   abaixo — `lead_retry_hours` através de `mem.bloqueada()` —, porque `drafts/`
+   é gitignored e sobrevive ao `git clean -fdq` (sem `-x`) do runner: uma vez
+   criado, o diretório prendia a pauta para sempre. Medido em 15/11 nos dados
+   reais: 3 de 3 registros `falha_texto` e 2 de 4 `reprovada` tinham o
+   diretório no disco, e a promessa do `cadence.json` ("volta à fila em 24h",
+   o motivo de a morte do redator ter saído de 72h para 24h) não chegava a
+   valer — `rascunho_ou_id` descartava a candidata em cada rodada seguinte, e
+   cada redator que morria reduzia em uma o suprimento do dia. Sem registro na
+   memória a trava continua valendo: pode ser rascunho do dono, e cardápio
+   velho não é motivo para escrever por cima do trabalho de alguém.           */
 const tomadas = new Set();
+const tentandoAinda = new Set();
+const tentadasComSlug = new Set();
+for (const r of Object.values(tentadas)) {
+  if (!r || !r.slug) continue;
+  tentadasComSlug.add(r.slug);
+  if (mem.bloqueada(r, RETENTATIVA)) tentandoAinda.add(r.slug);
+}
+let liberados = 0;
 if (fs.existsSync(DRAFTS)) {
   for (const d of fs.readdirSync(DRAFTS)) {
+    if (tentadasComSlug.has(d) && !tentandoAinda.has(d)) {
+      liberados++;
+      continue;
+    }
     tomadas.add(d);
     try { tomadas.add(slugify(JSON.parse(fs.readFileSync(path.join(DRAFTS, d, "brief.json"), "utf8")).topic || "")); } catch {}
   }
 }
+if (liberados) console.error(`pick-lead: ${liberados} rascunho(s) de tentativa já vencida liberado(s) da trava (a janela de retry venceu; o diretório continua no disco)`);
 
 const files = fs.existsSync(LEADS) ? fs.readdirSync(LEADS).filter((f) => f.endsWith(".json")).sort().reverse() : [];
 const candidatas = [];
