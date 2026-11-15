@@ -33,6 +33,7 @@
      node .audit/roda-provas.js --forcar             # roda perto do horário mesmo assim
    Saída: 0 com todo verde; 1 com qualquer prova vermelha ou restauração devida. */
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
@@ -112,6 +113,28 @@ const entradaRastreados = entradaSujos.filter((s) => s.rastreia);
 const jaEraNovo = new Set(entradaSujos.filter((s) => !s.rastreia).map((s) => s.caminho));
 const naoRestauravel = new Set();
 
+/* Devolver ao blob do HEAD é quase certo, mas não é byte a byte: com
+   `core.autocrlf=input` os `tools/*.js` desta máquina vivem CRLF no disco e LF
+   no objeto, e um `git checkout` depois de cada prova trocaria o fim de linha
+   de tudo que ela mutilou — verde para o git, diferente para quem compara os
+   bytes do próprio disco (e as provas comparam: `teste-trava-arquivo` confere
+   hash antes e depois). O espelho é mais honesto: na entrada, com a árvore
+   rastreada provada limpa, os bytes do disco SÃO o estado da entrada. Só o que
+   uma prova alcança a tocar é espelhado (tools, pipeline, js, voice, css e a
+   raiz); fora disso, a volta é pelo HEAD e isso fica dito na linha. */
+const ESPELHO = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "hwp-espelho-")), "arvore");
+const RAZOES = /^(tools|pipeline|js|voice|css)\//;
+const espelhados = new Map();
+for (const caminho of git("ls-files", "-z").stdout.split("\0").filter(Boolean)) {
+  if (!RAZOES.test(caminho) && !/^[^/]+$/.test(caminho)) continue;
+  const completo = path.join(ROOT, caminho);
+  if (!fs.existsSync(completo)) continue;
+  const destino = path.join(ESPELHO, caminho);
+  fs.mkdirSync(path.dirname(destino), { recursive: true });
+  fs.copyFileSync(completo, destino);
+  espelhados.set(caminho, destino);
+}
+
 function restaurar(lista, motivo) {
   const devida = lista.filter((s) => !jaEraNovo.has(s.caminho));
   const intocaveis = lista.filter((s) => jaEraNovo.has(s.caminho));
@@ -121,6 +144,13 @@ function restaurar(lista, motivo) {
   let erros = 0;
   for (const { caminho, rastreia } of devida) {
     if (rastreia) {
+      const volta = espelhados.get(caminho);
+      if (volta && fs.existsSync(volta)) {
+        fs.mkdirSync(path.dirname(path.join(ROOT, caminho)), { recursive: true });
+        fs.copyFileSync(volta, path.join(ROOT, caminho));
+        console.log(`  ↺ ${caminho} (bytes da entrada)`);
+        continue;
+      }
       const r = git("checkout", "--", caminho);
       if (r.status !== 0) {
         /* APAGAR um rastreado que a prova deletou é o `checkout` acima; um que
@@ -130,7 +160,7 @@ function restaurar(lista, motivo) {
         erros++;
         continue;
       }
-      console.log(`  ↺ ${caminho} (devolvido do HEAD)`);
+      console.log(`  ↺ ${caminho} (devolvido do HEAD — fora do espelho)`);
     } else {
       fs.rmSync(path.join(ROOT, caminho), { recursive: true, force: true });
       console.log(`  × ${caminho} (novo na árvore, apagado)`);
@@ -260,6 +290,19 @@ if (resíduo.length) {
   console.error(`\nroda-provas: a árvore continua suja depois da bateria:\n${resíduo.map((s) => `  ${s.estado} ${s.caminho}`).join("\n")}`);
 }
 if (naoRestauravel.size) console.error(`roda-provas: ${naoRestauravel.size} caminho(s) não rastreados na entrada foram deixados em paz: ${[...naoRestauravel].join(", ")}`);
-const ruins = placar.filter((p) => p.cor !== "verde").length + resíduo.length;
-console.log(`\n${placar.length} provas: ${placar.length - ruins} verdes, ${ruins ? `${ruins} boca(s) vermelhas` : "nenhuma vermelha"}.`);
-process.exit(ruins ? 1 : 0);
+/* A invariante não é "o git diz limpo": é byte a byte contra o espelho da
+   entrada. Um `checkout` que normalizou CRLF→LF deixaria o git verde e a
+   conferência falsa — foi por isso que o espelho entrou. */
+const divergentes = [];
+for (const [caminho, volta] of espelhados) {
+  const completo = path.join(ROOT, caminho);
+  const agora = fs.existsSync(completo) ? fs.readFileSync(completo) : null;
+  const antes = fs.readFileSync(volta);
+  if (!agora || !agora.equals(antes)) divergentes.push(caminho);
+}
+if (divergentes.length) console.error(`roda-provas: ${divergentes.length} caminho(s) não voltaram byte a byte ao espelho da entrada: ${divergentes.join(", ")}`);
+fs.rmSync(path.dirname(ESPELHO), { recursive: true, force: true });
+const vermelhas = placar.filter((p) => p.cor !== "verde").length;
+const estragos = resíduo.length + divergentes.length;
+console.log(`\n${placar.length} provas: ${placar.length - vermelhas} verdes, ${vermelhas} vermelhas${estragos ? ` + ${estragos} boca(s) de estrago na árvore` : ""}.`);
+process.exit(vermelhas || estragos ? 1 : 0);
