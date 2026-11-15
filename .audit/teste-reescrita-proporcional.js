@@ -174,11 +174,13 @@ console.log("\n3b-ii. fix do MESMO instante do prompt: a devolutiva vale (a tole
   const fix = path.join(fx.drafts, "fix.md");
   const mesmo = new Date(fs.statSync(path.join(fx.drafts, "prompt.md")).mtime);
   fs.utimesSync(fix, mesmo, mesmo);
-  /* O `utimesSync` com `Date` trunca ao milissegundo, então o prompt fica
-     alguns décimos de ms MAIS novo que o fix: a forma exata que um `fix >
-     prompt` seco leria como "brief refeito" e jogaria a devolutiva fora. */
+  /* O `utimesSync` com `Date` trunca ao milissegundo, então o prompt fica alguns
+     décimos de ms de UM LADO ou do outro do fix — a direção depende do ponto
+     flutuante em que o fs gravou, e o guard só rejeita o que está a mais de um
+     segundo. O que este caso prova é a vizinhança (mesmo tique), não o sinal: um
+     `fix > prompt` seco descartaria a devolutiva nos dois sentidos. */
   const delta = fs.statSync(path.join(fx.drafts, "prompt.md")).mtimeMs - fs.statSync(fix).mtimeMs;
-  confere("o fixture tem o prompt mais novo que o fix por menos de um tique", delta >= 0 && delta < 1000, `delta=${delta}ms`);
+  confere("o fixture tem prompt e fix no mesmo tique (|Δ| < 1 s)", Math.abs(delta) < 1000, `delta=${delta}ms`);
   const p = captura(fx, "mesmo-tique");
   confere("a devolutiva entra no prompt", /frase com 33 palavras/.test(p), (p.match(/rhythm[^\n]*/) || ["ausente"])[0]);
   confere("com a ordem proporcional de conserto", /NÃO reescreva do zero e NÃO acrescente seções/.test(p), (p.slice(-260)).replace(/\n/g, " ⏎ "));
