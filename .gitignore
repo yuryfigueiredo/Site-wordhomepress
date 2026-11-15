@@ -27,6 +27,13 @@ dist/
 node_modules/
 *.log
 Thumbs.db
+
+# Scratch do próprio app Qoder dentro do repo (worktrees de subagente em
+# .qoder/worktrees/). O portão da árvore do runner é `git status --porcelain`,
+# que conta untracked: com .qoder/ à vista a rodada para vermelha antes de
+# coletar — o mesmo classe de defeito do diário sujo que comeu o horário das
+# 20:23 de 13/11. Nada aqui é editorial; é a cópia de trabalho da ferramenta.
+.qoder/
 .audit/*.html
 .audit/*.json
 
