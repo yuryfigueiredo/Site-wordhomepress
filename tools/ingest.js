@@ -127,6 +127,30 @@ function saveSeen(set) {
   fs.writeFileSync(STATE_FILE, JSON.stringify({ updated: new Date().toISOString(), urls: keep }, null, 2));
 }
 
+/* O visto é memória de coleta, não lista negra: `pick-lead.js` só lê as três
+   filas mais recentes, então um card que sai dessa janela sem publicar está
+   morto — o feed continua oferecendo, o `seen` não deixa reentrar. Medido na
+   virada para 15/11: 133 itens novatos nos feeds, ZERO pautas aceitas; com o
+   mesmo `seen` podado para as filas vivas a coleta devolve 35 e ainda corta 51
+   por teto de fonte. A podadeira devolve a cauda; a duplicata continua barrada
+   em dois lugares que não envelhecem — `fontesPublicadas` (URL do que está no
+   ar) e a memória de tentativas do `pick-lead`. */
+function urlsNasFilasVivas(janela = 3) {
+  const set = new Set();
+  let files = [];
+  try {
+    files = fs.readdirSync(LEAD_DIR).filter((f) => f.endsWith(".json")).sort().reverse();
+  } catch {
+    return set;
+  }
+  for (const f of files.slice(0, janela)) {
+    try {
+      for (const l of JSON.parse(fs.readFileSync(path.join(LEAD_DIR, f), "utf8")).leads || []) if (l && l.url) set.add(l.url);
+    } catch {}
+  }
+  return set;
+}
+
 function titleOverlap(a, b) {
   const words = (s) => new Set(s.toLowerCase().replace(/[^a-z ]/g, " ").split(/\s+/).filter((w) => w.length > 3));
   const wa = words(a);
@@ -168,6 +192,11 @@ async function main() {
   const fontesNoAr = mem.fontesPublicadas(DB);
 
   const seen = loadSeen();
+  /* A poda vem antes de qualquer filtro: o que não está mais em fila alcançável
+     pelo pick-lead deixa de estar "visto" e volta a disputar a coleta. */
+  const vivas = urlsNasFilasVivas();
+  let vistasForaDaJanela = 0;
+  for (const u of [...seen]) if (!vivas.has(u)) { seen.delete(u); vistasForaDaJanela++; }
   const fresh = [];
   let fetched = 0;
   let jaPublicadas = 0;
@@ -327,7 +356,7 @@ async function main() {
   for (const lead of queue) seen.add(lead.url);
   saveSeen(seen);
 
-  console.log(`fila: ${queue.length} pautas acumuladas em ${anterior.geracoes + 1} rodada(s) (${fetched}/${FEEDS.length} feeds ok nesta) → pipeline/leads/${today}.md${descartadasNaFusao ? ` · ${descartadasNaFusao} repetida(s) na fusão` : ""}${cortadasPorCap ? ` · ${cortadasPorCap} novata(s) cortada(s) por fonte/teto, voltam na próxima rodada` : ""}`);
+  console.log(`fila: ${queue.length} pautas acumuladas em ${anterior.geracoes + 1} rodada(s) (${fetched}/${FEEDS.length} feeds ok nesta) → pipeline/leads/${today}.md${descartadasNaFusao ? ` · ${descartadasNaFusao} repetida(s) na fusão` : ""}${vistasForaDaJanela ? ` · ${vistasForaDaJanela} vista(s) fora da janela de 3 filas voltaram a ser coletáveis` : ""}${cortadasPorCap ? ` · ${cortadasPorCap} novata(s) cortada(s) por fonte/teto, voltam na próxima rodada` : ""}`);
   const perPillar = {};
   for (const l of queue) perPillar[l.pillar] = (perPillar[l.pillar] || 0) + 1;
   console.log("distribuição:", JSON.stringify(perPillar), jaPublicadas ? `· ${jaPublicadas} pautas já estavam no ar (fonte repetida)` : "");
