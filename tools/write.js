@@ -43,7 +43,19 @@ const piso = require("./lib/word-floor").piso(alvo);
 let melhor = null;
 
 function gravar(draft, k) {
-  draft.id = draft.id || SLUG.replace(/_/g, "-");
+  /* O id é da primeira entrega, não de cada tentativa. Medido na rodada das
+     06:23 de 15/11, a mesma peça atravessou a rodada com três identificadores:
+     o diretório e a foto nasceram de `we-are-dream-walking-…` (slug da pauta),
+     a tentativa 1 entregou `booker-winner-alien-invasion-warning-form` e a
+     reescrita trocou para `alien-invasions-promise-a-fight-…`, que é o que foi
+     ao ar. Com o contrato mudo sobre o campo (`prompt.md` não tem linha de id),
+     cada chamada reinventa a URL da matéria — e `check-post.js` confere
+     `id já publicado` contra o catálogo, então a troca é invisível até o
+     publish. Se o id escolhido colidir com um publicado, o portão [schema] do
+     editor reprova e a próxima tentativa corrective; não se silencia aqui. */
+  let idAnterior = null;
+  try { idAnterior = JSON.parse(fs.readFileSync(path.join(DIR, "draft.json"), "utf8")).id || null; } catch {}
+  draft.id = idAnterior || draft.id || SLUG.replace(/_/g, "-");
   /* Modelo às vezes devolve sources vazio mesmo tendo recebido a pauta; a
      matéria ia ao ar sem nenhuma citação. A fonte do brief é verificada, então
      ela entra como fonte mínima. */

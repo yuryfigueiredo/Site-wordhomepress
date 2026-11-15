@@ -183,10 +183,35 @@ const lengths = paras.map((p) => sentences(p).length);
 const sentLengths = sents.map((s) => words(s).length);
 const shortest = Math.min(...sentLengths);
 const longest = Math.max(...sentLengths);
-if (longest > 30) reject("rhythm", `frase com ${longest} palavras (máximo 30)`);
-if (shortest >= 8) reject("rhythm", `frase mais curta tem ${shortest} palavras — falta a frase curta obrigatória`);
-if (!paras.some((p) => words(p).length === 1 || sentences(p).length === 1)) reject("rhythm", "nenhum parágrafo de uma frase");
-if (!paras.some((p) => sentences(p).length >= 4)) reject("rhythm", "nenhum parágrafo longo (4+ frases) — ritmo uniforme");
+/* Uma reprovação sem localizador é uma ordem para reescrever o texto inteiro.
+   Medido na rodada das 06:23 de 15/11: `frase com 35 palavras (máximo 30)` foi
+   a única coisa que o `fix.md` devolveu ao redator, e o contrato do `write.js`
+   mandava "devolva o JSON completo de novo" — 1044 palavras reescritas para
+   consertar uma linha, com a chamada inteira dentro dos 780 s do CLI. A régua
+   não afrouxa nada aqui: é o MESMO ≤30, só que agora aponta o bloco e cita a
+   frase, então a devolutiva cabe numa troca de uma frase. */
+const ache = (cmp) => {
+  for (let i = 0; i < paras.length; i++) {
+    const ss = sentences(paras[i]);
+    for (let j = 0; j < ss.length; j++) {
+      const n = words(ss[j]).length;
+      if (cmp(n)) return { bloco: i + 1, n, trecho: words(ss[j].trim()).slice(0, 12).join(" ") };
+    }
+  }
+  return null;
+};
+const onde = (f) => (f ? ` — bloco ${f.bloco}/${paras.length}: "${f.trecho}${f.n > 12 ? "…" : ""}" (${f.n} palavras)` : "");
+if (longest > 30) reject("rhythm", `frase com ${longest} palavras (máximo 30)${onde(ache((n) => n > 30))}`);
+if (shortest >= 8)
+  reject("rhythm", `frase mais curta tem ${shortest} palavras — falta a frase curta obrigatória${onde(ache((n) => n === shortest))}`);
+if (!paras.some((p) => words(p).length === 1 || sentences(p).length === 1)) {
+  const alvo = paras.reduce((best, p, i) => (sentences(p).length > best.n ? { n: sentences(p).length, i: i + 1 } : best), { n: 0, i: 0 });
+  reject("rhythm", `nenhum parágrafo de uma frase — o bloco ${alvo.i} tem ${alvo.n} frases e é onde a quebra rende mais`);
+}
+if (!paras.some((p) => sentences(p).length >= 4)) {
+  const alvo = paras.reduce((best, p, i) => (sentences(p).length > best.n ? { n: sentences(p).length, i: i + 1 } : best), { n: 0, i: 0 });
+  reject("rhythm", `nenhum parágrafo longo (4+ frases) — ritmo uniforme; o bloco ${alvo.i} é o mais perto, com ${alvo.n} frases`);
+}
 const sc = draft.self_check || {};
 /* Medição é trabalho da máquina, não do modelo: contar palavras e parágrafos
    é objetivo, e um modelo que erra a conta não tem texto pior por isso. Antes
@@ -203,8 +228,9 @@ if (draft.self_check) {
     note("self-check", `medições refeitas pela máquina: modelo declarou ${antes}, o texto tem ${depois}`);
   }
 }
-const micDrops = paras.filter((p) => sentences(p).length === 1).length;
-if (micDrops > 2) reject("rhythm", `${micDrops} parágrafos de uma frase (máximo 2)`);
+const micDropBlocos = paras.map((p, i) => (sentences(p).length === 1 ? i + 1 : 0)).filter(Boolean);
+const micDrops = micDropBlocos.length;
+if (micDrops > 2) reject("rhythm", `${micDrops} parágrafos de uma frase (máximo 2): blocos ${micDropBlocos.join(", ")}`);
 
 /* ── 6. humor e tom ───────────────────────────────────────────────────── */
 const grim = /obituar|died|death|crash|disaster|traged|killed|funeral/i.test(`${draft.title} ${text.slice(0, 400)}`);
@@ -350,7 +376,14 @@ async function net() {
   const check = async (url, label) => {
     try {
       const res = await fetch(url, { method: "HEAD", redirect: "follow", signal: AbortSignal.timeout(15000), headers: { "User-Agent": "Mozilla/5.0 (compatible; HomeworldPressBot/1.0)" } });
-      if (res.status >= 400) reject("network", `${label} devolve HTTP ${res.status}: ${url.slice(0, 90)}`);
+      /* Link MORTO é defeito da matéria; porta FECHADA para o nosso robô não é.
+         Medido em 16 rodadas: o Phys.org devolve 429 em 14 delas. Com `status >=
+         400` reprova igual, a 429 virava reprovação [network] impossível de
+         consertar — o modelo não tem como fazer o site dele responder — e o
+         texto bom gastava os 3 ciclos de reescrita e saía da fila por 72h como
+         `reprovada`. 404/410 continuam vermelho: essa fonte não existe mais. */
+      if (res.status === 404 || res.status === 410) reject("network", `${label} não existe mais (HTTP ${res.status}): ${url.slice(0, 90)}`);
+      else if (res.status >= 400) note("network", `${label} recusou o robô (HTTP ${res.status}), abrir manualmente: ${url.slice(0, 80)}`);
       else note("network", `${label} ok (${res.status})`);
     } catch (err) {
       note("network", `${label} sem resposta (bloqueio de robô?), abrir manualmente: ${url.slice(0, 80)}`);
@@ -377,7 +410,7 @@ try { targetWords = Number(JSON.parse(fs.readFileSync(path.join(DIR, "brief.json
    usa para escolher a ordem da reescrita — `lib/word-floor.js`, uma boca só. */
 const pisoPalavras = require("./lib/word-floor").piso(targetWords);
 if (targetWords && measured < pisoPalavras)
-  reject("length", `texto com ${measured} palavras para uma pauta de ~${targetWords} — o piso é ${pisoPalavras}`);
+  reject("length", `texto com ${measured} palavras para uma pauta de ~${targetWords} — o piso é ${pisoPalavras}, faltam ${pisoPalavras - measured}${pisoPalavras - measured <= 60 ? " (dá para fechar numa seção, não no texto inteiro)" : ""}`);
 fs.writeFileSync(
   path.join(DIR, "metrics.json"),
   JSON.stringify(
