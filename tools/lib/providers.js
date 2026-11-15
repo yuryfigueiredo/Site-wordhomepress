@@ -13,7 +13,7 @@
                existe, e o prompt vai pelo stdin.                           */
 const fs = require("fs");
 const path = require("path");
-const { spawnSync } = require("child_process");
+const { spawn } = require("child_process");
 const { rank, diversificar } = require("./rank-models");
 
 /* A chave pode vir do Secret do Actions ou do .env local; sem este carregador,
@@ -143,10 +143,198 @@ async function descobrir(p) {
   return { modelos: nomes, erro: null };
 }
 
+/* A árvore do redator, morta por PID e não só pelo filho direto.
+
+   A régua é a medição de 15/11, 06:56Z, na rodada que morreu no
+   `chamada_max_ms`: o `spawnSync({timeout})` manda SIGTERM só para o processo
+   que ele mesmo lançou, e o `qodercli` do app não é um processo — é um pai que
+   levanta um worker, e o worker levanta outro. Mortos os diretos (turno.js,
+   write.js, qodercli), o worker viveu 81 s e 105 s e o bisneto 40 s. Três
+   consequências, todas caras: o `timeout 65m` do cinto deixou de ser a
+   garantia de fim de rodada (e o `TimeoutStartSec=78min`, por cima dele,
+   também); o plano do app continuou sendo gasto dentro da rodada seguinte; e o
+   `desfazerFotosDaRodada()` apagou jpgs que um escritor órfão ainda ia usar.
+
+   Quatro bocas, cada uma para um formato da árvore no momento do corte:
+     1. o GRUPO do filho, que é líder porque o lançamos `detached`: varre de uma
+        vez tudo o que nasceu nele e continuou nele, inclusive quando o pai já
+        morreu há tempo — é a boca da chamada verde que deixa worker de fundo;
+     2. descida por `/proc` a partir do filho direto — alcança o que o worker
+        reposicionou fora do grupo (setpgid/setsid) enquanto o pai está vivo, que
+        é o caso do timeout interno;
+     3. o censo abaixo, que grava a árvore enquanto ela ainda é alcançável e mata
+        por PID+carimbo de nascimento — a boca do caso 2 quando o pai já foi
+        colhido e os netos estão no PID 1;
+     4. o relay de sinal e o `process.on("exit")`, que refazem 1..3 quando a
+        saída não passa pela chamada: Ctrl+C, `timeout` do cinto,
+        `TimeoutStartSec` do systemd, exceção sem catch.
+   O `detached` sozinho não chega: com grupo próprio, o filho sai do grupo da
+   rodada, e é exatamente esse grupo que o `timeout 65m` do cinto mata — sem o
+   relay (boca 4) a parede de 65 min teria passado a CRIAR órfão em vez de
+   matá-lo. O `detached` sozinho também não é suficiente para o worker que se
+   reposiciona, e a descida sozinha não é suficiente para o pai já colhido: as
+   quatro juntas são o que a medição de 15/11 pede.
+   O que sobra, declarado: um neto gerado depois do último censo e reposicionado
+   para fora do grupo antes de o pai morrer — janela de um segundo no caminho
+   longo, vinte e cinco centésimos nos primeiros 5 s, e ela é janela, não buraco
+   silencioso. */
+function descendentes(pid) {
+  const porPai = new Map();
+  let entradas = [];
+  try {
+    entradas = fs.readdirSync("/proc");
+  } catch {
+    return [];
+  }
+  for (const nome of entradas) {
+    if (!/^\d+$/.test(nome)) continue;
+    let stat = "";
+    try {
+      stat = fs.readFileSync(path.join("/proc", nome, "stat"), "utf8");
+    } catch {
+      continue;
+    }
+    /* Campo 2 é o nome entre parênteses e pode ter espaço ou parênteses:
+       ancorar no ÚLTIMO ")" é o que não desfoca o ppid que vem depois. */
+    const fim = stat.lastIndexOf(")");
+    if (fim < 0) continue;
+    const depois = stat.slice(fim + 1).trim().split(/\s+/);
+    const ppid = Number(depois[1]);
+    if (!Number.isFinite(ppid)) continue;
+    const lista = porPai.get(ppid) || [];
+    lista.push(Number(nome));
+    porPai.set(ppid, lista);
+  }
+  const ordem = [];
+  const fila = [pid];
+  while (fila.length) {
+    const atual = fila.shift();
+    for (const filho of porPai.get(atual) || []) {
+      ordem.push(filho);
+      fila.push(filho);
+    }
+  }
+  return ordem.reverse();
+}
+
+/* O carimbo de nascimento do processo (campo 22 de /proc/pid/stat): é o que
+   distingue o PID gravado no censo de um PID reciclado depois que ele morreu. */
+function identidade(pid) {
+  let stat = "";
+  try {
+    stat = fs.readFileSync(`/proc/${pid}/stat`, "utf8");
+  } catch {
+    return null;
+  }
+  const fim = stat.lastIndexOf(")");
+  if (fim < 0) return null;
+  return stat.slice(fim + 1).trim().split(/\s+/)[19] || null;
+}
+
+function matarArvore(pid) {
+  for (const p of descendentes(pid)) {
+    try {
+      process.kill(p, "SIGKILL");
+    } catch {}
+  }
+  try {
+    process.kill(pid, "SIGKILL");
+  } catch {}
+}
+
+/* O grupo do filho: com `detached`, ele é líder, e um SIGKILL no `-pid` varre o
+   que nasceu naquele grupo mesmo depois de o líder virar zumbi e ser colhido.
+   Grupo vazio ou filho que nunca levantou ninguém: ESRCH, engolido de propósito. */
+function matarGrupo(pid) {
+  try {
+    process.kill(-pid, "SIGKILL");
+  } catch {}
+}
+
+/* A segunda passada, a que sobrevive à morte do pai. Morto e colhido o filho
+   direto, os descendentes vão para o PID 1 e a descida por `/proc` não os acha
+   mais. Por isso o censo: a cada CENSO_MS a árvore é lida e guardada com o
+   carimbo de nascimento, e no fim da chamada morre também o que o censo viu mas
+   a descida já não alcança. Um `readdirSync` + ~300 `stat` por segundo dentro de
+   uma chamada de 13 min é preço que se paga de bom grado pelo que ele compra.
+   Sem `/proc` (outro SO, ou escondido num contêiner) o censo fica vazio e sobra
+   o kill do filho direto, exatamente como era antes. */
+const CENSO_MS = 1000;
+/* Rajada no começo da chamada: é nos primeiros segundos que o pai do redator
+   levanta o worker, e um worker nascido depois do último censo e antes de o pai
+   morrer é o único órfão que a descida já não alcança. 250 ms durante 5 s custa
+   vinte varreduras de `/proc` e estreita a janela para o lado que importa. */
+const CENSO_RAJADA_MS = 250;
+const CENSO_RAJADA_ATÉ = 5000;
+function recensear(pid, vistos) {
+  for (const p of descendentes(pid)) {
+    if (!vistos.has(p)) {
+      const carimbo = identidade(p);
+      if (carimbo !== null) vistos.set(p, carimbo);
+    }
+  }
+  return vistos;
+}
+
+function matarCenso(vistos) {
+  for (const p of [...vistos.keys()].reverse()) {
+    if (identidade(p) === vistos.get(p)) {
+      try {
+        process.kill(p, "SIGKILL");
+      } catch {}
+    }
+  }
+}
+
+/* Filhos vivos desta chamada → a árvore que o censo já viu. */
+const emChamada = new Map();
+
+/* A varredura completa, na ordem das quatro bocas: descida (alcança o que se
+   reposicionou enquanto o pai vive), grupo (varre o que nasceu no grupo do
+   filho, vivo o pai ou não), censo (mata por PID+carimbo o que a descida já não
+   acha porque o pai foi colhido) e, por último, o filho direto. */
+function podar(pid, vistos) {
+  if (!Number.isInteger(pid)) return;
+  recensear(pid, vistos);
+  matarGrupo(pid);
+  matarCenso(vistos);
+  matarArvore(pid);
+}
+
+function podarTudo() {
+  for (const [pid, vistos] of emChamada) podar(pid, vistos);
+  emChamada.clear();
+}
+
+/* O timeout interno não é a única porta de saída: Ctrl+C, o `timeout 65m` do
+   cinto, o `TimeoutStartSec` do systemd e uma exceção sem catch também desarmam
+   o relógio da chamada. `process.on("exit")` cobre os que terminam em saída
+   normal ou por exceção; os mortos por sinal NÃO rodam o gancho de saída — é
+   por isso que o relay abaixo existe, e é por isso que o filho pode ser
+   `detached` sem que a parede do cinto perca a palavra.
+   O relay devolve o sinal depois de podar, retirando SÓ o seu próprio ouvinte:
+   remover todos os ouvintes levaria junto o tratante de SIGTERM do `turno.js`,
+   que é quem faz o `desfazerFotosDaRodada()`. */
+const SINAIS_DE_PODA = ["SIGTERM", "SIGINT", "SIGHUP"];
+const relays = new Map();
+for (const sig of SINAIS_DE_PODA) {
+  const ouvir = () => {
+    podarTudo();
+    process.removeListener(sig, ouvir);
+    relays.delete(sig);
+    try {
+      process.kill(process.pid, sig);
+    } catch {}
+  };
+  relays.set(sig, ouvir);
+  process.on(sig, ouvir);
+}
+process.on("exit", podarTudo);
+
 /* O mesmo contrato para os três tipos: um objeto com .ok, .status, .text() e
    .json(). No CLI ele é fabricado a partir do subprocesso, para o write.js não
    ter duas rotas de leitura. */
-function chamarCli(p, modelo, prompt, timeoutMs) {
+async function chamarCli(p, modelo, prompt, timeoutMs) {
   /* O teto de parede do write.js (14 min) já chegou aqui pelo prazo, então o
      clamp só pode ficar ACIMA do maior `chamada_max_ms` declarado: cortado em
      600s, o 780000 do CLI virava cifra morta no JSON e a chamada era partida
@@ -177,17 +365,112 @@ function chamarCli(p, modelo, prompt, timeoutMs) {
      muda qual executável roda. */
   const ambiente = { ...process.env };
   delete ambiente.QODER_AGENT_SDK_ENTRYPOINT;
-  const r = spawnSync(p.bin, arg, { input: prompt + CLI_CAUDA, cwd: ROOT, timeout: ms, encoding: "utf8", maxBuffer: 32 * 1024 * 1024, env: ambiente });
-  const saida = String(r.stdout || "");
-  const erro = String(r.stderr || "");
-  if (r.error) {
-    const motivo = /ETIMEDOUT/.test(r.error.code || "") || r.signal === "SIGTERM" ? `timeout de ${Math.round(ms / 1000)}s no CLI` : r.error.message;
-    return resposta(false, 500, "", motivo);
-  }
-  if (r.signal) return resposta(false, 500, saida, `o CLI foi morto por ${r.signal} (timeout de ${Math.round(ms / 1000)}s)`);
-  if (r.status !== 0) return resposta(false, /quota|limit exceeded|402|payment|credit|usage/i.test(erro + saida) ? 429 : 500, saida, `saiu com ${r.status}: ${(erro || saida).trim().slice(0, 300)}`);
-  if (!saida.trim()) return resposta(false, 500, "", "voltou sem texto nenhum");
-  return resposta(true, 200, saida, "");
+  /* `detached` aqui não é desapego do chamador: é para o filho nascer LÍDER de
+     grupo, porque um SIGKILL no grupo varre o worker que ele levanta sem que a
+     gente precise adivinhar quando ele nasceu. Quem segura o grupo da rodada na
+     parede do cinto é o relay de sinal acima — sem ele, `detached` teria
+     trocado um órfão medido por um órfão novo. */
+  return new Promise((resolve) => {
+    let filho;
+    try {
+      filho = spawn(p.bin, arg, { cwd: ROOT, env: ambiente, detached: true, stdio: ["pipe", "pipe", "pipe"] });
+    } catch (e) {
+      resolve(resposta(false, 500, "", `o CLI não levantou: ${e.message}`));
+      return;
+    }
+    let saida = "";
+    let erro = "";
+    let bytes = 0;
+    let cortado = false;
+    let estouro = false;
+    let fechado = false;
+    let código = null;
+    let sinal = null;
+    let falhaDeSpawn = null;
+    let dreno = null;
+    const pid = Number.isInteger(filho.pid) ? filho.pid : null;
+    const vistos = new Map();
+    const matar = () => {
+      if (!pid) return;
+      podar(pid, vistos);
+    };
+    if (pid) {
+      emChamada.set(pid, vistos);
+      recensear(pid, vistos);
+    }
+    const censo = pid ? setInterval(() => recensear(pid, vistos), CENSO_MS) : null;
+    if (censo) censo.unref();
+    const rajada = pid ? setInterval(() => recensear(pid, vistos), CENSO_RAJADA_MS) : null;
+    if (rajada) rajada.unref();
+    const atéRajada = pid ? setTimeout(() => clearInterval(rajada), CENSO_RAJADA_ATÉ) : null;
+    if (atéRajada) atéRajada.unref();
+    const relógio = setTimeout(() => {
+      cortado = true;
+      matar();
+    }, ms);
+    filho.stdout.on("data", (c) => {
+      bytes += c.length;
+      /* O antigo maxBuffer de 32 MB era uma recusa silenciosa: estourado, o
+         spawnSync devolvia stdout truncado e o JSON não parseava. Aqui o
+         excesso corta a chamada e diz por quê. */
+      if (bytes > 64 * 1024 * 1024) {
+        estouro = true;
+        matar();
+        return;
+      }
+      saida += c;
+    });
+    filho.stderr.on("data", (c) => {
+      erro = (erro + c).slice(-4000);
+    });
+    /* O filho morrendo antes de o stdin fechar é o caminho normal do timeout e
+       do erro de binário: sem este guard o EPIPE sobe como exceção não tratada
+       e derruba o write.js inteiro. */
+    filho.stdin.on("error", () => {});
+    try { filho.stdin.end(prompt + CLI_CAUDA); } catch {}
+    const acabar = () => {
+      if (fechado) return;
+      fechado = true;
+      clearTimeout(relógio);
+      if (dreno) clearTimeout(dreno);
+      if (censo) clearInterval(censo);
+      if (rajada) clearInterval(rajada);
+      if (atéRajada) clearTimeout(atéRajada);
+      if (pid) emChamada.delete(pid);
+      /* Matar a árvore também no caminho verde: um `qodercli` que devolve o
+         JSON e deixa um worker de fundo atrás de si é exatamente o órfão que a
+         medição de 15/11 achou vivo minutos depois da chamada terminar. */
+      matar();
+      resolve(veredito());
+    };
+    const veredito = () => {
+      if (falhaDeSpawn) return resposta(false, 500, "", falhaDeSpawn);
+      if (estouro) return resposta(false, 500, "", `a resposta passou de 64 MB (timeout de ${Math.round(ms / 1000)}s)`);
+      if (cortado) return resposta(false, 500, "", `timeout de ${Math.round(ms / 1000)}s no CLI`);
+      if (sinal) return resposta(false, 500, saida, `o CLI foi morto por ${sinal} (timeout de ${Math.round(ms / 1000)}s)`);
+      if (código !== 0) {
+        const status = /quota|limit exceeded|402|payment|credit|usage/i.test(erro + saida) ? 429 : 500;
+        return resposta(false, status, saida, `saiu com ${código}: ${(erro || saida).trim().slice(0, 300)}`);
+      }
+      if (!saida.trim()) return resposta(false, 500, "", "voltou sem texto nenhum");
+      return resposta(true, 200, saida, "");
+    };
+    filho.on("error", (e) => {
+      falhaDeSpawn = e.code === "ENOENT" ? `o binário ${p.bin} não está no disco` : e.message;
+      acabar();
+    });
+    filho.on("exit", (code, sig) => {
+      código = code;
+      sinal = sig;
+      /* `exit` chega antes do último bloco de stdout ser despejado no ouvinte,
+         e o `spawnSync` que substitui entrega o buffer inteiro já fechado. Sem
+         esta folga de 1,5 s a chamada verde seria lida truncada e o JSON
+         morreria no parse — o `close` encerra na hora quando o pipe é só do
+         filho; quem segura o stdout é o worker, e esse é morto pelo `matar()`. */
+      dreno = setTimeout(acabar, 1500);
+    });
+    filho.on("close", acabar);
+  });
 }
 
 const CLI_CAUDA =
@@ -207,7 +490,7 @@ function resposta(ok, status, texto, motivo) {
 }
 
 function chamar(p, modelo, prompt, timeoutMs) {
-  if (p.tipo === "cli") return Promise.resolve(chamarCli(p, modelo, prompt, timeoutMs));
+  if (p.tipo === "cli") return chamarCli(p, modelo, prompt, timeoutMs);
   /* AbortSignal.timeout recusa fração: a fatia de tempo sai de uma divisão. */
   const signal = AbortSignal.timeout(Math.round(Math.max(30000, Math.min(240000, timeoutMs))));
   if (p.tipo === "gemini") {
