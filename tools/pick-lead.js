@@ -162,7 +162,18 @@ async function sonda(url) {
        foi ela que deixou o `TimeoutError` do AbortSignal cair em `nao-abre` e
        enterrar a fila inteira por 12h. */
     const v = transporte.classe(e);
-    return v === "outra" ? "nao-abre" : v;
+    /* `outra` neste `catch` NUNCA é uma resposta do destino: quem recebeu status
+       HTTP saiu do `try` (`res.ok ? abre : nao-abre`). O que cai aqui é a
+       tentativa morrendo antes do pacote — `ERR_INVALID_URL` de um card torto,
+       `ERR_SOCKET_BAD_PORT`, um reset no meio do aperto. A versão antiga mandava
+       isso para `nao-abre`, e a linha do registro enterrava a pauta por 12 h com
+       zero evidência da fonte, contra a régua que o AGENTS.md declara («só a
+       resposta HTTP registra»). Medido 15/11 pelo revisor (F6): `http://…:9/…` e
+       `http://[::1` saíram da fila por 12 h; a ECONNREFUSED de verdade não saiu.
+       Sem registro, a mesma candidata é pulada no horário seguinte — e um URL
+       ilegível não gasta rede nenhuma ao ser recusado, então o custo de não
+       marcar é uma fração de segundo, contra 12 h de suprimento perdido.  */
+    return v === "outra" ? "sem-tentativa" : v;
   }
 }
 
@@ -182,6 +193,7 @@ async function sonda(url) {
   let naoAbre = 0;
   let semRede = 0;
   let empacou = 0;
+  let semTentativa = 0;
   for (const c of candidatas) {
     if (sondadas >= 8 && Date.now() - t0 > orcamentoMs) {
       console.error(`pick-lead: teto de tempo da sondagem estourado (${sondadas} de ${candidatas.length} fontes checadas)`);
@@ -205,6 +217,11 @@ async function sonda(url) {
       empacou++;
       continue;
     }
+    if (veredito === "sem-tentativa") {
+      console.error(`pauta não sondada (a tentativa não chegou ao pacote: URL ilegível ou conexão desfeita antes da resposta): ${c.url}`);
+      semTentativa++;
+      continue;
+    }
     if (veredito === "nao-abre") {
       console.error(`pauta descartada (fonte não abre): ${c.url}`);
       naoAbre++;
@@ -224,7 +241,8 @@ async function sonda(url) {
       `${porQue.coluna_ja_coberta} de coluna já coberta, ${porQue.ja_tentada} tentadas há pouco, ${porQue.pauta_velha} com fonte velha, ${porQue.rascunho_ou_id} com rascunho/id no ar` +
       `${naoAbre ? `, ${naoAbre} com fonte que não abriu (fora da fila 12h)` : ""}` +
       `${semRede ? `, ${semRede} não sondadas por falta de rede (nada marcado)` : ""}` +
-      `${empacou ? `, ${empacou} sem nenhuma resposta em 10s (nada marcado)` : ""}) — ` +
+      `${empacou ? `, ${empacou} sem nenhuma resposta em 10s (nada marcado)` : ""}` +
+      `${semTentativa ? `, ${semTentativa} com a tentativa morta antes do pacote (nada marcado)` : ""}) — ` +
       "a rodada termina após coletar e checar"
   );
   /* Se NADA chegou a uma resposta HTTP e o sintoma foi sempre falha de

@@ -91,6 +91,24 @@ fs.mkdirSync(HOME_VAZIO, { recursive: true });
 fs.mkdirSync(BIN_SEGURO, { recursive: true });
 const CAT = ["/bin/cat", "/usr/bin/cat"].find((c) => fs.existsSync(c));
 if (CAT) fs.symlinkSync(CAT, path.join(BIN_SEGURO, "cat"));
+/* O stderr comprido do F5: sessenta linhas de preâmbulo (~700 chars) e a
+   digital do pacote recusado SÓ no fim — a forma banal de um CLI que reclama da
+   vida antes de dizer o erro. Era aqui que o corte de 160 chars apagava o
+   sintoma para quem decide se a rodada dorme ou passa a vez.                */
+const RECUSA_LONGA = path.join(tmp, "recusa-longa.sh");
+fs.writeFileSync(
+  RECUSA_LONGA,
+  `#!/bin/bash
+cat > /dev/null
+pre=""
+for i in $(seq 1 60); do pre="$pre preambulo-do-cli-numero-$i"; done
+printf '%s\\n' "$pre" >&2
+echo "connect ECONNREFUSED 127.0.0.1:${PORTA_RECUSA}" >&2
+exit 1
+`,
+  { mode: 0o755 }
+);
+
 const ENV_SEM_APP = { HOME: HOME_VAZIO, PATH: BIN_SEGURO, QODER_CLI: path.join(HOME_VAZIO, "nao-existe") };
 
 function copia(provedores, mut) {
@@ -115,6 +133,7 @@ function copia(provedores, mut) {
 const RECUSA = (nome) => ({ nome, tipo: "openai", ativo: true, endpoint: `http://127.0.0.1:${PORTA_RECUSA}/v1`, chave_env: "HWP_FIXTURE_KEY", fila: ["fantasma-1", "fantasma-2"], peso: 1 });
 const ENTREGA = { nome: "casca", tipo: "cli", ativo: true, bin: CASCA, fila: ["Fix"], chamada_max_ms: 30000, peso: 3 };
 const SEM_BIN = { nome: "sem-binario", tipo: "cli", ativo: true, bin: path.join(tmp, "nao-existe-que-roda-ninguem"), fila: ["Fix"], peso: 1 };
+const RECUSA_FUNDO = { nome: "recusa-fundo", tipo: "cli", ativo: true, bin: RECUSA_LONGA, fila: ["Fix"], peso: 1 };
 
 function roda(dir, minutos, semApp) {
   const cont = path.join(tmp, `cont-${path.basename(path.dirname(dir))}`);
@@ -179,7 +198,16 @@ console.log("\n1. a lista de tokens de transporte tem UMA boca no repo");
   ];
   for (const [origem, corpo, esperado, porque] of CURA)
     confere(`esperaCura(${origem}, «${corpo.slice(0, 24)}…») = ${esperado} — ${porque}`, transporte.esperaCura(origem, corpo) === esperado, transporte.esperaCura(origem, corpo));
-  confere("o write.js lê a decisão do módulo, não uma regex própria", /transporte\.esperaCura\(prov\.origem\(res\), porQue\)/.test(fs.readFileSync(path.join(ROOT, "tools/write.js"), "utf8")));
+  confere("o write.js lê a decisão do módulo, não uma regex própria", /transporte\.esperaCura\(prov\.origem\(res\), txt\)/.test(fs.readFileSync(path.join(ROOT, "tools/write.js"), "utf8")));
+  /* A corda que o classificador lê não é a corda que o diário imprime. Medido
+     15/11 pelo revisor (F5): com `prov.reason(txt)` na linha de decisão, um
+     `ECONNREFUSED` empurrado ~443 chars para dentro do stderr saía do corte de
+     160, virava `outra` e pagava a escada de 15→30→90 s sobre um destino que já
+     tinha recusado — o defeito que o commit declarou morto, vivo pelo tamanho. */
+  const wDecisao = fs.readFileSync(path.join(ROOT, "tools/write.js"), "utf8");
+  confere("a decisão lê o corpo inteiro; o corte de 160 chars fica só na frase do diário", !/esperaCura\(prov\.origem\(res\), porQue\)/.test(wDecisao) && /esperaCura\(prov\.origem\(res\), txt\)/.test(wDecisao));
+  confere("e a frase do recusado local vem do módulo (`inalcançável`), não do rótulo HTTP com o preâmbulo", /transporte\.semRede\(txt\)/.test(wDecisao) && /inalcançável: \$\{transporte\.motivo\(txt\)/.test(wDecisao));
+  confere("e o `motivo` do CLI chega sem corte ao reador (a fatia é do stderr acumulado, não da decisão)", !/saiu com \$\{código\}: \$\{\(erro \|\| saida\)\.trim\(\)\.slice/.test(fs.readFileSync(path.join(ROOT, "tools/lib/providers.js"), "utf8")));
   const bocaOrigem = fs.readFileSync(path.join(ROOT, "tools/lib/providers.js"), "utf8");
   const declaração = (bocaOrigem.match(/module\.exports = \{[^}]*\};/) || [""])[0];
   confere("e `origem()` é uma boca só: providers exporta, ninguém inspeciona o campo cru", /\borigem\b/.test(declaração) && !/res\.origem\b/.test(fs.readFileSync(path.join(ROOT, "tools/write.js"), "utf8")), declaração.trim() || "nenhum `module.exports = { … }` encontrado");
@@ -208,6 +236,34 @@ console.log("\n2b. sem provedor seguinte, a causa que o diário mostra é `inalc
   confere("a rodada fecha sem texto", r.code !== 0, `codigo ${r.code}`);
   confere("o veredito diz inalcansável, não ocupado", /inalcançável/.test(r.err) && !/ocupado\(s\)/.test(r.err), r.err.split("\n").filter((l) => /·/.test(l)).join(" ⏎ "));
   confere("e o modelo recusado não volta para a fila", !/esperando \d+s/.test(r.err), r.err.slice(-200));
+}
+
+console.log("\n2c. o token no FUNDO de um stderr comprido: a decisão lê a corda inteira, não os 160 chars do diário");
+{
+  /* F5, medido 15/11 pelo revisor nas duas árvores vivas: o MESMO
+     `ECONNREFUSED` no começo da corda dava `definitivo` em 0,2 s; empurrado
+     ~443 chars para dentro — a forma banal de um CLI que despeja preâmbulo
+     antes do erro — saía do `reason(txt)` de 160, virava `outra`, e a escada de
+     15→30→90 s reacendia sobre um destino que já tinha recusado o SYN. A
+     falsificação não mexe no `transporte` nem no `reason()`: devolve o corte
+     para a LINHA DE DECISÃO, que é o erro.                                 */
+  const dir = copia([RECUSA_FUNDO, ENTREGA]);
+  const r = roda(dir);
+  confere("recusa enterrada no preâmbulo passa a vez, não dorme", !/esperando \d+s/.test(r.err), r.err.split("\n").filter((l) => /esperando|inalcan|recusa/.test(l)).join(" ⏎ ").slice(0, 300));
+  confere("e a peça sai do provedor seguinte em segundos", r.code === 0 && r.chamadas === 1 && r.segundos < 15, `codigo ${r.code}, ${r.chamadas} chamada(s), ${r.segundos.toFixed(1)}s`);
+  /* Sozinho, sem provedor seguinte: é a única forma de ver a frase que o dono
+     leria no `TURNO.md`. Ela tem de dizer o FATO (recusa, não ocupado) e caber
+     no corte — os ~700 chars de preâmbulo não podem chegar ao diário.        */
+  const solo = roda(copia([RECUSA_FUNDO]));
+  const linha = (solo.err.match(/recusa-fundo[^\n]*/) || [""])[0];
+  confere("com o recusado sozinho a rodada fecha sem texto", solo.code !== 0, `codigo ${solo.code}`);
+  confere("a frase diz inalcansável, não HTTP 500 com preâmbulo", /inalcançável/.test(solo.err) && !/ocupado\(s\)/.test(solo.err), linha.slice(0, 160));
+  confere("e continua curta: o corte é da frase, não da decisão", linha.length > 0 && linha.length < 240, `${linha.length} chars`);
+  const mut = copia([RECUSA_FUNDO, ENTREGA], (fonte) => fonte.replace("transporte.esperaCura(prov.origem(res), txt)", "transporte.esperaCura(prov.origem(res), porQue)"));
+  const m = roda(mut, 1);
+  confere("a mutação devolve mesmo o corte à linha de decisão", fs.readFileSync(path.join(mut, "tools/write.js"), "utf8").includes("esperaCura(prov.origem(res), porQue)"));
+  confere("com o corte de volta a escada reacende em cima do recusado", /esperando \d+s/.test(m.err), m.err.split("\n").filter((l) => /esperando/.test(l)).join(" ⏎ ").slice(0, 240));
+  confere("e o custo é mensurável no relógio da prova", m.segundos > 15, `${m.segundos.toFixed(1)}s`);
 }
 
 console.log("\n3. falsificação: voltar o genérico `rede:` reacende a escada que come a fatia");

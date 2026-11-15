@@ -450,7 +450,14 @@ async function chamarCli(p, modelo, prompt, timeoutMs) {
       if (sinal) return resposta(false, 500, saida, `o CLI foi morto por ${sinal} (timeout de ${Math.round(ms / 1000)}s)`);
       if (código !== 0) {
         const status = /quota|limit exceeded|402|payment|credit|usage/i.test(erro + saida) ? 429 : 500;
-        return resposta(false, status, saida, `saiu com ${código}: ${(erro || saida).trim().slice(0, 300)}`);
+        /* Nenhuma fatia aqui: este texto é lido por `transporte.esperaCura()` para
+           decidir se a rodada dorme ou passa a vez, e um token de pacote enterrado
+           num preâmbulo longo deixava de existir para a decisão. Medido 15/11 pelo
+           revisor (F5): o MESMO `ECONNREFUSED` no começo da corda dava `definitivo`
+           em 0,2 s; ~443 chars para dentro dava `esperando 15s`. O corte é da
+           FRASE DO DIÁRIO, e mora em `reason()` — não na matéria-prima. A corda já
+           vem limitada em cima: o acumulador do stderr guarda os últimos 4000.  */
+        return resposta(false, status, saida, `saiu com ${código}: ${(erro || saida).trim()}`);
       }
       if (!saida.trim()) return resposta(false, 500, "", "voltou sem texto nenhum");
       return resposta(true, 200, saida, "");

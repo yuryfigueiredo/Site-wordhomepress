@@ -316,15 +316,21 @@ function gravar(draft, k) {
     if (res.status >= 500) {
       const txt = await res.text().catch(() => "");
       const porQue = prov.reason(txt) || "serviço ocupado";
-      falhas.set(k, `HTTP ${res.status}: ${porQue}`);
+      const daqui = prov.origem(res) === "local" && transporte.semRede(txt);
+      falhas.set(k, daqui ? `inalcançável: ${transporte.motivo(txt) || porQue}` : `HTTP ${res.status}: ${porQue}`);
       /* Um 5xx tem corpo, e o corpo é texto de LÁ: um provedor que escreve
          «getaddrinfo failed» na própria mensagem está falando da rede DELE, e
          abandoná-lo por causa disso é perder a única boca que podia entregar
          (medido 15/11 08:47). Fato daqui, que espera nenhuma cura, é só o que
          ESTA máquina escreveu no corpo — o CLI que não levantou, o binário que
          não está no disco. A origem é `providers.origem()`, a decisão é
-         `transporte.esperaCura()`, e nenhuma das duas é repetida aqui.       */
-      if (!transporte.esperaCura(prov.origem(res), porQue)) return "definitivo";
+         `transporte.esperaCura()`, e nenhuma das duas é repetida aqui.
+         A decisão lê o corpo INTEIRO: `porQue` é a frase do diário, cortada em
+         160 chars por `reason()`, e um token de pacote depois do corte deixava de
+         existir para ela — medido 15/11, o mesmo `ECONNREFUSED` empurrado ~443
+         chars para dentro do stderr pagava a escada de 15→30→90 s sobre um
+         destino que já tinha recusado.                                 */
+      if (!transporte.esperaCura(prov.origem(res), txt)) return "definitivo";
       return "transitorio";
     }
     if (!res.ok) {

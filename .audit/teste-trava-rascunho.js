@@ -202,6 +202,7 @@ console.log("\n6b. sem rede NÃO é pauta morta: a varredura inteira falha, nada
     const mem = JSON.parse(fs.readFileSync(path.join(dir, "pipeline", "memory.json"), "utf8"));
     return {
       codigo: r.status ?? -1,
+      err: String(r.stderr || ""),
       marcadas: Object.values(mem.leads || {}).filter((l) => l && l.outcome === "fonte_inalcancavel").length,
     };
   };
@@ -229,7 +230,13 @@ console.log("\n6b. sem rede NÃO é pauta morta: a varredura inteira falha, nada
   );
   confere("a mutação encontrou a classificação no módulo", !fs.readFileSync(path.join(semClasse, "tools/lib/transporte.js"), "utf8").includes("SEM_REDE.test(sinal)"), "o replace não alcançou o módulo");
   const m = varre(semClasse);
-  confere("com a classificação arrancada as duas pautas vivas saem da fila por 12h", m.marcadas === 2 && m.codigo === 1, `marcou ${m.marcadas}, codigo ${m.codigo}`);
+  /* A falsificação mudou de custo quando o registro passou a exigir resposta
+     HTTP (15/11, F6 do revisor): arrancar o token já não enterra as duas pautas
+     vivas — o que ele passa a estragar é o DIAGNÓSTICO da rodada, que é a outra
+     boca do mesmo veredito. Sem `sem-rede` a varredura de máquina sem link sai
+     1, e a mão de reserva deixa de refazer o horário. */
+  confere("com a classificação arrancada nenhuma pauta é enterrada: marcar exige status do destino", m.marcadas === 0, `marcou ${m.marcadas}`);
+  confere("mas a varredura perde o exit 2 e o nome do sintoma — link caído passa por fila vazia", m.codigo === 1 && !/sem rede nesta máquina/.test(m.err), `codigo=${m.codigo} · ${m.err.split("\n").filter((l) => /não sondada|nenhuma sonda/.test(l)).join(" ⏎ ").slice(0, 200)}`);
 }
 
 console.log("\n6c. fonte que aceita a conexão e cala é fato do transporte: nada marcado, exit 2, e a 404 do lado continua pagando");
@@ -296,10 +303,52 @@ console.log("\n6c. fonte que aceita a conexão e cala é fato do transporte: nad
   const semClasseTimeout = copia({}, [], (fonte) => fonte.replace(LINHA_TIMEOUT, ""), FILA_BURACO, "tools/lib/transporte.js");
   confere("a mutação arrancou mesmo o classificador de timeout", !fs.readFileSync(path.join(semClasseTimeout, "tools/lib/transporte.js"), "utf8").includes("EMPACA.test(sinal)"), "o replace não alcançou o módulo");
   const g = varre(semClasseTimeout);
-  confere("com o classificador arrancado as três voltam a ser enterradas por 12h", g.marcadas === 3 && g.codigo === 1, `marcou ${g.marcadas}, codigo ${g.codigo}`);
+  /* Mesma troca de custo do 6b, pelo mesmo motivo: desde que marcar exige
+     status HTTP, o token arrancado não enterra mais ninguém — ele tira da
+     varredura o exit 2 e a frase que diz «nenhuma resposta em 10s», e é isso
+     que a rodada perderia. */
+  confere("com o classificador de timeout arrancado as três continuam vivas na fila", g.marcadas === 0, `marcou ${g.marcadas}`);
+  confere("mas a varredura perde o exit 2 e passa a chamar fila vazia o que é fonte muda", g.codigo === 1 && !/nenhuma resposta em 10s/.test(g.err), `codigo=${g.codigo} · ${g.err.split("\n").filter((l) => /não sondada|nenhuma sonda/.test(l)).join(" ⏎ ").slice(0, 200)}`);
 
   spawnSync("kill", [String(filho.pid)]);
   fs.rmSync(PRONTO, { force: true });
+}
+
+console.log("\n6d. tentativa que não chega ao pacote não enterra pauta: marcar exige resposta do destino (F6)");
+{
+  /* Medido 15/11 pelo revisor nas duas árvores vivas: `http://127.0.0.1:9/a`
+     (`ERR_SOCKET_BAD_PORT` — o undici nem abre tentativa) e `http://[::1`
+     (`ERR_INVALID_URL`) saíram da fila por 12 h com ZERO evidência da fonte,
+     enquanto a ECONNREFUSED verdadeira não saía. A régua declarada («só a
+     resposta HTTP registra») só valia para `sem-rede` e `empacou`; `outra` ia
+     direto ao `mem.registrar(..., "fonte_inalcancavel")`. Nenhuma rede neste
+     caso: os dois URLs morrem antes do SYN, a varredura custa milissegundos, e
+     por isso não marcar não custa tempo nenhum à rodada.                    */
+  const varre2 = (dir) => {
+    const r = spawnSync(process.execPath, [path.join(dir, "tools", "pick-lead.js")], { cwd: dir, encoding: "utf8", timeout: 240000 });
+    const mem = JSON.parse(fs.readFileSync(path.join(dir, "pipeline", "memory.json"), "utf8"));
+    return {
+      codigo: r.status ?? -1,
+      err: String(r.stderr || ""),
+      marcadas: Object.values(mem.leads || {}).filter((l) => l && l.outcome === "fonte_inalcancavel").length,
+    };
+  };
+  const FILA_ILEGIVEL = [
+    { title: "Pauta de fixture 7 sobre antenas de quintal numero 7", url: "http://127.0.0.1:9/a" },
+    { title: "Pauta de fixture 8 sobre antenas de quintal numero 8", url: "http://[::1" },
+  ];
+  const r = varre2(copia({}, [], null, FILA_ILEGIVEL));
+  confere("dois cards ilegíveis não pagam 12 h de fila", r.marcadas === 0, `${r.marcadas} marcações de 12h`);
+  confere("a varredura nomeia o fato: tentativa morta antes do pacote, nada marcado", /antes do pacote/.test(r.err) && !/fonte não abre/.test(r.err), r.err.split("\n").filter((l) => /não sondada|descartada/.test(l)).join(" ⏎ ").slice(0, 240));
+  confere("e o defeito do card não é lido como máquina sem link: sai 1, não 2", r.codigo === 1, `codigo=${r.codigo}`);
+  /* A falsificação devolve o mapeamento antigo, e morda onde a decisão mora
+     hoje: uma linha do `sonda()` do próprio `pick-lead.js` — o que `transporte`
+     decide (o veredito) não mudou, quem troca veredito em culpa da fonte é o
+     portão do status. */
+  const dirMut = copia({}, [], (fonte) => fonte.replace('return v === "outra" ? "sem-tentativa" : v;', 'return v === "outra" ? "nao-abre" : v;'), FILA_ILEGIVEL);
+  confere("a mutação devolve mesmo o mapeamento antigo no portão do status", /"outra" \? "nao-abre"/.test(fs.readFileSync(path.join(dirMut, "tools/pick-lead.js"), "utf8")), "o replace não alcançou a linha");
+  const m = varre2(dirMut);
+  confere("arrancado o portão, os dois cards voltam a sair da fila por 12 h sem uma resposta", m.marcadas === 2, `marcou ${m.marcadas}`);
 }
 
 console.log("\n7. invariante: a máquina do dono não foi tocada");
