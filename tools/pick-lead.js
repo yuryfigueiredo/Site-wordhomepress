@@ -1,6 +1,9 @@
 /* pick-lead.js — escolhe a próxima pauta sem interação humana.
    Imprime uma linha JSON {url, pillar, topic, slug} da melhor pauta do dia que
-   ainda não tenha rascunho; exit 1 quando não há nenhuma (a rodada só coleta).
+   ainda não tenha rascunho; exit 1 quando não há nenhuma (a rodada só coleta);
+   exit 2 quando NÃO HÁ REDE nesta máquina — aí nenhuma pauta é marcada, porque
+   sonda sem link falha para todas e 12h de fila boa iriam embora por um Wi-Fi
+   caído. A rodada fecha vermelha nesse caso, para a mão de reserva refazê-la.
    Uso: node tools/pick-lead.js          (COMPROMETE a pauta: em_andamento, 6h fora da fila)
         node tools/pick-lead.js --dry    (a mesma escolha, nenhuma escrita)
 
@@ -122,16 +125,27 @@ for (const f of files.slice(0, 3)) {
 /* Feed quebrado é comum (a ScienceDaily já entregou item com 404). A fonte é
    checada aqui, antes de gastar chave: o editor reprova link morto, e a rodada
    inteira se perderia depois do texto pronto. */
-async function alcançavel(url) {
+/* "A fonte não abre" e "esta máquina está sem rede" não são a mesma resposta.
+   A primeira é fato da fonte e vale tirar a pauta da fila por 12h. A segunda é
+   fato daqui: com o link caído a sonda falha em instantes para TODAS as
+   candidatas, e cada uma saía da fila por 12h sem nenhuma evidência de que a
+   fonte existe. `sem-rede` não marca nada e devolve exit 2 para a rodada. */
+async function sonda(url) {
+  /* Boca de prova: `HWP_SONDA=abre` faz toda fonte abrir. Sem ela, uma prova
+     que exercita a SELEÇÃO fica refém do DNS — `fixture.example` não resolve, e
+     o loop morria na primeira sonda sem nunca chegar à trava que está sendo
+     conferida. Não há valor que invente fonte: o default é sonda de verdade. */
+  if ((process.env.HWP_SONDA || "") === "abre") return "abre";
   try {
     const res = await fetch(url, {
       redirect: "follow",
       signal: AbortSignal.timeout(10000),
       headers: { "User-Agent": "Mozilla/5.0 (compatible; HomeworldPressBot/1.0; curadoria local)" },
     });
-    return res.ok;
-  } catch {
-    return false;
+    return res.ok ? "abre" : "nao-abre";
+  } catch (e) {
+    const sinal = `${(e && e.cause && e.cause.code) || (e && e.code) || ""} ${(e && e.message) || ""}`;
+    return /ENOTFOUND|EAI_AGAIN|ECONNREFUSED|ECONNRESET|EHOSTUNREACH|ENETUNREACH|UND_ERR_CONNECT|getaddrinfo/i.test(sinal) ? "sem-rede" : "nao-abre";
   }
 }
 
@@ -149,13 +163,22 @@ async function alcançavel(url) {
   const SECO = process.argv.includes("--dry");
   let sondadas = 0;
   let naoAbre = 0;
+  let semRede = 0;
   for (const c of candidatas) {
     if (sondadas >= 8 && Date.now() - t0 > orcamentoMs) {
       console.error(`pick-lead: teto de tempo da sondagem estourado (${sondadas} de ${candidatas.length} fontes checadas)`);
       break;
     }
     sondadas++;
-    if (!(await alcançavel(c.url))) {
+    const veredito = await sonda(c.url);
+    if (veredito === "sem-rede") {
+      /* Nada é marcado aqui, e o loop continua: a lista inteira sendo varrida
+         com o mesmo sintoma é o que decide, no fim, que o defeito é daqui. */
+      console.error(`pauta não sondada (sem rede nesta máquina): ${c.url}`);
+      semRede++;
+      continue;
+    }
+    if (veredito === "nao-abre") {
       console.error(`pauta descartada (fonte não abre): ${c.url}`);
       naoAbre++;
       if (!SECO) mem.registrar(ROOT, c.url, "fonte_inalcancavel", { slug: c.slug, topic: c.topic });
@@ -172,8 +195,19 @@ async function alcançavel(url) {
   console.error(
     `nenhuma pauta nova hoje (${total} itens nas 3 filas mais recentes: ${porQue.fonte_ja_usada} com fonte já publicada, ` +
       `${porQue.coluna_ja_coberta} de coluna já coberta, ${porQue.ja_tentada} tentadas há pouco, ${porQue.pauta_velha} com fonte velha, ${porQue.rascunho_ou_id} com rascunho/id no ar` +
-      `${naoAbre ? `, ${naoAbre} com fonte que não abriu (fora da fila 12h)` : ""}) — ` +
+      `${naoAbre ? `, ${naoAbre} com fonte que não abriu (fora da fila 12h)` : ""}` +
+      `${semRede ? `, ${semRede} não sondadas por falta de rede (nada marcado)` : ""}) — ` +
       "a rodada termina após coletar e checar"
   );
+  /* Se NADA chegou a uma resposta HTTP e o sintoma foi sempre falha de
+     transporte, o defeito é desta máquina, não das fontes: sair 1 diria "sem
+     pauta nova" numa fila que só está hígida e invisível por um link caído, e
+     marcar cada URL teria enterrado a fila inteira por 12h. A varredura
+     completa é o que distingue os dois — fonte morta dá HTTP, máquina sem link
+     dá ENOTFOUND/ECONNREFUSED em todas. */
+  if (semRede && !naoAbre) {
+    console.error("pick-lead: nenhuma sonda recebeu resposta HTTP — nenhuma pauta foi marcada, a fila está intacta (exit 2)");
+    process.exit(2);
+  }
   process.exit(1);
 })();

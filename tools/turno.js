@@ -327,6 +327,11 @@ if (!prov.armados().length)
 /* 5. pauta */
 const mem = require("./lib/memory");
 const pick = run("pick-lead.js");
+/* Exit 2 do `pick-lead` é fato desta máquina, não da pauta: sem link toda sonda
+   falha, e sair verde aqui deixaria o horário "servido" com a fila intacta e o
+   diário dizendo "sem pauta nova" — a mão de reserva (22 min depois) é quem
+   pode refazer o serviço quando a rede volta. Vermelho, portanto. */
+if (pick.code === 2) finish(`sem rede para sondar as fontes: ${pick.out.trim().split("\n").slice(-3).join(" · ").slice(0, 300)}`, 1);
 if (pick.code !== 0) finish(pick.out.trim() || "sem pauta nova.");
 const lead = JSON.parse(pick.out.trim().split("\n").pop());
 say("pauta", `${lead.topic} (${lead.source}, score ${lead.score})`);

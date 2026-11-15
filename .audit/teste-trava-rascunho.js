@@ -182,6 +182,42 @@ console.log("\n6. falsificação ao contrário: liberar tudo quebra a trava de t
   confere("liberar sem olhar a janela solta uma pauta que a rodada está escrevendo", r.liberados === 1 && r.rascunho === 0, `liberados=${r.liberados} rascunho=${r.rascunho}`);
 }
 
+console.log("\n6b. sem rede NÃO é pauta morta: a varredura inteira falha, nada é marcado e o pick-lead sai 2");
+{
+  /* O caso é real e medido: com o link caído toda sonda morre em falha de
+     transporte, e a versão antiga enterrava a fila inteira por 12h por
+     `fonte_inalcancavel` — R3 contou duas pautas boas marcadas em um segundo,
+     sem uma resposta HTTP sequer. O proxy apontado para uma porta fechada é a
+     mesma máquina sem rede, reproduzível e sem esperar o Wi-Fi cair. */
+  const SEM_REDE = { ...process.env, NODE_USE_ENV_PROXY: "1", HTTPS_PROXY: "http://127.0.0.1:9", HTTP_PROXY: "http://127.0.0.1:9" };
+  const varre = (dir) => {
+    const r = spawnSync(process.execPath, [path.join(dir, "tools", "pick-lead.js")], { cwd: dir, encoding: "utf8", timeout: 240000, env: SEM_REDE });
+    const mem = JSON.parse(fs.readFileSync(path.join(dir, "pipeline", "memory.json"), "utf8"));
+    return {
+      codigo: r.status ?? -1,
+      marcadas: Object.values(mem.leads || {}).filter((l) => l && l.outcome === "fonte_inalcancavel").length,
+    };
+  };
+  const travaViva = { "https://fixture.example/um": { outcome: "em_andamento", at: horasAtras(1), slug: PISTAS[0].slug, topic: PISTAS[0].title } };
+  const dir = copia(travaViva, [PISTAS[0].slug]);
+  const r = varre(dir);
+  confere("o portão devolve 2, não 1 — a rodada distingue link caído de fila vazia", r.codigo === 2, `codigo=${r.codigo}`);
+  confere("nenhuma pauta saiu da fila por causa do link", r.marcadas === 0, `${r.marcadas} marcações de 12h`);
+  /* Duas mutações, uma por boca: o código de saída e a marcação. Trocar só o
+     portão do fim mostra que exit 2 é consequência dele; trocar só a
+     classificação mostra que o que salva a fila é distinguir o sintoma. */
+  const semPortao = copia(travaViva, [PISTAS[0].slug], (fonte) => fonte.replace("if (semRede && !naoAbre) {", "if (false) {"));
+  confere("a mutação encontrou o portão de saída", !fs.readFileSync(path.join(semPortao, "tools/pick-lead.js"), "utf8").includes("if (semRede && !naoAbre) {"), "token não achado");
+  const p = varre(semPortao);
+  confere("arrancado o portão a mesma varredura diz 1 — a rodada trataria link caído como fila vazia", p.codigo === 1 && p.marcadas === 0, `codigo=${p.codigo}, marcou ${p.marcadas}`);
+  const semClasse = copia(travaViva, [PISTAS[0].slug], (fonte) =>
+    fonte.replace('/ENOTFOUND|EAI_AGAIN|ECONNREFUSED|ECONNRESET|EHOSTUNREACH|ENETUNREACH|UND_ERR_CONNECT|getaddrinfo/i.test(sinal) ? "sem-rede" : "nao-abre"', '"nao-abre"')
+  );
+  confere("a mutação encontrou a classificação", !fs.readFileSync(path.join(semClasse, "tools/pick-lead.js"), "utf8").includes('"sem-rede" : "nao-abre"'), "o replace não alcançou a sonda");
+  const m = varre(semClasse);
+  confere("com a classificação antiga as duas pautas vivas saem da fila por 12h", m.marcadas === 2 && m.codigo === 1, `marcou ${m.marcadas}, codigo ${m.codigo}`);
+}
+
 console.log("\n7. invariante: a máquina do dono não foi tocada");
 {
   const gitDepois = execFileSync("git", ["-C", REPO_REAL, "status", "--porcelain", "-uno"], { encoding: "utf8" });
