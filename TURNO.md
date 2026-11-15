@@ -1,16 +1,16 @@
-# Turno — 2026-11-15 05:44 UTC
+# Turno — 2026-11-15 09:32 UTC
 
-- **coleta** — fila: 34 pautas acumuladas em 4 rodada(s) (10/12 feeds ok nesta) → pipeline/leads/2026-11-15.md · 50 novata(s) cortada(s) por fonte/teto, voltam na próxima rodada · feeds fora: Publishing Perspectives: fetch failed (UND_ERR_SOCKET); Phys.org: HTTP 429
+- **coleta** — fila: 38 pautas acumuladas em 5 rodada(s) (11/12 feeds ok nesta) → pipeline/leads/2026-11-15.md · 50 novata(s) cortada(s) por fonte/teto, voltam na próxima rodada · feeds fora: Publishing Perspectives: fetch failed (UND_ERR_SOCKET)
 - **rotação diária** — rotação diária aplicada (capa intacta).
 - **manutenção** — errors 0 | ✗ warnings 1
-- **cadência** — 1/5 publicação(ões) hoje
-- **pauta** — Astronomers discover hidden alien planet in James Webb images (Science Daily Astronomy, score 5)
-- **brief** — pipeline/drafts/astronomers-discover-hidden-alien-planet-in-james-webb-images/ criado
-- **texto** — escrito por qoder/Efficient: second-pass-webb-images-planet-never-hidden (1146 palavras)
-- **foto** — ✓ foto encontrada: images/posts/astronomers-discover-hidden-alien-planet-in-james-webb-images.jpg (Photo by Lukas Kyzur on Unsplash)
-- **capa** — astronomers-discover-hidden-alien-planet-in-james-webb-images usa foto real (images/posts/astronomers-discover-hidden-alien-planet-in-james-webb-images.jpg) — nenhuma placa gerada
-- **edição** — tentativa 1 reprovada:   ✗ [rhythm] frase com 33 palavras (máximo 30)
-- **edição** — reescreva falhou: A rodada termina aqui de propósito: sem texto não há o que checar nem publicar.
-- **fotos** — 1 arquivo(s) descartado(s): foto baixada para uma matéria que não chegou ao ar
-- **capa** — index-hero: +1 (capa rotacionada: new-method-measures-microplastics-in-the-air-using-an-uncrewed-a (7.8, Nov 7, 2026) · piso 6.5 · rodada 2026-11-15T02:23)
-- **fim** — rascunho ficou reprovado depois de 3 tentativas — nada publicado, e a pauta fica 72h fora da fila (pipeline/memory.json).
+- **cadência** — 2/5 publicação(ões) hoje
+- **pauta** — ‘We are dream-walking into a desperate situation’: the Booker prize winner on his sci-fi alien invasion wakeup call (The Guardian SF, score 4)
+- **brief** — pipeline/drafts/we-are-dream-walking-into-a-desperate-situation-the-booker-prize/ criado
+- **texto** — escrito por qoder/Efficient: booker-winner-alien-invasion-warning-form (1044 palavras)
+- **foto** — ✓ foto encontrada: images/posts/we-are-dream-walking-into-a-desperate-situation-the-booker-prize.jpg (Photo by Олег Мороз on Unsplash)
+- **capa** — we-are-dream-walking-into-a-desperate-situation-the-booker-prize usa foto real (images/posts/we-are-dream-walking-into-a-desperate-situation-the-booker-prize.jpg) — nenhuma placa gerada
+- **edição** — tentativa 1 reprovada:   ✗ [rhythm] frase com 35 palavras (máximo 30)
+- **edição** — aprovado na tentativa 2
+- **nota** — 6.8/10 · 6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)
+- **publicação** — publicado localmente: alien-invasions-promise-a-fight-and-the-warning-has-none · nota 6.8/10 · cadência hoje: 3/5
+- **fim** — rodada completa. O commit `turno:` e o push são do runner (Actions ou hwp-turno.sh); o deploy é da Vercel.
