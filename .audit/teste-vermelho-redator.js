@@ -92,6 +92,23 @@ function planta(opciones) {
   const mem = JSON.parse(fs.readFileSync(memArq, "utf8"));
   if (opciones.gap) mem.publishes.push({ id: "fixture-publicada-agora", at: new Date().toISOString(), score: 7 });
   fs.writeFileSync(memArq, JSON.stringify(mem, null, 2) + "\n");
+  /* O `cp -a` traz o `round-lock.json` da máquina, e com o cron servindo 6
+     horários por dia o horário em curso estava quase sempre marcado como
+     servido: o portão do passo 0 devolvia `rodada duplicada` com exit 0 antes
+     de qualquer etapa, e os quatro casos abaixo — vermelho do redator, do brief,
+     do build diário e o verde da cadência — falhavam todos pela janela do
+     relógio, não pelo contrato (medido em 15/11 às 00:00, 11 vermelhas). A
+     fixture prova o desfecho da rodada, então declara o próprio horário como
+     não servido; os anteriores ficam, para a poda e o histórico continuarem os
+     de verdade. */
+  const lockArq = path.join(dir, "pipeline", "state", "round-lock.json");
+  if (fs.existsSync(lockArq)) {
+    const roundLock = require(path.join(ROOT, "tools", "lib", "round-lock.js"));
+    const lk = JSON.parse(fs.readFileSync(lockArq, "utf8"));
+    lk.servidas = (lk.servidas || []).filter((s) => s && s.rodada !== roundLock.chave());
+    fs.writeFileSync(lockArq, JSON.stringify(lk, null, 2) + "\n");
+    if (roundLock.jaServida(new Date(), dir)) throw new Error("a fixture não destravou o horário em curso");
+  }
   return dir;
 }
 

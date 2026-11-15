@@ -110,6 +110,22 @@ function destravaAgenda(dir) {
   const mem = JSON.parse(fs.readFileSync(memP, "utf8"));
   mem.publishes = [];
   fs.writeFileSync(memP, JSON.stringify(mem, null, 2) + "\n");
+  /* O portão de idempotência lê o `round-lock.json` que o `cp -a` acabou de
+     trazer da máquina do dono. Como o cron serve 6 horários por dia, qualquer
+     prova rodada nos ~45 min seguintes a uma rodada real herdava o horário em
+     curso como SERVIDO: o turno.js saía cedo no passo 0 e as asserções de pauta
+     queimada e de vermelho do redator falhavam pela janela do relógio, não pelo
+     contrato. Medido em 15/11 às 00:56, com a rodada das 22:23 no disco: 12
+     vermelhas. A fixture declara o próprio estado — o horário em curso sai da
+     lista, os anteriores ficam (a poda é em MAX_SERVIDAS, na leitura) para a
+     conta de histórico continuar real. Quem planta trava própria (`lock:`/
+     `semLock`) sobrescreve este arquivo depois, e continua no controle. */
+  const lockP = path.join(dir, "pipeline", "state", "round-lock.json");
+  if (fs.existsSync(lockP)) {
+    const lk = JSON.parse(fs.readFileSync(lockP, "utf8"));
+    lk.servidas = (lk.servidas || []).filter((s) => s && s.rodada !== SLOT);
+    fs.writeFileSync(lockP, JSON.stringify(lk, null, 2) + "\n");
+  }
   for (const f of ["ORIG_HEAD", "MERGE_HEAD", "rebase-apply", "rebase-merge", "CHERRY_PICK_HEAD"])
     fs.rmSync(path.join(dir, ".git", f), { recursive: true, force: true });
   let assuntos = [];
@@ -135,6 +151,10 @@ function destravaAgenda(dir) {
   const min = Number(JSON.parse(fs.readFileSync(path.join(dir, "pipeline", "cadence.json"), "utf8")).min_hours_between_publishes);
   confere("00.a agenda da fixture está destravada (0 publicações hoje)", hoje === 0, `lido: ${hoje}`);
   confere("00.b o intervalo mínimo não trava a fixture", gap === null || gap >= min, `gap: ${gap === null ? "sem publicação" : gap.toFixed(2) + "h"} / mín ${min}h`);
+  /* A travessa do portão, conferida na mesa e não presumida: sem isto a fixture
+     herdaria a rodada servida da máquina e cada caso abaixo morreria no passo 0
+     com `rodada duplicada` — vermelhos que acusam o relógio, não o contrato. */
+  confere("00.c o horário em curso não consta como servido na fixture", !roundLock.jaServida(new Date(), dir), `chave lida: ${roundLock.chave()} · servidas na cópia: ${JSON.stringify(roundLock.ler(dir).servidas.map((s) => s.rodada))}`);
   return dir;
 }
 
@@ -252,11 +272,20 @@ function etapasNaOrdem(diario) {
   return achadas;
 }
 
-/* A pauta queimada é a diferença entre as duas memórias: qualquer URL que saiu
-   de "nunca tentada" para `em_andamento`. Serve ao caso verde (o stub do
-   redator grava o rastro) e ao vermelho (o pick-lead real marca antes do texto). */
+/* A pauta queimada é o que sai da fila: uma URL que a rodada TOCOU (entrou na
+   memória ou teve o carimbo `at` avançado). Não é a etiqueta `em_andamento` —
+   quem confere o desfecho é o fim da rodada, e uma matéria reprovada no
+   check-post ou sem texto no redator chega na memória como `reprovada`/
+   `falha_texto`. O preço é o mesmo (a pauta fica fora da fila), e amarrar a
+   asserção ao rótulo do meio do caminho faz a prova vermelha por reclassificação
+   alheia: medido em 15/11 com o draft do stub caindo na terceira reprovação. */
 function queimadasAntesDepois(antes, depois) {
-  return Object.keys(depois.leads).filter((u) => depois.leads[u].outcome === "em_andamento" && (!antes.leads[u] || antes.leads[u].outcome !== "em_andamento"));
+  return Object.keys(depois.leads).filter((u) => {
+    const d = depois.leads[u] || {};
+    const a = (antes.leads || {})[u];
+    if (!a) return !!d.at;
+    return String(d.at || "") !== String(a.at || "");
+  });
 }
 
 /* ───────────────────────── 1. o portão ───────────────────────── */
@@ -365,16 +394,24 @@ console.log("\n5. falsificação: arrancar a chamada do portão devolve a mão d
   /* Três bocas para a mesma mutação — o guard é um bloco `else if` hoje e pode
      virar uma linha `if (...) saidaCurta(...)` amanhã; falhar as três é a prova
      avisar que desatualizou, não ficar verde por acaso. A árvore de trabalho é
-     CRLF e o blob é LF: `\r?\n` nas duas pontas. */
+     CRLF e o blob é LF: `\r?\n` nas duas pontas.
+     O miolo `(?:[^()]|\([^()]*\))*` é o que faltava desde 14/11: a chamada
+     passou a levar argumento (`jaServida(new Date(), ROOT)`) e `[^)]*` morre no
+     primeiro `)` de `new Date(` — a mutação não casava, o portão ficava de pé e
+     a falsificação "provava" o verde mudo. Cada boca traz a SUA substituição,
+     porque arrancar o `} else if` sem devolver a chave que fecha o `if (FORCAR)`
+     derruba o `node --check` e a falsificação passaria a medir sintaxe. */
+  const ARG = "(?:[^()]|\\([^()]*\\))*";
+  const GUARD = `roundLock\\.jaServida\\(${ARG}\\)`;
   const MUTACOES = [
-    [/ \} else if \(roundLock\.jaServida\([^)]*\)\) \{[\s\S]*?\r?\n\}\r?\n/, "\n"],
-    [/else if \(roundLock\.jaServida\([^)]*\)\)[\s\S]*?;\r?\n/, ""],
-    [/if \(!FORCAR && roundLock\.jaServida\([^)]*\)\)[\s\S]*?\r?\n\}\r?\n/, "\n"],
+    [new RegExp(`\\} else if \\(${GUARD}\\) \\{[\\s\\S]*?\\r?\\n\\}`), "}"],
+    [new RegExp(`else if \\(${GUARD}\\)[\\s\\S]*?;\\r?\\n`), ""],
+    [new RegExp(`if \\(!FORCAR && ${GUARD}\\)[\\s\\S]*?\\r?\\n\\}`), "/* MUTAÇÃO DA PROVA: portão arrancado */"],
   ];
   let mutada = fonte;
   let boca = -1;
   for (let i = 0; i < MUTACOES.length; i++) {
-    const t = mutada.replace(MUTACOES[i][0], "/* MUTAÇÃO DA PROVA: portão arrancado */\n");
+    const t = mutada.replace(MUTACOES[i][0], MUTACOES[i][1]);
     if (t !== mutada) { mutada = t; boca = i; break; }
   }
   confere("a mutação encontrou o guard do portão", boca >= 0, "nenhuma das três bocas casou — atualize a mutação");
@@ -391,7 +428,7 @@ console.log("\n5. falsificação: arrancar a chamada do portão devolve a mão d
   const antes = JSON.parse(fs.readFileSync(path.join(dir, "pipeline", "memory.json"), "utf8"));
   const r = roda(dir);
   const depois = JSON.parse(fs.readFileSync(path.join(dir, "pipeline", "memory.json"), "utf8"));
-  const queimadas = Object.keys(depois.leads).filter((u) => !antes.leads[u] || (antes.leads[u].outcome !== "em_andamento" && depois.leads[u].outcome === "em_andamento"));
+  const queimadas = queimadasAntesDepois(antes, depois);
   confere("sem o guard a segunda mão volta a rodar a pipeline inteira", etapasNaOrdem(r.depois.diario).includes("texto"), etapasNaOrdem(r.depois.diario).join(" › ") || `código ${r.code}`);
   confere("e chama o redator: a pauta sai queimada como em_andamento", queimadas.length > 0, `nenhuma pauta marcada · ${r.out.split("\n").slice(0, 6).join(" ⏎ ")}`);
   if (queimadas.length) {
