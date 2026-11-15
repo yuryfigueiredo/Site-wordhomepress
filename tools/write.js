@@ -101,8 +101,17 @@ function gravar(draft, k) {
   try { anterior = JSON.parse(fs.readFileSync(path.join(DIR, "draft.json"), "utf8")); } catch {}
 
   /* Na reescrita o modelo não estava vendo o que já tinha escrito: recomeçava
-     do zero e devolvia ainda menos palavras. O texto atual vai no prompt e a
-     ordem é expandir, não reescrever. */
+     do zero e devolvia ainda menos palavras. O texto atual vai no prompt, e a
+     ordem depende do que falta: EXPANDIR quando o texto está abaixo do piso,
+     CORRIGUAR quando já passou dele.
+
+     A segunda metade é medida, não elegância: na rodada das 02:23 de 15/11 o
+     draft tinha 1146 palavras (piso 770) e o editor reprovou UMA frase de 33
+     palavras. O prompt, porém, mandava "ACRESCENTE seções até passar de 770
+     palavras" — uma ordem já cumprida, que pede mais texto em cima de um
+     conserto de uma linha. A chamada devolvia o JSON inteiro reescrito e
+     estourou os 780 s do `chamada_max_ms` sem fechar: rodada sem peça, pauta
+     queimada e o diário dizendo outra coisa. */
   let prompt = promptBase;
   if (fixTxt) {
     prompt += "\n\n---\n" + fixTxt;
@@ -111,7 +120,10 @@ function gravar(draft, k) {
       prompt +=
         `\n\n=== SEU TEXTO ATUAL (${n} palavras; o piso é ${piso}) ===\n` +
         JSON.stringify({ title: anterior.title, dek: anterior.dek, sources: anterior.sources, content: anterior.content }, null, 2) +
-        `\n\nNÃO reescreva do zero. Mantenha os parágrafos que o editor não reprovou e ACRESCENTE seções até passar de ${piso} palavras. O JSON devolvido tem de conter esse texto expandido.`;
+        `\n\n` +
+        (n < piso
+          ? `NÃO reescreva do zero. Mantenha os parágrafos que o editor não reprovou e ACRESCENTE seções até passar de ${piso} palavras. O JSON devolvido tem de conter esse texto expandido.`
+          : `NÃO reescreva do zero e NÃO acrescente seções: com ${n} palavras o texto já passou do piso de ${piso}. Corrija EXATAMENTE os pontos que o editor reprovou e devolva o mesmo JSON, com o mesmo comprimento e as mesmas fontes.`);
     }
   }
 
