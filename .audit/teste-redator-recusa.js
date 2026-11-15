@@ -180,7 +180,9 @@ console.log("\n1. a lista de tokens de transporte tem UMA boca no repo");
   for (const [origem, corpo, esperado, porque] of CURA)
     confere(`esperaCura(${origem}, «${corpo.slice(0, 24)}…») = ${esperado} — ${porque}`, transporte.esperaCura(origem, corpo) === esperado, transporte.esperaCura(origem, corpo));
   confere("o write.js lê a decisão do módulo, não uma regex própria", /transporte\.esperaCura\(prov\.origem\(res\), porQue\)/.test(fs.readFileSync(path.join(ROOT, "tools/write.js"), "utf8")));
-  confere("e `origem()` é uma boca só: providers exporta, ninguém inspeciona o campo cru", /module\.exports = \{[^}]*\borgem\b/.test(fs.readFileSync(path.join(ROOT, "tools/lib/providers.js"), "utf8")) && !/res\.origem\b/.test(fs.readFileSync(path.join(ROOT, "tools/write.js"), "utf8")));
+  const bocaOrigem = fs.readFileSync(path.join(ROOT, "tools/lib/providers.js"), "utf8");
+  const declaração = (bocaOrigem.match(/module\.exports = \{[^}]*\};/) || [""])[0];
+  confere("e `origem()` é uma boca só: providers exporta, ninguém inspeciona o campo cru", /\borigem\b/.test(declaração) && !/res\.origem\b/.test(fs.readFileSync(path.join(ROOT, "tools/write.js"), "utf8")), declaração.trim() || "nenhum `module.exports = { … }` encontrado");
   const pick = fs.readFileSync(path.join(ROOT, "tools/pick-lead.js"), "utf8");
   confere("o pick-lead cita o módulo e não testa token nenhum", /require\("\.\/lib\/transporte"\)/.test(pick) && !/test\(sinal\)/.test(pick));
   const w = fs.readFileSync(path.join(ROOT, "tools/write.js"), "utf8");
