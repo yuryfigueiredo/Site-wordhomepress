@@ -157,6 +157,7 @@ const prompt = [
   `- O campo content tem de ter NO MÍNIMO ${require("./lib/word-floor").piso(brief.word_count)} palavras visíveis (alvo ${brief.word_count}). Se ficar abaixo, acrescente seções até atingir — texto curto é recusado pelo editor mecânico, não é estilo.`,
   "- Estrutura do content: 6 a 9 seções <h2>, cada uma com 2 a 4 parágrafos de 50 a 110 palavras. Se o total não bater o piso, acrescente uma seção; não encurte as existentes.",
   "- Inclua exatamente um parágrafo de uma frase (1 a 7 palavras) e pelo menos um parágrafo com 4 ou mais frases.",
+  "- Nenhuma frase com mais de 28 palavras: o editor mecânico reprova aos 30, e uma frase longa custa a matéria inteira. Quebre-a em duas.",
   "- Responda SOMENTE com o JSON do contrato acima, sem cercas de código.",
   `- Campo "date": copie exatamente "${brief.data_publicacao}". Não é a data da fonte e não é para inventar.`,
   `- Campo "photoQuery": 3 a 6 palavras em inglês nomeando a CENA que a foto desta matéria deveria mostrar — o que uma câmera veria, não o assunto da notícia. É com ele que o banco de imagens escolhe a foto; sem ele a matéria vai ao ar com imagem de outro assunto.`,

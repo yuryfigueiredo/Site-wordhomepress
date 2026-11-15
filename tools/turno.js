@@ -1,7 +1,7 @@
 /* turno.js — uma rodada completa do robô, idêntica no seu PC e no GitHub Actions.
    Coleta → rotação diária → manutenção → teto diário → pauta → brief → texto
-   (provedores de pipeline/providers.json) → capa → editor mecânico (até 3
-   tentativas) → nota → publicação. Nunca faz push e nunca faz
+   (provedores de pipeline/providers.json) → capa → editor mecânico (refaz até o
+   texto passar ou a rodada ficar sem tempo) → nota → publicação. Nunca faz push e nunca faz
    deploy: quem commita/envia é o workflow. Escreve TURNO.md, o relatório que
    substitui o painel quando o seu PC está desligado.
 
@@ -14,6 +14,11 @@ const { execFileSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "..");
 const log = [];
 const say = (stage, msg) => { log.push(`- **${stage}** — ${msg}`); console.log(`[${stage}] ${msg}`); };
+
+/* Relógio da rodada, aberto aqui porque o que ele tem de medir é o caminho
+   inteiro — coleta, manutenção, brief, texto — e não só o laço de correção que o
+   lê. O passo 8 usa este instante para decidir se cabe mais uma reescrita. */
+const RODADA_ABRE = Date.now();
 
 /* Saída SEM percorrer a pipeline: só o diário e o exit code. O portão do
    horário duplicado precisa sair por aqui porque uma rodada que não começou não
@@ -367,15 +372,47 @@ say("foto", garantirFoto(lead.slug).linha);
 const capa = run("make-cover.js", [lead.slug]);
 say("capa", capa.code === 0 ? capa.out.trim().split("\n")[0] : `falhou: ${capa.out.trim().slice(-200)}`);
 
-/* 8. editor mecânico, até 3 tentativas com devolutiva */
+/* 8. editor mecânico: refaz enquanto houver tempo na rodada.
+
+   A régua é o relógio, não a contagem, e o motivo é o cinto: quem passa dos
+   minutos do `timeout` do runner é morto por fora — sem `finish()`, sem vermelho
+   no stdout, sem recuo — e a árvore suja derruba também o horário seguinte
+   (portão da árvore). Dois horários perdidos em vez de um. Então uma reescrita
+   só começa se, estourando a própria parede, ainda sobrar tempo para nota +
+   publicação + build e para o runner fechar o commit e o push.
+
+   Medido 15/11: a rodada das 02:23 fechou reprovada em 22 min de 65 — quem a
+   matou foi o número 3, não o relógio, e a matéria morreu com 43 min de folga.
+   O `TENTATIVAS_MAX` continua: sem ele um redator que devolve o mesmo texto em
+   segundos gira o laço inteiro até o corte de tempo, gastando o plano à toa.
+   Os 65 min são os `timeout 65m` do `~/.local/bin/hwp-turno.sh` (fora do repo);
+   mexer lá exige mexer aqui. */
+const PAREDE_RUNNER_MS = 65 * 60 * 1000;
+const PAREDE_ESCRITA_MS = 15 * 60 * 1000; // o `timeout` de cada filho em `run()`
+const CUSTO_POS_LACO_MS = 8 * 60 * 1000; // nota + publish + build + diário
+const FOLGA_RUNNER_MS = 5 * 60 * 1000; // fetch/merge antes, push depois
+const TENTATIVAS_MAX = 6;
+const minutos = (ms) => Math.round(ms / 60000);
 let check = { code: 1, out: "" };
 let reescritaMorta = "";
-for (let t = 1; t <= 3; t++) {
+/* `null`, e não 0: o corte pode cair dentro do primeiro minuto (a prova de
+   cinto curto mede segundos), e um número de minutos arredondado a zero é falso
+   no teste de saída — o laço pararia sem tempo e o diário reclamaria de
+   tentativas esgotadas, que é exatamente a mentira que este portão existe para
+   não contar. */
+let semTempo = null;
+for (let t = 1; t <= TENTATIVAS_MAX; t++) {
   check = run("check-post.js", [lead.slug]);
   if (check.code === 0) { say("edição", `aprovado na tentativa ${t}`); break; }
   const rejs = check.out.split("\n").filter((l) => l.includes("✗")).slice(0, 6).join("\n");
   say("edição", `tentativa ${t} reprovada: ${rejs.replace(/\n/g, " · ").slice(0, 220)}`);
-  if (t === 3) break;
+  if (t === TENTATIVAS_MAX) break;
+  const gasto = Date.now() - RODADA_ABRE;
+  if (gasto + PAREDE_ESCRITA_MS > PAREDE_RUNNER_MS - CUSTO_POS_LACO_MS - FOLGA_RUNNER_MS) {
+    semTempo = minutos(gasto);
+    say("edição", `sem tempo para a tentativa ${t + 1}: rodada com ${semTempo} min, corte ${minutos(PAREDE_RUNNER_MS - PAREDE_ESCRITA_MS - CUSTO_POS_LACO_MS - FOLGA_RUNNER_MS)} min`);
+    break;
+  }
   /* O `fix.md` NÃO diz em que formato devolver: quem decide é o `write.js`,
      que olha o rascunho no disco. Com texto acima do piso ele pede só as trocas
      (`{"edits":[{old,new}]}`), e um "devolva o JSON completo de novo" aqui por
@@ -409,8 +446,18 @@ if (check.code !== 0) {
     mem.registrar(ROOT, lead.url, "falha_texto", { slug: lead.slug, topic: lead.topic });
     finish(`a reescrita do editor não entregou texto: ${reescritaMorta}`, 1);
   }
+  /* O relógio acabou com o texto ainda em disputa: a peça não foi julgada morta,
+     o que faltou foi minuto de rodada. É a mesma classe do passo 7 — um fato do
+     tempo desta máquina, não do texto — então a pauta sai por `falha_texto`
+     (24h) e volta amanhã, em vez de pagar os 72h de quem foi reprovado de
+     verdade. Vermelho pelo mesmo contrato: sem o token no stdout o vigia canta
+     entrega e a mão de reserva não refaz o horário. */
+  if (semTempo !== null) {
+    mem.registrar(ROOT, lead.url, "falha_texto", { slug: lead.slug, topic: lead.topic });
+    finish(`o júri reprovou e a rodada ficou sem tempo de refazer: ${semTempo} min gastos de ${minutos(PAREDE_RUNNER_MS)}, pauta de volta à fila em ${cad.lead_retry_hours.falha_texto}h`, 1);
+  }
   mem.registrar(ROOT, lead.url, "reprovada", { slug: lead.slug, topic: lead.topic });
-  finish("rascunho ficou reprovado depois de 3 tentativas — nada publicado, e a pauta fica 72h fora da fila (pipeline/memory.json).");
+  finish(`rascunho ficou reprovado depois de ${TENTATIVAS_MAX} tentativas — nada publicado, e a pauta fica ${cad.lead_retry_hours.reprovada}h fora da fila (pipeline/memory.json).`);
 }
 
 /* 9. nota */

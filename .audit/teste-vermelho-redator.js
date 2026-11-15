@@ -22,6 +22,12 @@ const { execFileSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..");
 const { agendaRasa, medir } = require(path.join(__dirname, "agenda-rasa.js"));
+
+/* O teto de tentativas é LIDO do `tools/turno.js`, não copiado aqui: a prova
+   confere o contrato (o diário diz o número que o laço usa), e mudar a régua na
+   fonte não deixa esta prova mentir verde. */
+const turnoFonte = fs.readFileSync(path.join(ROOT, "tools", "turno.js"), "utf8");
+const CAP = Number((turnoFonte.match(/const TENTATIVAS_MAX = (\d+)/) || [])[1]);
 const fixtures = [];
 let verde = 0;
 const falhas = [];
@@ -222,21 +228,22 @@ console.log("\n6. a reescrita do editor morre no passo 8 → vermelho, causa do 
   confere("a mesma linha sobrevive no diário", /VERMELHO: a reescrita do editor não entregou texto/.test(r.diario), r.diario.split("\n").slice(-4).join(" ⏎ "));
   const registro = r.mem.leads[LEAD.url];
   confere("a pauta fica falha_texto, não reprovada", registro && registro.outcome === "falha_texto", JSON.stringify(registro));
-  confere("o diário não mente 'reprovado depois de 3 tentativas'", !/reprovado depois de 3 tentativas/.test(r.diario), r.diario.split("\n").filter((l) => /tentativas|reprovada/.test(l)).join(" ⏎ "));
+  confere("o diário não mente 'reprovado depois de N tentativas'", !new RegExp(`reprovado depois de ${CAP} tentativas`).test(r.diario), r.diario.split("\n").filter((l) => /tentativas|reprovada/.test(l)).join(" ⏎ "));
   confere("o horário não fica marcado como servido (a mão de reserva pode refazê-lo)", medir(dir).servida === false, JSON.stringify(medir(dir)));
 }
 
-/* 7 — controle: o mesmo júri rigoroso, mas com o redator entregando as três
-        reescritas. Aqui `reprovada` (72h) e verde SÃO o caminho certo: foi a
-        peça que não passou, não a máquina. Esta é a conferência que impede a
-        correção de 6 de transformar toda reprovação em emergência vermelha. */
+/* 7 — controle: o mesmo júri rigoroso, mas com o redator entregando todas as
+        reescritas do teto, com tempo de sobra na rodada. Aqui `reprovada` (72h) e
+        verde SÃO o caminho certo: foi a peça que não passou, não a máquina. Esta
+        é a conferência que impede a correção de 6 — e o laço novo de 10 — de
+        transformar toda reprovação em emergência vermelha. */
 console.log("\n7. controle: reprovação editorial de verdade continua verde, com a pauta em reprovada");
 {
   const dir = planta({ escrita: "ok", editor: "falha" });
   const r = roda(dir);
   confere("exit 0 (júri rigoroso é trabalho editorial, não falha do relógio)", r.code === 0, `código ${r.code} · ${r.out.split("\n").filter((l) => /VERMELHO/.test(l)).join(" ⏎ ")}`);
   confere("nenhum VERMELHO na rodada que o editor reprovou de verdade", !/VERMELHO/.test(r.out), r.out.split("\n").filter((l) => /VERMELHO/.test(l)).join(" ⏎ "));
-  confere("as três tentativas aconteceram e o diário diz as três", /tentativa 3 reprovada/.test(r.diario) && /reprovado depois de 3 tentativas/.test(r.diario), r.diario.split("\n").filter((l) => /edição|fim/.test(l)).join(" ⏎ "));
+  confere(`as ${CAP} tentativas aconteceram e o diário diz as ${CAP}`, new RegExp(`tentativa ${CAP} reprovada`).test(r.diario) && new RegExp(`reprovado depois de ${CAP} tentativas`).test(r.diario), r.diario.split("\n").filter((l) => /edição|fim/.test(l)).join(" ⏎ "));
   confere("a pauta sai reprovada (72h)", r.mem.leads[LEAD.url] && r.mem.leads[LEAD.url].outcome === "reprovada", JSON.stringify(r.mem.leads[LEAD.url]));
   confere("a capa girou mesmo sem publicar", /index-hero:/.test(r.out), r.out.split("\n").filter((l) => /\[capa\]/.test(l)).join(" ⏎ "));
   confere("e o horário ficou servido", medir(dir).servida === true, JSON.stringify(medir(dir)));
@@ -258,7 +265,7 @@ console.log("\n8. falsificação A: desligado o ramo da reescrita, volta o verde
   const r = roda(dir);
   confere("sem o ramo a rodada fecha verde outra vez", r.code === 0, `código ${r.code}`);
   confere("e a pauta vira reprovada: 72h fora da fila por um timeout", r.mem.leads[LEAD.url] && r.mem.leads[LEAD.url].outcome === "reprovada", JSON.stringify(r.mem.leads[LEAD.url]));
-  confere("o diário volta a mentir a causa", /reprovado depois de 3 tentativas/.test(r.diario), r.diario.split("\n").slice(-3).join(" ⏎ "));
+  confere("o diário volta a mentir a causa", new RegExp(`reprovado depois de ${CAP} tentativas`).test(r.diario), r.diario.split("\n").slice(-3).join(" ⏎ "));
 }
 
 console.log("\n9. falsificação B: causa cortada na última linha devolve o diário sem o porquê");
@@ -276,6 +283,46 @@ console.log("\n9. falsificação B: causa cortada na última linha devolve o di�
   confere("mas o timeout desapareceu do token: sobra a linha de rodapé", !/900s/.test(r.out) && /termina aqui de propósito/.test(r.out), r.out.split("\n").filter((l) => /VERMELHO/.test(l)).join(" ⏎ "));
 }
 
+/* 10 — quem manda no laço de correção é o relógio da rodada, não o número de
+        voltas. Medido 15/11: a rodada das 02:23 fechou reprovada em 22 min de um
+        cinto de 65 e a pauta pagou 72h de fila — o número 3 matou a matéria com
+        43 min de folga. Aqui o cinto é encurtado NA CÓPIA (1 min) para o corte
+        acontecer na primeira volta, sem esperarmos 52 min de prova: o que se
+        confere é o contrato da saída — vermelho, `falha_texto` de 24h e horário
+        liberado para a mão de reserva — não a duração. */
+console.log("\n10. sem tempo para refazer: júri reprovou com o cinto estourado → vermelho, pauta em 24h, horário livre");
+{
+  const dir = planta({ escrita: "ok", editor: "falha" });
+  const arq = path.join(dir, "tools", "turno.js");
+  const fonte = fs.readFileSync(arq, "utf8").replace("const PAREDE_RUNNER_MS = 65 * 60 * 1000;", "const PAREDE_RUNNER_MS = 1 * 60 * 1000;");
+  fs.writeFileSync(arq, fonte);
+  confere("a mutação encurtou o cinto na cópia", /const PAREDE_RUNNER_MS = 1 \* 60 \* 1000;/.test(fonte), (fonte.match(/const PAREDE_RUNNER_MS = [^;]+;/) || [""])[0]);
+  const r = roda(dir);
+  confere("exit 1 (o relógio comeu a rodada; o júri não julgou a peça morta)", r.code === 1, `código ${r.code} · ${r.out.split("\n").filter((l) => /VERMELHO/.test(l)).join(" ⏎ ")}`);
+  confere("VERMELHO aponta o tempo, não a qualidade", /^VERMELHO: o júri reprovou e a rodada ficou sem tempo/m.test(r.out), r.out.split("\n").filter((l) => /VERMELHO/.test(l)).join(" ⏎ "));
+  confere("o diário registra o corte antes da chamada que não cabe", /sem tempo para a tentativa 2/.test(r.diario), r.diario.split("\n").filter((l) => /edição/.test(l)).join(" ⏎ "));
+  confere("a pauta sai falha_texto (24h), não reprovada (72h)", r.mem.leads[LEAD.url] && r.mem.leads[LEAD.url].outcome === "falha_texto", JSON.stringify(r.mem.leads[LEAD.url]));
+  confere("o horário não fica servido: a mão de reserva pode refazê-lo", medir(dir).servida === false, JSON.stringify(medir(dir)));
+  confere("e o diário não inventa tentativas esgotadas", !/reprovado depois de/.test(r.diario), r.diario.split("\n").slice(-3).join(" ⏎ "));
+}
+
+/* 11 — falsificação do portão novo. Desligado o ramo, a mesma rodada de cinto
+        curto volta a fechar VERDE com `reprovada`: a pena de 72h cobra do relógio
+        desta máquina uma culpa do texto, e o vigia canta entrega. */
+console.log("\n11. falsificação C: arrancado o portão do semTempo, o relógio volta a enterrar a pauta em 72h de verde");
+{
+  const dir = planta({ escrita: "ok", editor: "falha" });
+  const arq = path.join(dir, "tools", "turno.js");
+  const fonte = fs.readFileSync(arq, "utf8")
+    .replace("const PAREDE_RUNNER_MS = 65 * 60 * 1000;", "const PAREDE_RUNNER_MS = 1 * 60 * 1000;")
+    .replace("if (semTempo !== null) {", "if (semTempo !== null && null) {");
+  fs.writeFileSync(arq, fonte);
+  confere("a mutação pegou (o ramo está desligado no arquivo)", fonte.includes("if (semTempo !== null && null) {"), (fonte.match(/if \(semTempo[^{]*\{/) || [""])[0]);
+  const r = roda(dir);
+  confere("sem o portão a rodada fecha verde com o horário marcado", r.code === 0, `código ${r.code}`);
+  confere("e a pauta vira reprovada: 72h por um fato do relógio", r.mem.leads[LEAD.url] && r.mem.leads[LEAD.url].outcome === "reprovada", JSON.stringify(r.mem.leads[LEAD.url]));
+}
+
 /* Varre só as fixtures DESTA corrida. A versão anterior passava o prefixo no
    os.tmpdir() e apagava também as cópias de quem estivesse rodando a mesma
    prova ao mesmo tempo — nesta máquina um revisor audita enquanto o dono
@@ -285,7 +332,7 @@ for (const dir of fixtures) {
   fs.rmSync(dir, { recursive: true, force: true });
 }
 
-console.log("\n10. invariante: a máquina do dono não foi tocada pela prova");
+console.log("\n12. invariante: a máquina do dono não foi tocada pela prova");
 {
   const gitDepois = execFileSync("git", ["-C", ROOT, "status", "--porcelain", "-uno"], { encoding: "utf8" });
   confere("o repo real está como estava", gitDepois === gitAntes, gitDepois.split("\n").join(" ⏎ "));
