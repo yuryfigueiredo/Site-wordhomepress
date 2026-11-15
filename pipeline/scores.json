@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T13:35:15.730Z",
+  "updated": "2026-11-15T17:34:38.602Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -1053,6 +1053,44 @@
           "pts": 0.5,
           "max": 1,
           "why": "Argues the missing mission purpose is a template constraint rather than an editorial failure."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-15"
+    },
+    "drawing-a-pinpoint-costs-a-mission-its-orbit": {
+      "score": 6.8,
+      "note": "6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 2 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 10% com https-www-space-com-space-exploration-artemis-do-we-know-how-man"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Argues pinpoint accuracy is bought with orbital time, a claim testable against a mission report without any number."
         }
       },
       "source": "auto",

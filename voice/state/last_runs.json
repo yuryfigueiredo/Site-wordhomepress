@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-15T13:35:16.746Z",
+  "updated": "2026-11-15T17:34:42.740Z",
   "runs": {
     "analyst": {
-      "id": "sixty-years-turn-gemini-12-into-two-surnames-and-a-date",
+      "id": "drawing-a-pinpoint-costs-a-mission-its-orbit",
       "date": "2026-11-15",
-      "opening_move": "document",
-      "ending_move": "consequence",
-      "title_pattern": "sixty years turn a",
+      "opening_move": "object",
+      "ending_move": "verification",
+      "title_pattern": "drawing a pinpoint on",
       "humor_lines": 1
     },
     "lab": {

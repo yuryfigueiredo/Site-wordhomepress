@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "second-pass-webb-images-planet-never-hidden",
+  "currentCoverId": "drawing-a-pinpoint-costs-a-mission-its-orbit",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -184,6 +184,14 @@
       "id": "second-pass-webb-images-planet-never-hidden",
       "tipo": "do dia",
       "era": "alien-invasions-promise-a-fight-and-the-warning-has-none"
+    },
+    {
+      "at": "2026-11-15T17:34:39.219Z",
+      "dia": "2026-11-15",
+      "rodada": "2026-11-15T14:23",
+      "id": "drawing-a-pinpoint-costs-a-mission-its-orbit",
+      "tipo": "do dia",
+      "era": "second-pass-webb-images-planet-never-hidden"
     }
   ],
   "capaVistas": [
@@ -202,6 +210,7 @@
     "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
     "candidate-neutron-star-mass-gap",
     "alien-invasions-promise-a-fight-and-the-warning-has-none",
-    "second-pass-webb-images-planet-never-hidden"
+    "second-pass-webb-images-planet-never-hidden",
+    "drawing-a-pinpoint-costs-a-mission-its-orbit"
   ]
 }

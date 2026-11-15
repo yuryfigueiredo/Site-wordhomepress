@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T13:35:16.750Z",
+  "updated": "2026-11-15T17:34:42.748Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -254,8 +254,9 @@
     "https://www.space.com/space-exploration/on-this-day-in-space-november-14-2026": {
       "slug": "on-this-day-in-space-nov-14-1969-nasas-apollo-12-astronauts-laun",
       "topic": "On this day in space! Nov. 14, 1969: NASA's Apollo 12 astronauts launch to the moon on a 'pinpoint landing' lunar mission",
-      "outcome": "falha_texto",
-      "at": "2026-11-14T15:29:06.280Z"
+      "outcome": "publicada",
+      "at": "2026-11-15T17:34:42.746Z",
+      "id": "drawing-a-pinpoint-costs-a-mission-its-orbit"
     },
     "https://phys.org/news/2026-11-hidden-master-bacteria-breach-body.html": {
       "slug": "hidden-master-switch-allows-bacteria-to-breach-the-bodys-defense",
@@ -400,6 +401,11 @@
       "id": "sixty-years-turn-gemini-12-into-two-surnames-and-a-date",
       "at": "2026-11-15T13:35:16.749Z",
       "score": 6.3
+    },
+    {
+      "id": "drawing-a-pinpoint-costs-a-mission-its-orbit",
+      "at": "2026-11-15T17:34:42.746Z",
+      "score": 6.8
     }
   ]
 }
