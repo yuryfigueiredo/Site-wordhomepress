@@ -10,7 +10,7 @@
    Uso:
      GEMINI_API_KEY=... node tools/write.js <slug>
      node tools/write.js --check   # mostra quem está armado e o que cada um tem
-   Env opcional: WRITE_MINUTES (teto de parede, padrão 12)                      */
+   Env opcional: WRITE_MINUTES (teto de parede, padrão 14)                      */
 const fs = require("fs");
 const path = require("path");
 
