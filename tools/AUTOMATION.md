@@ -198,6 +198,28 @@ Para inverter a ordem, basta trocar as linhas do arquivo (`peso` decide quanto t
 
 Se um modelo responder JSON incompleto, o `write.js` grava a resposta recusada em `pipeline/drafts/<slug>/rejeitado-<provedor>-<modelo>.txt` — é ali que se vê o que ele escreveu de errado.
 
+### Rodar a bateria de provas sem pisar na rodada
+
+As provas de `.audit/` não são leitura: `muta-slot-stale`, `teste-trava-arquivo`, `teste-trava-picks`, `teste-capa-rodada` e companhia escrevem dentro de `tools/` e de `pipeline/state/` do **próprio repo** e devolvem o arquivo no fim. Isso é seguro até o momento em que o `tools/` mutilado é exatamente o que a rodada do cron executa — e até o momento em que um Ctrl+C no meio da prova deixa o defeito no disco, porque o `finally` morre junto com o processo. Quem empurra é o runner com `git add -A`: uma prova interrompida commita um `build.js` quebrado.
+
+Por isso a bateria entra por um portão, não por um `for`shell:
+
+```bash
+node .audit/roda-provas.js                    # a bateria inteira
+node .audit/roda-provas.js teste-trava-picks  # só o que o nome casa
+node .audit/roda-provas.js --pula provedor    # exclui por trecho
+node .audit/roda-provas.js --forcar           # ignora SÓ a janela de horário
+```
+
+Quatro coisas ele garante, e cada uma existe por um motivo medido:
+
+- **árvore limpa na entrada.** Com rastreado sujo, nada roda (exit 1) — devolver ao estado anterior seria apagar trabalho seu. O que já era **não rastreado** antes da bateria é lembrado e nunca apagado; foi assim que o próprio `roda-provas.js`, recém-criado, sobreviveu à primeira execução.
+- **fora da janela da rodada.** Segura o `flock` do cinto (`~/.local/state/hwp/turno.lock`) e calcula, no fuso do `cadence.json`, a distância ao próximo horário; menos de 20 min (`HWP_PROVAS_FOLGA`) barra. É o tempo que a bateria precisa de árvore estável.
+- **restauração por bytes, não por `git checkout`.** Na entrada, com o rastreado provado limpo, os bytes do disco SÃO o estado da entrada, e ele espelha `tools/`, `pipeline/`, `js/`, `voice/`, `css/` e a raiz num diretório temporário. O `checkout` devolveria o blob — com `core.autocrlf=input` nesta máquina, os `tools/*.js` vivem CRLF no disco e LF no objeto, então o checkout verdeja o git e muda os bytes; `teste-trava-arquivo` compara hash de arquivo, e é ele que acusaria. Fora do espelho a volta é pelo HEAD e a linha diz qual das duas bocas foi usada.
+- **o placar fecha conferindo a árvore.** `exit`, SIGINT, SIGTERM e SIGHUP passam pela mesma restauração, e no fim cada caminho espelhado é comparado byte a byte contra a entrada; resíduo ou divergência é vermelho mesmo com todas as provas verdes.
+
+Roda do Windows herdada que ficou de fora, declarada: `verify.js` e os `cdp*.js` chamam Chrome em `C:/Program Files/…` contra um servidor em `:8080`. Não são portões do pipeline e uma boca vermelha permanente no placar é o ruído que esconde a vermelha de verdade. (15/11: 22 provas, 474 conferências, zero resíduo.)
+
 ### Trocar a Store ID da Amazon
 
 A tag aparece em 184 links espalhados por 15 arquivos. Um comando troca todos:
