@@ -147,7 +147,11 @@ async function descobrir(p) {
    .json(). No CLI ele é fabricado a partir do subprocesso, para o write.js não
    ter duas rotas de leitura. */
 function chamarCli(p, modelo, prompt, timeoutMs) {
-  const ms = Math.round(Math.max(30000, Math.min(600000, timeoutMs)));
+  /* O teto de parede do write.js (14 min) já chegou aqui pelo prazo, então o
+     clamp só pode ficar ACIMA do maior `chamada_max_ms` declarado: cortado em
+     600s, o 780000 do CLI virava cifra morta no JSON e a chamada era partida
+     viva nos 22s que separam a medição de 578s do teto real. */
+  const ms = Math.round(Math.max(30000, Math.min(840000, timeoutMs)));
   const arg = [
     "-p",
     "--no-session-persistence",
