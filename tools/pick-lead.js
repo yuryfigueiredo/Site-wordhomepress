@@ -1,9 +1,11 @@
 /* pick-lead.js — escolhe a próxima pauta sem interação humana.
    Imprime uma linha JSON {url, pillar, topic, slug} da melhor pauta do dia que
    ainda não tenha rascunho; exit 1 quando não há nenhuma (a rodada só coleta);
-   exit 2 quando NÃO HÁ REDE nesta máquina — aí nenhuma pauta é marcada, porque
-   sonda sem link falha para todas e 12h de fila boa iriam embora por um Wi-Fi
-   caído. A rodada fecha vermelha nesse caso, para a mão de reserva refazê-la.
+   exit 2 quando NENHUMA sonda recebeu resposta HTTP — falta de rede aqui ou
+   fonte que aceita a conexão e não responde dentro de 10s. Aí nenhuma pauta é
+   marcada, porque a varredura inteira falha para o mesmo transporte e 12h de
+   fila boa iriam embora sem evidência de que a fonte existe. A rodada fecha
+   vermelha nesse caso, para a mão de reserva refazê-la.
    Uso: node tools/pick-lead.js          (COMPROMETE a pauta: em_andamento, 6h fora da fila)
         node tools/pick-lead.js --dry    (a mesma escolha, nenhuma escrita)
 
@@ -124,12 +126,21 @@ for (const f of files.slice(0, 3)) {
 
 /* Feed quebrado é comum (a ScienceDaily já entregou item com 404). A fonte é
    checada aqui, antes de gastar chave: o editor reprova link morto, e a rodada
-   inteira se perderia depois do texto pronto. */
-/* "A fonte não abre" e "esta máquina está sem rede" não são a mesma resposta.
-   A primeira é fato da fonte e vale tirar a pauta da fila por 12h. A segunda é
-   fato daqui: com o link caído a sonda falha em instantes para TODAS as
-   candidatas, e cada uma saía da fila por 12h sem nenhuma evidência de que a
-   fonte existe. `sem-rede` não marca nada e devolve exit 2 para a rodada. */
+   inteira se perderia depois do texto pronto.
+   Quatro vereditos, porque "a fonte não abre", "esta máquina está sem rede" e
+   "a conexão empacou" são três fatos diferentes com pesos diferentes:
+   · `nao-abre` é o único que merece tirada de fila (houve resposta HTTP, a
+     fonte existe e está devolvendo erro — 12h fora);
+   · `sem-rede` é falha de transporte local (ENOTFOUND, ECONNREFUSED, …);
+   · `empacou` é conexão que não devolve NENHUMA resposta dentro dos 10 s do
+     AbortSignal — host grudado, proxy cativo, porta fechada no meio do caminho.
+   Os dois últimos não marcam nada: cada um pode derrubar a lista inteira em
+   segundos, e enterrar 8 pautas sãs por 12h por um link ruim é perder
+   suprimento pela porta do transporte. Medido com servidor que aceita e cala:
+   o `sinal` fica `TimeoutError 23 The operation was aborted due to timeout`,
+   nenhum token do regex antigo casa (o `code` é o NÚMERO 23, não uma string) e
+   o veredito caía em `nao-abre` — a digital do AbortSignal são as gravações
+   exatamente 10 s apartes, e a varredura saía 1 (fila vazia) em vez de 2. */
 async function sonda(url) {
   /* Boca de prova: `HWP_SONDA=abre` faz toda fonte abrir. Sem ela, uma prova
      que exercita a SELEÇÃO fica refém do DNS — `fixture.example` não resolve, e
@@ -144,7 +155,10 @@ async function sonda(url) {
     });
     return res.ok ? "abre" : "nao-abre";
   } catch (e) {
-    const sinal = `${(e && e.cause && e.cause.code) || (e && e.code) || ""} ${(e && e.message) || ""}`;
+    const nome = (e && e.name) || "";
+    const codigo = `${(e && e.cause && e.cause.code) || (e && e.code) || ""}`;
+    const sinal = `${nome} ${codigo} ${(e && e.message) || ""}`;
+    if (/TimeoutError|due to timeout|ETIMEDOUT|UND_ERR_HEADERS_TIMEOUT|UND_ERR_BODY_TIMEOUT/i.test(sinal)) return "empacou";
     return /ENOTFOUND|EAI_AGAIN|ECONNREFUSED|ECONNRESET|EHOSTUNREACH|ENETUNREACH|UND_ERR_CONNECT|getaddrinfo/i.test(sinal) ? "sem-rede" : "nao-abre";
   }
 }
@@ -164,6 +178,7 @@ async function sonda(url) {
   let sondadas = 0;
   let naoAbre = 0;
   let semRede = 0;
+  let empacou = 0;
   for (const c of candidatas) {
     if (sondadas >= 8 && Date.now() - t0 > orcamentoMs) {
       console.error(`pick-lead: teto de tempo da sondagem estourado (${sondadas} de ${candidatas.length} fontes checadas)`);
@@ -176,6 +191,15 @@ async function sonda(url) {
          com o mesmo sintoma é o que decide, no fim, que o defeito é daqui. */
       console.error(`pauta não sondada (sem rede nesta máquina): ${c.url}`);
       semRede++;
+      continue;
+    }
+    if (veredito === "empacou") {
+      /* Mesma regra do `sem-rede`: sem resposta HTTP não há evidência nenhuma de
+         que a fonte esteja morta, só de que ela não respondeu em 10s — e um
+         portal lento não pode custar 12h de fila a uma pauta que a rodada ainda
+         pode pegar no próximo horário. */
+      console.error(`pauta não sondada (nenhuma resposta em 10s): ${c.url}`);
+      empacou++;
       continue;
     }
     if (veredito === "nao-abre") {
@@ -196,7 +220,8 @@ async function sonda(url) {
     `nenhuma pauta nova hoje (${total} itens nas 3 filas mais recentes: ${porQue.fonte_ja_usada} com fonte já publicada, ` +
       `${porQue.coluna_ja_coberta} de coluna já coberta, ${porQue.ja_tentada} tentadas há pouco, ${porQue.pauta_velha} com fonte velha, ${porQue.rascunho_ou_id} com rascunho/id no ar` +
       `${naoAbre ? `, ${naoAbre} com fonte que não abriu (fora da fila 12h)` : ""}` +
-      `${semRede ? `, ${semRede} não sondadas por falta de rede (nada marcado)` : ""}) — ` +
+      `${semRede ? `, ${semRede} não sondadas por falta de rede (nada marcado)` : ""}` +
+      `${empacou ? `, ${empacou} sem nenhuma resposta em 10s (nada marcado)` : ""}) — ` +
       "a rodada termina após coletar e checar"
   );
   /* Se NADA chegou a uma resposta HTTP e o sintoma foi sempre falha de
@@ -204,8 +229,10 @@ async function sonda(url) {
      pauta nova" numa fila que só está hígida e invisível por um link caído, e
      marcar cada URL teria enterrado a fila inteira por 12h. A varredura
      completa é o que distingue os dois — fonte morta dá HTTP, máquina sem link
-     dá ENOTFOUND/ECONNREFUSED em todas. */
-  if (semRede && !naoAbre) {
+     dá ENOTFOUND/ECONNREFUSED em todas, host grudado dá timeout. Uma resposta
+     HTTP em qualquer candidata já prova que o link existe, então aí `nao-abre`
+     continua valendo fila vazia (exit 1). */
+  if (!naoAbre && (semRede || empacou)) {
     console.error("pick-lead: nenhuma sonda recebeu resposta HTTP — nenhuma pauta foi marcada, a fila está intacta (exit 2)");
     process.exit(2);
   }

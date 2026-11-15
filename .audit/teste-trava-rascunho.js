@@ -24,7 +24,7 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
-const { execFileSync, spawnSync } = require("child_process");
+const { execFileSync, spawn, spawnSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..");
 const REPO_REAL = ROOT;
@@ -53,7 +53,7 @@ const PISTAS = [
   { title: "Pauta de fixture tres sobre telescopios velhos", url: "https://fixture.example/tres", slug: "pauta-de-fixture-tres-sobre-telescopios-velhos" },
 ];
 
-function copia(memLeads, dirs, mut) {
+function copia(memLeads, dirs, mut, fila) {
   const dir = path.join(tmp, `copia-${mut ? "mut" : "ok"}-${verde}-${Math.random().toString(36).slice(2, 8)}`);
   fs.mkdirSync(path.dirname(dir), { recursive: true });
   execFileSync("cp", ["-a", `${ROOT}/.`, `${dir}/`], { stdio: "ignore" });
@@ -66,9 +66,10 @@ function copia(memLeads, dirs, mut) {
   fs.rmSync(leads, { recursive: true, force: true });
   fs.rmSync(drafts, { recursive: true, force: true });
   fs.mkdirSync(leads, { recursive: true });
+  const PISTA = (p, i) => ({ title: p.title, url: p.url, pillar: "science", source: "Fixture Daily", score: 9 - i, published: horasAtras(3) });
   fs.writeFileSync(
     path.join(leads, "2026-11-15.json"),
-    JSON.stringify({ dia: "2026-11-15", leads: PISTAS.map((p, i) => ({ title: p.title, url: p.url, pillar: "science", source: "Fixture Daily", score: 9 - i, published: horasAtras(3) })) }, null, 2) + "\n"
+    JSON.stringify({ dia: "2026-11-15", leads: (fila || PISTAS).map(PISTA) }, null, 2) + "\n"
   );
   for (const d of dirs) {
     fs.mkdirSync(path.join(drafts, d), { recursive: true });
@@ -206,8 +207,8 @@ console.log("\n6b. sem rede NÃO é pauta morta: a varredura inteira falha, nada
   /* Duas mutações, uma por boca: o código de saída e a marcação. Trocar só o
      portão do fim mostra que exit 2 é consequência dele; trocar só a
      classificação mostra que o que salva a fila é distinguir o sintoma. */
-  const semPortao = copia(travaViva, [PISTAS[0].slug], (fonte) => fonte.replace("if (semRede && !naoAbre) {", "if (false) {"));
-  confere("a mutação encontrou o portão de saída", !fs.readFileSync(path.join(semPortao, "tools/pick-lead.js"), "utf8").includes("if (semRede && !naoAbre) {"), "token não achado");
+  const semPortao = copia(travaViva, [PISTAS[0].slug], (fonte) => fonte.replace("if (!naoAbre && (semRede || empacou)) {", "if (false) {"));
+  confere("a mutação encontrou o portão de saída", !fs.readFileSync(path.join(semPortao, "tools/pick-lead.js"), "utf8").includes("if (!naoAbre && (semRede || empacou)) {"), "token não achado");
   const p = varre(semPortao);
   confere("arrancado o portão a mesma varredura diz 1 — a rodada trataria link caído como fila vazia", p.codigo === 1 && p.marcadas === 0, `codigo=${p.codigo}, marcou ${p.marcadas}`);
   const semClasse = copia(travaViva, [PISTAS[0].slug], (fonte) =>
@@ -216,6 +217,74 @@ console.log("\n6b. sem rede NÃO é pauta morta: a varredura inteira falha, nada
   confere("a mutação encontrou a classificação", !fs.readFileSync(path.join(semClasse, "tools/pick-lead.js"), "utf8").includes('"sem-rede" : "nao-abre"'), "o replace não alcançou a sonda");
   const m = varre(semClasse);
   confere("com a classificação antiga as duas pautas vivas saem da fila por 12h", m.marcadas === 2 && m.codigo === 1, `marcou ${m.marcadas}, codigo ${m.codigo}`);
+}
+
+console.log("\n6c. fonte que aceita a conexão e cala é fato do transporte: nada marcado, exit 2, e a 404 do lado continua pagando");
+{
+  /* O caso não é o Wi-Fi caído do 6b: aqui o pacote sai, o SYN/ACK vem, e a
+     fonte nunca responde. Medido em servidor que aceita e cala, sondado com o
+     mesmo `AbortSignal.timeout(10000)` do pick-lead, a exceção chega como
+     `TimeoutError` com `code` 23 (NÚMERO, não string) e mensagem "The
+     operation was aborted due to timeout" — nenhum token do regex antigo casa,
+     então o veredito era `nao-abre` e a pauta saía por 12h. Na máquina real
+     duas candidatas boas foram gravadas `fonte_inalcancavel` com 10,007 s de
+     diferença entre si (a digital do AbortSignal) e a varredura devolveu 1,
+     não 2: fila enterrada e rodada verde sem peça.
+     O servidor nasce num filho e o pai espera o arquivo `pronto` com um laço
+     de `sh`, porque `spawnSync` do pick-lead bloqueia o event loop e um
+     `listen(0)` não teria como publicar a porta sem ele rodar. */
+  const PRONTO = path.join(tmp, "servidores-pronto");
+  const filho = spawn(
+    process.execPath,
+    [
+      "-e",
+      `const net=require("net"),fs=require("fs");
+       const morto=net.createServer((s)=>s.end("HTTP/1.1 404 Not Found\\r\\ncontent-length: 0\\r\\n\\r\\n"));
+       const buraco=net.createServer(()=>{});
+       let n=0;
+       const avisa=()=>{ if(n<2)return; fs.writeFileSync(${JSON.stringify(PRONTO)}, "PRONTO "+buraco.address().port+" "+morto.address().port); };
+       buraco.listen(0,"127.0.0.1",()=>{n++;avisa();});
+       morto.listen(0,"127.0.0.1",()=>{n++;avisa();});
+       setTimeout(()=>process.exit(0),420000);`,
+    ],
+    { detached: true, stdio: "ignore" }
+  );
+  filho.unref();
+  const espera = spawnSync("sh", ["-c", `for i in $(seq 200); do [ -s ${PRONTO} ] && exit 0; sleep 0.1; done; exit 1`], { encoding: "utf8" });
+  const [portaBuraco, portaMorta] = (espera.status === 0 ? fs.readFileSync(PRONTO, "utf8") : "").split(/\s+/).slice(1).map(Number);
+  confere("os dois servidores de fixture estão de pé", !!portaBuraco && !!portaMorta, `espera.status=${espera.status}`);
+
+  const P = (i, url) => ({ title: `Pauta de fixture ${i} sobre antenas de quintal numero ${i}`, url });
+  const FILA_BURACO = [P(1, `http://127.0.0.1:${portaBuraco}/a`), P(2, `http://127.0.0.1:${portaBuraco}/b`), P(3, `http://127.0.0.1:${portaBuraco}/c`)];
+  const FILA_MISTURA = [P(4, `http://127.0.0.1:${portaMorta}/d`), P(5, `http://127.0.0.1:${portaBuraco}/e`), P(6, `http://127.0.0.1:${portaBuraco}/f`)];
+
+  const varre = (dir) => {
+    const r = spawnSync(process.execPath, [path.join(dir, "tools", "pick-lead.js")], { cwd: dir, encoding: "utf8", timeout: 300000 });
+    const mem = JSON.parse(fs.readFileSync(path.join(dir, "pipeline", "memory.json"), "utf8"));
+    return {
+      codigo: r.status ?? -1,
+      err: String(r.stderr || ""),
+      marcadas: Object.values(mem.leads || {}).filter((l) => l && l.outcome === "fonte_inalcancavel").length,
+    };
+  };
+
+  const r = varre(copia({}, [], null, FILA_BURACO));
+  confere("três fontes que aceitam e calam devolvem 2, não 1", r.codigo === 2, `codigo=${r.codigo}`);
+  confere("nenhuma das três saiu da fila por 12h", r.marcadas === 0, `${r.marcadas} marcações`);
+  confere("a causa dita timeout, não 'sem rede nesta máquina'", /nenhuma resposta em 10s/.test(r.err) && !/sem rede nesta máquina/.test(r.err), r.err.split("\n").filter((l) => /não sondada|nenhuma sonda/.test(l)).join(" ⏎ "));
+
+  const m = varre(copia({}, [], null, FILA_MISTURA));
+  confere("uma resposta HTTP na varredura prova que o link existe: sai 1", m.codigo === 1, `codigo=${m.codigo}`);
+  confere("e só a fonte que devolveu 404 paga as 12h", m.marcadas === 1, `marcou ${m.marcadas} de 3`);
+
+  const LINHA_TIMEOUT = 'if (/TimeoutError|due to timeout|ETIMEDOUT|UND_ERR_HEADERS_TIMEOUT|UND_ERR_BODY_TIMEOUT/i.test(sinal)) return "empacou";';
+  const semClasseTimeout = copia({}, [], (fonte) => fonte.replace(LINHA_TIMEOUT, ""), FILA_BURACO);
+  confere("a mutação arrancou mesmo o classificador de timeout", !fs.readFileSync(path.join(semClasseTimeout, "tools/pick-lead.js"), "utf8").includes('return "empacou"'), "o replace não alcançou a linha");
+  const g = varre(semClasseTimeout);
+  confere("com o classificador arrancado as três voltam a ser enterradas por 12h", g.marcadas === 3 && g.codigo === 1, `marcou ${g.marcadas}, codigo ${g.codigo}`);
+
+  spawnSync("kill", [String(filho.pid)]);
+  fs.rmSync(PRONTO, { force: true });
 }
 
 console.log("\n7. invariante: a máquina do dono não foi tocada");
