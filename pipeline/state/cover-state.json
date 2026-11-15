@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "drawing-a-pinpoint-costs-a-mission-its-orbit",
+  "currentCoverId": "alien-invasions-promise-a-fight-and-the-warning-has-none",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -192,6 +192,14 @@
       "id": "drawing-a-pinpoint-costs-a-mission-its-orbit",
       "tipo": "do dia",
       "era": "second-pass-webb-images-planet-never-hidden"
+    },
+    {
+      "at": "2026-11-15T21:23:24.640Z",
+      "dia": "2026-11-15",
+      "rodada": "2026-11-15T18:23",
+      "id": "alien-invasions-promise-a-fight-and-the-warning-has-none",
+      "tipo": "rotacionada",
+      "era": "drawing-a-pinpoint-costs-a-mission-its-orbit"
     }
   ],
   "capaVistas": [
