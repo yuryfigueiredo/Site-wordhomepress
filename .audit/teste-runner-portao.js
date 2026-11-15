@@ -235,6 +235,159 @@ function rodaAgenda(f) {
   confere("arquivo de workflow apagado é dito como ilegível e barra com active", /arquivo ilegivel/.test(semArquivo.linha) && semArquivo.codigo === 1, `${semArquivo.codigo} · ${semArquivo.linha}`);
 }
 
+/* 7 — o recuo da rodada vermelha e a única exceção que ele tem direito: a
+       troca de capa do passo 12. O defeito é de 15/11 e nasceu DEPOIS da
+       correção do passo 8: com a morte do redator passando a fechar vermelha
+       (a47ba2d), o `git checkout HEAD -- .` do cinto devolvia `index.html` e
+       `pipeline/state/cover-state.json` ao commit anterior e o horário
+       contribuída zero trocas para `cover_changes_per_day` 6 — o recuo desfazia
+       exatamente o produto que o AGENTS.md manda entregar numa rodada sem
+       matéria. A exceção tem de ser estreita: só com manutenção errors 0 E
+       linha `index-hero: +1` no diário da própria rodada; vermelha de
+       manutenção continua recuo integral, e nada fora dos três arquivos da capa
+       escapa (culture.html regenerado na rodada suja volta, jpg órfão é limpo).
+       A rodada é trocada pela boca HWP_SO_TURNO + HWP_PLANTA, que copia um
+       retrato de fim de rodada para a cópia — nenhum minuto de redator, nenhum
+       toque no runner instalado: as mutações rodam numa CÓPIA do script.      */
+const DIARIO_VERDE = [
+  "# Turno — prova do recuo",
+  "- **manutenção** — errors 0 | ✗ warnings 1",
+  "- **pauta** — algo da fila (Science Daily, score 5)",
+  "- **capa** — index-hero: +1 (capa rotacionada: algum-slug (7.8, Nov 7, 2026) · piso 6.5 · rodada 2026-11-15T02:23)",
+  "- **fim** — VERMELHO: a reescrita do editor não entregou texto",
+  "",
+].join("\n");
+const DIARIO_SEM_TROCA = [
+  "# Turno — prova do recuo",
+  "- **manutenção** — errors 0 | ✗ warnings 1",
+  "- **capa** — index-hero: +0 (capa mantida: algum-slug)",
+  "- **fim** — VERMELHO: a reescrita do editor não entregou texto",
+  "",
+].join("\n");
+const DIARIO_MANUTENCAO_VERMELHA = [
+  "# Turno — prova do recuo",
+  "- **manutenção** — errors 1 | ✓ warnings 0",
+  "- **capa** — index-hero: +1 (capa rotacionada: algum-slug (7.8, Nov 7, 2026))",
+  "- **fim** — VERMELHO: a manutenção abriu um erro",
+  "",
+].join("\n");
+
+function fixtureRecuo(diario) {
+  const f = fixtureRelogio({ inerte: true });
+  const baseline = {
+    "index.html": "<p>HERO DE ONTEM</p>\n",
+    "culture.html": "<p>cultura baseline</p>\n",
+    "pipeline/state/cover-state.json": '{"rodada":"2026-11-14T22:23"}\n',
+    "pipeline/state/hero-fallback.html": "<p>fallback de ontem</p>\n",
+    "pipeline/memory.json": '{"leads":{}}\n',
+  };
+  for (const [p, txt] of Object.entries(baseline)) {
+    const alvo = path.join(f.dir, p);
+    fs.mkdirSync(path.dirname(alvo), { recursive: true });
+    fs.writeFileSync(alvo, txt);
+  }
+  git(f.dir, "add", "-A");
+  git(f.dir, "commit", "-qm", "baseline com capa");
+  git(f.dir, "push", "-q", "origin", "main");
+  /* O retrato de fim de rodada: o que o build e o publish deixariam no disco.
+     Vem num diretório separado para o `cp` do cinto ser a única porta de
+     entrada — a árvore do fixture precisa chegar limpa ao portão.            */
+  const planta = path.join(f.raiz, "planta");
+  fs.mkdirSync(path.join(planta, "pipeline/state"), { recursive: true });
+  fs.mkdirSync(path.join(planta, "images/posts"), { recursive: true });
+  fs.writeFileSync(path.join(planta, "TURNO.md"), diario);
+  fs.writeFileSync(path.join(planta, "index.html"), "<p>HERO DE HOJE</p>\n");
+  fs.writeFileSync(path.join(planta, "culture.html"), "<p>cultura girada nesta rodada</p>\n");
+  fs.writeFileSync(path.join(planta, "pipeline/state/cover-state.json"), '{"rodada":"2026-11-15T02:23"}\n');
+  fs.writeFileSync(path.join(planta, "pipeline/state/hero-fallback.html"), "<p>fallback de hoje</p>\n");
+  fs.writeFileSync(path.join(planta, "pipeline/memory.json"), '{"leads":{"x":{"outcome":"falha_texto"}}}\n');
+  fs.writeFileSync(path.join(planta, "images/posts/foto-de-materia-morta.jpg"), "não é rastreado e deve sumir\n");
+  return { ...f, planta, l: (p) => fs.readFileSync(path.join(f.dir, p), "utf8"), noOrigin: (p) => execFileSync("git", ["--git-dir", path.join(f.raiz, "origin.git"), "show", `main:${p}`], { encoding: "utf8" }) };
+}
+
+function rodaRecuo(f, runner) {
+  let saida = "";
+  let codigo = 0;
+  try {
+    saida = execFileSync(runner || RUNNER, [], {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        HWP_REPO: f.dir,
+        HWP_STATE: f.state,
+        HWP_AVISO: f.stub,
+        HWP_API_WORKFLOWS: `file://${f.api}`,
+        HWP_SO_TURNO: "1",
+        HWP_PLANTA: f.planta,
+        HWP_TURNO_RC: "1",
+      },
+    });
+  } catch (e) {
+    saida = String(e.stdout || "") + String(e.stderr || "");
+    codigo = e.status ?? -1;
+  }
+  return { saida, codigo, assunto: git(f.dir, "log", "-1", "--format=%s").trim() };
+}
+
+{
+  console.log("7. rodada vermelha com capa girada: o recuo preserva a troca e empurra o hero");
+  const f = fixtureRecuo(DIARIO_VERDE);
+  const r = rodaRecuo(f);
+  confere("a rodada vermelha continua vermelha (exit 1)", r.codigo === 1, `${r.codigo} · ${r.saida.trim().slice(0, 200)}`);
+  confere("e o cinto diz que preservou a capa", /preservada \(manutenção errors 0 \+ index-hero: \+1\)/.test(r.saida), r.saida.split("\n").filter((l) => /recuo|preserv|recuada/.test(l)).join(" ⏎ "));
+  confere("o hero novo está na árvore", /HERO DE HOJE/.test(f.l("index.html")), f.l("index.html"));
+  confere("o cover-state do horário está na árvore", /2026-11-15T02:23/.test(f.l("pipeline/state/cover-state.json")), f.l("pipeline/state/cover-state.json"));
+  confere("o fallback do hero também", /fallback de hoje/.test(f.l("pipeline/state/hero-fallback.html")), f.l("pipeline/state/hero-fallback.html"));
+  confere("o diário e a memória continuam preservados, como sempre", /VERMELHO: a reescrita/.test(f.l("TURNO.md")) && /falha_texto/.test(f.l("pipeline/memory.json")), `${f.l("TURNO.md").slice(0, 60)} | ${f.l("pipeline/memory.json")}`);
+  confere("culture.html, fora da lista, voltou ao baseline", /cultura baseline/.test(f.l("culture.html")), f.l("culture.html"));
+  confere("o jpg órfão da matéria morta foi limpo pelo recuo", !fs.existsSync(path.join(f.dir, "images/posts/foto-de-materia-morta.jpg")), "sobrou na árvore");
+  confere("o commit `turno:` levou a troca de capa", /turno:/.test(r.assunto) && /HERO DE HOJE/.test(execFileSync("git", ["-C", f.dir, "cat-file", "-p", "HEAD:index.html"], { encoding: "utf8" })), `${r.assunto} · ${execFileSync("git", ["-C", f.dir, "show", "--name-only", "--format=", "HEAD"], { encoding: "utf8" }).trim().split("\n").join(" ")}`);
+  confere("e o origin do fixture recebeu o hero novo — é o que o site veria", /HERO DE HOJE/.test(f.noOrigin("index.html")) && /2026-11-15T02:23/.test(f.noOrigin("pipeline/state/cover-state.json")), f.noOrigin("index.html"));
+}
+
+{
+  console.log("7b. vermelha SEM troca de capa: recuo integral, a exceção não virou licença");
+  const f = fixtureRecuo(DIARIO_SEM_TROCA);
+  const r = rodaRecuo(f);
+  confere("saiu 1", r.codigo === 1, `${r.codigo} · ${r.saida.trim().slice(0, 160)}`);
+  confere("o recuo foi o velho recuo", /só TURNO\.md e pipeline\/memory\.json ficaram/.test(r.saida), r.saida.split("\n").filter((l) => /recuada/.test(l)).join(" ⏎ "));
+  confere("o hero voltou ao de ontem", /HERO DE ONTEM/.test(f.l("index.html")), f.l("index.html"));
+  confere("o cover-state voltou à rodada anterior", /2026-11-14T22:23/.test(f.l("pipeline/state/cover-state.json")), f.l("pipeline/state/cover-state.json"));
+  confere("o origin não viu capa nova", /HERO DE ONTEM/.test(f.noOrigin("index.html")), f.noOrigin("index.html"));
+}
+
+{
+  console.log("7c. vermelha de MANUTENÇÃO (errors ≠ 0) com capa girada: nada de HTML ao ar");
+  const f = fixtureRecuo(DIARIO_MANUTENCAO_VERMELHA);
+  const r = rodaRecuo(f);
+  confere("saiu 1", r.codigo === 1, `${r.codigo}`);
+  confere("não preservou: o portão que reprovou o HTML é justamente o que abriu", /só TURNO\.md e pipeline\/memory\.json ficaram/.test(r.saida), r.saida.split("\n").filter((l) => /recuada|preserv/.test(l)).join(" ⏎ "));
+  confere("o hero voltou ao de ontem", /HERO DE ONTEM/.test(f.l("index.html")), f.l("index.html"));
+  confere("a troca de capa não foi empurrada", /HERO DE ONTEM/.test(f.noOrigin("index.html")), f.noOrigin("index.html"));
+}
+
+{
+  console.log("7d. falsificações: tirar a exceção e alargá-la");
+  const fonteBelt = fs.readFileSync(RUNNER, "utf8");
+  const semExcecao = path.join(os.tmpdir(), `runner-sem-excecao-${process.pid}.sh`);
+  fs.writeFileSync(semExcecao, fonteBelt.replace("    CAPA=1\n", "    CAPA=0\n"), { mode: 0o755 });
+  confere("a mutação encontrou o ramo de preservação", fonteBelt.includes("    CAPA=1\n") && fs.readFileSync(semExcecao, "utf8").includes("    CAPA=0\n"), "token CAPA=1 não achado");
+  const f1 = fixtureRecuo(DIARIO_VERDE);
+  const r1 = rodaRecuo(f1, semExcecao);
+  confere("sem a exceção, o hero volta ao de ontem (é o defeito de 15/11)", /HERO DE ONTEM/.test(f1.l("index.html")), f1.l("index.html"));
+  confere("e a troca não chega ao origin", /HERO DE ONTEM/.test(f1.noOrigin("index.html")), f1.noOrigin("index.html"));
+
+  const manutLarga = path.join(os.tmpdir(), `runner-manut-larga-${process.pid}.sh`);
+  fs.writeFileSync(manutLarga, fonteBelt.replace("grep -q '^- \\*\\*manutenção\\*\\* — errors 0' TURNO.md", "true"), { mode: 0o755 });
+  confere("a segunda mutação encontrou a conferência de manutenção", fonteBelt.includes("errors 0' TURNO.md") && !fs.readFileSync(manutLarga, "utf8").includes("errors 0' TURNO.md"), "token não achado");
+  const f2 = fixtureRecuo(DIARIO_MANUTENCAO_VERMELHA);
+  const r2 = rodaRecuo(f2, manutLarga);
+  confere("com o portão de manutenção arrancado, uma HTML reprovado vai ao ar", /HERO DE HOJE/.test(f2.l("index.html")), `${r2.saida.split("\n").filter((l) => /recuada|preserv/.test(l)).join(" ⏎ ")} · ${f2.l("index.html")}`);
+  confere("e o origin recebe o HTML que a manutenção reprovou", /HERO DE HOJE/.test(f2.noOrigin("index.html")), f2.noOrigin("index.html"));
+  for (const p of [semExcecao, manutLarga]) fs.rmSync(p, { force: true });
+  confere("o runner instalado nesta máquina não foi tocado pelas mutações", fs.readFileSync(RUNNER, "utf8") === fonteBelt && fonteBelt.includes("    CAPA=1\n"), "o script real mudou");
+}
+
 /* 6 — invariante: o estado desta máquina não foi tocado pela prova. */
 {
   console.log("6. nada encostou no repo real nem no estado da máquina");
