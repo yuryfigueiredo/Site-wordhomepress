@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "manufactured-water-has-to-be-kept-in-rock",
+  "currentCoverId": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -232,6 +232,14 @@
       "id": "manufactured-water-has-to-be-kept-in-rock",
       "tipo": "rotacionada",
       "era": "a-solar-magnetic-pattern-is-a-method-claim-first"
+    },
+    {
+      "at": "2026-11-16T17:23:17.937Z",
+      "dia": "2026-11-16",
+      "rodada": "2026-11-16T14:23",
+      "id": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f",
+      "tipo": "do dia",
+      "era": "manufactured-water-has-to-be-kept-in-rock"
     }
   ],
   "capaVistas": [
@@ -254,6 +262,7 @@
     "drawing-a-pinpoint-costs-a-mission-its-orbit",
     "slow-radio-clock-points-at-an-unseen-companion",
     "manufactured-water-has-to-be-kept-in-rock",
-    "a-solar-magnetic-pattern-is-a-method-claim-first"
+    "a-solar-magnetic-pattern-is-a-method-claim-first",
+    "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f"
   ]
 }
