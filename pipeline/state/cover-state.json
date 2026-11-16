@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "alien-invasions-promise-a-fight-and-the-warning-has-none",
+  "currentCoverId": "slow-radio-clock-points-at-an-unseen-companion",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -200,6 +200,14 @@
       "id": "alien-invasions-promise-a-fight-and-the-warning-has-none",
       "tipo": "rotacionada",
       "era": "drawing-a-pinpoint-costs-a-mission-its-orbit"
+    },
+    {
+      "at": "2026-11-16T01:29:02.811Z",
+      "dia": "2026-11-15",
+      "rodada": "2026-11-15T22:23",
+      "id": "slow-radio-clock-points-at-an-unseen-companion",
+      "tipo": "do dia",
+      "era": "alien-invasions-promise-a-fight-and-the-warning-has-none"
     }
   ],
   "capaVistas": [
@@ -219,6 +227,7 @@
     "candidate-neutron-star-mass-gap",
     "alien-invasions-promise-a-fight-and-the-warning-has-none",
     "second-pass-webb-images-planet-never-hidden",
-    "drawing-a-pinpoint-costs-a-mission-its-orbit"
+    "drawing-a-pinpoint-costs-a-mission-its-orbit",
+    "slow-radio-clock-points-at-an-unseen-companion"
   ]
 }

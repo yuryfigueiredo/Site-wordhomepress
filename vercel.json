@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "slow-radio-clock-points-at-an-unseen-companion"
+        }
+      ],
+      "destination": "/a-slow-radio-clock-points-at-an-unseen-companion.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "drawing-a-pinpoint-costs-a-mission-its-orbit"
         }
       ],

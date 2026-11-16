@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T17:34:42.748Z",
+  "updated": "2026-11-16T01:29:03.678Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -284,6 +284,13 @@
       "outcome": "publicada",
       "at": "2026-11-15T13:35:16.749Z",
       "id": "sixty-years-turn-gemini-12-into-two-surnames-and-a-date"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261114202136.htm": {
+      "slug": "astronomers-discover-a-dead-star-spinning-every-8-minutes-and-se",
+      "topic": "Astronomers discover a dead star spinning every 8 minutes and sending mysterious radio pulses",
+      "outcome": "publicada",
+      "at": "2026-11-16T01:29:03.676Z",
+      "id": "slow-radio-clock-points-at-an-unseen-companion"
     }
   },
   "publishes": [
@@ -405,6 +412,11 @@
     {
       "id": "drawing-a-pinpoint-costs-a-mission-its-orbit",
       "at": "2026-11-15T17:34:42.746Z",
+      "score": 6.8
+    },
+    {
+      "id": "slow-radio-clock-points-at-an-unseen-companion",
+      "at": "2026-11-16T01:29:03.676Z",
       "score": 6.8
     }
   ]

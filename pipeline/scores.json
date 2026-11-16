@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15T17:34:38.602Z",
+  "updated": "2026-11-16T01:29:02.619Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -1095,6 +1095,44 @@
       },
       "source": "auto",
       "date": "2026-11-15"
+    },
+    "slow-radio-clock-points-at-an-unseen-companion": {
+      "score": 6.8,
+      "note": "6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 14% com quantum-timekeeping-interstellar-navigation-physics"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Argues the eight-minute period indicts the label spin, and that an orbit is the cheaper reading, including its own Roche objection."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-16"
     }
   }
 }
