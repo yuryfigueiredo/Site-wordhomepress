@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "slow-radio-clock-points-at-an-unseen-companion",
+  "currentCoverId": "manufactured-water-has-to-be-kept-in-rock",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -208,6 +208,14 @@
       "id": "slow-radio-clock-points-at-an-unseen-companion",
       "tipo": "do dia",
       "era": "alien-invasions-promise-a-fight-and-the-warning-has-none"
+    },
+    {
+      "at": "2026-11-16T05:34:28.361Z",
+      "dia": "2026-11-16",
+      "rodada": "2026-11-16T02:23",
+      "id": "manufactured-water-has-to-be-kept-in-rock",
+      "tipo": "do dia",
+      "era": "slow-radio-clock-points-at-an-unseen-companion"
     }
   ],
   "capaVistas": [
@@ -228,6 +236,7 @@
     "alien-invasions-promise-a-fight-and-the-warning-has-none",
     "second-pass-webb-images-planet-never-hidden",
     "drawing-a-pinpoint-costs-a-mission-its-orbit",
-    "slow-radio-clock-points-at-an-unseen-companion"
+    "slow-radio-clock-points-at-an-unseen-companion",
+    "manufactured-water-has-to-be-kept-in-rock"
   ]
 }

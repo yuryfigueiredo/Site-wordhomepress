@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16T01:29:03.678Z",
+  "updated": "2026-11-16T05:34:29.306Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -291,6 +291,13 @@
       "outcome": "publicada",
       "at": "2026-11-16T01:29:03.676Z",
       "id": "slow-radio-clock-points-at-an-unseen-companion"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261110042549.htm": {
+      "slug": "earths-fiery-birth-may-have-created-hundreds-of-oceans-worth-of-",
+      "topic": "Earth's fiery birth may have created hundreds of oceans' worth of water",
+      "outcome": "publicada",
+      "at": "2026-11-16T05:34:29.305Z",
+      "id": "manufactured-water-has-to-be-kept-in-rock"
     }
   },
   "publishes": [
@@ -417,6 +424,11 @@
     {
       "id": "slow-radio-clock-points-at-an-unseen-companion",
       "at": "2026-11-16T01:29:03.676Z",
+      "score": 6.8
+    },
+    {
+      "id": "manufactured-water-has-to-be-kept-in-rock",
+      "at": "2026-11-16T05:34:29.305Z",
       "score": 6.8
     }
   ]

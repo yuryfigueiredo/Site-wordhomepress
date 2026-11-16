@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "manufactured-water-has-to-be-kept-in-rock"
+        }
+      ],
+      "destination": "/a-manufactured-water-has-to-be-kept-in-rock.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "slow-radio-clock-points-at-an-unseen-companion"
         }
       ],
