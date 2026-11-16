@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "a-solar-magnetic-pattern-is-a-method-claim-first",
+  "currentCoverId": "manufactured-water-has-to-be-kept-in-rock",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -224,6 +224,14 @@
       "id": "a-solar-magnetic-pattern-is-a-method-claim-first",
       "tipo": "do dia",
       "era": "manufactured-water-has-to-be-kept-in-rock"
+    },
+    {
+      "at": "2026-11-16T13:37:19.801Z",
+      "dia": "2026-11-16",
+      "rodada": "2026-11-16T10:23",
+      "id": "manufactured-water-has-to-be-kept-in-rock",
+      "tipo": "rotacionada",
+      "era": "a-solar-magnetic-pattern-is-a-method-claim-first"
     }
   ],
   "capaVistas": [

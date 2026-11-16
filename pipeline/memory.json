@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16T09:27:53.396Z",
+  "updated": "2026-11-16T13:37:19.654Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -305,6 +305,12 @@
       "outcome": "publicada",
       "at": "2026-11-16T09:27:53.394Z",
       "id": "a-solar-magnetic-pattern-is-a-method-claim-first"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261109205406.htm": {
+      "slug": "nasas-chapea-mars-crew-finally-emerges-after-more-than-a-year-in",
+      "topic": "NASA’s CHAPEA Mars crew finally emerges after more than a year in isolation",
+      "outcome": "falha_texto",
+      "at": "2026-11-16T13:37:19.654Z"
     }
   },
   "publishes": [
