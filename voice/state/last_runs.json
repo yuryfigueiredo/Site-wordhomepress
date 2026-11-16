@@ -1,15 +1,15 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-16T09:27:53.390Z",
+  "updated": "2026-11-16T15:32:43.938Z",
   "runs": {
     "analyst": {
-      "id": "a-solar-magnetic-pattern-is-a-method-claim-first",
+      "id": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f",
       "date": "2026-11-16",
-      "opening_move": "dry_contrast",
-      "ending_move": "admitted_limit",
-      "title_pattern": "a hidden pattern in",
-      "humor_lines": 1
+      "opening_move": "dated_fact",
+      "ending_move": "verification",
+      "title_pattern": "audible recruits its own",
+      "humor_lines": 0
     },
     "lab": {
       "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",

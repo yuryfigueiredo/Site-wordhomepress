@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16T09:27:52.431Z",
+  "updated": "2026-11-16T15:32:43.093Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -1205,6 +1205,44 @@
           "pts": 1,
           "max": 1,
           "why": "Reads the probe result as a disclosure problem and names the four items that settle it before any new measurement exists."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-16"
+    },
+    "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f": {
+      "score": 7.8,
+      "note": "7.8/10 — força em timeliness (fonte mais recente há 1 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 1.3,
+          "max": 2.5,
+          "why": "2 fonte(s), 2 domínio(s), 1 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 11% com color-e-ink-kaleido-gallery-technology-explained"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Argues the feature converts third-party reader judgment into store voice, so labeling decides whether it is advice or merchandising."
         }
       },
       "source": "auto",

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16T13:37:19.654Z",
+  "updated": "2026-11-16T15:32:43.943Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -311,6 +311,16 @@
       "topic": "NASA’s CHAPEA Mars crew finally emerges after more than a year in isolation",
       "outcome": "falha_texto",
       "at": "2026-11-16T13:37:19.654Z"
+    },
+    "https://www.theverge.com/tech/1034083/audible-audio-discovery-ai-feature-availability": {
+      "outcome": "publicada",
+      "at": "2026-11-16T15:32:43.941Z",
+      "id": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f"
+    },
+    "https://www.audible.com/about/newsroom/the-next-chapter-in-listening-new-ways-to-interact-with-stories-on-audible": {
+      "outcome": "publicada",
+      "at": "2026-11-16T15:32:43.941Z",
+      "id": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f"
     }
   },
   "publishes": [
@@ -448,6 +458,11 @@
       "id": "a-solar-magnetic-pattern-is-a-method-claim-first",
       "at": "2026-11-16T09:27:53.394Z",
       "score": 6.8
+    },
+    {
+      "id": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f",
+      "at": "2026-11-16T15:32:43.941Z",
+      "score": 7.8
     }
   ]
 }

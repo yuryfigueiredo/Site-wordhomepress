@@ -8,6 +8,14 @@
     <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Audible Recruits Its Own Reviews to Sell the Next Listen</title>
+      <link>https://www.homeworldpress.com/article.html?id=https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f</link>
+      <description>The new audio discovery feature plays a sample, then a machine summary built from listener reactions, before you commit to a book.</description>
+      <category>culture</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f</guid>
+      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>A Hidden Pattern in Solar Magnetism Has to Outlive Its Instrument</title>
       <link>https://www.homeworldpress.com/article.html?id=a-solar-magnetic-pattern-is-a-method-claim-first</link>
       <description>The Parker Solar Probe result is best read as news about resolution and chosen statistics. A prediction the old description of the field could not make is what settles it.</description>
@@ -78,14 +86,6 @@
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=gravitational-lens-supernova-reappearance-time-delay</guid>
       <pubDate>Sat, 14 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>A Candidate Neutron Star Crowds the Mass Gap</title>
-      <link>https://www.homeworldpress.com/article.html?id=candidate-neutron-star-mass-gap</link>
-      <description>One heavy object would test the equation of state that every neutron star obeys, if the mass can be measured properly.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=candidate-neutron-star-mass-gap</guid>
-      <pubDate>Fri, 13 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>

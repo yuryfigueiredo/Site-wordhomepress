@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f"
+        }
+      ],
+      "destination": "/a-https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "a-solar-magnetic-pattern-is-a-method-claim-first"
         }
       ],
