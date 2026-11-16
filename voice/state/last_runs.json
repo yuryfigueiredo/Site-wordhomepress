@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-16T05:34:29.301Z",
+  "updated": "2026-11-16T09:27:53.390Z",
   "runs": {
     "analyst": {
-      "id": "manufactured-water-has-to-be-kept-in-rock",
+      "id": "a-solar-magnetic-pattern-is-a-method-claim-first",
       "date": "2026-11-16",
-      "opening_move": "document",
-      "ending_move": "verification",
-      "title_pattern": "a fiery birth made",
+      "opening_move": "dry_contrast",
+      "ending_move": "admitted_limit",
+      "title_pattern": "a hidden pattern in",
       "humor_lines": 1
     },
     "lab": {

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16T05:34:29.306Z",
+  "updated": "2026-11-16T09:27:53.396Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -298,6 +298,13 @@
       "outcome": "publicada",
       "at": "2026-11-16T05:34:29.305Z",
       "id": "manufactured-water-has-to-be-kept-in-rock"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261109205411.htm": {
+      "slug": "nasas-parker-solar-probe-discovers-a-hidden-pattern-in-the-suns-",
+      "topic": "NASA’s Parker Solar Probe discovers a hidden pattern in the Sun’s chaotic magnetic fields",
+      "outcome": "publicada",
+      "at": "2026-11-16T09:27:53.394Z",
+      "id": "a-solar-magnetic-pattern-is-a-method-claim-first"
     }
   },
   "publishes": [
@@ -429,6 +436,11 @@
     {
       "id": "manufactured-water-has-to-be-kept-in-rock",
       "at": "2026-11-16T05:34:29.305Z",
+      "score": 6.8
+    },
+    {
+      "id": "a-solar-magnetic-pattern-is-a-method-claim-first",
+      "at": "2026-11-16T09:27:53.394Z",
       "score": 6.8
     }
   ]

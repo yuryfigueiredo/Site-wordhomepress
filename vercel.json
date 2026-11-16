@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "a-solar-magnetic-pattern-is-a-method-claim-first"
+        }
+      ],
+      "destination": "/a-a-solar-magnetic-pattern-is-a-method-claim-first.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "manufactured-water-has-to-be-kept-in-rock"
         }
       ],

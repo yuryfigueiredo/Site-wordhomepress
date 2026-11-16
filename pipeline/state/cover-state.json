@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "manufactured-water-has-to-be-kept-in-rock",
+  "currentCoverId": "a-solar-magnetic-pattern-is-a-method-claim-first",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -216,6 +216,14 @@
       "id": "manufactured-water-has-to-be-kept-in-rock",
       "tipo": "do dia",
       "era": "slow-radio-clock-points-at-an-unseen-companion"
+    },
+    {
+      "at": "2026-11-16T09:27:52.566Z",
+      "dia": "2026-11-16",
+      "rodada": "2026-11-16T06:23",
+      "id": "a-solar-magnetic-pattern-is-a-method-claim-first",
+      "tipo": "do dia",
+      "era": "manufactured-water-has-to-be-kept-in-rock"
     }
   ],
   "capaVistas": [
@@ -237,6 +245,7 @@
     "second-pass-webb-images-planet-never-hidden",
     "drawing-a-pinpoint-costs-a-mission-its-orbit",
     "slow-radio-clock-points-at-an-unseen-companion",
-    "manufactured-water-has-to-be-kept-in-rock"
+    "manufactured-water-has-to-be-kept-in-rock",
+    "a-solar-magnetic-pattern-is-a-method-claim-first"
   ]
 }
