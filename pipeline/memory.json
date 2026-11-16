@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16T15:32:43.943Z",
+  "updated": "2026-11-16T21:33:43.142Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -321,6 +321,13 @@
       "outcome": "publicada",
       "at": "2026-11-16T15:32:43.941Z",
       "id": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f"
+    },
+    "https://reactormag.com/neuromancer-tv-series-will-tell-a-story-william-gibson-couldnt-fit-into-the-book": {
+      "slug": "neuromancer-tv-series-will-tell-a-story-william-gibson-couldnt-f",
+      "topic": "Neuromancer TV Series Will Tell a Story William Gibson Couldn’t Fit Into the Book",
+      "outcome": "publicada",
+      "at": "2026-11-16T21:33:43.140Z",
+      "id": "neuromancer-tv-series-story-william-gibson-couldnt-fit-book"
     }
   },
   "publishes": [
@@ -463,6 +470,11 @@
       "id": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f",
       "at": "2026-11-16T15:32:43.941Z",
       "score": 7.8
+    },
+    {
+      "id": "neuromancer-tv-series-story-william-gibson-couldnt-fit-book",
+      "at": "2026-11-16T21:33:43.140Z",
+      "score": 6.8
     }
   ]
 }

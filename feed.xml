@@ -8,6 +8,14 @@
     <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>The Neuromancer Series Pitches the Story the Novel Left Out</title>
+      <link>https://www.homeworldpress.com/article.html?id=neuromancer-tv-series-story-william-gibson-couldnt-fit-book</link>
+      <description>The announcement leads with material the book refused to spend time on, and that choice settles the argument before a script exists.</description>
+      <category>culture</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=neuromancer-tv-series-story-william-gibson-couldnt-fit-book</guid>
+      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>Audible Recruits Its Own Reviews to Sell the Next Listen</title>
       <link>https://www.homeworldpress.com/article.html?id=https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f</link>
       <description>The new audio discovery feature plays a sample, then a machine summary built from listener reactions, before you commit to a book.</description>
@@ -78,14 +86,6 @@
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=deadline-without-dependency-list-lunar-return</guid>
       <pubDate>Sun, 15 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>A Gravitational Lens Schedules Two More Arrivals of One Supernova</title>
-      <link>https://www.homeworldpress.com/article.html?id=gravitational-lens-supernova-reappearance-time-delay</link>
-      <description>Seventy years between images is a hard test of a fitted mass model, and a stranger will run it.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=gravitational-lens-supernova-reappearance-time-delay</guid>
-      <pubDate>Sat, 14 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>

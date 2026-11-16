@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f",
+  "currentCoverId": "neuromancer-tv-series-story-william-gibson-couldnt-fit-book",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -240,6 +240,14 @@
       "id": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f",
       "tipo": "do dia",
       "era": "manufactured-water-has-to-be-kept-in-rock"
+    },
+    {
+      "at": "2026-11-16T21:33:42.317Z",
+      "dia": "2026-11-16",
+      "rodada": "2026-11-16T18:23",
+      "id": "neuromancer-tv-series-story-william-gibson-couldnt-fit-book",
+      "tipo": "do dia",
+      "era": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f"
     }
   ],
   "capaVistas": [
@@ -263,6 +271,7 @@
     "slow-radio-clock-points-at-an-unseen-companion",
     "manufactured-water-has-to-be-kept-in-rock",
     "a-solar-magnetic-pattern-is-a-method-claim-first",
-    "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f"
+    "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f",
+    "neuromancer-tv-series-story-william-gibson-couldnt-fit-book"
   ]
 }
