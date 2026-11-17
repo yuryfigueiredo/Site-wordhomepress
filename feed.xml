@@ -8,6 +8,14 @@
     <lastBuildDate>Tue, 17 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Surveyor 6 Turned the Moon Into a Launch Pad in 1967</title>
+      <link>https://www.homeworldpress.com/article.html?id=surveyor-6-lunar-hop-first-surface-launch</link>
+      <description>The anniversary entry gives a date, two verbs and a superlative, and the argument hides in what it leaves out.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=surveyor-6-lunar-hop-first-surface-launch</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>NASA Prices Its Moon Base Ideas at a Million Dollars</title>
       <link>https://www.homeworldpress.com/article.html?id=nasa-million-dollar-moon-base-prize-design-studies</link>
       <description>Read the amount as a design constraint: at this price the prize buys documents and a list of who can think about lunar construction, and the rules decide whether either becomes hardware.</description>
@@ -77,14 +85,6 @@
       <description>A Guardian interview lends an alarming sentence to an alien-invasion frame. The frame is what breaks, and the ending is where to look.</description>
       <category>culture</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=alien-invasions-promise-a-fight-and-the-warning-has-none</guid>
-      <pubDate>Sun, 15 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Second pass through Webb data finds a planet that was never hidden</title>
-      <link>https://www.homeworldpress.com/article.html?id=second-pass-webb-images-planet-never-hidden</link>
-      <description>The reduction moved a detection limit rather than the object, and that is exactly what the next paper has to confirm.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=second-pass-webb-images-planet-never-hidden</guid>
       <pubDate>Sun, 15 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "a-solar-magnetic-pattern-is-a-method-claim-first",
+  "currentCoverId": "surveyor-6-lunar-hop-first-surface-launch",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -256,6 +256,14 @@
       "id": "a-solar-magnetic-pattern-is-a-method-claim-first",
       "tipo": "rotacionada",
       "era": "neuromancer-tv-series-story-william-gibson-couldnt-fit-book"
+    },
+    {
+      "at": "2026-11-17T19:21:44.256Z",
+      "dia": "2026-11-17",
+      "rodada": "2026-11-17T14:23",
+      "id": "surveyor-6-lunar-hop-first-surface-launch",
+      "tipo": "do dia",
+      "era": "a-solar-magnetic-pattern-is-a-method-claim-first"
     }
   ],
   "capaVistas": [
@@ -280,6 +288,7 @@
     "manufactured-water-has-to-be-kept-in-rock",
     "a-solar-magnetic-pattern-is-a-method-claim-first",
     "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f",
-    "neuromancer-tv-series-story-william-gibson-couldnt-fit-book"
+    "neuromancer-tv-series-story-william-gibson-couldnt-fit-book",
+    "surveyor-6-lunar-hop-first-surface-launch"
   ]
 }

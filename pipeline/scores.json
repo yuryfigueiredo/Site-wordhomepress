@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-17T01:31:46.954Z",
+  "updated": "2026-11-17T19:21:44.097Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -1319,6 +1319,44 @@
           "pts": 1,
           "max": 1,
           "why": "Argues the small award is an attention instrument whose value lives in four rule lines, not in the million."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-17"
+    },
+    "surveyor-6-lunar-hop-first-surface-launch": {
+      "score": 7.3,
+      "note": "7.3/10 — força em timeliness (fonte mais recente há 1 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 21% com sixty-years-turn-gemini-12-into-two-surnames-and-a-date"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Argues the hop's value is the surface interface, not delta-v, and grades the record by what the entry omits."
         }
       },
       "source": "auto",

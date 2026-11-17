@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-17T01:31:47.946Z",
+  "updated": "2026-11-17T19:21:45.095Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -335,6 +335,13 @@
       "outcome": "publicada",
       "at": "2026-11-17T01:31:47.945Z",
       "id": "nasa-million-dollar-moon-base-prize-design-studies"
+    },
+    "https://www.space.com/space-exploration/on-this-day-in-space-november-17-2026": {
+      "slug": "on-this-day-in-space-nov-17-1967-nasas-surveyor-6-moon-probe-mak",
+      "topic": "On this day in space! Nov. 17, 1967: NASA's Surveyor 6 moon probe makes 1st-ever successful launch and hop from the lunar surface",
+      "outcome": "publicada",
+      "at": "2026-11-17T19:21:45.093Z",
+      "id": "surveyor-6-lunar-hop-first-surface-launch"
     }
   },
   "publishes": [
@@ -487,6 +494,11 @@
       "id": "nasa-million-dollar-moon-base-prize-design-studies",
       "at": "2026-11-17T01:31:47.945Z",
       "score": 6.3
+    },
+    {
+      "id": "surveyor-6-lunar-hop-first-surface-launch",
+      "at": "2026-11-17T19:21:45.093Z",
+      "score": 7.3
     }
   ]
 }

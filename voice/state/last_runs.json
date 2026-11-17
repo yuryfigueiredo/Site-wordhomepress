@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-17T01:31:47.942Z",
+  "updated": "2026-11-17T19:21:45.088Z",
   "runs": {
     "analyst": {
-      "id": "nasa-million-dollar-moon-base-prize-design-studies",
+      "id": "surveyor-6-lunar-hop-first-surface-launch",
       "date": "2026-11-17",
-      "opening_move": "dated_fact",
-      "ending_move": "admitted_limit",
-      "title_pattern": "nasa prices its moon",
+      "opening_move": "correction",
+      "ending_move": "verification",
+      "title_pattern": "surveyor 6 turned the",
       "humor_lines": 1
     },
     "lab": {
