@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-16T21:33:43.135Z",
+  "updated": "2026-11-17T01:31:47.942Z",
   "runs": {
     "analyst": {
-      "id": "neuromancer-tv-series-story-william-gibson-couldnt-fit-book",
-      "date": "2026-11-16",
-      "opening_move": "document",
-      "ending_move": "small_observation",
-      "title_pattern": "the neuromancer series pitches",
+      "id": "nasa-million-dollar-moon-base-prize-design-studies",
+      "date": "2026-11-17",
+      "opening_move": "dated_fact",
+      "ending_move": "admitted_limit",
+      "title_pattern": "nasa prices its moon",
       "humor_lines": 1
     },
     "lab": {

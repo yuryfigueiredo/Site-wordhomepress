@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Mon, 16 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 17 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>NASA Prices Its Moon Base Ideas at a Million Dollars</title>
+      <link>https://www.homeworldpress.com/article.html?id=nasa-million-dollar-moon-base-prize-design-studies</link>
+      <description>Read the amount as a design constraint: at this price the prize buys documents and a list of who can think about lunar construction, and the rules decide whether either becomes hardware.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=nasa-million-dollar-moon-base-prize-design-studies</guid>
+      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>The Neuromancer Series Pitches the Story the Novel Left Out</title>
       <link>https://www.homeworldpress.com/article.html?id=neuromancer-tv-series-story-william-gibson-couldnt-fit-book</link>
@@ -77,14 +85,6 @@
       <description>The reduction moved a detection limit rather than the object, and that is exactly what the next paper has to confirm.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=second-pass-webb-images-planet-never-hidden</guid>
-      <pubDate>Sun, 15 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>A deadline alone cannot carry astronauts back to the Moon</title>
-      <link>https://www.homeworldpress.com/article.html?id=deadline-without-dependency-list-lunar-return</link>
-      <description>The target year for a crewed return arrives with no dependency list, and the missing engineering answers are the story</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=deadline-without-dependency-list-lunar-return</guid>
       <pubDate>Sun, 15 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

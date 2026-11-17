@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "nasa-million-dollar-moon-base-prize-design-studies"
+        }
+      ],
+      "destination": "/a-nasa-million-dollar-moon-base-prize-design-studies.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "neuromancer-tv-series-story-william-gibson-couldnt-fit-book"
         }
       ],

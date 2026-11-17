@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16T21:33:43.142Z",
+  "updated": "2026-11-17T01:31:47.946Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -328,6 +328,13 @@
       "outcome": "publicada",
       "at": "2026-11-16T21:33:43.140Z",
       "id": "neuromancer-tv-series-story-william-gibson-couldnt-fit-book"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261115085542.htm": {
+      "slug": "nasa-is-offering-1-million-for-bold-ideas-to-help-build-a-moon-b",
+      "topic": "NASA is offering $1 million for bold ideas to help build a Moon base",
+      "outcome": "publicada",
+      "at": "2026-11-17T01:31:47.945Z",
+      "id": "nasa-million-dollar-moon-base-prize-design-studies"
     }
   },
   "publishes": [
@@ -475,6 +482,11 @@
       "id": "neuromancer-tv-series-story-william-gibson-couldnt-fit-book",
       "at": "2026-11-16T21:33:43.140Z",
       "score": 6.8
+    },
+    {
+      "id": "nasa-million-dollar-moon-base-prize-design-studies",
+      "at": "2026-11-17T01:31:47.945Z",
+      "score": 6.3
     }
   ]
 }
