@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "jbls-headphones-that-are-great-for-in-flight-entertainment-are-6"
+        }
+      ],
+      "destination": "/a-jbls-headphones-that-are-great-for-in-flight-entertainment-are-6.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "surveyor-6-lunar-hop-first-surface-launch"
         }
       ],

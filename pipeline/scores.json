@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-17T19:21:44.097Z",
+  "updated": "2026-11-17T23:33:07.991Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -1357,6 +1357,44 @@
           "pts": 1,
           "max": 1,
           "why": "Argues the hop's value is the surface interface, not delta-v, and grades the record by what the entry omits."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-17"
+    },
+    "jbls-headphones-that-are-great-for-in-flight-entertainment-are-6": {
+      "score": 6.4,
+      "note": "6.4/10 — força em timeliness (fonte mais recente há 1 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 7% com candidate-neutron-star-mass-gap"
+        },
+        "craft": {
+          "pts": 1.6,
+          "max": 2,
+          "why": "ritmo e léxico medidos (80%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 0.5,
+          "max": 1,
+          "why": "A peça separa o único número verificável do listing da única afirmação útil para o leitor, e mostra que a segunda não depende da primeira."
         }
       },
       "source": "auto",

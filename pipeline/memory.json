@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-17T19:21:45.095Z",
+  "updated": "2026-11-17T23:33:08.831Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -342,6 +342,11 @@
       "outcome": "publicada",
       "at": "2026-11-17T19:21:45.093Z",
       "id": "surveyor-6-lunar-hop-first-surface-launch"
+    },
+    "https://www.theverge.com/gadgets/1035085/jbl-tour-one-m3-deal-sale-black-friday-2026": {
+      "outcome": "publicada",
+      "at": "2026-11-17T23:33:08.829Z",
+      "id": "jbls-headphones-that-are-great-for-in-flight-entertainment-are-6"
     }
   },
   "publishes": [
@@ -499,6 +504,11 @@
       "id": "surveyor-6-lunar-hop-first-surface-launch",
       "at": "2026-11-17T19:21:45.093Z",
       "score": 7.3
+    },
+    {
+      "id": "jbls-headphones-that-are-great-for-in-flight-entertainment-are-6",
+      "at": "2026-11-17T23:33:08.829Z",
+      "score": 6.4
     }
   ]
 }

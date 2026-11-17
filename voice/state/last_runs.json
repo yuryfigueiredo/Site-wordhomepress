@@ -1,15 +1,15 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-17T19:21:45.088Z",
+  "updated": "2026-11-17T23:33:08.824Z",
   "runs": {
     "analyst": {
-      "id": "surveyor-6-lunar-hop-first-surface-launch",
+      "id": "jbls-headphones-that-are-great-for-in-flight-entertainment-are-6",
       "date": "2026-11-17",
-      "opening_move": "correction",
-      "ending_move": "verification",
-      "title_pattern": "surveyor 6 turned the",
-      "humor_lines": 1
+      "opening_move": "document",
+      "ending_move": "small_observation",
+      "title_pattern": "a jbl flagship headphone",
+      "humor_lines": 0
     },
     "lab": {
       "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
