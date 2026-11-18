@@ -79,7 +79,12 @@
       "rodada": "2026-11-17T22:23",
       "at": "2026-11-18T01:24:01.267Z",
       "resultado": "cadência: a última matéria está no ar há 1.8h (mínimo 3h) — esta rodada só coleta e checa."
+    },
+    {
+      "rodada": "2026-11-18T02:23",
+      "at": "2026-11-18T05:35:14.077Z",
+      "resultado": "rascunho ficou reprovado depois de 6 tentativas — nada publicado, e a pauta fica 72h fora da fila (pipeline/memory.json)."
     }
   ],
-  "updated": "2026-11-18T01:24:01.267Z"
+  "updated": "2026-11-18T05:35:14.077Z"
 }

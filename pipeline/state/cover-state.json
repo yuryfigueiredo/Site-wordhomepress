@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "neuromancer-tv-series-story-william-gibson-couldnt-fit-book",
+  "currentCoverId": "a-solar-magnetic-pattern-is-a-method-claim-first",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -280,6 +280,14 @@
       "id": "neuromancer-tv-series-story-william-gibson-couldnt-fit-book",
       "tipo": "rotacionada",
       "era": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f"
+    },
+    {
+      "at": "2026-11-18T05:35:14.042Z",
+      "dia": "2026-11-18",
+      "rodada": "2026-11-18T02:23",
+      "id": "a-solar-magnetic-pattern-is-a-method-claim-first",
+      "tipo": "rotacionada",
+      "era": "neuromancer-tv-series-story-william-gibson-couldnt-fit-book"
     }
   ],
   "capaVistas": [
