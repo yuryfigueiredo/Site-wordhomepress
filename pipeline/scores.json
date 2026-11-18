@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-17T23:33:07.991Z",
+  "updated": "2026-11-18T09:29:45.532Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -1399,6 +1399,44 @@
       },
       "source": "auto",
       "date": "2026-11-17"
+    },
+    "smaller-plankton-more-mouths-before-a-fish": {
+      "score": 6.8,
+      "note": "6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 6% com gravitational-lens-supernova-reappearance-time-delay"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Argues the risk is trophic step count, not plankton biomass, so stable chlorophyll can hide a collapse in what reaches fish."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-18"
     }
   }
 }

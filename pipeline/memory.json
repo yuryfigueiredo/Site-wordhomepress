@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18T05:35:13.904Z",
+  "updated": "2026-11-18T09:29:46.655Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -353,6 +353,19 @@
       "topic": "A mysterious twist in the universe’s oldest light could reveal new physics",
       "outcome": "reprovada",
       "at": "2026-11-18T05:35:13.904Z"
+    },
+    "https://arstechnica.com/science/2026/11/james-webb-telescope-finds-ice-older-than-the-star-it-orbits": {
+      "slug": "james-webb-telescope-finds-ice-older-than-the-star-it-orbits",
+      "topic": "James Webb telescope finds ice older than the star it orbits",
+      "outcome": "fonte_inalcancavel",
+      "at": "2026-11-18T09:23:53.179Z"
+    },
+    "https://phys.org/news/2026-11-base-ocean-food-chain-scientists.html": {
+      "slug": "at-base-of-ocean-food-chain-scientists-uncover-impacts-of-a-chan",
+      "topic": "At base of ocean food chain, scientists uncover impacts of a changing atmosphere",
+      "outcome": "publicada",
+      "at": "2026-11-18T09:29:46.653Z",
+      "id": "smaller-plankton-more-mouths-before-a-fish"
     }
   },
   "publishes": [
@@ -515,6 +528,11 @@
       "id": "jbls-headphones-that-are-great-for-in-flight-entertainment-are-6",
       "at": "2026-11-17T23:33:08.829Z",
       "score": 6.4
+    },
+    {
+      "id": "smaller-plankton-more-mouths-before-a-fish",
+      "at": "2026-11-18T09:29:46.653Z",
+      "score": 6.8
     }
   ]
 }

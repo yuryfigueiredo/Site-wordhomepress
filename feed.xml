@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Tue, 17 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 18 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Smaller Plankton Means More Mouths Between a Cell and a Fish</title>
+      <link>https://www.homeworldpress.com/article.html?id=smaller-plankton-more-mouths-before-a-fish</link>
+      <description>The new ocean result points at cell size, not cell count. Chlorophyll can stay flat while the energy reaching a fish collapses.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=smaller-plankton-more-mouths-before-a-fish</guid>
+      <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>A JBL Flagship Headphone Takes A Deep Black Friday Cut</title>
       <link>https://www.homeworldpress.com/article.html?id=jbls-headphones-that-are-great-for-in-flight-entertainment-are-6</link>
@@ -77,14 +85,6 @@
       <description>Anniversary writing repeats a phrase that promises a distance; the headline attached to it prints no number, and the schedule underneath is the actual claim.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=drawing-a-pinpoint-costs-a-mission-its-orbit</guid>
-      <pubDate>Sun, 15 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Sixty years turn a spaceflight into two surnames and a date</title>
-      <link>https://www.homeworldpress.com/article.html?id=sixty-years-turn-gemini-12-into-two-surnames-and-a-date</link>
-      <description>Space.com's November anniversary note keeps the launch date and the crew names. The problem the flight was sent to solve has no field in that format.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=sixty-years-turn-gemini-12-into-two-surnames-and-a-date</guid>
       <pubDate>Sun, 15 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
