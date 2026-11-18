@@ -84,7 +84,12 @@
       "rodada": "2026-11-18T02:23",
       "at": "2026-11-18T05:35:14.077Z",
       "resultado": "rascunho ficou reprovado depois de 6 tentativas — nada publicado, e a pauta fica 72h fora da fila (pipeline/memory.json)."
+    },
+    {
+      "rodada": "2026-11-18T06:23",
+      "at": "2026-11-18T09:29:47.106Z",
+      "resultado": "rodada completa. O commit `turno:` e o push são do runner (Actions ou hwp-turno.sh); o deploy é da Vercel."
     }
   ],
-  "updated": "2026-11-18T05:35:14.077Z"
+  "updated": "2026-11-18T09:29:47.106Z"
 }
