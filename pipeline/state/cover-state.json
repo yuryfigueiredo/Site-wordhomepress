@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "reader-letters-arrive-under-a-headline-nobody-signed",
+  "currentCoverId": "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -312,6 +312,14 @@
       "id": "reader-letters-arrive-under-a-headline-nobody-signed",
       "tipo": "do dia",
       "era": "cold-water-will-not-explain-where-glacial-carbon-hid"
+    },
+    {
+      "at": "2026-11-18T21:29:03.312Z",
+      "dia": "2026-11-18",
+      "rodada": "2026-11-18T18:23",
+      "id": "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar",
+      "tipo": "do dia",
+      "era": "reader-letters-arrive-under-a-headline-nobody-signed"
     }
   ],
   "capaVistas": [
@@ -340,6 +348,7 @@
     "surveyor-6-lunar-hop-first-surface-launch",
     "smaller-plankton-more-mouths-before-a-fish",
     "cold-water-will-not-explain-where-glacial-carbon-hid",
-    "reader-letters-arrive-under-a-headline-nobody-signed"
+    "reader-letters-arrive-under-a-headline-nobody-signed",
+    "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar"
   ]
 }

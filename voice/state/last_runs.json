@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-18T17:31:58.714Z",
+  "updated": "2026-11-18T21:29:04.178Z",
   "runs": {
     "analyst": {
-      "id": "reader-letters-arrive-under-a-headline-nobody-signed",
+      "id": "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar",
       "date": "2026-11-18",
-      "opening_move": "document",
-      "ending_move": "verification",
-      "title_pattern": "reader letters arrive under",
+      "opening_move": "dated_fact",
+      "ending_move": "small_observation",
+      "title_pattern": "bravia 8 ii's early",
       "humor_lines": 1
     },
     "lab": {

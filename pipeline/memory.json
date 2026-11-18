@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18T17:31:58.716Z",
+  "updated": "2026-11-18T21:29:04.184Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -380,6 +380,13 @@
       "outcome": "publicada",
       "at": "2026-11-18T17:31:58.716Z",
       "id": "reader-letters-arrive-under-a-headline-nobody-signed"
+    },
+    "https://www.theverge.com/gadgets/1036693/sony-bravia-8-ii-oled-black-friday-2026-deal-sale": {
+      "slug": "sonys-impressive-bravia-8-ii-oled-hits-a-new-low-price-ahead-of-",
+      "topic": "Sony’s impressive Bravia 8 II OLED hits a new low price ahead of Black Friday",
+      "outcome": "publicada",
+      "at": "2026-11-18T21:29:04.183Z",
+      "id": "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar"
     }
   },
   "publishes": [
@@ -557,6 +564,11 @@
       "id": "reader-letters-arrive-under-a-headline-nobody-signed",
       "at": "2026-11-18T17:31:58.716Z",
       "score": 7.3
+    },
+    {
+      "id": "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar",
+      "at": "2026-11-18T21:29:04.183Z",
+      "score": 6.8
     }
   ]
 }
