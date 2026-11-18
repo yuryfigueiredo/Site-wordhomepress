@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "cold-water-will-not-explain-where-glacial-carbon-hid",
+  "currentCoverId": "reader-letters-arrive-under-a-headline-nobody-signed",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -304,6 +304,14 @@
       "id": "cold-water-will-not-explain-where-glacial-carbon-hid",
       "tipo": "do dia",
       "era": "smaller-plankton-more-mouths-before-a-fish"
+    },
+    {
+      "at": "2026-11-18T17:31:57.905Z",
+      "dia": "2026-11-18",
+      "rodada": "2026-11-18T14:23",
+      "id": "reader-letters-arrive-under-a-headline-nobody-signed",
+      "tipo": "do dia",
+      "era": "cold-water-will-not-explain-where-glacial-carbon-hid"
     }
   ],
   "capaVistas": [
@@ -331,6 +339,7 @@
     "neuromancer-tv-series-story-william-gibson-couldnt-fit-book",
     "surveyor-6-lunar-hop-first-surface-launch",
     "smaller-plankton-more-mouths-before-a-fish",
-    "cold-water-will-not-explain-where-glacial-carbon-hid"
+    "cold-water-will-not-explain-where-glacial-carbon-hid",
+    "reader-letters-arrive-under-a-headline-nobody-signed"
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18T13:32:35.067Z",
+  "updated": "2026-11-18T17:31:58.716Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -373,6 +373,13 @@
       "outcome": "publicada",
       "at": "2026-11-18T13:32:35.065Z",
       "id": "cold-water-will-not-explain-where-glacial-carbon-hid"
+    },
+    "https://www.theguardian.com/books/2026/nov/13/the-end-of-everything-is-the-beginning-of-something-great": {
+      "slug": "the-end-of-everything-is-the-beginning-of-something-great-letter",
+      "topic": "The End of Everything is the beginning of something great | Letters",
+      "outcome": "publicada",
+      "at": "2026-11-18T17:31:58.716Z",
+      "id": "reader-letters-arrive-under-a-headline-nobody-signed"
     }
   },
   "publishes": [
@@ -545,6 +552,11 @@
       "id": "cold-water-will-not-explain-where-glacial-carbon-hid",
       "at": "2026-11-18T13:32:35.065Z",
       "score": 6.8
+    },
+    {
+      "id": "reader-letters-arrive-under-a-headline-nobody-signed",
+      "at": "2026-11-18T17:31:58.716Z",
+      "score": 7.3
     }
   ]
 }

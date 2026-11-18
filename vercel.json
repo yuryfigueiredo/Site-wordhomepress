@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "reader-letters-arrive-under-a-headline-nobody-signed"
+        }
+      ],
+      "destination": "/a-reader-letters-arrive-under-a-headline-nobody-signed.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "cold-water-will-not-explain-where-glacial-carbon-hid"
         }
       ],
