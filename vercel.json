@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "cold-water-will-not-explain-where-glacial-carbon-hid"
+        }
+      ],
+      "destination": "/a-cold-water-will-not-explain-where-glacial-carbon-hid.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "smaller-plankton-more-mouths-before-a-fish"
         }
       ],

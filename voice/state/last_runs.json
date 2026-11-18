@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-18T09:29:46.648Z",
+  "updated": "2026-11-18T13:32:35.060Z",
   "runs": {
     "analyst": {
-      "id": "smaller-plankton-more-mouths-before-a-fish",
+      "id": "cold-water-will-not-explain-where-glacial-carbon-hid",
       "date": "2026-11-18",
-      "opening_move": "object",
-      "ending_move": "verification",
-      "title_pattern": "smaller plankton means more",
+      "opening_move": "correction",
+      "ending_move": "admitted_limit",
+      "title_pattern": "cold water will not",
       "humor_lines": 1
     },
     "lab": {

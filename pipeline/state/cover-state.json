@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "smaller-plankton-more-mouths-before-a-fish",
+  "currentCoverId": "cold-water-will-not-explain-where-glacial-carbon-hid",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -296,6 +296,14 @@
       "id": "smaller-plankton-more-mouths-before-a-fish",
       "tipo": "do dia",
       "era": "a-solar-magnetic-pattern-is-a-method-claim-first"
+    },
+    {
+      "at": "2026-11-18T13:32:34.144Z",
+      "dia": "2026-11-18",
+      "rodada": "2026-11-18T10:23",
+      "id": "cold-water-will-not-explain-where-glacial-carbon-hid",
+      "tipo": "do dia",
+      "era": "smaller-plankton-more-mouths-before-a-fish"
     }
   ],
   "capaVistas": [
@@ -322,6 +330,7 @@
     "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f",
     "neuromancer-tv-series-story-william-gibson-couldnt-fit-book",
     "surveyor-6-lunar-hop-first-surface-launch",
-    "smaller-plankton-more-mouths-before-a-fish"
+    "smaller-plankton-more-mouths-before-a-fish",
+    "cold-water-will-not-explain-where-glacial-carbon-hid"
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18T09:29:46.655Z",
+  "updated": "2026-11-18T13:32:35.067Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -366,6 +366,13 @@
       "outcome": "publicada",
       "at": "2026-11-18T09:29:46.653Z",
       "id": "smaller-plankton-more-mouths-before-a-fish"
+    },
+    "https://phys.org/news/2026-11-ocean-carbon-sequestration-glacial-conditions.html": {
+      "slug": "how-does-ocean-carbon-sequestration-change-under-different-glaci",
+      "topic": "How does ocean carbon sequestration change under different glacial conditions?",
+      "outcome": "publicada",
+      "at": "2026-11-18T13:32:35.065Z",
+      "id": "cold-water-will-not-explain-where-glacial-carbon-hid"
     }
   },
   "publishes": [
@@ -532,6 +539,11 @@
     {
       "id": "smaller-plankton-more-mouths-before-a-fish",
       "at": "2026-11-18T09:29:46.653Z",
+      "score": 6.8
+    },
+    {
+      "id": "cold-water-will-not-explain-where-glacial-carbon-hid",
+      "at": "2026-11-18T13:32:35.065Z",
       "score": 6.8
     }
   ]
