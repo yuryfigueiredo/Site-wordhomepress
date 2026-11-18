@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f",
+  "currentCoverId": "neuromancer-tv-series-story-william-gibson-couldnt-fit-book",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -272,6 +272,14 @@
       "id": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f",
       "tipo": "rotacionada",
       "era": "surveyor-6-lunar-hop-first-surface-launch"
+    },
+    {
+      "at": "2026-11-18T01:24:01.224Z",
+      "dia": "2026-11-17",
+      "rodada": "2026-11-17T22:23",
+      "id": "neuromancer-tv-series-story-william-gibson-couldnt-fit-book",
+      "tipo": "rotacionada",
+      "era": "https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f"
     }
   ],
   "capaVistas": [
