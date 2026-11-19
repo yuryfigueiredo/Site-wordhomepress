@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-19T09:29:59.025Z",
+  "updated": "2026-11-19T13:31:42.883Z",
   "runs": {
     "analyst": {
-      "id": "first-year-penguins-share-water-with-the-krill-fleet",
+      "id": "mars-rotor-tips-learn-to-run-supersonic",
       "date": "2026-11-19",
-      "opening_move": "dry_contrast",
-      "ending_move": "admitted_limit",
-      "title_pattern": "a krill fishery works",
+      "opening_move": "object",
+      "ending_move": "verification",
+      "title_pattern": "nasa pushes mars rotor",
       "humor_lines": 1
     },
     "lab": {

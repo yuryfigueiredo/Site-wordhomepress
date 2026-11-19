@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "mars-rotor-tips-learn-to-run-supersonic"
+        }
+      ],
+      "destination": "/a-mars-rotor-tips-learn-to-run-supersonic.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "first-year-penguins-share-water-with-the-krill-fleet"
         }
       ],

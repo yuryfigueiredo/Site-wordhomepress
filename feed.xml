@@ -8,6 +8,14 @@
     <lastBuildDate>Thu, 19 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>NASA Pushes Mars Rotor Blades Past the Sound Barrier</title>
+      <link>https://www.homeworldpress.com/article.html?id=mars-rotor-tips-learn-to-run-supersonic</link>
+      <description>A ground campaign takes helicopter blades into transonic flow on the one planet where a rotor has no margin left over</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=mars-rotor-tips-learn-to-run-supersonic</guid>
+      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>A Krill Fishery Works the Water Where Young Penguins Learn to Feed</title>
       <link>https://www.homeworldpress.com/article.html?id=first-year-penguins-share-water-with-the-krill-fleet</link>
       <description>The reported encounters fall in a bird's first year at sea, the stretch in which it acquires its feeding knowledge. That timing is what makes the finding hard to manage around, and the study's own figures were not available to this desk.</description>
@@ -77,14 +85,6 @@
       <description>The anniversary entry gives a date, two verbs and a superlative, and the argument hides in what it leaves out.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=surveyor-6-lunar-hop-first-surface-launch</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>NASA Prices Its Moon Base Ideas at a Million Dollars</title>
-      <link>https://www.homeworldpress.com/article.html?id=nasa-million-dollar-moon-base-prize-design-studies</link>
-      <description>Read the amount as a design constraint: at this price the prize buys documents and a list of who can think about lunar construction, and the rules decide whether either becomes hardware.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=nasa-million-dollar-moon-base-prize-design-studies</guid>
       <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
