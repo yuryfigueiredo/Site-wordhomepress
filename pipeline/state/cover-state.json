@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "weight-space-playgrounds-put-weights-on-screen",
+  "currentCoverId": "first-year-penguins-share-water-with-the-krill-fleet",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -360,6 +360,14 @@
       "id": "weight-space-playgrounds-put-weights-on-screen",
       "tipo": "do dia",
       "era": "one-tooth-cannot-prove-homo-erectus-coexistence"
+    },
+    {
+      "at": "2026-11-19T21:23:52.617Z",
+      "dia": "2026-11-19",
+      "rodada": "2026-11-19T18:23",
+      "id": "first-year-penguins-share-water-with-the-krill-fleet",
+      "tipo": "rotacionada",
+      "era": "weight-space-playgrounds-put-weights-on-screen"
     }
   ],
   "capaVistas": [
