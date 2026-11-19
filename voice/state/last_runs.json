@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-19T05:34:14.498Z",
+  "updated": "2026-11-19T09:29:59.025Z",
   "runs": {
     "analyst": {
-      "id": "one-tooth-cannot-prove-homo-erectus-coexistence",
+      "id": "first-year-penguins-share-water-with-the-krill-fleet",
       "date": "2026-11-19",
-      "opening_move": "document",
-      "ending_move": "verification",
-      "title_pattern": "one tooth cannot carry",
+      "opening_move": "dry_contrast",
+      "ending_move": "admitted_limit",
+      "title_pattern": "a krill fishery works",
       "humor_lines": 1
     },
     "lab": {

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-19T05:34:14.504Z",
+  "updated": "2026-11-19T09:29:59.028Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -401,6 +401,13 @@
       "outcome": "publicada",
       "at": "2026-11-19T05:34:14.503Z",
       "id": "one-tooth-cannot-prove-homo-erectus-coexistence"
+    },
+    "https://phys.org/news/2026-11-young-emperor-penguins-encounter-industrial.html": {
+      "slug": "young-emperor-penguins-encounter-industrial-krill-fishing-during",
+      "topic": "Young emperor penguins encounter industrial krill fishing during first year at sea",
+      "outcome": "publicada",
+      "at": "2026-11-19T09:29:59.027Z",
+      "id": "first-year-penguins-share-water-with-the-krill-fleet"
     }
   },
   "publishes": [
@@ -592,6 +599,11 @@
     {
       "id": "one-tooth-cannot-prove-homo-erectus-coexistence",
       "at": "2026-11-19T05:34:14.503Z",
+      "score": 6.8
+    },
+    {
+      "id": "first-year-penguins-share-water-with-the-krill-fleet",
+      "at": "2026-11-19T09:29:59.027Z",
       "score": 6.8
     }
   ]

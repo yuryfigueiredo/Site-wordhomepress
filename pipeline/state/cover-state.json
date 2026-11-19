@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "one-tooth-cannot-prove-homo-erectus-coexistence",
+  "currentCoverId": "first-year-penguins-share-water-with-the-krill-fleet",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -336,6 +336,14 @@
       "id": "one-tooth-cannot-prove-homo-erectus-coexistence",
       "tipo": "do dia",
       "era": "webb-confirms-supergiant-sun-like-merger"
+    },
+    {
+      "at": "2026-11-19T09:29:58.217Z",
+      "dia": "2026-11-19",
+      "rodada": "2026-11-19T06:23",
+      "id": "first-year-penguins-share-water-with-the-krill-fleet",
+      "tipo": "do dia",
+      "era": "one-tooth-cannot-prove-homo-erectus-coexistence"
     }
   ],
   "capaVistas": [
@@ -367,6 +375,7 @@
     "reader-letters-arrive-under-a-headline-nobody-signed",
     "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar",
     "webb-confirms-supergiant-sun-like-merger",
-    "one-tooth-cannot-prove-homo-erectus-coexistence"
+    "one-tooth-cannot-prove-homo-erectus-coexistence",
+    "first-year-penguins-share-water-with-the-krill-fleet"
   ]
 }

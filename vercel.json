@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "first-year-penguins-share-water-with-the-krill-fleet"
+        }
+      ],
+      "destination": "/a-first-year-penguins-share-water-with-the-krill-fleet.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "one-tooth-cannot-prove-homo-erectus-coexistence"
         }
       ],
