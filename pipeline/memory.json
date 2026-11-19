@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18T21:29:04.184Z",
+  "updated": "2026-11-19T01:29:30.881Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -387,6 +387,13 @@
       "outcome": "publicada",
       "at": "2026-11-18T21:29:04.183Z",
       "id": "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar"
+    },
+    "https://phys.org/news/2026-11-webb-kind-merger-supergiant-smaller.html": {
+      "slug": "webb-confirms-first-of-its-kind-merger-of-a-supergiant-and-small",
+      "topic": "Webb confirms first-of-its-kind merger of a supergiant and smaller sun-like star",
+      "outcome": "publicada",
+      "at": "2026-11-19T01:29:30.880Z",
+      "id": "webb-confirms-supergiant-sun-like-merger"
     }
   },
   "publishes": [
@@ -568,6 +575,11 @@
     {
       "id": "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar",
       "at": "2026-11-18T21:29:04.183Z",
+      "score": 6.8
+    },
+    {
+      "id": "webb-confirms-supergiant-sun-like-merger",
+      "at": "2026-11-19T01:29:30.880Z",
       "score": 6.8
     }
   ]

@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 18 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 19 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>A Supergiant's Sun-Like Companion Gives Webb a Phase to Measure</title>
+      <link>https://www.homeworldpress.com/article.html?id=webb-confirms-supergiant-sun-like-merger</link>
+      <description>The announcement carries no distance, no orbit and no instrument. What it carries is the word confirms, and that word implies a prediction someone made first.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=webb-confirms-supergiant-sun-like-merger</guid>
+      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Bravia 8 II's Early Low Price Follows a Retail Calendar</title>
       <link>https://www.homeworldpress.com/article.html?id=sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar</link>
@@ -77,14 +85,6 @@
       <description>The new audio discovery feature plays a sample, then a machine summary built from listener reactions, before you commit to a book.</description>
       <category>culture</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=https-www-theverge-com-tech-1034083-audible-audio-discovery-ai-f</guid>
-      <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>A Hidden Pattern in Solar Magnetism Has to Outlive Its Instrument</title>
-      <link>https://www.homeworldpress.com/article.html?id=a-solar-magnetic-pattern-is-a-method-claim-first</link>
-      <description>The Parker Solar Probe result is best read as news about resolution and chosen statistics. A prediction the old description of the field could not make is what settles it.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=a-solar-magnetic-pattern-is-a-method-claim-first</guid>
       <pubDate>Mon, 16 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

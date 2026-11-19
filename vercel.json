@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "webb-confirms-supergiant-sun-like-merger"
+        }
+      ],
+      "destination": "/a-webb-confirms-supergiant-sun-like-merger.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar"
         }
       ],

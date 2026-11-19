@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar",
+  "currentCoverId": "webb-confirms-supergiant-sun-like-merger",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -320,6 +320,14 @@
       "id": "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar",
       "tipo": "do dia",
       "era": "reader-letters-arrive-under-a-headline-nobody-signed"
+    },
+    {
+      "at": "2026-11-19T01:29:30.063Z",
+      "dia": "2026-11-18",
+      "rodada": "2026-11-18T22:23",
+      "id": "webb-confirms-supergiant-sun-like-merger",
+      "tipo": "do dia",
+      "era": "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar"
     }
   ],
   "capaVistas": [
@@ -349,6 +357,7 @@
     "smaller-plankton-more-mouths-before-a-fish",
     "cold-water-will-not-explain-where-glacial-carbon-hid",
     "reader-letters-arrive-under-a-headline-nobody-signed",
-    "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar"
+    "sony-bravia-8-ii-early-price-floor-follows-a-retail-calendar",
+    "webb-confirms-supergiant-sun-like-merger"
   ]
 }
