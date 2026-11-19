@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-19T01:29:30.881Z",
+  "updated": "2026-11-19T05:34:14.504Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -394,6 +394,13 @@
       "outcome": "publicada",
       "at": "2026-11-19T01:29:30.880Z",
       "id": "webb-confirms-supergiant-sun-like-merger"
+    },
+    "https://phys.org/news/2026-11-unusual-tooth-homo-erectus-southern.html": {
+      "slug": "one-unusual-tooth-suggests-homo-erectus-shared-southern-china-wi",
+      "topic": "One unusual tooth suggests Homo erectus shared southern China with another human species",
+      "outcome": "publicada",
+      "at": "2026-11-19T05:34:14.503Z",
+      "id": "one-tooth-cannot-prove-homo-erectus-coexistence"
     }
   },
   "publishes": [
@@ -580,6 +587,11 @@
     {
       "id": "webb-confirms-supergiant-sun-like-merger",
       "at": "2026-11-19T01:29:30.880Z",
+      "score": 6.8
+    },
+    {
+      "id": "one-tooth-cannot-prove-homo-erectus-coexistence",
+      "at": "2026-11-19T05:34:14.503Z",
       "score": 6.8
     }
   ]

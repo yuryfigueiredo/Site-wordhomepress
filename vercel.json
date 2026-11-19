@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "one-tooth-cannot-prove-homo-erectus-coexistence"
+        }
+      ],
+      "destination": "/a-one-tooth-cannot-prove-homo-erectus-coexistence.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "webb-confirms-supergiant-sun-like-merger"
         }
       ],
