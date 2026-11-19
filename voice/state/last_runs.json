@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-19T13:31:42.883Z",
+  "updated": "2026-11-19T17:27:49.509Z",
   "runs": {
     "analyst": {
-      "id": "mars-rotor-tips-learn-to-run-supersonic",
+      "id": "weight-space-playgrounds-put-weights-on-screen",
       "date": "2026-11-19",
-      "opening_move": "object",
-      "ending_move": "verification",
-      "title_pattern": "nasa pushes mars rotor",
+      "opening_move": "document",
+      "ending_move": "small_observation",
+      "title_pattern": "weight-space playgrounds put trained",
       "humor_lines": 1
     },
     "lab": {

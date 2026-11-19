@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-19T13:31:42.885Z",
+  "updated": "2026-11-19T17:27:49.511Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -415,6 +415,13 @@
       "outcome": "publicada",
       "at": "2026-11-19T13:31:42.885Z",
       "id": "mars-rotor-tips-learn-to-run-supersonic"
+    },
+    "https://tabbyml.github.io/weight-space-playground": {
+      "slug": "show-hn-watch-weight-space-programming-in-action-with-webgpu",
+      "topic": "Show HN: Watch weight-space programming in action with WebGPU",
+      "outcome": "publicada",
+      "at": "2026-11-19T17:27:49.510Z",
+      "id": "weight-space-playgrounds-put-weights-on-screen"
     }
   },
   "publishes": [
@@ -617,6 +624,11 @@
       "id": "mars-rotor-tips-learn-to-run-supersonic",
       "at": "2026-11-19T13:31:42.885Z",
       "score": 6.4
+    },
+    {
+      "id": "weight-space-playgrounds-put-weights-on-screen",
+      "at": "2026-11-19T17:27:49.510Z",
+      "score": 6.8
     }
   ]
 }

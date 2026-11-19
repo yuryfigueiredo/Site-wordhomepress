@@ -8,6 +8,14 @@
     <lastBuildDate>Thu, 19 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Weight-Space Playgrounds Put Trained Parameters in a Tab</title>
+      <link>https://www.homeworldpress.com/article.html?id=weight-space-playgrounds-put-weights-on-screen</link>
+      <description>A new interactive demo invites readers to watch learning happen on their own hardware. Its lesson belongs to teaching, and its weakest word is programming.</description>
+      <category>tech</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=weight-space-playgrounds-put-weights-on-screen</guid>
+      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>NASA Pushes Mars Rotor Blades Past the Sound Barrier</title>
       <link>https://www.homeworldpress.com/article.html?id=mars-rotor-tips-learn-to-run-supersonic</link>
       <description>A ground campaign takes helicopter blades into transonic flow on the one planet where a rotor has no margin left over</description>
@@ -77,14 +85,6 @@
       <description>The listing carries one real number and no test protocol, and that gap decides what a shopper can actually buy for a long flight.</description>
       <category>tech</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=jbls-headphones-that-are-great-for-in-flight-entertainment-are-6</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Surveyor 6 Turned the Moon Into a Launch Pad in 1967</title>
-      <link>https://www.homeworldpress.com/article.html?id=surveyor-6-lunar-hop-first-surface-launch</link>
-      <description>The anniversary entry gives a date, two verbs and a superlative, and the argument hides in what it leaves out.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=surveyor-6-lunar-hop-first-surface-launch</guid>
       <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

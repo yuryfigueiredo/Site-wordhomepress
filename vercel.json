@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "weight-space-playgrounds-put-weights-on-screen"
+        }
+      ],
+      "destination": "/a-weight-space-playgrounds-put-weights-on-screen.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "mars-rotor-tips-learn-to-run-supersonic"
         }
       ],
