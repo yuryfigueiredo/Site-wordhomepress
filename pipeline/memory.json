@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-20T05:33:07.905Z",
+  "updated": "2026-11-20T09:32:25.811Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -435,6 +435,13 @@
       "outcome": "publicada",
       "at": "2026-11-20T05:33:07.903Z",
       "id": "voyager-1-launched-second-and-outran-voyager-2"
+    },
+    "https://www.space.com/astronomy/comets/euclid-discovers-its-1st-comet-space-photo-of-the-day-for-nov-16-2026": {
+      "slug": "euclid-space-telescope-discovers-its-1st-comet-space-photo-of-th",
+      "topic": "Euclid space telescope discovers its 1st comet | Space photo of the day for Nov. 16, 2026",
+      "outcome": "publicada",
+      "at": "2026-11-20T09:32:25.809Z",
+      "id": "euclid-first-comet-survey-pipeline"
     }
   },
   "publishes": [
@@ -646,6 +653,11 @@
     {
       "id": "voyager-1-launched-second-and-outran-voyager-2",
       "at": "2026-11-20T05:33:07.903Z",
+      "score": 6.8
+    },
+    {
+      "id": "euclid-first-comet-survey-pipeline",
+      "at": "2026-11-20T09:32:25.809Z",
       "score": 6.8
     }
   ]

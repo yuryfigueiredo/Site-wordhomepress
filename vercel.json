@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "euclid-first-comet-survey-pipeline"
+        }
+      ],
+      "destination": "/a-euclid-first-comet-survey-pipeline.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "voyager-1-launched-second-and-outran-voyager-2"
         }
       ],

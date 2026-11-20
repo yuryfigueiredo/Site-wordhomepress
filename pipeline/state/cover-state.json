@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "voyager-1-launched-second-and-outran-voyager-2",
+  "currentCoverId": "euclid-first-comet-survey-pipeline",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -384,6 +384,14 @@
       "id": "voyager-1-launched-second-and-outran-voyager-2",
       "tipo": "do dia",
       "era": "one-tooth-cannot-prove-homo-erectus-coexistence"
+    },
+    {
+      "at": "2026-11-20T09:32:24.943Z",
+      "dia": "2026-11-20",
+      "rodada": "2026-11-20T06:23",
+      "id": "euclid-first-comet-survey-pipeline",
+      "tipo": "do dia",
+      "era": "voyager-1-launched-second-and-outran-voyager-2"
     }
   ],
   "capaVistas": [
@@ -418,6 +426,7 @@
     "one-tooth-cannot-prove-homo-erectus-coexistence",
     "first-year-penguins-share-water-with-the-krill-fleet",
     "weight-space-playgrounds-put-weights-on-screen",
-    "voyager-1-launched-second-and-outran-voyager-2"
+    "voyager-1-launched-second-and-outran-voyager-2",
+    "euclid-first-comet-survey-pipeline"
   ]
 }
