@@ -1,20 +1,15 @@
-# Turno — 2026-11-20 01:34 UTC
+# Turno — 2026-11-20 05:33 UTC
 
-- **coleta** — fila: 14 pautas acumuladas em 1 rodada(s) (11/12 feeds ok nesta) → pipeline/leads/2026-11-20.md · 7 novata(s) cortada(s) por fonte/teto, voltam na próxima rodada · feeds fora: Publishing Perspectives: fetch failed (UND_ERR_SOCKET)
+- **coleta** — fila: 25 pautas acumuladas em 2 rodada(s) (11/12 feeds ok nesta) → pipeline/leads/2026-11-20.md · 33 vista(s) fora da janela de 3 filas voltaram a ser coletáveis · 15 novata(s) cortada(s) por fonte/teto, voltam na próxima rodada · feeds fora: Publishing Perspectives: fetch failed (UND_ERR_SOCKET)
 - **rotação diária** — rotação diária aplicada (capa intacta).
 - **manutenção** — errors 0 | ✗ warnings 4
 - **cadência** — 0/5 publicação(ões) hoje
-- **pauta** — ESA's Hera probe uses 'superhuman' vision to inspect NASA's asteroid crash site (Phys.org, score 4)
-- **brief** — pipeline/drafts/esas-hera-probe-uses-superhuman-vision-to-inspect-nasas-asteroid/ criado
-- **texto** — escrito por qoder/Efficient: hera-crater-audit-needs-mass-not-sharpness (1108 palavras)
-- **foto** — ✓ foto encontrada: images/posts/esas-hera-probe-uses-superhuman-vision-to-inspect-nasas-asteroid.jpg (Photo by TECNIC Bioprocess Solutions on Unsplash)
-- **capa** — esas-hera-probe-uses-superhuman-vision-to-inspect-nasas-asteroid usa foto real (images/posts/esas-hera-probe-uses-superhuman-vision-to-inspect-nasas-asteroid.jpg) — nenhuma placa gerada
-- **edição** — tentativa 1 reprovada:   ✗ [tone] linha de humor em pauta de morte/desastre
-- **edição** — tentativa 2 reprovada:   ✗ [tone] linha de humor em pauta de morte/desastre
-- **edição** — tentativa 3 reprovada:   ✗ [tone] linha de humor em pauta de morte/desastre
-- **edição** — tentativa 4 reprovada:   ✗ [tone] linha de humor em pauta de morte/desastre
-- **edição** — tentativa 5 reprovada:   ✗ [tone] linha de humor em pauta de morte/desastre
-- **edição** — tentativa 6 reprovada:   ✗ [tone] linha de humor em pauta de morte/desastre
-- **fotos** — 1 arquivo(s) descartado(s): foto baixada para uma matéria que não chegou ao ar
-- **capa** — index-hero: +1 (capa rotacionada: one-tooth-cannot-prove-homo-erectus-coexistence (6.8, Nov 19, 2026) · piso 6.5 · rodada 2026-11-19T22:23)
-- **fim** — rascunho ficou reprovado depois de 6 tentativas — nada publicado, e a pauta fica 72h fora da fila (pipeline/memory.json).
+- **pauta** — NASA's Voyager 1 launched second, so how did it beat Voyager 2 to a light-day by nearly a decade? (Space.com, score 3)
+- **brief** — pipeline/drafts/nasas-voyager-1-launched-second-so-how-did-it-beat-voyager-2-to-/ criado
+- **texto** — escrito por qoder/Efficient: voyager-1-launched-second-and-outran-voyager-2 (1205 palavras)
+- **foto** — ✓ foto encontrada: images/posts/nasas-voyager-1-launched-second-so-how-did-it-beat-voyager-2-to-.jpg (Photo by Edwin Rodriguez on Unsplash)
+- **capa** — nasas-voyager-1-launched-second-so-how-did-it-beat-voyager-2-to- usa foto real (images/posts/nasas-voyager-1-launched-second-so-how-did-it-beat-voyager-2-to-.jpg) — nenhuma placa gerada
+- **edição** — aprovado na tentativa 1
+- **nota** — 6.8/10 · 6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)
+- **publicação** — publicado localmente: voyager-1-launched-second-and-outran-voyager-2 · nota 6.8/10 · cadência hoje: 1/5
+- **fim** — rodada completa. O commit `turno:` e o push são do runner (Actions ou hwp-turno.sh); o deploy é da Vercel.
