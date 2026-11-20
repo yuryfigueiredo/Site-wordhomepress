@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-19T17:27:49.511Z",
+  "updated": "2026-11-20T01:34:59.618Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -422,6 +422,12 @@
       "outcome": "publicada",
       "at": "2026-11-19T17:27:49.510Z",
       "id": "weight-space-playgrounds-put-weights-on-screen"
+    },
+    "https://phys.org/news/2026-11-esa-hera-probe-superhuman-vision.html": {
+      "slug": "esas-hera-probe-uses-superhuman-vision-to-inspect-nasas-asteroid",
+      "topic": "ESA's Hera probe uses 'superhuman' vision to inspect NASA's asteroid crash site",
+      "outcome": "reprovada",
+      "at": "2026-11-20T01:34:59.617Z"
     }
   },
   "publishes": [

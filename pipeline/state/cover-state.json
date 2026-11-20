@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "first-year-penguins-share-water-with-the-krill-fleet",
+  "currentCoverId": "one-tooth-cannot-prove-homo-erectus-coexistence",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -368,6 +368,14 @@
       "id": "first-year-penguins-share-water-with-the-krill-fleet",
       "tipo": "rotacionada",
       "era": "weight-space-playgrounds-put-weights-on-screen"
+    },
+    {
+      "at": "2026-11-20T01:34:59.760Z",
+      "dia": "2026-11-19",
+      "rodada": "2026-11-19T22:23",
+      "id": "one-tooth-cannot-prove-homo-erectus-coexistence",
+      "tipo": "rotacionada",
+      "era": "first-year-penguins-share-water-with-the-krill-fleet"
     }
   ],
   "capaVistas": [

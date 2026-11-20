@@ -134,7 +134,12 @@
       "rodada": "2026-11-19T18:23",
       "at": "2026-11-19T21:23:52.659Z",
       "resultado": "teto diário atingido — as próximas rodadas só coletam e checam."
+    },
+    {
+      "rodada": "2026-11-19T22:23",
+      "at": "2026-11-20T01:34:59.799Z",
+      "resultado": "rascunho ficou reprovado depois de 6 tentativas — nada publicado, e a pauta fica 72h fora da fila (pipeline/memory.json)."
     }
   ],
-  "updated": "2026-11-19T21:23:52.659Z"
+  "updated": "2026-11-20T01:34:59.799Z"
 }
