@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "euclid-first-comet-survey-pipeline",
+  "currentCoverId": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -392,6 +392,14 @@
       "id": "euclid-first-comet-survey-pipeline",
       "tipo": "do dia",
       "era": "voyager-1-launched-second-and-outran-voyager-2"
+    },
+    {
+      "at": "2026-11-20T13:29:48.243Z",
+      "dia": "2026-11-20",
+      "rodada": "2026-11-20T10:23",
+      "id": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried",
+      "tipo": "do dia",
+      "era": "euclid-first-comet-survey-pipeline"
     }
   ],
   "capaVistas": [
@@ -427,6 +435,7 @@
     "first-year-penguins-share-water-with-the-krill-fleet",
     "weight-space-playgrounds-put-weights-on-screen",
     "voyager-1-launched-second-and-outran-voyager-2",
-    "euclid-first-comet-survey-pipeline"
+    "euclid-first-comet-survey-pipeline",
+    "apple-neuromancer-must-invent-the-plot-the-novel-never-carried"
   ]
 }

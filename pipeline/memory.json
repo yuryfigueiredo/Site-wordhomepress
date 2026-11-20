@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-20T09:32:25.811Z",
+  "updated": "2026-11-20T13:29:49.107Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -442,6 +442,13 @@
       "outcome": "publicada",
       "at": "2026-11-20T09:32:25.809Z",
       "id": "euclid-first-comet-survey-pipeline"
+    },
+    "https://www.space.com/entertainment/space-movies-shows/neuromancer-release-date-cast-and-everything-we-know-about-apple-tvs-new-cyberpunk-series": {
+      "slug": "neuromancer-release-date-cast-everything-we-know-about-apple-tvs",
+      "topic": "'Neuromancer:' Release date, cast & everything we know about Apple TV's new cyberpunk series",
+      "outcome": "publicada",
+      "at": "2026-11-20T13:29:49.107Z",
+      "id": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried"
     }
   },
   "publishes": [
@@ -658,6 +665,11 @@
     {
       "id": "euclid-first-comet-survey-pipeline",
       "at": "2026-11-20T09:32:25.809Z",
+      "score": 6.8
+    },
+    {
+      "id": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried",
+      "at": "2026-11-20T13:29:49.107Z",
       "score": 6.8
     }
   ]

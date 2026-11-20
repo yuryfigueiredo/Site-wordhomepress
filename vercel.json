@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried"
+        }
+      ],
+      "destination": "/a-apple-neuromancer-must-invent-the-plot-the-novel-never-carried.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "euclid-first-comet-survey-pipeline"
         }
       ],

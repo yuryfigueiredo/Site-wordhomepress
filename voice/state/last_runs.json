@@ -1,15 +1,15 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-20T09:32:25.807Z",
+  "updated": "2026-11-20T13:29:49.105Z",
   "runs": {
     "analyst": {
-      "id": "euclid-first-comet-survey-pipeline",
+      "id": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried",
       "date": "2026-11-20",
-      "opening_move": "document",
-      "ending_move": "small_observation",
-      "title_pattern": "euclid's first comet tests",
-      "humor_lines": 1
+      "opening_move": "dry_contrast",
+      "ending_move": "verification",
+      "title_pattern": "apple's neuromancer must invent",
+      "humor_lines": 2
     },
     "lab": {
       "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
