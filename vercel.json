@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "voyager-1-launched-second-and-outran-voyager-2"
+        }
+      ],
+      "destination": "/a-voyager-1-launched-second-and-outran-voyager-2.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "weight-space-playgrounds-put-weights-on-screen"
         }
       ],

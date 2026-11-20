@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-20T01:34:59.618Z",
+  "updated": "2026-11-20T05:33:07.905Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -428,6 +428,13 @@
       "topic": "ESA's Hera probe uses 'superhuman' vision to inspect NASA's asteroid crash site",
       "outcome": "reprovada",
       "at": "2026-11-20T01:34:59.617Z"
+    },
+    "https://www.space.com/space-exploration/voyager/nasas-voyager-1-launched-second-so-how-did-it-beat-voyager-2-to-a-light-day-by-nearly-a-decade": {
+      "slug": "nasas-voyager-1-launched-second-so-how-did-it-beat-voyager-2-to-",
+      "topic": "NASA's Voyager 1 launched second, so how did it beat Voyager 2 to a light-day by nearly a decade?",
+      "outcome": "publicada",
+      "at": "2026-11-20T05:33:07.903Z",
+      "id": "voyager-1-launched-second-and-outran-voyager-2"
     }
   },
   "publishes": [
@@ -634,6 +641,11 @@
     {
       "id": "weight-space-playgrounds-put-weights-on-screen",
       "at": "2026-11-19T17:27:49.510Z",
+      "score": 6.8
+    },
+    {
+      "id": "voyager-1-launched-second-and-outran-voyager-2",
+      "at": "2026-11-20T05:33:07.903Z",
       "score": 6.8
     }
   ]

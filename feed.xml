@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Thu, 19 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 20 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Voyager 1 launched second and outran Voyager 2 to a light-day</title>
+      <link>https://www.homeworldpress.com/article.html?id=voyager-1-launched-second-and-outran-voyager-2</link>
+      <description>Each trajectory was handed a different amount of speed before launch, depending on which planets it was pointed at.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=voyager-1-launched-second-and-outran-voyager-2</guid>
+      <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Weight-Space Playgrounds Put Trained Parameters in a Tab</title>
       <link>https://www.homeworldpress.com/article.html?id=weight-space-playgrounds-put-weights-on-screen</link>
@@ -78,14 +86,6 @@
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=smaller-plankton-more-mouths-before-a-fish</guid>
       <pubDate>Wed, 18 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>A JBL Flagship Headphone Takes A Deep Black Friday Cut</title>
-      <link>https://www.homeworldpress.com/article.html?id=jbls-headphones-that-are-great-for-in-flight-entertainment-are-6</link>
-      <description>The listing carries one real number and no test protocol, and that gap decides what a shopper can actually buy for a long flight.</description>
-      <category>tech</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=jbls-headphones-that-are-great-for-in-flight-entertainment-are-6</guid>
-      <pubDate>Tue, 17 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>

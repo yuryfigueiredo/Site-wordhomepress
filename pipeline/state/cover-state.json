@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "one-tooth-cannot-prove-homo-erectus-coexistence",
+  "currentCoverId": "voyager-1-launched-second-and-outran-voyager-2",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -376,6 +376,14 @@
       "id": "one-tooth-cannot-prove-homo-erectus-coexistence",
       "tipo": "rotacionada",
       "era": "first-year-penguins-share-water-with-the-krill-fleet"
+    },
+    {
+      "at": "2026-11-20T05:33:07.080Z",
+      "dia": "2026-11-20",
+      "rodada": "2026-11-20T02:23",
+      "id": "voyager-1-launched-second-and-outran-voyager-2",
+      "tipo": "do dia",
+      "era": "one-tooth-cannot-prove-homo-erectus-coexistence"
     }
   ],
   "capaVistas": [
@@ -409,6 +417,7 @@
     "webb-confirms-supergiant-sun-like-merger",
     "one-tooth-cannot-prove-homo-erectus-coexistence",
     "first-year-penguins-share-water-with-the-krill-fleet",
-    "weight-space-playgrounds-put-weights-on-screen"
+    "weight-space-playgrounds-put-weights-on-screen",
+    "voyager-1-launched-second-and-outran-voyager-2"
   ]
 }
