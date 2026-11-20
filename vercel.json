@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "eufy-omni-c28-discount-needs-a-baseline"
+        }
+      ],
+      "destination": "/a-eufy-omni-c28-discount-needs-a-baseline.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "open-ocean-records-decide-the-navy-weather-model-swap"
         }
       ],

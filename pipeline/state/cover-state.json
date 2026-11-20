@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "euclid-first-comet-survey-pipeline",
+  "currentCoverId": "eufy-omni-c28-discount-needs-a-baseline",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -408,6 +408,14 @@
       "id": "euclid-first-comet-survey-pipeline",
       "tipo": "rotacionada",
       "era": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried"
+    },
+    {
+      "at": "2026-11-20T21:34:22.161Z",
+      "dia": "2026-11-20",
+      "rodada": "2026-11-20T18:23",
+      "id": "eufy-omni-c28-discount-needs-a-baseline",
+      "tipo": "do dia",
+      "era": "euclid-first-comet-survey-pipeline"
     }
   ],
   "capaVistas": [
@@ -444,6 +452,7 @@
     "weight-space-playgrounds-put-weights-on-screen",
     "voyager-1-launched-second-and-outran-voyager-2",
     "euclid-first-comet-survey-pipeline",
-    "apple-neuromancer-must-invent-the-plot-the-novel-never-carried"
+    "apple-neuromancer-must-invent-the-plot-the-novel-never-carried",
+    "eufy-omni-c28-discount-needs-a-baseline"
   ]
 }

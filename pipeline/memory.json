@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-20T17:29:42.947Z",
+  "updated": "2026-11-20T21:34:23.026Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -456,6 +456,13 @@
       "outcome": "publicada",
       "at": "2026-11-20T17:29:42.946Z",
       "id": "open-ocean-records-decide-the-navy-weather-model-swap"
+    },
+    "https://www.theverge.com/gadgets/1037933/eufy-omni-c28-robot-vacuum-deal-sale": {
+      "slug": "eufys-omni-c28-is-53-percent-off-ahead-of-black-friday",
+      "topic": "Eufy’s Omni C28 is 53 percent off ahead of Black Friday",
+      "outcome": "publicada",
+      "at": "2026-11-20T21:34:23.025Z",
+      "id": "eufy-omni-c28-discount-needs-a-baseline"
     }
   },
   "publishes": [
@@ -683,6 +690,11 @@
       "id": "open-ocean-records-decide-the-navy-weather-model-swap",
       "at": "2026-11-20T17:29:42.946Z",
       "score": 6.3
+    },
+    {
+      "id": "eufy-omni-c28-discount-needs-a-baseline",
+      "at": "2026-11-20T21:34:23.025Z",
+      "score": 6.8
     }
   ]
 }
