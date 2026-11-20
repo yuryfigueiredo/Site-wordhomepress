@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "open-ocean-records-decide-the-navy-weather-model-swap"
+        }
+      ],
+      "destination": "/a-open-ocean-records-decide-the-navy-weather-model-swap.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried"
         }
       ],

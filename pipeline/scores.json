@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-20T13:29:48.079Z",
+  "updated": "2026-11-20T17:29:41.816Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -1851,6 +1851,44 @@
           "pts": 1,
           "max": 1,
           "why": "Reads an explainer's headline order as evidence and moves the adaptation problem from the look to plotting and tone."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-20"
+    },
+    "open-ocean-records-decide-the-navy-weather-model-swap": {
+      "score": 6.3,
+      "note": "6.3/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 2 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 13% com reader-letters-arrive-under-a-headline-nobody-signed"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 0.5,
+          "max": 1,
+          "why": "Argues a model swap is decided by ocean observation counts rather than averaged scores, and shows the supplied record proves neither."
         }
       },
       "source": "auto",

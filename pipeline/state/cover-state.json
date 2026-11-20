@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried",
+  "currentCoverId": "euclid-first-comet-survey-pipeline",
   "changes": [
     {
       "at": "2026-11-07T00:54:07.300Z",
@@ -400,6 +400,14 @@
       "id": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried",
       "tipo": "do dia",
       "era": "euclid-first-comet-survey-pipeline"
+    },
+    {
+      "at": "2026-11-20T17:29:41.972Z",
+      "dia": "2026-11-20",
+      "rodada": "2026-11-20T14:23",
+      "id": "euclid-first-comet-survey-pipeline",
+      "tipo": "rotacionada",
+      "era": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried"
     }
   ],
   "capaVistas": [
