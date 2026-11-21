@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "a-lunar-land-office-has-to-open-before-the-claims-do"
+        }
+      ],
+      "destination": "/a-a-lunar-land-office-has-to-open-before-the-claims-do.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "deep-venture-class-claim-needs-a-test"
         }
       ],

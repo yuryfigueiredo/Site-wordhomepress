@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "deep-venture-class-claim-needs-a-test",
+  "currentCoverId": "a-lunar-land-office-has-to-open-before-the-claims-do",
   "changes": [
     {
       "at": "2026-11-07T18:17:09.848Z",
@@ -424,6 +424,14 @@
       "id": "deep-venture-class-claim-needs-a-test",
       "tipo": "do dia",
       "era": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried"
+    },
+    {
+      "at": "2026-11-21T09:28:20.230Z",
+      "dia": "2026-11-21",
+      "rodada": "2026-11-21T06:23",
+      "id": "a-lunar-land-office-has-to-open-before-the-claims-do",
+      "tipo": "do dia",
+      "era": "deep-venture-class-claim-needs-a-test"
     }
   ],
   "capaVistas": [
@@ -462,6 +470,7 @@
     "euclid-first-comet-survey-pipeline",
     "apple-neuromancer-must-invent-the-plot-the-novel-never-carried",
     "eufy-omni-c28-discount-needs-a-baseline",
-    "deep-venture-class-claim-needs-a-test"
+    "deep-venture-class-claim-needs-a-test",
+    "a-lunar-land-office-has-to-open-before-the-claims-do"
   ]
 }

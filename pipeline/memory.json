@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T05:34:08.516Z",
+  "updated": "2026-11-21T09:28:21.131Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -476,6 +476,13 @@
       "outcome": "publicada",
       "at": "2026-11-21T05:34:08.515Z",
       "id": "deep-venture-class-claim-needs-a-test"
+    },
+    "https://www.space.com/astronomy/moon/dont-turn-the-moon-into-the-wild-west-scientists-warn": {
+      "slug": "dont-turn-the-moon-into-the-wild-west-scientists-warn",
+      "topic": "Don't turn the moon into the Wild West, scientists warn",
+      "outcome": "publicada",
+      "at": "2026-11-21T09:28:21.130Z",
+      "id": "a-lunar-land-office-has-to-open-before-the-claims-do"
     }
   },
   "publishes": [
@@ -712,6 +719,11 @@
     {
       "id": "deep-venture-class-claim-needs-a-test",
       "at": "2026-11-21T05:34:08.515Z",
+      "score": 6.8
+    },
+    {
+      "id": "a-lunar-land-office-has-to-open-before-the-claims-do",
+      "at": "2026-11-21T09:28:21.130Z",
       "score": 6.8
     }
   ]
