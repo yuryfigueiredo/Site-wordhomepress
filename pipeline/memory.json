@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T17:26:27.069Z",
+  "updated": "2026-11-21T21:37:54.223Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -497,6 +497,12 @@
       "outcome": "publicada",
       "at": "2026-11-21T17:26:27.067Z",
       "id": "instagram-contact-studies-concede-the-dose"
+    },
+    "https://phys.org/news/2026-11-oxygen-lunar-soil-bases-moon.html": {
+      "slug": "a-new-way-to-extract-oxygen-from-lunar-soil-could-support-bases-",
+      "topic": "A new way to extract oxygen from lunar soil could support bases on the moon",
+      "outcome": "falha_texto",
+      "at": "2026-11-21T21:37:54.223Z"
     }
   },
   "publishes": [

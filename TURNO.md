@@ -1,15 +1,11 @@
-# Turno — 2026-11-21 17:26 UTC
+# Turno — 2026-11-21 21:37 UTC
 
-- **coleta** — fila: 36 pautas acumuladas em 6 rodada(s) (11/12 feeds ok nesta) → pipeline/leads/2026-11-21.md · 19 novata(s) cortada(s) por fonte/teto, voltam na próxima rodada · feeds fora: Publishing Perspectives: fetch failed (UND_ERR_SOCKET)
+- **coleta** — fila: 36 pautas acumuladas em 7 rodada(s) (11/12 feeds ok nesta) → pipeline/leads/2026-11-21.md · 18 novata(s) cortada(s) por fonte/teto, voltam na próxima rodada · feeds fora: Publishing Perspectives: fetch failed (UND_ERR_SOCKET)
 - **rotação diária** — rotação diária aplicada (capa intacta).
 - **manutenção** — errors 0 | ✗ warnings 8
-- **cadência** — 3/5 publicação(ões) hoje
-- **pauta** — Can Instagram reduce prejudice? Study reveals the potential and limits of social media contact (Phys.org, score 3)
-- **brief** — pipeline/drafts/can-instagram-reduce-prejudice-study-reveals-the-potential-and-l/ criado
-- **texto** — escrito por qoder/Efficient: instagram-contact-studies-concede-the-dose (1079 palavras)
-- **foto** — ✓ foto encontrada: images/posts/can-instagram-reduce-prejudice-study-reveals-the-potential-and-l.jpg (Photo by Mariia Berezovsky on Unsplash)
-- **capa** — can-instagram-reduce-prejudice-study-reveals-the-potential-and-l usa foto real (images/posts/can-instagram-reduce-prejudice-study-reveals-the-potential-and-l.jpg) — nenhuma placa gerada
-- **edição** — aprovado na tentativa 1
-- **nota** — 6.8/10 · 6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)
-- **publicação** — publicado localmente: instagram-contact-studies-concede-the-dose · nota 6.8/10 · cadência hoje: 4/5
-- **fim** — rodada completa. O commit `turno:` e o push são do runner (Actions ou hwp-turno.sh); o deploy é da Vercel.
+- **cadência** — 4/5 publicação(ões) hoje
+- **pauta** — A new way to extract oxygen from lunar soil could support bases on the moon (Phys.org, score 3)
+- **brief** — pipeline/drafts/a-new-way-to-extract-oxygen-from-lunar-soil-could-support-bases-/ criado
+- **capa** — index-hero: +1 (capa rotacionada: lunar-bricks-have-to-hold-air-not-weight (6.8, Nov 21, 2026) · piso 6.5 · rodada 2026-11-21T18:23)
+- **fim** — o redator não entregou texto: qoder: 1 modelo(s) ocupado(s); esperando 15s e voltando (60s nesta fatia). · não saiu texto em 14min, em nenhum provedor armado. O que houve: ·   · qoder/Efficient: HTTP 500: timeout de 45s no CLI · não tentados: gemini (falta GEMINI_API_KEY), nvidia (falta NVIDIA_API_KEY), nvidia-2 (falta NVIDIA_API_KEY_2), groq (falta GROQ_API_KEY), cerebras (falta CEREBRAS_API_KEY), mistral (falta MISTRAL_API_KEY), openrouter (falta OPENROUTER_API_KEY) · A rodada termina aqui de propósito: sem texto não há o que checar nem publicar.
+- **portão** — VERMELHO: o redator não entregou texto: qoder: 1 modelo(s) ocupado(s); esperando 15s e voltando (60s nesta fatia). · não saiu texto em 14min, em nenhum provedor armado. O que houve: ·   · qoder/Efficient: HTTP 500: timeout de 45s no CLI · não tentados: gemini (falta GEMINI_API_KEY), nvidia (falta NVIDIA_API_KEY), nvidia-2 (falta NVIDIA_API_KEY_2), groq (falta GROQ_API_KEY), cerebras (falta CEREBRAS_API_KEY), mistral (falta MISTRAL_API_KEY), openrouter (falta OPENROUTER_API_KEY) · A rodada termina aqui de propósito: sem texto não há o que checar nem publicar.
