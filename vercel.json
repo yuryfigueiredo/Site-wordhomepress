@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "lunar-bricks-have-to-hold-air-not-weight"
+        }
+      ],
+      "destination": "/a-lunar-bricks-have-to-hold-air-not-weight.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "a-lunar-land-office-has-to-open-before-the-claims-do"
         }
       ],

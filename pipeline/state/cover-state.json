@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "a-lunar-land-office-has-to-open-before-the-claims-do",
+  "currentCoverId": "lunar-bricks-have-to-hold-air-not-weight",
   "changes": [
     {
       "at": "2026-11-07T18:17:09.848Z",
@@ -432,6 +432,14 @@
       "id": "a-lunar-land-office-has-to-open-before-the-claims-do",
       "tipo": "do dia",
       "era": "deep-venture-class-claim-needs-a-test"
+    },
+    {
+      "at": "2026-11-21T13:36:18.384Z",
+      "dia": "2026-11-21",
+      "rodada": "2026-11-21T10:23",
+      "id": "lunar-bricks-have-to-hold-air-not-weight",
+      "tipo": "do dia",
+      "era": "a-lunar-land-office-has-to-open-before-the-claims-do"
     }
   ],
   "capaVistas": [
@@ -471,6 +479,7 @@
     "apple-neuromancer-must-invent-the-plot-the-novel-never-carried",
     "eufy-omni-c28-discount-needs-a-baseline",
     "deep-venture-class-claim-needs-a-test",
-    "a-lunar-land-office-has-to-open-before-the-claims-do"
+    "a-lunar-land-office-has-to-open-before-the-claims-do",
+    "lunar-bricks-have-to-hold-air-not-weight"
   ]
 }

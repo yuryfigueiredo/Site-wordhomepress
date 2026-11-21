@@ -8,6 +8,14 @@
     <lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Moon Bricks Have to Hold Air, Not Weight</title>
+      <link>https://www.homeworldpress.com/article.html?id=lunar-bricks-have-to-hold-air-not-weight</link>
+      <description>Interlocking regolith brick is a shielding story rather than a pressure shell, and the figure worth demanding is a cycle count.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=lunar-bricks-have-to-hold-air-not-weight</guid>
+      <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>A Lunar Land Office Has to Open Before the Claims Do</title>
       <link>https://www.homeworldpress.com/article.html?id=a-lunar-land-office-has-to-open-before-the-claims-do</link>
       <description>Space.com's frontier warning reads better as an argument about survey data, reference frames and who gets to file first.</description>
@@ -77,14 +85,6 @@
       <description>A ground campaign takes helicopter blades into transonic flow on the one planet where a rotor has no margin left over</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=mars-rotor-tips-learn-to-run-supersonic</guid>
-      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>A Krill Fishery Works the Water Where Young Penguins Learn to Feed</title>
-      <link>https://www.homeworldpress.com/article.html?id=first-year-penguins-share-water-with-the-krill-fleet</link>
-      <description>The reported encounters fall in a bird's first year at sea, the stretch in which it acquires its feeding knowledge. That timing is what makes the finding hard to manage around, and the study's own figures were not available to this desk.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=first-year-penguins-share-water-with-the-krill-fleet</guid>
       <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

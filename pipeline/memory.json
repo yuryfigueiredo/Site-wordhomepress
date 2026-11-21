@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T09:28:21.131Z",
+  "updated": "2026-11-21T13:36:19.267Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -358,7 +358,7 @@
       "slug": "james-webb-telescope-finds-ice-older-than-the-star-it-orbits",
       "topic": "James Webb telescope finds ice older than the star it orbits",
       "outcome": "fonte_inalcancavel",
-      "at": "2026-11-18T09:23:53.179Z"
+      "at": "2026-11-21T13:23:52.340Z"
     },
     "https://phys.org/news/2026-11-base-ocean-food-chain-scientists.html": {
       "slug": "at-base-of-ocean-food-chain-scientists-uncover-impacts-of-a-chan",
@@ -483,6 +483,13 @@
       "outcome": "publicada",
       "at": "2026-11-21T09:28:21.130Z",
       "id": "a-lunar-land-office-has-to-open-before-the-claims-do"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261119194525.htm": {
+      "slug": "scientists-turn-moon-dust-into-lego-like-bricks-for-future-lunar",
+      "topic": "Scientists turn Moon dust into LEGO-like bricks for future lunar bases",
+      "outcome": "publicada",
+      "at": "2026-11-21T13:36:19.265Z",
+      "id": "lunar-bricks-have-to-hold-air-not-weight"
     }
   },
   "publishes": [
@@ -724,6 +731,11 @@
     {
       "id": "a-lunar-land-office-has-to-open-before-the-claims-do",
       "at": "2026-11-21T09:28:21.130Z",
+      "score": 6.8
+    },
+    {
+      "id": "lunar-bricks-have-to-hold-air-not-weight",
+      "at": "2026-11-21T13:36:19.265Z",
       "score": 6.8
     }
   ]
