@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried",
+  "currentCoverId": "deep-venture-class-claim-needs-a-test",
   "changes": [
     {
       "at": "2026-11-07T18:17:09.848Z",
@@ -416,6 +416,14 @@
       "id": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried",
       "tipo": "rotacionada",
       "era": "eufy-omni-c28-discount-needs-a-baseline"
+    },
+    {
+      "at": "2026-11-21T05:34:06.951Z",
+      "dia": "2026-11-21",
+      "rodada": "2026-11-21T02:23",
+      "id": "deep-venture-class-claim-needs-a-test",
+      "tipo": "do dia",
+      "era": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried"
     }
   ],
   "capaVistas": [
@@ -453,6 +461,7 @@
     "voyager-1-launched-second-and-outran-voyager-2",
     "euclid-first-comet-survey-pipeline",
     "apple-neuromancer-must-invent-the-plot-the-novel-never-carried",
-    "eufy-omni-c28-discount-needs-a-baseline"
+    "eufy-omni-c28-discount-needs-a-baseline",
+    "deep-venture-class-claim-needs-a-test"
   ]
 }

@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "deep-venture-class-claim-needs-a-test"
+        }
+      ],
+      "destination": "/a-deep-venture-class-claim-needs-a-test.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "eufy-omni-c28-discount-needs-a-baseline"
         }
       ],

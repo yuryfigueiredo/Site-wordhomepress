@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-20T21:34:23.024Z",
+  "updated": "2026-11-21T05:34:08.511Z",
   "runs": {
     "analyst": {
-      "id": "eufy-omni-c28-discount-needs-a-baseline",
-      "date": "2026-11-20",
-      "opening_move": "correction",
-      "ending_move": "verification",
-      "title_pattern": "eufy's omni c28 needs",
+      "id": "deep-venture-class-claim-needs-a-test",
+      "date": "2026-11-21",
+      "opening_move": "document",
+      "ending_move": "small_observation",
+      "title_pattern": "a new ocean vehicle",
       "humor_lines": 1
     },
     "lab": {

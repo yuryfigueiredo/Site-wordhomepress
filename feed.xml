@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Fri, 20 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>A New Ocean Vehicle Class Has to Sacrifice One Constraint</title>
+      <link>https://www.homeworldpress.com/article.html?id=deep-venture-class-claim-needs-a-test</link>
+      <description>The November 20 item on Deep Venture uses the word class without the specification that would defend it. Every such claim has one testable tell.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=deep-venture-class-claim-needs-a-test</guid>
+      <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Eufy's Omni C28 Needs a Baseline Before 53 Percent Means Anything</title>
       <link>https://www.homeworldpress.com/article.html?id=eufy-omni-c28-discount-needs-a-baseline</link>
@@ -77,14 +85,6 @@
       <description>A report from southern China reads an unusual crown as company for Homo erectus. What the specimen can prove and what the headline implies are different claims.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=one-tooth-cannot-prove-homo-erectus-coexistence</guid>
-      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>A Supergiant's Sun-Like Companion Gives Webb a Phase to Measure</title>
-      <link>https://www.homeworldpress.com/article.html?id=webb-confirms-supergiant-sun-like-merger</link>
-      <description>The announcement carries no distance, no orbit and no instrument. What it carries is the word confirms, and that word implies a prediction someone made first.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=webb-confirms-supergiant-sun-like-merger</guid>
       <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

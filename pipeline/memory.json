@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T01:38:02.689Z",
+  "updated": "2026-11-21T05:34:08.516Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -469,6 +469,13 @@
       "topic": "The secret to building Moon bases may be hiding in emergency blankets",
       "outcome": "falha_texto",
       "at": "2026-11-21T01:38:02.688Z"
+    },
+    "https://phys.org/news/2026-11-deep-venture-class-ocean-exploration.html": {
+      "slug": "deep-venture-a-new-class-of-ocean-exploration-vehicle-developed",
+      "topic": "Deep Venture: A new class of ocean exploration vehicle developed",
+      "outcome": "publicada",
+      "at": "2026-11-21T05:34:08.515Z",
+      "id": "deep-venture-class-claim-needs-a-test"
     }
   },
   "publishes": [
@@ -700,6 +707,11 @@
     {
       "id": "eufy-omni-c28-discount-needs-a-baseline",
       "at": "2026-11-20T21:34:23.025Z",
+      "score": 6.8
+    },
+    {
+      "id": "deep-venture-class-claim-needs-a-test",
+      "at": "2026-11-21T05:34:08.515Z",
       "score": 6.8
     }
   ]
