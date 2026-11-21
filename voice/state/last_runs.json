@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-21T13:36:19.261Z",
+  "updated": "2026-11-21T17:26:27.062Z",
   "runs": {
     "analyst": {
-      "id": "lunar-bricks-have-to-hold-air-not-weight",
+      "id": "instagram-contact-studies-concede-the-dose",
       "date": "2026-11-21",
-      "opening_move": "object",
-      "ending_move": "small_observation",
-      "title_pattern": "moon bricks have to",
+      "opening_move": "document",
+      "ending_move": "verification",
+      "title_pattern": "contact theory meets the",
       "humor_lines": 1
     },
     "lab": {

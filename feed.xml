@@ -8,6 +8,14 @@
     <lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Contact Theory Meets the Feed and Brings Fine Print</title>
+      <link>https://www.homeworldpress.com/article.html?id=instagram-contact-studies-concede-the-dose</link>
+      <description>A November 2026 report on Instagram-mediated intergroup contact puts its concession in the headline. The order of those clauses is the most useful thing the study has to say.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=instagram-contact-studies-concede-the-dose</guid>
+      <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>Moon Bricks Have to Hold Air, Not Weight</title>
       <link>https://www.homeworldpress.com/article.html?id=lunar-bricks-have-to-hold-air-not-weight</link>
       <description>Interlocking regolith brick is a shielding story rather than a pressure shell, and the figure worth demanding is a cycle count.</description>
@@ -77,14 +85,6 @@
       <description>A new interactive demo invites readers to watch learning happen on their own hardware. Its lesson belongs to teaching, and its weakest word is programming.</description>
       <category>tech</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=weight-space-playgrounds-put-weights-on-screen</guid>
-      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>NASA Pushes Mars Rotor Blades Past the Sound Barrier</title>
-      <link>https://www.homeworldpress.com/article.html?id=mars-rotor-tips-learn-to-run-supersonic</link>
-      <description>A ground campaign takes helicopter blades into transonic flow on the one planet where a rotor has no margin left over</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=mars-rotor-tips-learn-to-run-supersonic</guid>
       <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

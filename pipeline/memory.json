@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T13:36:19.267Z",
+  "updated": "2026-11-21T17:26:27.069Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -490,6 +490,13 @@
       "outcome": "publicada",
       "at": "2026-11-21T13:36:19.265Z",
       "id": "lunar-bricks-have-to-hold-air-not-weight"
+    },
+    "https://phys.org/news/2026-11-instagram-prejudice-reveals-potential-limits.html": {
+      "slug": "can-instagram-reduce-prejudice-study-reveals-the-potential-and-l",
+      "topic": "Can Instagram reduce prejudice? Study reveals the potential and limits of social media contact",
+      "outcome": "publicada",
+      "at": "2026-11-21T17:26:27.067Z",
+      "id": "instagram-contact-studies-concede-the-dose"
     }
   },
   "publishes": [
@@ -736,6 +743,11 @@
     {
       "id": "lunar-bricks-have-to-hold-air-not-weight",
       "at": "2026-11-21T13:36:19.265Z",
+      "score": 6.8
+    },
+    {
+      "id": "instagram-contact-studies-concede-the-dose",
+      "at": "2026-11-21T17:26:27.067Z",
       "score": 6.8
     }
   ]

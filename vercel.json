@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "instagram-contact-studies-concede-the-dose"
+        }
+      ],
+      "destination": "/a-instagram-contact-studies-concede-the-dose.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "lunar-bricks-have-to-hold-air-not-weight"
         }
       ],

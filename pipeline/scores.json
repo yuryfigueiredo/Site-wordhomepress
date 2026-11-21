@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T13:36:18.221Z",
+  "updated": "2026-11-21T17:26:26.007Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -2041,6 +2041,44 @@
           "pts": 1,
           "max": 1,
           "why": "Reframes the interlocking brick as shielding mass over a membrane, and names cycle count and seam leak rate as the figures that matter."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-21"
+    },
+    "instagram-contact-studies-concede-the-dose": {
+      "score": 6.8,
+      "note": "6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 2 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 13% com reader-letters-arrive-under-a-headline-nobody-signed"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Argues the headline's concession is the actual finding: feed-controlled dosing makes any measured attitude change unattributable to contact."
         }
       },
       "source": "auto",
