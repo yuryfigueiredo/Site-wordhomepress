@@ -8,6 +8,14 @@
     <lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Three Helicopters Underwrite NASA's Reactor Demonstration</title>
+      <link>https://www.homeworldpress.com/article.html?id=three-helicopters-underwrite-a-reactor-demo</link>
+      <description>SkyFall flies on a nuclear carrier that may not be ready, and its own project scientist says a Falcon 9 would do.</description>
+      <category>culture</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=three-helicopters-underwrite-a-reactor-demo</guid>
+      <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>Contact Theory Meets the Feed and Brings Fine Print</title>
       <link>https://www.homeworldpress.com/article.html?id=instagram-contact-studies-concede-the-dose</link>
       <description>A November 2026 report on Instagram-mediated intergroup contact puts its concession in the headline. The order of those clauses is the most useful thing the study has to say.</description>
@@ -78,14 +86,6 @@
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=voyager-1-launched-second-and-outran-voyager-2</guid>
       <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Weight-Space Playgrounds Put Trained Parameters in a Tab</title>
-      <link>https://www.homeworldpress.com/article.html?id=weight-space-playgrounds-put-weights-on-screen</link>
-      <description>A new interactive demo invites readers to watch learning happen on their own hardware. Its lesson belongs to teaching, and its weakest word is programming.</description>
-      <category>tech</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=weight-space-playgrounds-put-weights-on-screen</guid>
-      <pubDate>Thu, 19 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>

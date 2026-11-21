@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "three-helicopters-underwrite-a-reactor-demo"
+        }
+      ],
+      "destination": "/a-three-helicopters-underwrite-a-reactor-demo.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "instagram-contact-studies-concede-the-dose"
         }
       ],

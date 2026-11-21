@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T21:37:54.223Z",
+  "updated": "2026-11-21T23:30:05.985Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -503,6 +503,11 @@
       "topic": "A new way to extract oxygen from lunar soil could support bases on the moon",
       "outcome": "falha_texto",
       "at": "2026-11-21T21:37:54.223Z"
+    },
+    "https://www.space.com/astronomy/mars/a-shotgun-marriage-why-are-nasas-skyfall-mars-helicopters-riding-on-a-nuclear-rocket": {
+      "outcome": "publicada",
+      "at": "2026-11-21T23:30:05.983Z",
+      "id": "three-helicopters-underwrite-a-reactor-demo"
     }
   },
   "publishes": [
@@ -755,6 +760,11 @@
       "id": "instagram-contact-studies-concede-the-dose",
       "at": "2026-11-21T17:26:27.067Z",
       "score": 6.8
+    },
+    {
+      "id": "three-helicopters-underwrite-a-reactor-demo",
+      "at": "2026-11-21T23:30:05.983Z",
+      "score": 7.3
     }
   ]
 }
