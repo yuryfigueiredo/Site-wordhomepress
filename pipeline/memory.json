@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-20T21:34:23.026Z",
+  "updated": "2026-11-21T01:38:02.689Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -463,6 +463,12 @@
       "outcome": "publicada",
       "at": "2026-11-20T21:34:23.025Z",
       "id": "eufy-omni-c28-discount-needs-a-baseline"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261115085549.htm": {
+      "slug": "the-secret-to-building-moon-bases-may-be-hiding-in-emergency-bla",
+      "topic": "The secret to building Moon bases may be hiding in emergency blankets",
+      "outcome": "falha_texto",
+      "at": "2026-11-21T01:38:02.688Z"
     }
   },
   "publishes": [

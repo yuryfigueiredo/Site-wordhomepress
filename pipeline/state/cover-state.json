@@ -1,14 +1,6 @@
 {
-  "currentCoverId": "eufy-omni-c28-discount-needs-a-baseline",
+  "currentCoverId": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried",
   "changes": [
-    {
-      "at": "2026-11-07T00:54:07.300Z",
-      "dia": "2026-11-06",
-      "id": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
-      "tipo": "publicacao",
-      "era": null,
-      "rodada": "2026-11-06T20:23"
-    },
     {
       "at": "2026-11-07T18:17:09.848Z",
       "dia": "2026-11-07",
@@ -416,6 +408,14 @@
       "id": "eufy-omni-c28-discount-needs-a-baseline",
       "tipo": "do dia",
       "era": "euclid-first-comet-survey-pipeline"
+    },
+    {
+      "at": "2026-11-21T01:38:02.921Z",
+      "dia": "2026-11-20",
+      "rodada": "2026-11-20T22:23",
+      "id": "apple-neuromancer-must-invent-the-plot-the-novel-never-carried",
+      "tipo": "rotacionada",
+      "era": "eufy-omni-c28-discount-needs-a-baseline"
     }
   ],
   "capaVistas": [
