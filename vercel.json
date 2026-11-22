@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "second-low-energy-fermi-catalog-is-a-target-list"
+        }
+      ],
+      "destination": "/a-second-low-energy-fermi-catalog-is-a-target-list.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "infrared-spectra-decide-what-an-engulfed-star-leaves-behind"
         }
       ],

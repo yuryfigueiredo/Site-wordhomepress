@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-22T09:34:43.827Z",
+  "updated": "2026-11-22T15:38:20.499Z",
   "runs": {
     "analyst": {
-      "id": "infrared-spectra-decide-what-an-engulfed-star-leaves-behind",
+      "id": "second-low-energy-fermi-catalog-is-a-target-list",
       "date": "2026-11-22",
-      "opening_move": "dry_contrast",
-      "ending_move": "flat_statement",
-      "title_pattern": "infrared spectra decide what",
+      "opening_move": "document",
+      "ending_move": "admitted_limit",
+      "title_pattern": "fermi's low-energy catalog turns",
       "humor_lines": 1
     },
     "lab": {
