@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "voyagers-24-hour-light-time-costs-two-days-per-repair"
+        }
+      ],
+      "destination": "/a-voyagers-24-hour-light-time-costs-two-days-per-repair.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "second-low-energy-fermi-catalog-is-a-target-list"
         }
       ],

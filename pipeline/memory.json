@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-22T15:38:20.502Z",
+  "updated": "2026-11-22T21:28:53.587Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -532,6 +532,13 @@
       "outcome": "publicada",
       "at": "2026-11-22T15:38:20.501Z",
       "id": "second-low-energy-fermi-catalog-is-a-target-list"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261120075554.htm": {
+      "slug": "nasas-voyager-1-is-now-so-far-away-that-light-takes-24-hours-to-",
+      "topic": "NASA’s Voyager 1 is now so far away that light takes 24 hours to reach it",
+      "outcome": "publicada",
+      "at": "2026-11-22T21:28:53.584Z",
+      "id": "voyagers-24-hour-light-time-costs-two-days-per-repair"
     }
   },
   "publishes": [
@@ -804,6 +811,11 @@
       "id": "second-low-energy-fermi-catalog-is-a-target-list",
       "at": "2026-11-22T15:38:20.501Z",
       "score": 7.8
+    },
+    {
+      "id": "voyagers-24-hour-light-time-costs-two-days-per-repair",
+      "at": "2026-11-22T21:28:53.584Z",
+      "score": 7.3
     }
   ]
 }

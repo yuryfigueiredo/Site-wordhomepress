@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-22T15:38:17.801Z",
+  "updated": "2026-11-22T21:28:49.437Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -2231,6 +2231,44 @@
           "pts": 1,
           "max": 1,
           "why": "Argues the catalog's value sits in its 73 unmatched entries and that the MeV gap was instrument-limited resolution, not an empty band."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-22"
+    },
+    "voyagers-24-hour-light-time-costs-two-days-per-repair": {
+      "score": 7.3,
+      "note": "7.3/10 — força em timeliness (fonte mais recente há 3 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 3 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 15% com eufy-omni-c28-discount-needs-a-baseline"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "The light-day costs nominal operations nothing and fault response everything, so the milestone measures schedule rather than spacecraft heal"
         }
       },
       "source": "auto",

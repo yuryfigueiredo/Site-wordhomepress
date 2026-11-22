@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "second-low-energy-fermi-catalog-is-a-target-list",
+  "currentCoverId": "voyagers-24-hour-light-time-costs-two-days-per-repair",
   "changes": [
     {
       "at": "2026-11-09T20:28:23.406Z",
@@ -456,6 +456,14 @@
       "id": "second-low-energy-fermi-catalog-is-a-target-list",
       "tipo": "do dia",
       "era": "moon-rocket-engine-hot-fire-duration"
+    },
+    {
+      "at": "2026-11-22T21:28:50.064Z",
+      "dia": "2026-11-22",
+      "rodada": "2026-11-22T18:23",
+      "id": "voyagers-24-hour-light-time-costs-two-days-per-repair",
+      "tipo": "do dia",
+      "era": "second-low-energy-fermi-catalog-is-a-target-list"
     }
   ],
   "capaVistas": [
@@ -501,6 +509,7 @@
     "three-helicopters-underwrite-a-reactor-demo",
     "moon-rocket-engine-hot-fire-duration",
     "infrared-spectra-decide-what-an-engulfed-star-leaves-behind",
-    "second-low-energy-fermi-catalog-is-a-target-list"
+    "second-low-energy-fermi-catalog-is-a-target-list",
+    "voyagers-24-hour-light-time-costs-two-days-per-repair"
   ]
 }

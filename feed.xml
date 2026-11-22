@@ -8,6 +8,14 @@
     <lastBuildDate>Sun, 22 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>A Light-Day to Voyager Turns Every Repair Into a Two-Day Loop</title>
+      <link>https://www.homeworldpress.com/article.html?id=voyagers-24-hour-light-time-costs-two-days-per-repair</link>
+      <description>The reported figure covers one leg of the trip. The operational number is 48 hours, and it costs the mission nothing until a fault needs a human answer.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=voyagers-24-hour-light-time-costs-two-days-per-repair</guid>
+      <pubDate>Sun, 22 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>Fermi's Low-energy Catalog Turns a Detection Gap Into a Target List</title>
       <link>https://www.homeworldpress.com/article.html?id=second-low-energy-fermi-catalog-is-a-target-list</link>
       <description>The Second Catalog of Low-energy Fermi-LAT Sources reports 450 sources between 20 and 200 MeV, and the 73 that match nothing are the part worth arguing about.</description>
@@ -77,14 +85,6 @@
       <description>The reported figure is a ratio and not a price. Without the starting price, the parts cost and the retailer, a buyer cannot convert it into a decision.</description>
       <category>tech</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=eufy-omni-c28-discount-needs-a-baseline</guid>
-      <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Open Ocean Forecasts Will Decide the Navy's Next Weather Model</title>
-      <link>https://www.homeworldpress.com/article.html?id=open-ocean-records-decide-the-navy-weather-model-swap</link>
-      <description>A report says NEPTUNE is poised to take over the Navy's global weather model, with gains over open ocean. The record behind that promise is one sentence, and the sentence is the weak part.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=open-ocean-records-decide-the-navy-weather-model-swap</guid>
       <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
