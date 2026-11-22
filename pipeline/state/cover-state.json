@@ -1,14 +1,6 @@
 {
-  "currentCoverId": "infrared-spectra-decide-what-an-engulfed-star-leaves-behind",
+  "currentCoverId": "moon-rocket-engine-hot-fire-duration",
   "changes": [
-    {
-      "at": "2026-11-08T10:33:28.856Z",
-      "dia": "2026-11-08",
-      "rodada": "2026-11-08T04:23",
-      "id": "james-webb-telescope-reveals-giant-exoplanet",
-      "tipo": "do dia",
-      "era": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere"
-    },
     {
       "at": "2026-11-08T17:03:50.448Z",
       "dia": "2026-11-08",
@@ -456,6 +448,14 @@
       "id": "infrared-spectra-decide-what-an-engulfed-star-leaves-behind",
       "tipo": "do dia",
       "era": "moon-rocket-engine-hot-fire-duration"
+    },
+    {
+      "at": "2026-11-22T13:54:27.564Z",
+      "dia": "2026-11-22",
+      "rodada": "2026-11-22T10:23",
+      "id": "moon-rocket-engine-hot-fire-duration",
+      "tipo": "rotacionada",
+      "era": "infrared-spectra-decide-what-an-engulfed-star-leaves-behind"
     }
   ],
   "capaVistas": [
