@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-22T05:31:50.248Z",
+  "updated": "2026-11-22T09:34:43.827Z",
   "runs": {
     "analyst": {
-      "id": "moon-rocket-engine-hot-fire-duration",
+      "id": "infrared-spectra-decide-what-an-engulfed-star-leaves-behind",
       "date": "2026-11-22",
-      "opening_move": "object",
-      "ending_move": "verification",
-      "title_pattern": "test stands measure heat",
+      "opening_move": "dry_contrast",
+      "ending_move": "flat_statement",
+      "title_pattern": "infrared spectra decide what",
       "humor_lines": 1
     },
     "lab": {

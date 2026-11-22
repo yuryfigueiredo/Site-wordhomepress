@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-22T05:31:50.252Z",
+  "updated": "2026-11-22T09:34:43.834Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -515,6 +515,13 @@
       "outcome": "publicada",
       "at": "2026-11-22T05:31:50.251Z",
       "id": "moon-rocket-engine-hot-fire-duration"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261120075556.htm": {
+      "slug": "a-giant-star-swallowed-another-star-james-webb-reveals-the-after",
+      "topic": "A giant star swallowed another star. James Webb reveals the aftermath",
+      "outcome": "publicada",
+      "at": "2026-11-22T09:34:43.832Z",
+      "id": "infrared-spectra-decide-what-an-engulfed-star-leaves-behind"
     }
   },
   "publishes": [
@@ -776,6 +783,11 @@
     {
       "id": "moon-rocket-engine-hot-fire-duration",
       "at": "2026-11-22T05:31:50.251Z",
+      "score": 6.8
+    },
+    {
+      "id": "infrared-spectra-decide-what-an-engulfed-star-leaves-behind",
+      "at": "2026-11-22T09:34:43.832Z",
       "score": 6.8
     }
   ]

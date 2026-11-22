@@ -8,6 +8,14 @@
     <lastBuildDate>Sun, 22 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Infrared Spectra Decide What an Engulfed Star Leaves Behind</title>
+      <link>https://www.homeworldpress.com/article.html?id=infrared-spectra-decide-what-an-engulfed-star-leaves-behind</link>
+      <description>Any dusty shell explains the brightness. Only the chemistry says whether a second star helped make it.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=infrared-spectra-decide-what-an-engulfed-star-leaves-behind</guid>
+      <pubDate>Sun, 22 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>Test Stands Measure Heat Soak Before They Measure Thrust</title>
       <link>https://www.homeworldpress.com/article.html?id=moon-rocket-engine-hot-fire-duration</link>
       <description>A dispatch dated November 20, 2026 reports a 200-second firing of a Moon rocket engine. In qualification work, that duration reports on a thermal budget rather than on capability.</description>
@@ -77,14 +85,6 @@
       <description>The promotion leads with a calendar and a cast list. The hard part is that the book is famous for its sentences, not its story.</description>
       <category>culture</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=apple-neuromancer-must-invent-the-plot-the-novel-never-carried</guid>
-      <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Euclid's First Comet Tests the Boring Half of a Cosmology Camera</title>
-      <link>https://www.homeworldpress.com/article.html?id=euclid-first-comet-survey-pipeline</link>
-      <description>What the detection proves first is the data pipeline; the object itself is where the announcement runs out.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=euclid-first-comet-survey-pipeline</guid>
       <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

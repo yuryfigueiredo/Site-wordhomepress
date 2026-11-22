@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-22T05:31:49.200Z",
+  "updated": "2026-11-22T09:34:42.745Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -2155,6 +2155,44 @@
           "pts": 1,
           "max": 1,
           "why": "Treats test duration as a thermal-budget and purchasing signal, disputing the standard longer-means-stronger reading."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-22"
+    },
+    "infrared-spectra-decide-what-an-engulfed-star-leaves-behind": {
+      "score": 6.8,
+      "note": "6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 17% com open-ocean-records-decide-the-navy-weather-model-swap"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Sets the burden of proof on abundance ratios and lists what a dust detection cannot settle by itself."
         }
       },
       "source": "auto",

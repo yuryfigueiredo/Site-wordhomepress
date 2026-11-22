@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "infrared-spectra-decide-what-an-engulfed-star-leaves-behind"
+        }
+      ],
+      "destination": "/a-infrared-spectra-decide-what-an-engulfed-star-leaves-behind.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "moon-rocket-engine-hot-fire-duration"
         }
       ],

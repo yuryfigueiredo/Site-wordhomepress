@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "moon-rocket-engine-hot-fire-duration",
+  "currentCoverId": "infrared-spectra-decide-what-an-engulfed-star-leaves-behind",
   "changes": [
     {
       "at": "2026-11-08T10:33:28.856Z",
@@ -448,6 +448,14 @@
       "id": "moon-rocket-engine-hot-fire-duration",
       "tipo": "do dia",
       "era": "three-helicopters-underwrite-a-reactor-demo"
+    },
+    {
+      "at": "2026-11-22T09:34:42.971Z",
+      "dia": "2026-11-22",
+      "rodada": "2026-11-22T06:23",
+      "id": "infrared-spectra-decide-what-an-engulfed-star-leaves-behind",
+      "tipo": "do dia",
+      "era": "moon-rocket-engine-hot-fire-duration"
     }
   ],
   "capaVistas": [
@@ -491,6 +499,7 @@
     "lunar-bricks-have-to-hold-air-not-weight",
     "instagram-contact-studies-concede-the-dose",
     "three-helicopters-underwrite-a-reactor-demo",
-    "moon-rocket-engine-hot-fire-duration"
+    "moon-rocket-engine-hot-fire-duration",
+    "infrared-spectra-decide-what-an-engulfed-star-leaves-behind"
   ]
 }
