@@ -1,14 +1,6 @@
 {
-  "currentCoverId": "moon-rocket-engine-hot-fire-duration",
+  "currentCoverId": "second-low-energy-fermi-catalog-is-a-target-list",
   "changes": [
-    {
-      "at": "2026-11-08T17:03:50.448Z",
-      "dia": "2026-11-08",
-      "rodada": "2026-11-08T12:23",
-      "id": "swift-space-telescope-reentry-failure-analysis",
-      "tipo": "do dia",
-      "era": "james-webb-telescope-reveals-giant-exoplanet"
-    },
     {
       "at": "2026-11-09T20:28:23.406Z",
       "dia": "2026-11-09",
@@ -456,6 +448,14 @@
       "id": "moon-rocket-engine-hot-fire-duration",
       "tipo": "rotacionada",
       "era": "infrared-spectra-decide-what-an-engulfed-star-leaves-behind"
+    },
+    {
+      "at": "2026-11-22T17:23:51.920Z",
+      "dia": "2026-11-22",
+      "rodada": "2026-11-22T14:23",
+      "id": "second-low-energy-fermi-catalog-is-a-target-list",
+      "tipo": "do dia",
+      "era": "moon-rocket-engine-hot-fire-duration"
     }
   ],
   "capaVistas": [
@@ -500,6 +500,7 @@
     "instagram-contact-studies-concede-the-dose",
     "three-helicopters-underwrite-a-reactor-demo",
     "moon-rocket-engine-hot-fire-duration",
-    "infrared-spectra-decide-what-an-engulfed-star-leaves-behind"
+    "infrared-spectra-decide-what-an-engulfed-star-leaves-behind",
+    "second-low-energy-fermi-catalog-is-a-target-list"
   ]
 }

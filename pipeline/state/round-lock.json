@@ -204,7 +204,12 @@
       "rodada": "2026-11-22T10:23",
       "at": "2026-11-22T13:54:27.598Z",
       "resultado": "rascunho ficou reprovado depois de 6 tentativas — nada publicado, e a pauta fica 72h fora da fila (pipeline/memory.json)."
+    },
+    {
+      "rodada": "2026-11-22T14:23",
+      "at": "2026-11-22T17:23:51.959Z",
+      "resultado": "cadência: a última matéria está no ar há 1.8h (mínimo 3h) — esta rodada só coleta e checa."
     }
   ],
-  "updated": "2026-11-22T13:54:27.598Z"
+  "updated": "2026-11-22T17:23:51.959Z"
 }
