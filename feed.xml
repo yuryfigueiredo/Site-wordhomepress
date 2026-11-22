@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 21 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 22 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Test Stands Measure Heat Soak Before They Measure Thrust</title>
+      <link>https://www.homeworldpress.com/article.html?id=moon-rocket-engine-hot-fire-duration</link>
+      <description>A dispatch dated November 20, 2026 reports a 200-second firing of a Moon rocket engine. In qualification work, that duration reports on a thermal budget rather than on capability.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=moon-rocket-engine-hot-fire-duration</guid>
+      <pubDate>Sun, 22 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Three Helicopters Underwrite NASA's Reactor Demonstration</title>
       <link>https://www.homeworldpress.com/article.html?id=three-helicopters-underwrite-a-reactor-demo</link>
@@ -77,14 +85,6 @@
       <description>What the detection proves first is the data pipeline; the object itself is where the announcement runs out.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=euclid-first-comet-survey-pipeline</guid>
-      <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Voyager 1 launched second and outran Voyager 2 to a light-day</title>
-      <link>https://www.homeworldpress.com/article.html?id=voyager-1-launched-second-and-outran-voyager-2</link>
-      <description>Each trajectory was handed a different amount of speed before launch, depending on which planets it was pointed at.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=voyager-1-launched-second-and-outran-voyager-2</guid>
       <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

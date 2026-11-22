@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "moon-rocket-engine-hot-fire-duration"
+        }
+      ],
+      "destination": "/a-moon-rocket-engine-hot-fire-duration.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "three-helicopters-underwrite-a-reactor-demo"
         }
       ],

@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-21T23:30:05.977Z",
+  "updated": "2026-11-22T05:31:50.248Z",
   "runs": {
     "analyst": {
-      "id": "three-helicopters-underwrite-a-reactor-demo",
-      "date": "2026-11-21",
-      "opening_move": "dated_fact",
-      "ending_move": "small_observation",
-      "title_pattern": "three helicopters underwrite nasa's",
+      "id": "moon-rocket-engine-hot-fire-duration",
+      "date": "2026-11-22",
+      "opening_move": "object",
+      "ending_move": "verification",
+      "title_pattern": "test stands measure heat",
       "humor_lines": 1
     },
     "lab": {

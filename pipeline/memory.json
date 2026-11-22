@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T23:30:05.985Z",
+  "updated": "2026-11-22T05:31:50.252Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -508,6 +508,13 @@
       "outcome": "publicada",
       "at": "2026-11-21T23:30:05.983Z",
       "id": "three-helicopters-underwrite-a-reactor-demo"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261120075551.htm": {
+      "slug": "nasas-powerful-moon-rocket-engine-roars-through-a-dramatic-200-s",
+      "topic": "NASA's powerful Moon rocket engine roars through a dramatic 200-second test",
+      "outcome": "publicada",
+      "at": "2026-11-22T05:31:50.251Z",
+      "id": "moon-rocket-engine-hot-fire-duration"
     }
   },
   "publishes": [
@@ -765,6 +772,11 @@
       "id": "three-helicopters-underwrite-a-reactor-demo",
       "at": "2026-11-21T23:30:05.983Z",
       "score": 7.3
+    },
+    {
+      "id": "moon-rocket-engine-hot-fire-duration",
+      "at": "2026-11-22T05:31:50.251Z",
+      "score": 6.8
     }
   ]
 }
