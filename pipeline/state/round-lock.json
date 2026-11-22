@@ -189,7 +189,12 @@
       "rodada": "2026-11-21T22:23",
       "at": "2026-11-22T01:23:55.610Z",
       "resultado": "cadência: a última matéria está no ar há 1.9h (mínimo 3h) — esta rodada só coleta e checa."
+    },
+    {
+      "rodada": "2026-11-22T02:23",
+      "at": "2026-11-22T05:31:50.567Z",
+      "resultado": "rodada completa. O commit `turno:` e o push são do runner (Actions ou hwp-turno.sh); o deploy é da Vercel."
     }
   ],
-  "updated": "2026-11-22T01:23:55.610Z"
+  "updated": "2026-11-22T05:31:50.567Z"
 }
