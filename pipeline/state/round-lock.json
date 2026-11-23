@@ -239,7 +239,12 @@
       "rodada": "2026-11-23T14:23",
       "at": "2026-11-23T17:23:59.252Z",
       "resultado": "teto diário atingido — as próximas rodadas só coletam e checam."
+    },
+    {
+      "rodada": "2026-11-23T18:23",
+      "at": "2026-11-23T21:23:52.157Z",
+      "resultado": "teto diário atingido — as próximas rodadas só coletam e checam."
     }
   ],
-  "updated": "2026-11-23T17:23:59.252Z"
+  "updated": "2026-11-23T21:23:52.157Z"
 }

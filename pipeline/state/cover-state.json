@@ -1,14 +1,6 @@
 {
-  "currentCoverId": "blade-runner-2099-swaps-who-holds-the-clipboard",
+  "currentCoverId": "last-soviet-mars-probe-archive-nobody-can-open",
   "changes": [
-    {
-      "at": "2026-11-09T20:28:23.406Z",
-      "dia": "2026-11-09",
-      "rodada": "2026-11-09T12:23",
-      "id": "physicists-watch-time-emerge-without-clocks",
-      "tipo": "do dia",
-      "era": "swift-space-telescope-reentry-failure-analysis"
-    },
     {
       "at": "2026-11-10T04:30:09.704Z",
       "dia": "2026-11-09",
@@ -504,6 +496,14 @@
       "id": "blade-runner-2099-swaps-who-holds-the-clipboard",
       "tipo": "do dia",
       "era": "last-soviet-mars-probe-archive-nobody-can-open"
+    },
+    {
+      "at": "2026-11-23T21:23:52.110Z",
+      "dia": "2026-11-23",
+      "rodada": "2026-11-23T18:23",
+      "id": "last-soviet-mars-probe-archive-nobody-can-open",
+      "tipo": "rotacionada",
+      "era": "blade-runner-2099-swaps-who-holds-the-clipboard"
     }
   ],
   "capaVistas": [
