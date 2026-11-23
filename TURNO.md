@@ -1,15 +1,15 @@
-# Turno — 2026-11-22 21:28 UTC
+# Turno — 2026-11-23 01:30 UTC
 
-- **coleta** — fila: 29 pautas acumuladas em 7 rodada(s) (11/12 feeds ok nesta) → pipeline/leads/2026-11-22.md · 13 novata(s) cortada(s) por fonte/teto, voltam na próxima rodada · feeds fora: Publishing Perspectives: fetch failed (UND_ERR_SOCKET)
+- **coleta** — fila: 10 pautas acumuladas em 1 rodada(s) (11/12 feeds ok nesta) → pipeline/leads/2026-11-23.md · 5 novata(s) cortada(s) por fonte/teto, voltam na próxima rodada · feeds fora: Publishing Perspectives: fetch failed (UND_ERR_SOCKET)
 - **rotação diária** — rotação diária aplicada (capa intacta).
-- **manutenção** — errors 0 | ✗ warnings 8
-- **cadência** — 3/5 publicação(ões) hoje
-- **pauta** — NASA’s Voyager 1 is now so far away that light takes 24 hours to reach it (Science Daily Astronomy, score 2)
-- **brief** — pipeline/drafts/nasas-voyager-1-is-now-so-far-away-that-light-takes-24-hours-to-/ criado
-- **texto** — escrito por qoder/Efficient: voyagers-24-hour-light-time-costs-two-days-per-repair (1158 palavras)
-- **foto** — ✓ foto encontrada: images/posts/nasas-voyager-1-is-now-so-far-away-that-light-takes-24-hours-to-.jpg (Photo by Stephan Widua on Unsplash)
-- **capa** — nasas-voyager-1-is-now-so-far-away-that-light-takes-24-hours-to- usa foto real (images/posts/nasas-voyager-1-is-now-so-far-away-that-light-takes-24-hours-to-.jpg) — nenhuma placa gerada
+- **manutenção** — errors 0 | ✗ warnings 9
+- **cadência** — 0/5 publicação(ões) hoje
+- **pauta** — A Beginner's Guide to Local AI with Inkling, Qwen, and Unsloth (Hacker News, score 2)
+- **brief** — pipeline/drafts/a-beginners-guide-to-local-ai-with-inkling-qwen-and-unsloth/ criado
+- **texto** — escrito por qoder/Efficient: local-ai-onboarding-moved-from-model-choice-to-installation (1145 palavras)
+- **foto** — ✓ foto encontrada: images/posts/a-beginners-guide-to-local-ai-with-inkling-qwen-and-unsloth.jpg (Photo by Rafael Pol on Unsplash)
+- **capa** — a-beginners-guide-to-local-ai-with-inkling-qwen-and-unsloth usa foto real (images/posts/a-beginners-guide-to-local-ai-with-inkling-qwen-and-unsloth.jpg) — nenhuma placa gerada
 - **edição** — aprovado na tentativa 1
-- **nota** — 7.3/10 · 7.3/10 — força em timeliness (fonte mais recente há 3 dia(s)); ponto fraco: commercial (sem produto nem caixa de afiliado)
-- **publicação** — publicado localmente: voyagers-24-hour-light-time-costs-two-days-per-repair · nota 7.3/10 · cadência hoje: 4/5
+- **nota** — 6.8/10 · 6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)
+- **publicação** — publicado localmente: local-ai-onboarding-moved-from-model-choice-to-installation · nota 6.8/10 · cadência hoje: 1/5
 - **fim** — rodada completa. O commit `turno:` e o push são do runner (Actions ou hwp-turno.sh); o deploy é da Vercel.
