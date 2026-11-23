@@ -8,6 +8,14 @@
     <lastBuildDate>Mon, 23 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Amazon's First Satellite Batch Since the Vulcan Failure Flies an Ariane 6</title>
+      <link>https://www.homeworldpress.com/article.html?id=launch-access-now-decides-constellation-coverage</link>
+      <description>One live-coverage page is thin evidence for a larger claim: constellation programs now compete on launch access rather than satellite count.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=launch-access-now-decides-constellation-coverage</guid>
+      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>The Onboarding Manual for Local AI Sits on a Hardware Domain</title>
       <link>https://www.homeworldpress.com/article.html?id=local-ai-onboarding-moved-from-model-choice-to-installation</link>
       <description>Inkling, Qwen and Unsloth share a beginner's title. What the title does not say is which of the three you have to install.</description>
@@ -77,14 +85,6 @@
       <description>Space.com's frontier warning reads better as an argument about survey data, reference frames and who gets to file first.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=a-lunar-land-office-has-to-open-before-the-claims-do</guid>
-      <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>A New Ocean Vehicle Class Has to Sacrifice One Constraint</title>
-      <link>https://www.homeworldpress.com/article.html?id=deep-venture-class-claim-needs-a-test</link>
-      <description>The November 20 item on Deep Venture uses the word class without the specification that would defend it. Every such claim has one testable tell.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=deep-venture-class-claim-needs-a-test</guid>
       <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

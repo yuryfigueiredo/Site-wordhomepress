@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23T01:30:38.411Z",
+  "updated": "2026-11-23T05:31:50.441Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -546,6 +546,13 @@
       "outcome": "publicada",
       "at": "2026-11-23T01:30:38.409Z",
       "id": "local-ai-onboarding-moved-from-model-choice-to-installation"
+    },
+    "https://www.space.com/space-exploration/launches-spacecraft/arianespace-ariane-6-amazon-leo-internet-satellite-launch": {
+      "slug": "watch-live-on-nov-23-amazon-launching-1st-batch-of-internet-sate",
+      "topic": "Watch live on Nov. 23: Amazon launching 1st batch of internet satellites since Vulcan Centaur failure",
+      "outcome": "publicada",
+      "at": "2026-11-23T05:31:50.440Z",
+      "id": "launch-access-now-decides-constellation-coverage"
     }
   },
   "publishes": [
@@ -827,6 +834,11 @@
     {
       "id": "local-ai-onboarding-moved-from-model-choice-to-installation",
       "at": "2026-11-23T01:30:38.409Z",
+      "score": 6.8
+    },
+    {
+      "id": "launch-access-now-decides-constellation-coverage",
+      "at": "2026-11-23T05:31:50.440Z",
       "score": 6.8
     }
   ]

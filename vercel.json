@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "launch-access-now-decides-constellation-coverage"
+        }
+      ],
+      "destination": "/a-launch-access-now-decides-constellation-coverage.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "local-ai-onboarding-moved-from-model-choice-to-installation"
         }
       ],

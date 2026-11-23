@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "local-ai-onboarding-moved-from-model-choice-to-installation",
+  "currentCoverId": "launch-access-now-decides-constellation-coverage",
   "changes": [
     {
       "at": "2026-11-09T20:28:23.406Z",
@@ -472,6 +472,14 @@
       "id": "local-ai-onboarding-moved-from-model-choice-to-installation",
       "tipo": "do dia",
       "era": "voyagers-24-hour-light-time-costs-two-days-per-repair"
+    },
+    {
+      "at": "2026-11-23T05:31:49.551Z",
+      "dia": "2026-11-23",
+      "rodada": "2026-11-23T02:23",
+      "id": "launch-access-now-decides-constellation-coverage",
+      "tipo": "do dia",
+      "era": "local-ai-onboarding-moved-from-model-choice-to-installation"
     }
   ],
   "capaVistas": [
@@ -519,6 +527,7 @@
     "infrared-spectra-decide-what-an-engulfed-star-leaves-behind",
     "second-low-energy-fermi-catalog-is-a-target-list",
     "voyagers-24-hour-light-time-costs-two-days-per-repair",
-    "local-ai-onboarding-moved-from-model-choice-to-installation"
+    "local-ai-onboarding-moved-from-model-choice-to-installation",
+    "launch-access-now-decides-constellation-coverage"
   ]
 }
