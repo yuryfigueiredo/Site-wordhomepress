@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23T05:31:49.393Z",
+  "updated": "2026-11-23T09:31:53.823Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -2345,6 +2345,44 @@
           "pts": 1,
           "max": 1,
           "why": "Argues that constellation coverage is set by booster-class cadence and qualification, not by announced satellite counts."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-23"
+    },
+    "casting-headline-asks-readers-to-treat-paperwork-as-plot": {
+      "score": 6.3,
+      "note": "6.3/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 6 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 11% com instagram-contact-studies-concede-the-dose"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 0.5,
+          "max": 1,
+          "why": "Reads a casting headline as an availability document and a free audience test, not as plot evidence."
         }
       },
       "source": "auto",

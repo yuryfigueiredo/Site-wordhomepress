@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23T05:31:50.441Z",
+  "updated": "2026-11-23T09:31:54.961Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -553,6 +553,13 @@
       "outcome": "publicada",
       "at": "2026-11-23T05:31:50.440Z",
       "id": "launch-access-now-decides-constellation-coverage"
+    },
+    "https://reactormag.com/the-mummy-book-of-the-dead-cast-returning-characters": {
+      "slug": "the-mummy-book-of-the-dead-cast-includes-some-surprising-returni",
+      "topic": "The Mummy: Book of the Dead Cast Includes Some Surprising Returning Characters",
+      "outcome": "publicada",
+      "at": "2026-11-23T09:31:54.959Z",
+      "id": "casting-headline-asks-readers-to-treat-paperwork-as-plot"
     }
   },
   "publishes": [
@@ -840,6 +847,11 @@
       "id": "launch-access-now-decides-constellation-coverage",
       "at": "2026-11-23T05:31:50.440Z",
       "score": 6.8
+    },
+    {
+      "id": "casting-headline-asks-readers-to-treat-paperwork-as-plot",
+      "at": "2026-11-23T09:31:54.959Z",
+      "score": 6.3
     }
   ]
 }

@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-23T05:31:50.436Z",
+  "updated": "2026-11-23T09:31:54.952Z",
   "runs": {
     "analyst": {
-      "id": "launch-access-now-decides-constellation-coverage",
+      "id": "casting-headline-asks-readers-to-treat-paperwork-as-plot",
       "date": "2026-11-23",
-      "opening_move": "dry_contrast",
-      "ending_move": "small_observation",
-      "title_pattern": "amazon's first satellite batch",
+      "opening_move": "dated_fact",
+      "ending_move": "flat_statement",
+      "title_pattern": "casting news asks readers",
       "humor_lines": 1
     },
     "lab": {

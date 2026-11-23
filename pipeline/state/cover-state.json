@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "launch-access-now-decides-constellation-coverage",
+  "currentCoverId": "local-ai-onboarding-moved-from-model-choice-to-installation",
   "changes": [
     {
       "at": "2026-11-09T20:28:23.406Z",
@@ -480,6 +480,14 @@
       "id": "launch-access-now-decides-constellation-coverage",
       "tipo": "do dia",
       "era": "local-ai-onboarding-moved-from-model-choice-to-installation"
+    },
+    {
+      "at": "2026-11-23T09:31:54.046Z",
+      "dia": "2026-11-23",
+      "rodada": "2026-11-23T06:23",
+      "id": "local-ai-onboarding-moved-from-model-choice-to-installation",
+      "tipo": "rotacionada",
+      "era": "launch-access-now-decides-constellation-coverage"
     }
   ],
   "capaVistas": [
