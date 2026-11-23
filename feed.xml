@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 22 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 23 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>The Onboarding Manual for Local AI Sits on a Hardware Domain</title>
+      <link>https://www.homeworldpress.com/article.html?id=local-ai-onboarding-moved-from-model-choice-to-installation</link>
+      <description>Inkling, Qwen and Unsloth share a beginner's title. What the title does not say is which of the three you have to install.</description>
+      <category>tech</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=local-ai-onboarding-moved-from-model-choice-to-installation</guid>
+      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>A Light-Day to Voyager Turns Every Repair Into a Two-Day Loop</title>
       <link>https://www.homeworldpress.com/article.html?id=voyagers-24-hour-light-time-costs-two-days-per-repair</link>
@@ -78,14 +86,6 @@
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=deep-venture-class-claim-needs-a-test</guid>
       <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Eufy's Omni C28 Needs a Baseline Before 53 Percent Means Anything</title>
-      <link>https://www.homeworldpress.com/article.html?id=eufy-omni-c28-discount-needs-a-baseline</link>
-      <description>The reported figure is a ratio and not a price. Without the starting price, the parts cost and the retailer, a buyer cannot convert it into a decision.</description>
-      <category>tech</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=eufy-omni-c28-discount-needs-a-baseline</guid>
-      <pubDate>Fri, 20 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>

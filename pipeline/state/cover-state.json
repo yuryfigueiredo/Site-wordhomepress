@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "voyagers-24-hour-light-time-costs-two-days-per-repair",
+  "currentCoverId": "local-ai-onboarding-moved-from-model-choice-to-installation",
   "changes": [
     {
       "at": "2026-11-09T20:28:23.406Z",
@@ -464,6 +464,14 @@
       "id": "voyagers-24-hour-light-time-costs-two-days-per-repair",
       "tipo": "do dia",
       "era": "second-low-energy-fermi-catalog-is-a-target-list"
+    },
+    {
+      "at": "2026-11-23T01:30:36.765Z",
+      "dia": "2026-11-22",
+      "rodada": "2026-11-22T22:23",
+      "id": "local-ai-onboarding-moved-from-model-choice-to-installation",
+      "tipo": "do dia",
+      "era": "voyagers-24-hour-light-time-costs-two-days-per-repair"
     }
   ],
   "capaVistas": [
@@ -510,6 +518,7 @@
     "moon-rocket-engine-hot-fire-duration",
     "infrared-spectra-decide-what-an-engulfed-star-leaves-behind",
     "second-low-energy-fermi-catalog-is-a-target-list",
-    "voyagers-24-hour-light-time-costs-two-days-per-repair"
+    "voyagers-24-hour-light-time-costs-two-days-per-repair",
+    "local-ai-onboarding-moved-from-model-choice-to-installation"
   ]
 }

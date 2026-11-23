@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-22T21:28:53.587Z",
+  "updated": "2026-11-23T01:30:38.411Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -539,6 +539,13 @@
       "outcome": "publicada",
       "at": "2026-11-22T21:28:53.584Z",
       "id": "voyagers-24-hour-light-time-costs-two-days-per-repair"
+    },
+    "https://www.gpupartner.com/blog/beginners-guide-local-ai-inkling-qwen-unsloth": {
+      "slug": "a-beginners-guide-to-local-ai-with-inkling-qwen-and-unsloth",
+      "topic": "A Beginner's Guide to Local AI with Inkling, Qwen, and Unsloth",
+      "outcome": "publicada",
+      "at": "2026-11-23T01:30:38.409Z",
+      "id": "local-ai-onboarding-moved-from-model-choice-to-installation"
     }
   },
   "publishes": [
@@ -816,6 +823,11 @@
       "id": "voyagers-24-hour-light-time-costs-two-days-per-repair",
       "at": "2026-11-22T21:28:53.584Z",
       "score": 7.3
+    },
+    {
+      "id": "local-ai-onboarding-moved-from-model-choice-to-installation",
+      "at": "2026-11-23T01:30:38.409Z",
+      "score": 6.8
     }
   ]
 }

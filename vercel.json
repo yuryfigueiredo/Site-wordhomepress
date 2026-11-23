@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "local-ai-onboarding-moved-from-model-choice-to-installation"
+        }
+      ],
+      "destination": "/a-local-ai-onboarding-moved-from-model-choice-to-installation.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "voyagers-24-hour-light-time-costs-two-days-per-repair"
         }
       ],
