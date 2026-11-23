@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "last-soviet-mars-probe-archive-nobody-can-open",
+  "currentCoverId": "blade-runner-2099-swaps-who-holds-the-clipboard",
   "changes": [
     {
       "at": "2026-11-09T20:28:23.406Z",
@@ -496,6 +496,14 @@
       "id": "last-soviet-mars-probe-archive-nobody-can-open",
       "tipo": "do dia",
       "era": "local-ai-onboarding-moved-from-model-choice-to-installation"
+    },
+    {
+      "at": "2026-11-23T17:23:59.179Z",
+      "dia": "2026-11-23",
+      "rodada": "2026-11-23T14:23",
+      "id": "blade-runner-2099-swaps-who-holds-the-clipboard",
+      "tipo": "do dia",
+      "era": "last-soviet-mars-probe-archive-nobody-can-open"
     }
   ],
   "capaVistas": [
@@ -545,6 +553,7 @@
     "voyagers-24-hour-light-time-costs-two-days-per-repair",
     "local-ai-onboarding-moved-from-model-choice-to-installation",
     "launch-access-now-decides-constellation-coverage",
-    "last-soviet-mars-probe-archive-nobody-can-open"
+    "last-soviet-mars-probe-archive-nobody-can-open",
+    "blade-runner-2099-swaps-who-holds-the-clipboard"
   ]
 }
