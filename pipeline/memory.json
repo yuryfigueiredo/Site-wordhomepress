@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23T09:31:54.961Z",
+  "updated": "2026-11-23T13:33:07.163Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -560,6 +560,13 @@
       "outcome": "publicada",
       "at": "2026-11-23T09:31:54.959Z",
       "id": "casting-headline-asks-readers-to-treat-paperwork-as-plot"
+    },
+    "https://www.space.com/astronomy/mars/what-did-the-soviet-unions-final-deep-space-probe-actually-see-on-mars": {
+      "slug": "what-did-the-soviet-unions-final-deep-space-probe-actually-see-o",
+      "topic": "What did the Soviet Union's final deep space probe actually see on Mars?",
+      "outcome": "publicada",
+      "at": "2026-11-23T13:33:07.161Z",
+      "id": "last-soviet-mars-probe-archive-nobody-can-open"
     }
   },
   "publishes": [
@@ -852,6 +859,11 @@
       "id": "casting-headline-asks-readers-to-treat-paperwork-as-plot",
       "at": "2026-11-23T09:31:54.959Z",
       "score": 6.3
+    },
+    {
+      "id": "last-soviet-mars-probe-archive-nobody-can-open",
+      "at": "2026-11-23T13:33:07.161Z",
+      "score": 6.8
     }
   ]
 }

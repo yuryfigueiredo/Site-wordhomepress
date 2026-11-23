@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23T09:31:53.823Z",
+  "updated": "2026-11-23T13:33:05.992Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -2383,6 +2383,44 @@
           "pts": 0.5,
           "max": 1,
           "why": "Reads a casting headline as an availability document and a free audience test, not as plot evidence."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-23"
+    },
+    "last-soviet-mars-probe-archive-nobody-can-open": {
+      "score": 6.8,
+      "note": "6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 12% com a-lunar-land-office-has-to-open-before-the-claims-do"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Treats the probe's imagery as an institutional failure of evidence rather than a Mars result, and shows summary confidence tracks citation d"
         }
       },
       "source": "auto",

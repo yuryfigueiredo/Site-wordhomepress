@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "local-ai-onboarding-moved-from-model-choice-to-installation",
+  "currentCoverId": "last-soviet-mars-probe-archive-nobody-can-open",
   "changes": [
     {
       "at": "2026-11-09T20:28:23.406Z",
@@ -488,6 +488,14 @@
       "id": "local-ai-onboarding-moved-from-model-choice-to-installation",
       "tipo": "rotacionada",
       "era": "launch-access-now-decides-constellation-coverage"
+    },
+    {
+      "at": "2026-11-23T13:33:06.174Z",
+      "dia": "2026-11-23",
+      "rodada": "2026-11-23T10:23",
+      "id": "last-soviet-mars-probe-archive-nobody-can-open",
+      "tipo": "do dia",
+      "era": "local-ai-onboarding-moved-from-model-choice-to-installation"
     }
   ],
   "capaVistas": [
@@ -536,6 +544,7 @@
     "second-low-energy-fermi-catalog-is-a-target-list",
     "voyagers-24-hour-light-time-costs-two-days-per-repair",
     "local-ai-onboarding-moved-from-model-choice-to-installation",
-    "launch-access-now-decides-constellation-coverage"
+    "launch-access-now-decides-constellation-coverage",
+    "last-soviet-mars-probe-archive-nobody-can-open"
   ]
 }
