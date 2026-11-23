@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23T13:33:07.163Z",
+  "updated": "2026-11-23T16:35:32.432Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -567,6 +567,11 @@
       "outcome": "publicada",
       "at": "2026-11-23T13:33:07.161Z",
       "id": "last-soviet-mars-probe-archive-nobody-can-open"
+    },
+    "https://www.theverge.com/entertainment/1039095/blade-runner-2099-review": {
+      "outcome": "publicada",
+      "at": "2026-11-23T16:35:32.431Z",
+      "id": "blade-runner-2099-swaps-who-holds-the-clipboard"
     }
   },
   "publishes": [
@@ -864,6 +869,11 @@
       "id": "last-soviet-mars-probe-archive-nobody-can-open",
       "at": "2026-11-23T13:33:07.161Z",
       "score": 6.8
+    },
+    {
+      "id": "blade-runner-2099-swaps-who-holds-the-clipboard",
+      "at": "2026-11-23T16:35:32.431Z",
+      "score": 7.3
     }
   ]
 }
