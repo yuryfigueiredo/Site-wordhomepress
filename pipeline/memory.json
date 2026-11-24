@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24T01:30:20.481Z",
+  "updated": "2026-11-24T05:31:12.670Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -579,14 +579,16 @@
       "outcome": "publicada",
       "at": "2026-11-24T01:30:20.479Z",
       "id": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind"
+    },
+    "https://phys.org/news/2026-11-physics-ai-reconstructs-fluid-sparse.html": {
+      "slug": "physics-guided-ai-reconstructs-fluid-flow-from-sparse-noisy-data",
+      "topic": "Physics-guided AI reconstructs fluid flow from sparse, noisy data",
+      "outcome": "publicada",
+      "at": "2026-11-24T05:31:12.668Z",
+      "id": "physics-prior-outvotes-particle-measurement"
     }
   },
   "publishes": [
-    {
-      "id": "webb-telescope-mars-sized-collisions",
-      "at": "2026-10-30T21:09:35Z",
-      "score": 6.4
-    },
     {
       "id": "webb-telescope-detects-mars-sized-collisions",
       "at": "2026-10-31T00:43:18Z",
@@ -880,6 +882,11 @@
     {
       "id": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind",
       "at": "2026-11-24T01:30:20.479Z",
+      "score": 6.8
+    },
+    {
+      "id": "physics-prior-outvotes-particle-measurement",
+      "at": "2026-11-24T05:31:12.668Z",
       "score": 6.8
     }
   ]

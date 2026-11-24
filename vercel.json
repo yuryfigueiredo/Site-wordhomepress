@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "physics-prior-outvotes-particle-measurement"
+        }
+      ],
+      "destination": "/a-physics-prior-outvotes-particle-measurement.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind"
         }
       ],

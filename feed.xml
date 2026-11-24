@@ -8,6 +8,14 @@
     <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>The Physics Prior Can Outvote the Measurement It Was Built to Fix</title>
+      <link>https://www.homeworldpress.com/article.html?id=physics-prior-outvotes-particle-measurement</link>
+      <description>Reconstruction from sparse, noisy particle images turns on a weighting choice that no benchmark shows</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=physics-prior-outvotes-particle-measurement</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>Spacecraft Data Track Fourteen Years of Motion in the Solar System's Tail</title>
       <link>https://www.homeworldpress.com/article.html?id=fourteen-years-of-motion-at-the-edge-of-the-solar-wind</link>
       <description>A tail that moves turns a boundary nobody has visited into a reading of the gas outside the Sun's bubble.</description>
@@ -77,14 +85,6 @@
       <description>Any dusty shell explains the brightness. Only the chemistry says whether a second star helped make it.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=infrared-spectra-decide-what-an-engulfed-star-leaves-behind</guid>
-      <pubDate>Sun, 22 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Test Stands Measure Heat Soak Before They Measure Thrust</title>
-      <link>https://www.homeworldpress.com/article.html?id=moon-rocket-engine-hot-fire-duration</link>
-      <description>A dispatch dated November 20, 2026 reports a 200-second firing of a Moon rocket engine. In qualification work, that duration reports on a thermal budget rather than on capability.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=moon-rocket-engine-hot-fire-duration</guid>
       <pubDate>Sun, 22 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

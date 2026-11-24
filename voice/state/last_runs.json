@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-24T01:30:20.475Z",
+  "updated": "2026-11-24T05:31:12.664Z",
   "runs": {
     "analyst": {
-      "id": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind",
+      "id": "physics-prior-outvotes-particle-measurement",
       "date": "2026-11-24",
-      "opening_move": "dated_fact",
-      "ending_move": "verification",
-      "title_pattern": "spacecraft data track fourteen",
+      "opening_move": "object",
+      "ending_move": "small_observation",
+      "title_pattern": "the physics prior can",
       "humor_lines": 1
     },
     "lab": {
