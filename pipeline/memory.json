@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24T17:26:44.070Z",
+  "updated": "2026-11-24T21:27:24.765Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -606,14 +606,16 @@
       "outcome": "publicada",
       "at": "2026-11-24T17:26:44.070Z",
       "id": "calibration-star-pulses-expose-hidden-companion"
+    },
+    "https://phys.org/news/2026-11-violin-physical-characteristics-regular-playing.html": {
+      "slug": "do-a-violins-physical-characteristics-really-improve-with-regula",
+      "topic": "Do a violin's physical characteristics really improve with regular playing?",
+      "outcome": "publicada",
+      "at": "2026-11-24T21:27:24.763Z",
+      "id": "playing-a-violin-changes-the-player-before-the-wood"
     }
   },
   "publishes": [
-    {
-      "id": "nasa-lunar-landing-research-vehicle-test",
-      "at": "2026-11-02T17:12:10.136Z",
-      "score": 7.3
-    },
     {
       "id": "physicists-watch-time-emerge-without-clocks",
       "at": "2026-11-03T22:22:46.842Z",
@@ -907,6 +909,11 @@
     {
       "id": "calibration-star-pulses-expose-hidden-companion",
       "at": "2026-11-24T17:26:44.070Z",
+      "score": 6.8
+    },
+    {
+      "id": "playing-a-violin-changes-the-player-before-the-wood",
+      "at": "2026-11-24T21:27:24.763Z",
       "score": 6.8
     }
   ]

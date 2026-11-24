@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "playing-a-violin-changes-the-player-before-the-wood"
+        }
+      ],
+      "destination": "/a-playing-a-violin-changes-the-player-before-the-wood.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "calibration-star-pulses-expose-hidden-companion"
         }
       ],

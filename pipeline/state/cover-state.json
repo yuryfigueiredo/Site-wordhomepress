@@ -1,14 +1,6 @@
 {
-  "currentCoverId": "calibration-star-pulses-expose-hidden-companion",
+  "currentCoverId": "playing-a-violin-changes-the-player-before-the-wood",
   "changes": [
-    {
-      "at": "2026-11-10T21:27:19.837Z",
-      "dia": "2026-11-10",
-      "rodada": "2026-11-10T12:23",
-      "id": "artemis-i-radiation-discrepancy",
-      "tipo": "do dia",
-      "era": "nasa-lunar-landing-research-vehicle-test"
-    },
     {
       "at": "2026-11-11T03:02:31.942Z",
       "dia": "2026-11-10",
@@ -536,6 +528,14 @@
       "id": "calibration-star-pulses-expose-hidden-companion",
       "tipo": "do dia",
       "era": "mars-bacterial-habitats-reactor-schedule-constraint"
+    },
+    {
+      "at": "2026-11-24T21:27:23.787Z",
+      "dia": "2026-11-24",
+      "rodada": "2026-11-24T18:23",
+      "id": "playing-a-violin-changes-the-player-before-the-wood",
+      "tipo": "do dia",
+      "era": "calibration-star-pulses-expose-hidden-companion"
     }
   ],
   "capaVistas": [
@@ -590,6 +590,7 @@
     "fourteen-years-of-motion-at-the-edge-of-the-solar-wind",
     "physics-prior-outvotes-particle-measurement",
     "mars-bacterial-habitats-reactor-schedule-constraint",
-    "calibration-star-pulses-expose-hidden-companion"
+    "calibration-star-pulses-expose-hidden-companion",
+    "playing-a-violin-changes-the-player-before-the-wood"
   ]
 }

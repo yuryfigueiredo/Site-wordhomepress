@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24T17:26:43.038Z",
+  "updated": "2026-11-24T21:27:23.586Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -2611,6 +2611,44 @@
           "pts": 1,
           "max": 1,
           "why": "Argues rhythmic contamination defeats the usual error-cancellation defense, while steady offsets survive; the real defect is unaudited lists"
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-24"
+    },
+    "playing-a-violin-changes-the-player-before-the-wood": {
+      "score": 6.8,
+      "note": "6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 2 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 14% com candidate-neutron-star-mass-gap"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Separates strings, setup, climate cycling and plate stiffness, then shows the loud one is strings and the slow one is unmeasured."
         }
       },
       "source": "auto",

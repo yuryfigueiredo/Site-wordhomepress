@@ -8,6 +8,14 @@
     <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Playing a Violin Changes the Player Before the Wood</title>
+      <link>https://www.homeworldpress.com/article.html?id=playing-a-violin-changes-the-player-before-the-wood</link>
+      <description>A violin's measured resonances are set by geometry, mass and stiffness. What players call break-in lives in bridge feet, humidity cycles and strings, which is a different claim.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=playing-a-violin-changes-the-player-before-the-wood</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>Hidden Companions Move the Flux a Calibration Standard Was Meant to Hold</title>
       <link>https://www.homeworldpress.com/article.html?id=calibration-star-pulses-expose-hidden-companion</link>
       <description>A pulsing reference star is a small discovery with a long administrative tail, and the interesting part is that the sample caught it at all.</description>
@@ -78,14 +86,6 @@
       <category>tech</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=local-ai-onboarding-moved-from-model-choice-to-installation</guid>
       <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>A Light-Day to Voyager Turns Every Repair Into a Two-Day Loop</title>
-      <link>https://www.homeworldpress.com/article.html?id=voyagers-24-hour-light-time-costs-two-days-per-repair</link>
-      <description>The reported figure covers one leg of the trip. The operational number is 48 hours, and it costs the mission nothing until a fault needs a human answer.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=voyagers-24-hour-light-time-costs-two-days-per-repair</guid>
-      <pubDate>Sun, 22 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>
