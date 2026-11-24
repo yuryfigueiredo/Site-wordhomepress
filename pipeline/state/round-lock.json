@@ -249,7 +249,12 @@
       "rodada": "2026-11-23T22:23",
       "at": "2026-11-24T01:30:21.091Z",
       "resultado": "rodada completa. O commit `turno:` e o push são do runner (Actions ou hwp-turno.sh); o deploy é da Vercel."
+    },
+    {
+      "rodada": "2026-11-24T02:23",
+      "at": "2026-11-24T05:31:13.256Z",
+      "resultado": "rodada completa. O commit `turno:` e o push são do runner (Actions ou hwp-turno.sh); o deploy é da Vercel."
     }
   ],
-  "updated": "2026-11-24T01:30:21.091Z"
+  "updated": "2026-11-24T05:31:13.256Z"
 }
