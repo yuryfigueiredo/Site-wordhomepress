@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "calibration-star-pulses-expose-hidden-companion"
+        }
+      ],
+      "destination": "/a-calibration-star-pulses-expose-hidden-companion.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "mars-bacterial-habitats-reactor-schedule-constraint"
         }
       ],

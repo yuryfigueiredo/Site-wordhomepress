@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-24T13:28:16.930Z",
+  "updated": "2026-11-24T17:26:44.067Z",
   "runs": {
     "analyst": {
-      "id": "mars-bacterial-habitats-reactor-schedule-constraint",
+      "id": "calibration-star-pulses-expose-hidden-companion",
       "date": "2026-11-24",
-      "opening_move": "dated_fact",
-      "ending_move": "verification",
-      "title_pattern": "grown mars walls wait",
+      "opening_move": "document",
+      "ending_move": "admitted_limit",
+      "title_pattern": "hidden companions move the",
       "humor_lines": 1
     },
     "lab": {

@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "mars-bacterial-habitats-reactor-schedule-constraint",
+  "currentCoverId": "calibration-star-pulses-expose-hidden-companion",
   "changes": [
     {
       "at": "2026-11-10T21:27:19.837Z",
@@ -528,6 +528,14 @@
       "id": "mars-bacterial-habitats-reactor-schedule-constraint",
       "tipo": "do dia",
       "era": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind"
+    },
+    {
+      "at": "2026-11-24T17:26:43.193Z",
+      "dia": "2026-11-24",
+      "rodada": "2026-11-24T14:23",
+      "id": "calibration-star-pulses-expose-hidden-companion",
+      "tipo": "do dia",
+      "era": "mars-bacterial-habitats-reactor-schedule-constraint"
     }
   ],
   "capaVistas": [
@@ -581,6 +589,7 @@
     "blade-runner-2099-swaps-who-holds-the-clipboard",
     "fourteen-years-of-motion-at-the-edge-of-the-solar-wind",
     "physics-prior-outvotes-particle-measurement",
-    "mars-bacterial-habitats-reactor-schedule-constraint"
+    "mars-bacterial-habitats-reactor-schedule-constraint",
+    "calibration-star-pulses-expose-hidden-companion"
   ]
 }

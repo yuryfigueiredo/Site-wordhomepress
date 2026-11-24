@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24T13:28:16.935Z",
+  "updated": "2026-11-24T17:26:44.070Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -599,14 +599,16 @@
       "outcome": "publicada",
       "at": "2026-11-24T13:28:16.934Z",
       "id": "mars-bacterial-habitats-reactor-schedule-constraint"
+    },
+    "https://phys.org/news/2026-11-stellar-pulses-reveal-hidden-binary.html": {
+      "slug": "stellar-pulses-reveal-hidden-binary-in-jwst-calibration-star-sam",
+      "topic": "Stellar pulses reveal hidden binary in JWST calibration star sample",
+      "outcome": "publicada",
+      "at": "2026-11-24T17:26:44.070Z",
+      "id": "calibration-star-pulses-expose-hidden-companion"
     }
   },
   "publishes": [
-    {
-      "id": "artemis-i-radiation-discrepancy",
-      "at": "2026-11-01T14:14:59.645Z",
-      "score": 6.9
-    },
     {
       "id": "nasa-lunar-landing-research-vehicle-test",
       "at": "2026-11-02T17:12:10.136Z",
@@ -900,6 +902,11 @@
     {
       "id": "mars-bacterial-habitats-reactor-schedule-constraint",
       "at": "2026-11-24T13:28:16.934Z",
+      "score": 6.8
+    },
+    {
+      "id": "calibration-star-pulses-expose-hidden-companion",
+      "at": "2026-11-24T17:26:44.070Z",
       "score": 6.8
     }
   ]
