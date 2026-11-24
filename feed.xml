@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Mon, 23 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Spacecraft Data Track Fourteen Years of Motion in the Solar System's Tail</title>
+      <link>https://www.homeworldpress.com/article.html?id=fourteen-years-of-motion-at-the-edge-of-the-solar-wind</link>
+      <description>A tail that moves turns a boundary nobody has visited into a reading of the gas outside the Sun's bubble.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=fourteen-years-of-motion-at-the-edge-of-the-solar-wind</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Blade Runner 2099 Swaps Who Holds the Clipboard</title>
       <link>https://www.homeworldpress.com/article.html?id=blade-runner-2099-swaps-who-holds-the-clipboard</link>
@@ -78,14 +86,6 @@
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=moon-rocket-engine-hot-fire-duration</guid>
       <pubDate>Sun, 22 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Three Helicopters Underwrite NASA's Reactor Demonstration</title>
-      <link>https://www.homeworldpress.com/article.html?id=three-helicopters-underwrite-a-reactor-demo</link>
-      <description>SkyFall flies on a nuclear carrier that may not be ready, and its own project scientist says a Falcon 9 would do.</description>
-      <category>culture</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=three-helicopters-underwrite-a-reactor-demo</guid>
-      <pubDate>Sat, 21 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>

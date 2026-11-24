@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind"
+        }
+      ],
+      "destination": "/a-fourteen-years-of-motion-at-the-edge-of-the-solar-wind.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "blade-runner-2099-swaps-who-holds-the-clipboard"
         }
       ],

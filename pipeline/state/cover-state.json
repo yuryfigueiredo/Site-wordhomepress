@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "last-soviet-mars-probe-archive-nobody-can-open",
+  "currentCoverId": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind",
   "changes": [
     {
       "at": "2026-11-10T04:30:09.704Z",
@@ -504,6 +504,14 @@
       "id": "last-soviet-mars-probe-archive-nobody-can-open",
       "tipo": "rotacionada",
       "era": "blade-runner-2099-swaps-who-holds-the-clipboard"
+    },
+    {
+      "at": "2026-11-24T01:30:19.538Z",
+      "dia": "2026-11-23",
+      "rodada": "2026-11-23T22:23",
+      "id": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind",
+      "tipo": "do dia",
+      "era": "last-soviet-mars-probe-archive-nobody-can-open"
     }
   ],
   "capaVistas": [
@@ -554,6 +562,7 @@
     "local-ai-onboarding-moved-from-model-choice-to-installation",
     "launch-access-now-decides-constellation-coverage",
     "last-soviet-mars-probe-archive-nobody-can-open",
-    "blade-runner-2099-swaps-who-holds-the-clipboard"
+    "blade-runner-2099-swaps-who-holds-the-clipboard",
+    "fourteen-years-of-motion-at-the-edge-of-the-solar-wind"
   ]
 }

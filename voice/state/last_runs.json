@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-23T16:35:32.427Z",
+  "updated": "2026-11-24T01:30:20.475Z",
   "runs": {
     "analyst": {
-      "id": "blade-runner-2099-swaps-who-holds-the-clipboard",
-      "date": "2026-11-23",
-      "opening_move": "dry_contrast",
-      "ending_move": "flat_statement",
-      "title_pattern": "blade runner 2099 swaps",
+      "id": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind",
+      "date": "2026-11-24",
+      "opening_move": "dated_fact",
+      "ending_move": "verification",
+      "title_pattern": "spacecraft data track fourteen",
       "humor_lines": 1
     },
     "lab": {

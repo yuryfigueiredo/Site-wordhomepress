@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23T16:35:32.432Z",
+  "updated": "2026-11-24T01:30:20.481Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -572,14 +572,16 @@
       "outcome": "publicada",
       "at": "2026-11-23T16:35:32.431Z",
       "id": "blade-runner-2099-swaps-who-holds-the-clipboard"
+    },
+    "https://phys.org/news/2026-11-nasa-spacecraft-reveal-solar-tail.html": {
+      "slug": "nasa-spacecraft-data-reveal-how-solar-systems-tail-shifts-over-1",
+      "topic": "NASA spacecraft data reveal how solar system's tail shifts over 14 years",
+      "outcome": "publicada",
+      "at": "2026-11-24T01:30:20.479Z",
+      "id": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind"
     }
   },
   "publishes": [
-    {
-      "id": "guardian-september-roundup-one-category-2026",
-      "at": "2026-10-29T14:14:28-03:00",
-      "score": 6.8
-    },
     {
       "id": "webb-telescope-mars-sized-collisions",
       "at": "2026-10-30T21:09:35Z",
@@ -874,6 +876,11 @@
       "id": "blade-runner-2099-swaps-who-holds-the-clipboard",
       "at": "2026-11-23T16:35:32.431Z",
       "score": 7.3
+    },
+    {
+      "id": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind",
+      "at": "2026-11-24T01:30:20.479Z",
+      "score": 6.8
     }
   ]
 }
