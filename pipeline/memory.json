@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24T05:31:12.670Z",
+  "updated": "2026-11-24T09:33:05.198Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -586,6 +586,12 @@
       "outcome": "publicada",
       "at": "2026-11-24T05:31:12.668Z",
       "id": "physics-prior-outvotes-particle-measurement"
+    },
+    "https://phys.org/news/2026-11-webb-evidence-star-layers-merged.html": {
+      "slug": "webb-finds-evidence-stars-layers-may-have-merged-just-hours-befo",
+      "topic": "Webb finds evidence star's layers may have merged just hours before Cas A supernova",
+      "outcome": "reprovada",
+      "at": "2026-11-24T09:33:05.197Z"
     }
   },
   "publishes": [

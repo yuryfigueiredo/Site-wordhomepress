@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "physics-prior-outvotes-particle-measurement",
+  "currentCoverId": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind",
   "changes": [
     {
       "at": "2026-11-10T21:27:19.837Z",
@@ -512,6 +512,14 @@
       "id": "physics-prior-outvotes-particle-measurement",
       "tipo": "do dia",
       "era": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind"
+    },
+    {
+      "at": "2026-11-24T09:33:05.331Z",
+      "dia": "2026-11-24",
+      "rodada": "2026-11-24T06:23",
+      "id": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind",
+      "tipo": "rotacionada",
+      "era": "physics-prior-outvotes-particle-measurement"
     }
   ],
   "capaVistas": [
