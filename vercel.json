@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "mars-bacterial-habitats-reactor-schedule-constraint"
+        }
+      ],
+      "destination": "/a-mars-bacterial-habitats-reactor-schedule-constraint.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "physics-prior-outvotes-particle-measurement"
         }
       ],

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24T05:31:11.445Z",
+  "updated": "2026-11-24T13:28:15.810Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -2535,6 +2535,44 @@
           "pts": 1,
           "max": 1,
           "why": "Argues that a physics prior's benefit and its failure share one control: the weight that decides which term loses."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-24"
+    },
+    "mars-bacterial-habitats-reactor-schedule-constraint": {
+      "score": 6.8,
+      "note": "6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 2 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 13% com three-helicopters-underwrite-a-reactor-demo"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Frames the proposal as a power-and-water scheduling problem and names unattended uptime as the falsifiable part."
         }
       },
       "source": "auto",

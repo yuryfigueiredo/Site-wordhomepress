@@ -8,6 +8,14 @@
     <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Grown Mars Walls Wait on a Reactor Nobody Has Flown</title>
+      <link>https://www.homeworldpress.com/article.html?id=mars-bacterial-habitats-reactor-schedule-constraint</link>
+      <description>A November report pairs microbial cementation with surface nuclear power. The binding constraints are water and unattended time.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=mars-bacterial-habitats-reactor-schedule-constraint</guid>
+      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>The Physics Prior Can Outvote the Measurement It Was Built to Fix</title>
       <link>https://www.homeworldpress.com/article.html?id=physics-prior-outvotes-particle-measurement</link>
       <description>Reconstruction from sparse, noisy particle images turns on a weighting choice that no benchmark shows</description>
@@ -77,14 +85,6 @@
       <description>The Second Catalog of Low-energy Fermi-LAT Sources reports 450 sources between 20 and 200 MeV, and the 73 that match nothing are the part worth arguing about.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=second-low-energy-fermi-catalog-is-a-target-list</guid>
-      <pubDate>Sun, 22 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Infrared Spectra Decide What an Engulfed Star Leaves Behind</title>
-      <link>https://www.homeworldpress.com/article.html?id=infrared-spectra-decide-what-an-engulfed-star-leaves-behind</link>
-      <description>Any dusty shell explains the brightness. Only the chemistry says whether a second star helped make it.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=infrared-spectra-decide-what-an-engulfed-star-leaves-behind</guid>
       <pubDate>Sun, 22 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

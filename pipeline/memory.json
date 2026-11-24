@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24T09:33:05.198Z",
+  "updated": "2026-11-24T13:28:16.935Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -592,14 +592,16 @@
       "topic": "Webb finds evidence star's layers may have merged just hours before Cas A supernova",
       "outcome": "reprovada",
       "at": "2026-11-24T09:33:05.197Z"
+    },
+    "https://phys.org/news/2026-11-bacteria-nuclear-power-ready-homes.html": {
+      "slug": "bacteria-and-nuclear-power-could-grow-ready-made-homes-on-mars-b",
+      "topic": "Bacteria and nuclear power could grow ready-made homes on Mars before astronauts arrive",
+      "outcome": "publicada",
+      "at": "2026-11-24T13:28:16.934Z",
+      "id": "mars-bacterial-habitats-reactor-schedule-constraint"
     }
   },
   "publishes": [
-    {
-      "id": "webb-telescope-detects-mars-sized-collisions",
-      "at": "2026-10-31T00:43:18Z",
-      "score": 6.4
-    },
     {
       "id": "artemis-i-radiation-discrepancy",
       "at": "2026-11-01T14:14:59.645Z",
@@ -893,6 +895,11 @@
     {
       "id": "physics-prior-outvotes-particle-measurement",
       "at": "2026-11-24T05:31:12.668Z",
+      "score": 6.8
+    },
+    {
+      "id": "mars-bacterial-habitats-reactor-schedule-constraint",
+      "at": "2026-11-24T13:28:16.934Z",
       "score": 6.8
     }
   ]

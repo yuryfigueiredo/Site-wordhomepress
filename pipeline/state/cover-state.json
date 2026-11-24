@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind",
+  "currentCoverId": "mars-bacterial-habitats-reactor-schedule-constraint",
   "changes": [
     {
       "at": "2026-11-10T21:27:19.837Z",
@@ -520,6 +520,14 @@
       "id": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind",
       "tipo": "rotacionada",
       "era": "physics-prior-outvotes-particle-measurement"
+    },
+    {
+      "at": "2026-11-24T13:28:15.981Z",
+      "dia": "2026-11-24",
+      "rodada": "2026-11-24T10:23",
+      "id": "mars-bacterial-habitats-reactor-schedule-constraint",
+      "tipo": "do dia",
+      "era": "fourteen-years-of-motion-at-the-edge-of-the-solar-wind"
     }
   ],
   "capaVistas": [
@@ -572,6 +580,7 @@
     "last-soviet-mars-probe-archive-nobody-can-open",
     "blade-runner-2099-swaps-who-holds-the-clipboard",
     "fourteen-years-of-motion-at-the-edge-of-the-solar-wind",
-    "physics-prior-outvotes-particle-measurement"
+    "physics-prior-outvotes-particle-measurement",
+    "mars-bacterial-habitats-reactor-schedule-constraint"
   ]
 }
