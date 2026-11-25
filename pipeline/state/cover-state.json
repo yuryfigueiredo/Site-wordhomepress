@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support",
+  "currentCoverId": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture",
   "changes": [
     {
       "at": "2026-11-11T22:16:29.653Z",
@@ -568,6 +568,14 @@
       "id": "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support",
       "tipo": "do dia",
       "era": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture"
+    },
+    {
+      "at": "2026-11-25T21:23:30.838Z",
+      "dia": "2026-11-25",
+      "rodada": "2026-11-25T18:23",
+      "id": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture",
+      "tipo": "rotacionada",
+      "era": "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support"
     }
   ],
   "capaVistas": [
