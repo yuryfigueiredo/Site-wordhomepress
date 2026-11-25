@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture"
+        }
+      ],
+      "destination": "/a-chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "deep-water-salp-forces-old-nets-to-account-for-absences"
         }
       ],

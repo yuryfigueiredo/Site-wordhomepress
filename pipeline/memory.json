@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-25T09:29:09.629Z",
+  "updated": "2026-11-25T13:30:26.461Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -634,14 +634,16 @@
       "outcome": "publicada",
       "at": "2026-11-25T09:29:09.628Z",
       "id": "deep-water-salp-forces-old-nets-to-account-for-absences"
+    },
+    "https://phys.org/news/2026-11-workflow-advances-programmable-chromosome.html": {
+      "slug": "new-workflow-advances-programmable-chromosome-editing-in-plants",
+      "topic": "New workflow advances programmable chromosome editing in plants",
+      "outcome": "publicada",
+      "at": "2026-11-25T13:30:26.460Z",
+      "id": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture"
     }
   },
   "publishes": [
-    {
-      "id": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
-      "at": "2026-11-07T00:42:35.334Z",
-      "score": 7.8
-    },
     {
       "id": "theory-predicting-an-older-universe-without-dark-matter-or-dark",
       "at": "2026-11-07T18:17:10.588Z",
@@ -935,6 +937,11 @@
     {
       "id": "deep-water-salp-forces-old-nets-to-account-for-absences",
       "at": "2026-11-25T09:29:09.628Z",
+      "score": 6.8
+    },
+    {
+      "id": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture",
+      "at": "2026-11-25T13:30:26.460Z",
       "score": 6.8
     }
   ]

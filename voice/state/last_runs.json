@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-25T09:29:09.626Z",
+  "updated": "2026-11-25T13:30:26.458Z",
   "runs": {
     "analyst": {
-      "id": "deep-water-salp-forces-old-nets-to-account-for-absences",
+      "id": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture",
       "date": "2026-11-25",
-      "opening_move": "object",
-      "ending_move": "verification",
-      "title_pattern": "a deep-water salp forces",
+      "opening_move": "document",
+      "ending_move": "admitted_limit",
+      "title_pattern": "a chromosome editing workflow",
       "humor_lines": 1
     },
     "lab": {

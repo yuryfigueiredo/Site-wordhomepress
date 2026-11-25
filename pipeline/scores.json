@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-25T09:29:08.334Z",
+  "updated": "2026-11-25T13:30:25.280Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -2763,6 +2763,44 @@
           "pts": 1,
           "max": 1,
           "why": "Turns a species announcement into an instrument claim: the missing evidence is shallow hauls, not another specimen."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-25"
+    },
+    "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture": {
+      "score": 6.8,
+      "note": "6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 2 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 6% com mars-rotor-tips-learn-to-run-supersonic"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Sets a falsifiable bar for chromosome editing claims: progeny on a recalcitrant genotype, not efficiency in the treated plant."
         }
       },
       "source": "auto",

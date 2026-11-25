@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "deep-water-salp-forces-old-nets-to-account-for-absences",
+  "currentCoverId": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture",
   "changes": [
     {
       "at": "2026-11-11T22:16:29.653Z",
@@ -552,6 +552,14 @@
       "id": "deep-water-salp-forces-old-nets-to-account-for-absences",
       "tipo": "do dia",
       "era": "playing-a-violin-changes-the-player-before-the-wood"
+    },
+    {
+      "at": "2026-11-25T13:30:25.430Z",
+      "dia": "2026-11-25",
+      "rodada": "2026-11-25T10:23",
+      "id": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture",
+      "tipo": "do dia",
+      "era": "deep-water-salp-forces-old-nets-to-account-for-absences"
     }
   ],
   "capaVistas": [
@@ -609,6 +617,7 @@
     "calibration-star-pulses-expose-hidden-companion",
     "playing-a-violin-changes-the-player-before-the-wood",
     "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn",
-    "deep-water-salp-forces-old-nets-to-account-for-absences"
+    "deep-water-salp-forces-old-nets-to-account-for-absences",
+    "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture"
   ]
 }
