@@ -8,6 +8,14 @@
     <lastBuildDate>Wed, 25 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>A New Hubble Frame Turns a Known Galaxy Into a Calibration Test</title>
+      <link>https://www.homeworldpress.com/article.html?id=hubble-new-view-ngc-4394-depth-is-a-budget-claim</link>
+      <description>A repeat visit to a heavily photographed galaxy wins on one axis only, and that axis is measurement error.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=hubble-new-view-ngc-4394-depth-is-a-budget-claim</guid>
+      <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>Far-Side Moon Rocks Test Where the Lunar Timeline Was Drawn</title>
       <link>https://www.homeworldpress.com/article.html?id=far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn</link>
       <description>Whether the impact record changes depends on one measurement this release does not contain.</description>
@@ -77,14 +85,6 @@
       <description>A 17 November report says characters return in The Mummy: Book of the Dead, which is thinner evidence than the arguments it has started.</description>
       <category>culture</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=casting-headline-asks-readers-to-treat-paperwork-as-plot</guid>
-      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Amazon's First Satellite Batch Since the Vulcan Failure Flies an Ariane 6</title>
-      <link>https://www.homeworldpress.com/article.html?id=launch-access-now-decides-constellation-coverage</link>
-      <description>One live-coverage page is thin evidence for a larger claim: constellation programs now compete on launch access rather than satellite count.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=launch-access-now-decides-constellation-coverage</guid>
       <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

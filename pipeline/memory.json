@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-25T01:29:55.206Z",
+  "updated": "2026-11-25T05:30:29.852Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -620,14 +620,16 @@
       "outcome": "publicada",
       "at": "2026-11-25T01:29:55.206Z",
       "id": "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn"
+    },
+    "https://phys.org/news/2026-11-nasa-hubble-view-ngc-bar.html": {
+      "slug": "nasa-hubbles-new-view-of-ngc-4394-raises-the-bar",
+      "topic": "NASA Hubble's new view of NGC 4394 raises the bar",
+      "outcome": "publicada",
+      "at": "2026-11-25T05:30:29.851Z",
+      "id": "hubble-new-view-ngc-4394-depth-is-a-budget-claim"
     }
   },
   "publishes": [
-    {
-      "id": "nasa-fights-orbital-drag-to-prolong-hubble-survival",
-      "at": "2026-11-04T22:30:52.745Z",
-      "score": 6.4
-    },
     {
       "id": "https-www-space-com-space-exploration-artemis-do-we-know-how-man",
       "at": "2026-11-06T18:06:27.245Z",
@@ -922,6 +924,11 @@
       "id": "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn",
       "at": "2026-11-25T01:29:55.206Z",
       "score": 6.8
+    },
+    {
+      "id": "hubble-new-view-ngc-4394-depth-is-a-budget-claim",
+      "at": "2026-11-25T05:30:29.851Z",
+      "score": 6.3
     }
   ]
 }

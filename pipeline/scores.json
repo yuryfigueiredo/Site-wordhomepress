@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-25T01:29:54.036Z",
+  "updated": "2026-11-25T05:30:28.692Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -2687,6 +2687,44 @@
           "pts": 1,
           "max": 1,
           "why": "The rewrite is only real if the ages break the curve's error bands; otherwise the result is provenance, not new violence."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-25"
+    },
+    "hubble-new-view-ngc-4394-depth-is-a-budget-claim": {
+      "score": 6.3,
+      "note": "6.3/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 13% com physics-prior-outvotes-particle-measurement"
+        },
+        "craft": {
+          "pts": 1.5,
+          "max": 2,
+          "why": "ritmo e léxico medidos (75%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Separates the auditable budget claim from the unauditable picture, and shows why added depth cannot fix projection degeneracy."
         }
       },
       "source": "auto",
