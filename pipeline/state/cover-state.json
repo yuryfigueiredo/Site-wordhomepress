@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture",
+  "currentCoverId": "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support",
   "changes": [
     {
       "at": "2026-11-11T22:16:29.653Z",
@@ -560,6 +560,14 @@
       "id": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture",
       "tipo": "do dia",
       "era": "deep-water-salp-forces-old-nets-to-account-for-absences"
+    },
+    {
+      "at": "2026-11-25T17:29:11.779Z",
+      "dia": "2026-11-25",
+      "rodada": "2026-11-25T14:23",
+      "id": "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support",
+      "tipo": "do dia",
+      "era": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture"
     }
   ],
   "capaVistas": [
@@ -618,6 +626,7 @@
     "playing-a-violin-changes-the-player-before-the-wood",
     "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn",
     "deep-water-salp-forces-old-nets-to-account-for-absences",
-    "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture"
+    "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture",
+    "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support"
   ]
 }

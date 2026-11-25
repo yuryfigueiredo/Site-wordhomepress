@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support"
+        }
+      ],
+      "destination": "/a-a-fifty-dollar-pocket-reader-moves-the-risk-onto-support.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture"
         }
       ],
