@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn"
+        }
+      ],
+      "destination": "/a-far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "playing-a-violin-changes-the-player-before-the-wood"
         }
       ],

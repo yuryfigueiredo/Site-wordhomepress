@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "playing-a-violin-changes-the-player-before-the-wood",
+  "currentCoverId": "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn",
   "changes": [
     {
       "at": "2026-11-11T03:02:31.942Z",
@@ -536,6 +536,14 @@
       "id": "playing-a-violin-changes-the-player-before-the-wood",
       "tipo": "do dia",
       "era": "calibration-star-pulses-expose-hidden-companion"
+    },
+    {
+      "at": "2026-11-25T01:29:54.206Z",
+      "dia": "2026-11-24",
+      "rodada": "2026-11-24T22:23",
+      "id": "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn",
+      "tipo": "do dia",
+      "era": "playing-a-violin-changes-the-player-before-the-wood"
     }
   ],
   "capaVistas": [
@@ -591,6 +599,7 @@
     "physics-prior-outvotes-particle-measurement",
     "mars-bacterial-habitats-reactor-schedule-constraint",
     "calibration-star-pulses-expose-hidden-companion",
-    "playing-a-violin-changes-the-player-before-the-wood"
+    "playing-a-violin-changes-the-player-before-the-wood",
+    "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn"
   ]
 }

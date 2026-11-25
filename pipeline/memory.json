@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24T21:27:24.765Z",
+  "updated": "2026-11-25T01:29:55.206Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -613,14 +613,16 @@
       "outcome": "publicada",
       "at": "2026-11-24T21:27:24.763Z",
       "id": "playing-a-violin-changes-the-player-before-the-wood"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261121221136.htm": {
+      "slug": "ancient-rocks-from-the-moons-far-side-rewrite-the-solar-systems-",
+      "topic": "Ancient rocks from the Moon’s far side rewrite the Solar System’s violent past",
+      "outcome": "publicada",
+      "at": "2026-11-25T01:29:55.206Z",
+      "id": "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn"
     }
   },
   "publishes": [
-    {
-      "id": "physicists-watch-time-emerge-without-clocks",
-      "at": "2026-11-03T22:22:46.842Z",
-      "score": 6.9
-    },
     {
       "id": "nasa-fights-orbital-drag-to-prolong-hubble-survival",
       "at": "2026-11-04T22:30:52.745Z",
@@ -914,6 +916,11 @@
     {
       "id": "playing-a-violin-changes-the-player-before-the-wood",
       "at": "2026-11-24T21:27:24.763Z",
+      "score": 6.8
+    },
+    {
+      "id": "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn",
+      "at": "2026-11-25T01:29:55.206Z",
       "score": 6.8
     }
   ]

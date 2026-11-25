@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Tue, 24 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 25 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Far-Side Moon Rocks Test Where the Lunar Timeline Was Drawn</title>
+      <link>https://www.homeworldpress.com/article.html?id=far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn</link>
+      <description>Whether the impact record changes depends on one measurement this release does not contain.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn</guid>
+      <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Playing a Violin Changes the Player Before the Wood</title>
       <link>https://www.homeworldpress.com/article.html?id=playing-a-violin-changes-the-player-before-the-wood</link>
@@ -77,14 +85,6 @@
       <description>One live-coverage page is thin evidence for a larger claim: constellation programs now compete on launch access rather than satellite count.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=launch-access-now-decides-constellation-coverage</guid>
-      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>The Onboarding Manual for Local AI Sits on a Hardware Domain</title>
-      <link>https://www.homeworldpress.com/article.html?id=local-ai-onboarding-moved-from-model-choice-to-installation</link>
-      <description>Inkling, Qwen and Unsloth share a beginner's title. What the title does not say is which of the three you have to install.</description>
-      <category>tech</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=local-ai-onboarding-moved-from-model-choice-to-installation</guid>
       <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

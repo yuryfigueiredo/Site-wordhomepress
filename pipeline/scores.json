@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24T21:27:23.586Z",
+  "updated": "2026-11-25T01:29:54.036Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -2653,6 +2653,44 @@
       },
       "source": "auto",
       "date": "2026-11-24"
+    },
+    "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn": {
+      "score": 6.8,
+      "note": "6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 19% com nasa-million-dollar-moon-base-prize-design-studies"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "The rewrite is only real if the ages break the curve's error bands; otherwise the result is provenance, not new violence."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-25"
     }
   }
 }

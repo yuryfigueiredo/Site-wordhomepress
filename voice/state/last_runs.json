@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-24T21:27:24.759Z",
+  "updated": "2026-11-25T01:29:55.204Z",
   "runs": {
     "analyst": {
-      "id": "playing-a-violin-changes-the-player-before-the-wood",
-      "date": "2026-11-24",
-      "opening_move": "object",
-      "ending_move": "consequence",
-      "title_pattern": "playing a violin changes",
+      "id": "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn",
+      "date": "2026-11-25",
+      "opening_move": "document",
+      "ending_move": "verification",
+      "title_pattern": "far-side moon rocks test",
       "humor_lines": 1
     },
     "lab": {
