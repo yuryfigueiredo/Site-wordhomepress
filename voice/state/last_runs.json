@@ -1,15 +1,15 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-25T05:30:29.847Z",
+  "updated": "2026-11-25T09:29:09.626Z",
   "runs": {
     "analyst": {
-      "id": "hubble-new-view-ngc-4394-depth-is-a-budget-claim",
+      "id": "deep-water-salp-forces-old-nets-to-account-for-absences",
       "date": "2026-11-25",
-      "opening_move": "dated_fact",
-      "ending_move": "small_observation",
-      "title_pattern": "a new hubble frame",
-      "humor_lines": 2
+      "opening_move": "object",
+      "ending_move": "verification",
+      "title_pattern": "a deep-water salp forces",
+      "humor_lines": 1
     },
     "lab": {
       "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",

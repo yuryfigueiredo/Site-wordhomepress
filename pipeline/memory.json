@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-25T05:30:29.852Z",
+  "updated": "2026-11-25T09:29:09.629Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -627,14 +627,16 @@
       "outcome": "publicada",
       "at": "2026-11-25T05:30:29.851Z",
       "id": "hubble-new-view-ngc-4394-depth-is-a-budget-claim"
+    },
+    "https://phys.org/news/2026-11-underwater-robots-reveal-salp-species.html": {
+      "slug": "underwater-robots-reveal-first-salp-species-known-to-live-exclus",
+      "topic": "Underwater robots reveal first salp species known to live exclusively in deep sea",
+      "outcome": "publicada",
+      "at": "2026-11-25T09:29:09.628Z",
+      "id": "deep-water-salp-forces-old-nets-to-account-for-absences"
     }
   },
   "publishes": [
-    {
-      "id": "https-www-space-com-space-exploration-artemis-do-we-know-how-man",
-      "at": "2026-11-06T18:06:27.245Z",
-      "score": 6.4
-    },
     {
       "id": "new-method-measures-microplastics-in-the-air-using-an-uncrewed-a",
       "at": "2026-11-07T00:42:35.334Z",
@@ -929,6 +931,11 @@
       "id": "hubble-new-view-ngc-4394-depth-is-a-budget-claim",
       "at": "2026-11-25T05:30:29.851Z",
       "score": 6.3
+    },
+    {
+      "id": "deep-water-salp-forces-old-nets-to-account-for-absences",
+      "at": "2026-11-25T09:29:09.628Z",
+      "score": 6.8
     }
   ]
 }

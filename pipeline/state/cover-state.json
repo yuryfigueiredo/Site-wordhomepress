@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "playing-a-violin-changes-the-player-before-the-wood",
+  "currentCoverId": "deep-water-salp-forces-old-nets-to-account-for-absences",
   "changes": [
     {
       "at": "2026-11-11T22:16:29.653Z",
@@ -544,6 +544,14 @@
       "id": "playing-a-violin-changes-the-player-before-the-wood",
       "tipo": "rotacionada",
       "era": "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn"
+    },
+    {
+      "at": "2026-11-25T09:29:08.559Z",
+      "dia": "2026-11-25",
+      "rodada": "2026-11-25T06:23",
+      "id": "deep-water-salp-forces-old-nets-to-account-for-absences",
+      "tipo": "do dia",
+      "era": "playing-a-violin-changes-the-player-before-the-wood"
     }
   ],
   "capaVistas": [
@@ -600,6 +608,7 @@
     "mars-bacterial-habitats-reactor-schedule-constraint",
     "calibration-star-pulses-expose-hidden-companion",
     "playing-a-violin-changes-the-player-before-the-wood",
-    "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn"
+    "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn",
+    "deep-water-salp-forces-old-nets-to-account-for-absences"
   ]
 }

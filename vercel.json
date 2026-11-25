@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "deep-water-salp-forces-old-nets-to-account-for-absences"
+        }
+      ],
+      "destination": "/a-deep-water-salp-forces-old-nets-to-account-for-absences.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "hubble-new-view-ngc-4394-depth-is-a-budget-claim"
         }
       ],
