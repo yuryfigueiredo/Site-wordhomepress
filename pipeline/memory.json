@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-26T13:28:02.862Z",
+  "updated": "2026-11-26T23:32:46.901Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -676,14 +676,14 @@
       "outcome": "publicada",
       "at": "2026-11-26T13:28:02.861Z",
       "id": "carbon-nanotubes-give-rival-electron-models-a-common-test"
+    },
+    "https://www.theverge.com/gadgets/1028991/black-friday-best-early-deals-2026": {
+      "outcome": "publicada",
+      "at": "2026-11-26T23:32:46.901Z",
+      "id": "black-friday-card-percentages-describe-one-button"
     }
   },
   "publishes": [
-    {
-      "id": "m-john-harrison-booker-prize-win",
-      "at": "2026-11-11T03:02:32.139Z",
-      "score": 6.9
-    },
     {
       "id": "little-red-dots-black-hole-hypothesis",
       "at": "2026-11-12T21:52:47.524Z",
@@ -978,6 +978,11 @@
       "id": "carbon-nanotubes-give-rival-electron-models-a-common-test",
       "at": "2026-11-26T13:28:02.861Z",
       "score": 6.8
+    },
+    {
+      "id": "black-friday-card-percentages-describe-one-button",
+      "at": "2026-11-26T23:32:46.901Z",
+      "score": 7.5
     }
   ]
 }

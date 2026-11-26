@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "black-friday-card-percentages-describe-one-button"
+        }
+      ],
+      "destination": "/a-black-friday-card-percentages-describe-one-button.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "carbon-nanotubes-give-rival-electron-models-a-common-test"
         }
       ],

@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-26T13:28:02.855Z",
+  "updated": "2026-11-26T23:32:46.898Z",
   "runs": {
     "analyst": {
-      "id": "carbon-nanotubes-give-rival-electron-models-a-common-test",
+      "id": "black-friday-card-percentages-describe-one-button",
       "date": "2026-11-26",
-      "opening_move": "object",
-      "ending_move": "verification",
-      "title_pattern": "carbon nanotubes give rival",
+      "opening_move": "dated_fact",
+      "ending_move": "consequence",
+      "title_pattern": "the discounts on one",
       "humor_lines": 1
     },
     "lab": {
