@@ -8,6 +8,14 @@
     <lastBuildDate>Thu, 26 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Simulated Moon Dust Grows a Potato Root Fine</title>
+      <link>https://www.homeworldpress.com/article.html?id=simulated-moon-dust-grows-a-potato-root-fine</link>
+      <description>A substrate trial showed tuber crops tolerate crushed rock under lamps. Water, nitrogen, energy and gravity were never supplied by the dirt.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=simulated-moon-dust-grows-a-potato-root-fine</guid>
+      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>Clipper Picks Up Speed From Earth and Pays for Instruments</title>
       <link>https://www.homeworldpress.com/article.html?id=clipper-picks-up-speed-from-earth-and-pays-for-instruments</link>
       <description>The pass is where a launch vehicle limit turns into instrument mass. Timing data, not photographs, will decide whether it worked.</description>
@@ -77,14 +85,6 @@
       <description>A November report pairs microbial cementation with surface nuclear power. The binding constraints are water and unattended time.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=mars-bacterial-habitats-reactor-schedule-constraint</guid>
-      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>The Physics Prior Can Outvote the Measurement It Was Built to Fix</title>
-      <link>https://www.homeworldpress.com/article.html?id=physics-prior-outvotes-particle-measurement</link>
-      <description>Reconstruction from sparse, noisy particle images turns on a weighting choice that no benchmark shows</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=physics-prior-outvotes-particle-measurement</guid>
       <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

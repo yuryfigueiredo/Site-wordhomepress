@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-26T01:30:42.362Z",
+  "updated": "2026-11-26T05:27:47.705Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -655,14 +655,16 @@
       "outcome": "publicada",
       "at": "2026-11-26T01:30:42.360Z",
       "id": "clipper-picks-up-speed-from-earth-and-pays-for-instruments"
+    },
+    "https://www.space.com/astronomy/moon/will-astronauts-farm-on-the-moon-scientists-successfully-grow-potatoes-in-simulated-lunar-dust": {
+      "slug": "will-astronauts-farm-on-the-moon-scientists-successfully-grow-po",
+      "topic": "Will astronauts farm on the moon? Scientists successfully grow potatoes in simulated lunar dust",
+      "outcome": "publicada",
+      "at": "2026-11-26T05:27:47.704Z",
+      "id": "simulated-moon-dust-grows-a-potato-root-fine"
     }
   },
   "publishes": [
-    {
-      "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
-      "at": "2026-11-07T18:23:06.279Z",
-      "score": 7.4
-    },
     {
       "id": "james-webb-telescope-reveals-giant-exoplanet",
       "at": "2026-11-08T02:36:15.870Z",
@@ -956,6 +958,11 @@
     {
       "id": "clipper-picks-up-speed-from-earth-and-pays-for-instruments",
       "at": "2026-11-26T01:30:42.360Z",
+      "score": 6.8
+    },
+    {
+      "id": "simulated-moon-dust-grows-a-potato-root-fine",
+      "at": "2026-11-26T05:27:47.704Z",
       "score": 6.8
     }
   ]

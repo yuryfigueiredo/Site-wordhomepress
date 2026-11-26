@@ -1,14 +1,6 @@
 {
-  "currentCoverId": "clipper-picks-up-speed-from-earth-and-pays-for-instruments",
+  "currentCoverId": "simulated-moon-dust-grows-a-potato-root-fine",
   "changes": [
-    {
-      "at": "2026-11-12T04:03:20.327Z",
-      "dia": "2026-11-11",
-      "rodada": "2026-11-11T20:23",
-      "id": "m-john-harrison-booker-prize-win",
-      "tipo": "rotacionada",
-      "era": "guardian-september-roundup-one-category-2026"
-    },
     {
       "at": "2026-11-12T21:52:47.267Z",
       "dia": "2026-11-12",
@@ -576,6 +568,14 @@
       "id": "clipper-picks-up-speed-from-earth-and-pays-for-instruments",
       "tipo": "do dia",
       "era": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture"
+    },
+    {
+      "at": "2026-11-26T05:27:45.236Z",
+      "dia": "2026-11-26",
+      "rodada": "2026-11-26T02:23",
+      "id": "simulated-moon-dust-grows-a-potato-root-fine",
+      "tipo": "do dia",
+      "era": "clipper-picks-up-speed-from-earth-and-pays-for-instruments"
     }
   ],
   "capaVistas": [
@@ -636,6 +636,7 @@
     "deep-water-salp-forces-old-nets-to-account-for-absences",
     "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture",
     "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support",
-    "clipper-picks-up-speed-from-earth-and-pays-for-instruments"
+    "clipper-picks-up-speed-from-earth-and-pays-for-instruments",
+    "simulated-moon-dust-grows-a-potato-root-fine"
   ]
 }
