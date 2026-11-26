@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-25T17:29:12.734Z",
+  "updated": "2026-11-26T01:30:42.357Z",
   "runs": {
     "analyst": {
-      "id": "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support",
-      "date": "2026-11-25",
-      "opening_move": "object",
-      "ending_move": "consequence",
-      "title_pattern": "xteink's price cut pushes",
+      "id": "clipper-picks-up-speed-from-earth-and-pays-for-instruments",
+      "date": "2026-11-26",
+      "opening_move": "document",
+      "ending_move": "flat_statement",
+      "title_pattern": "clipper picks up speed",
       "humor_lines": 1
     },
     "lab": {

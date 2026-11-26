@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-25T17:29:12.737Z",
+  "updated": "2026-11-26T01:30:42.362Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -648,14 +648,16 @@
       "outcome": "publicada",
       "at": "2026-11-25T17:29:12.736Z",
       "id": "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support"
+    },
+    "https://phys.org/news/2026-11-nasa-europa-clipper-earth-jupiter.html": {
+      "slug": "nasas-europa-clipper-zooming-by-earth-on-way-to-jupiters-icy-moo",
+      "topic": "NASA's Europa Clipper zooming by Earth on way to Jupiter's icy moon",
+      "outcome": "publicada",
+      "at": "2026-11-26T01:30:42.360Z",
+      "id": "clipper-picks-up-speed-from-earth-and-pays-for-instruments"
     }
   },
   "publishes": [
-    {
-      "id": "two-paths-one-flux-trapped-ions-simulate-aharonov-bohm-interfere",
-      "at": "2026-11-07T18:20:49.715Z",
-      "score": 7.4
-    },
     {
       "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
       "at": "2026-11-07T18:23:06.279Z",
@@ -949,6 +951,11 @@
     {
       "id": "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support",
       "at": "2026-11-25T17:29:12.736Z",
+      "score": 6.8
+    },
+    {
+      "id": "clipper-picks-up-speed-from-earth-and-pays-for-instruments",
+      "at": "2026-11-26T01:30:42.360Z",
       "score": 6.8
     }
   ]

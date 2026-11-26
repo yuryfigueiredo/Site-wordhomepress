@@ -1,14 +1,6 @@
 {
-  "currentCoverId": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture",
+  "currentCoverId": "clipper-picks-up-speed-from-earth-and-pays-for-instruments",
   "changes": [
-    {
-      "at": "2026-11-11T22:16:29.653Z",
-      "dia": "2026-11-11",
-      "rodada": "2026-11-11T12:23",
-      "id": "guardian-september-roundup-one-category-2026",
-      "tipo": "do dia",
-      "era": "m-john-harrison-booker-prize-win"
-    },
     {
       "at": "2026-11-12T04:03:20.327Z",
       "dia": "2026-11-11",
@@ -576,6 +568,14 @@
       "id": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture",
       "tipo": "rotacionada",
       "era": "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support"
+    },
+    {
+      "at": "2026-11-26T01:30:41.378Z",
+      "dia": "2026-11-25",
+      "rodada": "2026-11-25T22:23",
+      "id": "clipper-picks-up-speed-from-earth-and-pays-for-instruments",
+      "tipo": "do dia",
+      "era": "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture"
     }
   ],
   "capaVistas": [
@@ -635,6 +635,7 @@
     "far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn",
     "deep-water-salp-forces-old-nets-to-account-for-absences",
     "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture",
-    "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support"
+    "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support",
+    "clipper-picks-up-speed-from-earth-and-pays-for-instruments"
   ]
 }

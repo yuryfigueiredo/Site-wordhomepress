@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "clipper-picks-up-speed-from-earth-and-pays-for-instruments"
+        }
+      ],
+      "destination": "/a-clipper-picks-up-speed-from-earth-and-pays-for-instruments.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support"
         }
       ],

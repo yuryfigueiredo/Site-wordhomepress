@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 25 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 26 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Clipper Picks Up Speed From Earth and Pays for Instruments</title>
+      <link>https://www.homeworldpress.com/article.html?id=clipper-picks-up-speed-from-earth-and-pays-for-instruments</link>
+      <description>The pass is where a launch vehicle limit turns into instrument mass. Timing data, not photographs, will decide whether it worked.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=clipper-picks-up-speed-from-earth-and-pays-for-instruments</guid>
+      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Xteink's Price Cut Pushes the Whole Argument Onto Support</title>
       <link>https://www.homeworldpress.com/article.html?id=a-fifty-dollar-pocket-reader-moves-the-risk-onto-support</link>
@@ -77,14 +85,6 @@
       <description>Reconstruction from sparse, noisy particle images turns on a weighting choice that no benchmark shows</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=physics-prior-outvotes-particle-measurement</guid>
-      <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Spacecraft Data Track Fourteen Years of Motion in the Solar System's Tail</title>
-      <link>https://www.homeworldpress.com/article.html?id=fourteen-years-of-motion-at-the-edge-of-the-solar-wind</link>
-      <description>A tail that moves turns a boundary nobody has visited into a reading of the gas outside the Sun's bubble.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=fourteen-years-of-motion-at-the-edge-of-the-solar-wind</guid>
       <pubDate>Tue, 24 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
