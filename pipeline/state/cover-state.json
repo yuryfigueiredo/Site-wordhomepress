@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "dark-matter-telescope-anomaly-arrives-before-its-number",
+  "currentCoverId": "carbon-nanotubes-give-rival-electron-models-a-common-test",
   "changes": [
     {
       "at": "2026-11-12T21:52:47.267Z",
@@ -584,6 +584,14 @@
       "id": "dark-matter-telescope-anomaly-arrives-before-its-number",
       "tipo": "do dia",
       "era": "simulated-moon-dust-grows-a-potato-root-fine"
+    },
+    {
+      "at": "2026-11-26T13:28:01.832Z",
+      "dia": "2026-11-26",
+      "rodada": "2026-11-26T10:23",
+      "id": "carbon-nanotubes-give-rival-electron-models-a-common-test",
+      "tipo": "do dia",
+      "era": "dark-matter-telescope-anomaly-arrives-before-its-number"
     }
   ],
   "capaVistas": [
@@ -646,6 +654,7 @@
     "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support",
     "clipper-picks-up-speed-from-earth-and-pays-for-instruments",
     "simulated-moon-dust-grows-a-potato-root-fine",
-    "dark-matter-telescope-anomaly-arrives-before-its-number"
+    "dark-matter-telescope-anomaly-arrives-before-its-number",
+    "carbon-nanotubes-give-rival-electron-models-a-common-test"
   ]
 }

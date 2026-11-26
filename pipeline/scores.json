@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-26T09:28:39.012Z",
+  "updated": "2026-11-26T13:28:01.629Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -2953,6 +2953,44 @@
           "pts": 1,
           "max": 1,
           "why": "Reads a missing measurement as evidence about the release pipeline and instrument class, not about the sky."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-26"
+    },
+    "carbon-nanotubes-give-rival-electron-models-a-common-test": {
+      "score": 6.8,
+      "note": "6.8/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 2 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 19% com far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 1,
+          "max": 1,
+          "why": "Argues the reported win is unreadable without the observable named, and identifies tunneling spectroscopy as the only decisive one."
         }
       },
       "source": "auto",

@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-26T09:28:40.176Z",
+  "updated": "2026-11-26T13:28:02.855Z",
   "runs": {
     "analyst": {
-      "id": "dark-matter-telescope-anomaly-arrives-before-its-number",
+      "id": "carbon-nanotubes-give-rival-electron-models-a-common-test",
       "date": "2026-11-26",
-      "opening_move": "document",
-      "ending_move": "flat_statement",
-      "title_pattern": "a dark-matter telescope anomaly",
+      "opening_move": "object",
+      "ending_move": "verification",
+      "title_pattern": "carbon nanotubes give rival",
       "humor_lines": 1
     },
     "lab": {

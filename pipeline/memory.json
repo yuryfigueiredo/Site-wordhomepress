@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-26T09:28:40.178Z",
+  "updated": "2026-11-26T13:28:02.862Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -669,14 +669,16 @@
       "outcome": "publicada",
       "at": "2026-11-26T09:28:40.178Z",
       "id": "dark-matter-telescope-anomaly-arrives-before-its-number"
+    },
+    "https://phys.org/news/2026-11-carbon-nanotube-reveal-quantum-electron.html": {
+      "slug": "carbon-nanotube-measurements-reveal-quantum-model-better-explain",
+      "topic": "Carbon nanotube measurements reveal quantum model better explains collective electron behavior",
+      "outcome": "publicada",
+      "at": "2026-11-26T13:28:02.861Z",
+      "id": "carbon-nanotubes-give-rival-electron-models-a-common-test"
     }
   },
   "publishes": [
-    {
-      "id": "swift-space-telescope-reentry-failure-analysis",
-      "at": "2026-11-08T10:33:29.156Z",
-      "score": 6.8
-    },
     {
       "id": "m-john-harrison-booker-prize-win",
       "at": "2026-11-11T03:02:32.139Z",
@@ -970,6 +972,11 @@
     {
       "id": "dark-matter-telescope-anomaly-arrives-before-its-number",
       "at": "2026-11-26T09:28:40.178Z",
+      "score": 6.8
+    },
+    {
+      "id": "carbon-nanotubes-give-rival-electron-models-a-common-test",
+      "at": "2026-11-26T13:28:02.861Z",
       "score": 6.8
     }
   ]

@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "carbon-nanotubes-give-rival-electron-models-a-common-test"
+        }
+      ],
+      "destination": "/a-carbon-nanotubes-give-rival-electron-models-a-common-test.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "dark-matter-telescope-anomaly-arrives-before-its-number"
         }
       ],
