@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-26T05:27:47.705Z",
+  "updated": "2026-11-26T09:28:40.178Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -662,14 +662,16 @@
       "outcome": "publicada",
       "at": "2026-11-26T05:27:47.704Z",
       "id": "simulated-moon-dust-grows-a-potato-root-fine"
+    },
+    "https://www.sciencedaily.com/releases/2026/11/261124055852.htm": {
+      "slug": "a-space-telescope-hunting-for-dark-matter-just-discovered-someth",
+      "topic": "A space telescope hunting for dark matter just discovered something unexpected",
+      "outcome": "publicada",
+      "at": "2026-11-26T09:28:40.178Z",
+      "id": "dark-matter-telescope-anomaly-arrives-before-its-number"
     }
   },
   "publishes": [
-    {
-      "id": "james-webb-telescope-reveals-giant-exoplanet",
-      "at": "2026-11-08T02:36:15.870Z",
-      "score": 7.3
-    },
     {
       "id": "swift-space-telescope-reentry-failure-analysis",
       "at": "2026-11-08T10:33:29.156Z",
@@ -963,6 +965,11 @@
     {
       "id": "simulated-moon-dust-grows-a-potato-root-fine",
       "at": "2026-11-26T05:27:47.704Z",
+      "score": 6.8
+    },
+    {
+      "id": "dark-matter-telescope-anomaly-arrives-before-its-number",
+      "at": "2026-11-26T09:28:40.178Z",
       "score": 6.8
     }
   ]

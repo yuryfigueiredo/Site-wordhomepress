@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "dark-matter-telescope-anomaly-arrives-before-its-number"
+        }
+      ],
+      "destination": "/a-dark-matter-telescope-anomaly-arrives-before-its-number.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "simulated-moon-dust-grows-a-potato-root-fine"
         }
       ],

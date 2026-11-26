@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-26T05:27:47.701Z",
+  "updated": "2026-11-26T09:28:40.176Z",
   "runs": {
     "analyst": {
-      "id": "simulated-moon-dust-grows-a-potato-root-fine",
+      "id": "dark-matter-telescope-anomaly-arrives-before-its-number",
       "date": "2026-11-26",
-      "opening_move": "object",
-      "ending_move": "verification",
-      "title_pattern": "simulated moon dust grows",
+      "opening_move": "document",
+      "ending_move": "flat_statement",
+      "title_pattern": "a dark-matter telescope anomaly",
       "humor_lines": 1
     },
     "lab": {

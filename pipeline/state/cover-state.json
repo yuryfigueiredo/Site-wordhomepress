@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "simulated-moon-dust-grows-a-potato-root-fine",
+  "currentCoverId": "dark-matter-telescope-anomaly-arrives-before-its-number",
   "changes": [
     {
       "at": "2026-11-12T21:52:47.267Z",
@@ -576,6 +576,14 @@
       "id": "simulated-moon-dust-grows-a-potato-root-fine",
       "tipo": "do dia",
       "era": "clipper-picks-up-speed-from-earth-and-pays-for-instruments"
+    },
+    {
+      "at": "2026-11-26T09:28:39.173Z",
+      "dia": "2026-11-26",
+      "rodada": "2026-11-26T06:23",
+      "id": "dark-matter-telescope-anomaly-arrives-before-its-number",
+      "tipo": "do dia",
+      "era": "simulated-moon-dust-grows-a-potato-root-fine"
     }
   ],
   "capaVistas": [
@@ -637,6 +645,7 @@
     "chromosome-editing-workflow-moves-the-bottleneck-into-tissue-culture",
     "a-fifty-dollar-pocket-reader-moves-the-risk-onto-support",
     "clipper-picks-up-speed-from-earth-and-pays-for-instruments",
-    "simulated-moon-dust-grows-a-potato-root-fine"
+    "simulated-moon-dust-grows-a-potato-root-fine",
+    "dark-matter-telescope-anomaly-arrives-before-its-number"
   ]
 }
