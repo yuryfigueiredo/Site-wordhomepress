@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-26T23:32:46.901Z",
+  "updated": "2026-11-27T05:37:32.790Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -681,6 +681,12 @@
       "outcome": "publicada",
       "at": "2026-11-26T23:32:46.901Z",
       "id": "black-friday-card-percentages-describe-one-button"
+    },
+    "https://phys.org/news/2026-11-jwst-tiny-metal-poor-galaxy.html": {
+      "slug": "jwst-studies-a-tiny-metal-poor-galaxy-with-just-a-fraction-of-th",
+      "topic": "JWST studies a tiny, metal-poor galaxy with just a fraction of the sun's oxygen abundance",
+      "outcome": "falha_texto",
+      "at": "2026-11-27T05:37:32.790Z"
     }
   },
   "publishes": [
