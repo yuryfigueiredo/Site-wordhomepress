@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-27T17:30:50.190Z",
+  "updated": "2026-11-27T21:30:09.697Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -708,14 +708,16 @@
       "outcome": "publicada",
       "at": "2026-11-27T17:30:50.188Z",
       "id": "a-galaxy-statistic-asks-the-ocean-where-its-water-connects"
+    },
+    "https://www.theverge.com/gadgets/1043912/best-smart-home-deals-black-friday": {
+      "slug": "the-best-black-friday-deals-on-smart-home-gear",
+      "topic": "The best Black Friday deals on smart home gear",
+      "outcome": "publicada",
+      "at": "2026-11-27T21:30:09.696Z",
+      "id": "black-friday-smart-home-deal-pages-count-stock-not-software"
     }
   },
   "publishes": [
-    {
-      "id": "gravitational-lens-supernova-reappearance-time-delay",
-      "at": "2026-11-14T20:49:16.027Z",
-      "score": 6.4
-    },
     {
       "id": "deadline-without-dependency-list-lunar-return",
       "at": "2026-11-15T01:38:40.721Z",
@@ -1009,6 +1011,11 @@
     {
       "id": "a-galaxy-statistic-asks-the-ocean-where-its-water-connects",
       "at": "2026-11-27T17:30:50.188Z",
+      "score": 6.8
+    },
+    {
+      "id": "black-friday-smart-home-deal-pages-count-stock-not-software",
+      "at": "2026-11-27T21:30:09.696Z",
       "score": 6.8
     }
   ]

@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-27T17:30:50.183Z",
+  "updated": "2026-11-27T21:30:09.691Z",
   "runs": {
     "analyst": {
-      "id": "a-galaxy-statistic-asks-the-ocean-where-its-water-connects",
+      "id": "black-friday-smart-home-deal-pages-count-stock-not-software",
       "date": "2026-11-27",
-      "opening_move": "object",
-      "ending_move": "verification",
-      "title_pattern": "a galaxy statistic asks",
+      "opening_move": "dated_fact",
+      "ending_move": "consequence",
+      "title_pattern": "black friday smart home",
       "humor_lines": 1
     },
     "lab": {
