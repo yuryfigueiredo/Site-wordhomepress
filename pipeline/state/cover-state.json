@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "simulated-moon-dust-grows-a-potato-root-fine",
+  "currentCoverId": "the-model-code-decides-what-a-headphone-discount-means",
   "changes": [
     {
       "at": "2026-11-13T21:46:47.629Z",
@@ -608,6 +608,14 @@
       "id": "simulated-moon-dust-grows-a-potato-root-fine",
       "tipo": "rotacionada",
       "era": "dark-matter-telescope-anomaly-arrives-before-its-number"
+    },
+    {
+      "at": "2026-11-27T13:29:27.050Z",
+      "dia": "2026-11-27",
+      "rodada": "2026-11-27T10:23",
+      "id": "the-model-code-decides-what-a-headphone-discount-means",
+      "tipo": "do dia",
+      "era": "simulated-moon-dust-grows-a-potato-root-fine"
     }
   ],
   "capaVistas": [
@@ -672,6 +680,7 @@
     "simulated-moon-dust-grows-a-potato-root-fine",
     "dark-matter-telescope-anomaly-arrives-before-its-number",
     "carbon-nanotubes-give-rival-electron-models-a-common-test",
-    "black-friday-card-percentages-describe-one-button"
+    "black-friday-card-percentages-describe-one-button",
+    "the-model-code-decides-what-a-headphone-discount-means"
   ]
 }

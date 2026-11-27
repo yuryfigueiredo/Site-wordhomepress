@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "the-model-code-decides-what-a-headphone-discount-means"
+        }
+      ],
+      "destination": "/a-the-model-code-decides-what-a-headphone-discount-means.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "redesigned-insertion-enzymes-make-target-choice-the-product"
         }
       ],

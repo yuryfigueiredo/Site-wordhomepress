@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-27T09:29:19.650Z",
+  "updated": "2026-11-27T13:29:28.092Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -694,14 +694,16 @@
       "outcome": "publicada",
       "at": "2026-11-27T09:29:19.649Z",
       "id": "redesigned-insertion-enzymes-make-target-choice-the-product"
+    },
+    "https://www.theverge.com/gadgets/1040292/best-black-friday-headphone-earbud-deals-2026": {
+      "slug": "our-favorite-headphones-and-earbuds-are-cheaper-than-ever-for-bl",
+      "topic": "Our favorite headphones and earbuds are cheaper than ever for Black Friday",
+      "outcome": "publicada",
+      "at": "2026-11-27T13:29:28.090Z",
+      "id": "the-model-code-decides-what-a-headphone-discount-means"
     }
   },
   "publishes": [
-    {
-      "id": "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
-      "at": "2026-11-13T03:36:53.837Z",
-      "score": 6.8
-    },
     {
       "id": "candidate-neutron-star-mass-gap",
       "at": "2026-11-13T21:46:48.315Z",
@@ -996,6 +998,11 @@
       "id": "redesigned-insertion-enzymes-make-target-choice-the-product",
       "at": "2026-11-27T09:29:19.649Z",
       "score": 6.3
+    },
+    {
+      "id": "the-model-code-decides-what-a-headphone-discount-means",
+      "at": "2026-11-27T13:29:28.090Z",
+      "score": 6.8
     }
   ]
 }
