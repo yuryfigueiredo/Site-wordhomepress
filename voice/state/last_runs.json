@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-27T13:29:28.085Z",
+  "updated": "2026-11-27T17:30:50.183Z",
   "runs": {
     "analyst": {
-      "id": "the-model-code-decides-what-a-headphone-discount-means",
+      "id": "a-galaxy-statistic-asks-the-ocean-where-its-water-connects",
       "date": "2026-11-27",
-      "opening_move": "dated_fact",
-      "ending_move": "small_observation",
-      "title_pattern": "the model code decides",
+      "opening_move": "object",
+      "ending_move": "verification",
+      "title_pattern": "a galaxy statistic asks",
       "humor_lines": 1
     },
     "lab": {

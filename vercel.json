@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "a-galaxy-statistic-asks-the-ocean-where-its-water-connects"
+        }
+      ],
+      "destination": "/a-a-galaxy-statistic-asks-the-ocean-where-its-water-connects.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "the-model-code-decides-what-a-headphone-discount-means"
         }
       ],

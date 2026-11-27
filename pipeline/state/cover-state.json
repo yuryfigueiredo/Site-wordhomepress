@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "the-model-code-decides-what-a-headphone-discount-means",
+  "currentCoverId": "a-galaxy-statistic-asks-the-ocean-where-its-water-connects",
   "changes": [
     {
       "at": "2026-11-13T21:46:47.629Z",
@@ -616,6 +616,14 @@
       "id": "the-model-code-decides-what-a-headphone-discount-means",
       "tipo": "do dia",
       "era": "simulated-moon-dust-grows-a-potato-root-fine"
+    },
+    {
+      "at": "2026-11-27T17:30:49.071Z",
+      "dia": "2026-11-27",
+      "rodada": "2026-11-27T14:23",
+      "id": "a-galaxy-statistic-asks-the-ocean-where-its-water-connects",
+      "tipo": "do dia",
+      "era": "the-model-code-decides-what-a-headphone-discount-means"
     }
   ],
   "capaVistas": [
@@ -681,6 +689,7 @@
     "dark-matter-telescope-anomaly-arrives-before-its-number",
     "carbon-nanotubes-give-rival-electron-models-a-common-test",
     "black-friday-card-percentages-describe-one-button",
-    "the-model-code-decides-what-a-headphone-discount-means"
+    "the-model-code-decides-what-a-headphone-discount-means",
+    "a-galaxy-statistic-asks-the-ocean-where-its-water-connects"
   ]
 }
