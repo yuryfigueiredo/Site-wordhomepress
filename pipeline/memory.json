@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-27T05:37:32.790Z",
+  "updated": "2026-11-27T09:29:19.650Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -687,14 +687,16 @@
       "topic": "JWST studies a tiny, metal-poor galaxy with just a fraction of the sun's oxygen abundance",
       "outcome": "falha_texto",
       "at": "2026-11-27T05:37:32.790Z"
+    },
+    "https://phys.org/news/2026-11-protein-redesign-boosts-dna-insertion.html": {
+      "slug": "protein-redesign-boosts-dna-insertion-activity-and-reveals-how-m",
+      "topic": "Protein redesign boosts DNA insertion activity and reveals how molecular machinery selects targets",
+      "outcome": "publicada",
+      "at": "2026-11-27T09:29:19.649Z",
+      "id": "redesigned-insertion-enzymes-make-target-choice-the-product"
     }
   },
   "publishes": [
-    {
-      "id": "little-red-dots-black-hole-hypothesis",
-      "at": "2026-11-12T21:52:47.524Z",
-      "score": 6.8
-    },
     {
       "id": "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
       "at": "2026-11-13T03:36:53.837Z",
@@ -989,6 +991,11 @@
       "id": "black-friday-card-percentages-describe-one-button",
       "at": "2026-11-26T23:32:46.901Z",
       "score": 7.5
+    },
+    {
+      "id": "redesigned-insertion-enzymes-make-target-choice-the-product",
+      "at": "2026-11-27T09:29:19.649Z",
+      "score": 6.3
     }
   ]
 }

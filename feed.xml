@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Thu, 26 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 27 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Faster DNA insertion leaves target choice as the useful half</title>
+      <link>https://www.homeworldpress.com/article.html?id=redesigned-insertion-enzymes-make-target-choice-the-product</link>
+      <description>A redesign that raises how often a protein writes DNA also exposes the contacts used to decide where. Only the second claim travels between experiments.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=redesigned-insertion-enzymes-make-target-choice-the-product</guid>
+      <pubDate>Fri, 27 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>The Discounts on One Black Friday Page All Add Up</title>
       <link>https://www.homeworldpress.com/article.html?id=black-friday-card-percentages-describe-one-button</link>
@@ -77,14 +85,6 @@
       <description>A repeat visit to a heavily photographed galaxy wins on one axis only, and that axis is measurement error.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=hubble-new-view-ngc-4394-depth-is-a-budget-claim</guid>
-      <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Far-Side Moon Rocks Test Where the Lunar Timeline Was Drawn</title>
-      <link>https://www.homeworldpress.com/article.html?id=far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn</link>
-      <description>Whether the impact record changes depends on one measurement this release does not contain.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=far-side-moon-rocks-test-where-the-lunar-timeline-was-drawn</guid>
       <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

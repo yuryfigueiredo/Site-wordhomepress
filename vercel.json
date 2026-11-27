@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "redesigned-insertion-enzymes-make-target-choice-the-product"
+        }
+      ],
+      "destination": "/a-redesigned-insertion-enzymes-make-target-choice-the-product.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "black-friday-card-percentages-describe-one-button"
         }
       ],

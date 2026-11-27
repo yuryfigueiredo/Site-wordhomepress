@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-26T23:32:45.273Z",
+  "updated": "2026-11-27T09:29:18.432Z",
   "scores": {
     "brandon-sanderson-sci-fi-publishing-empire-2026": {
       "score": 7,
@@ -3033,6 +3033,44 @@
       },
       "source": "auto",
       "date": "2026-11-26"
+    },
+    "redesigned-insertion-enzymes-make-target-choice-the-product": {
+      "score": 6.3,
+      "note": "6.3/10 — analysis_only −0,5; ponto fraco: commercial (sem produto nem caixa de afiliado)",
+      "breakdown": {
+        "evidence": {
+          "pts": 0.8,
+          "max": 2.5,
+          "why": "1 fonte(s), 1 domínio(s), 0 primária(s)"
+        },
+        "timeliness": {
+          "pts": 1.5,
+          "max": 1.5,
+          "why": "fonte mais recente há 1 dia(s)"
+        },
+        "novelty": {
+          "pts": 2,
+          "max": 2,
+          "why": "sobrepõe 22% com infrared-spectra-decide-what-an-engulfed-star-leaves-behind"
+        },
+        "craft": {
+          "pts": 2,
+          "max": 2,
+          "why": "ritmo e léxico medidos (100%)"
+        },
+        "commercial": {
+          "pts": 0,
+          "max": 1,
+          "why": "sem produto nem caixa de afiliado"
+        },
+        "judgment": {
+          "pts": 0.5,
+          "max": 1,
+          "why": "Argues the selection rule, not the activity gain, is the only portable product of a redesigned insertion enzyme."
+        }
+      },
+      "source": "auto",
+      "date": "2026-11-27"
     }
   }
 }
