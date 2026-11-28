@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "late-apple-deals-report-channel-trouble-before-savings"
+        }
+      ],
+      "destination": "/a-late-apple-deals-report-channel-trouble-before-savings.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "smart-telescope-discount-forces-a-skipped-comparison"
         }
       ],

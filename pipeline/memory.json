@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-28T09:29:45.603Z",
+  "updated": "2026-11-28T13:30:04.338Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -736,14 +736,16 @@
       "outcome": "publicada",
       "at": "2026-11-28T09:29:45.603Z",
       "id": "smart-telescope-discount-forces-a-skipped-comparison"
+    },
+    "https://www.theverge.com/gadgets/1043935/best-black-friday-apple-deals-2026": {
+      "slug": "the-best-black-friday-deals-you-can-still-get-on-airpods-macs-an",
+      "topic": "The best Black Friday deals you can still get on AirPods, Macs, and other Apple gear",
+      "outcome": "publicada",
+      "at": "2026-11-28T13:30:04.337Z",
+      "id": "late-apple-deals-report-channel-trouble-before-savings"
     }
   },
   "publishes": [
-    {
-      "id": "sixty-years-turn-gemini-12-into-two-surnames-and-a-date",
-      "at": "2026-11-15T13:35:16.749Z",
-      "score": 6.3
-    },
     {
       "id": "drawing-a-pinpoint-costs-a-mission-its-orbit",
       "at": "2026-11-15T17:34:42.746Z",
@@ -1038,6 +1040,11 @@
       "id": "smart-telescope-discount-forces-a-skipped-comparison",
       "at": "2026-11-28T09:29:45.603Z",
       "score": 7.3
+    },
+    {
+      "id": "late-apple-deals-report-channel-trouble-before-savings",
+      "at": "2026-11-28T13:30:04.337Z",
+      "score": 6.3
     }
   ]
 }

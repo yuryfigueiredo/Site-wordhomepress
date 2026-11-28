@@ -1,14 +1,6 @@
 {
-  "currentCoverId": "smart-telescope-discount-forces-a-skipped-comparison",
+  "currentCoverId": "broken-heat-records-test-the-archive",
   "changes": [
-    {
-      "at": "2026-11-14T11:29:05.608Z",
-      "dia": "2026-11-14",
-      "rodada": "2026-11-14T08:23",
-      "id": "nasa-stakes-ten-billion-dollars-lunar-infrastructure",
-      "tipo": "rotacionada",
-      "era": "candidate-neutron-star-mass-gap"
-    },
     {
       "at": "2026-11-14T15:29:06.424Z",
       "dia": "2026-11-14",
@@ -648,6 +640,14 @@
       "id": "smart-telescope-discount-forces-a-skipped-comparison",
       "tipo": "do dia",
       "era": "broken-heat-records-test-the-archive"
+    },
+    {
+      "at": "2026-11-28T13:30:03.236Z",
+      "dia": "2026-11-28",
+      "rodada": "2026-11-28T10:23",
+      "id": "broken-heat-records-test-the-archive",
+      "tipo": "rotacionada",
+      "era": "smart-telescope-discount-forces-a-skipped-comparison"
     }
   ],
   "capaVistas": [

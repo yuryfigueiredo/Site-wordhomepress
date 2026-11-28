@@ -1,15 +1,15 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-28T09:29:45.601Z",
+  "updated": "2026-11-28T13:30:04.335Z",
   "runs": {
     "analyst": {
-      "id": "smart-telescope-discount-forces-a-skipped-comparison",
+      "id": "late-apple-deals-report-channel-trouble-before-savings",
       "date": "2026-11-28",
-      "opening_move": "document",
-      "ending_move": "verification",
-      "title_pattern": "smart telescope discounts force",
-      "humor_lines": 1
+      "opening_move": "object",
+      "ending_move": "flat_statement",
+      "title_pattern": "late apple deals report",
+      "humor_lines": 0
     },
     "lab": {
       "id": "earths-gravity-may-have-kept-the-early-moons-volcanic-heart-beat",
