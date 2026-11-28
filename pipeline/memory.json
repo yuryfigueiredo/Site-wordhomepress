@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-28T05:28:00.168Z",
+  "updated": "2026-11-28T09:29:45.603Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -729,14 +729,16 @@
       "outcome": "publicada",
       "at": "2026-11-28T05:28:00.167Z",
       "id": "broken-heat-records-test-the-archive"
+    },
+    "https://www.space.com/stargazing/skywatching-kit/best-smart-telescope-for-nebula-photography-now-500-off": {
+      "slug": "i-think-this-might-be-the-best-smart-telescope-for-nebula-photog",
+      "topic": "I think this might be the best smart telescope for nebula photography — I'm amazed it's $500 off",
+      "outcome": "publicada",
+      "at": "2026-11-28T09:29:45.603Z",
+      "id": "smart-telescope-discount-forces-a-skipped-comparison"
     }
   },
   "publishes": [
-    {
-      "id": "alien-invasions-promise-a-fight-and-the-warning-has-none",
-      "at": "2026-11-15T09:32:12.647Z",
-      "score": 6.8
-    },
     {
       "id": "sixty-years-turn-gemini-12-into-two-surnames-and-a-date",
       "at": "2026-11-15T13:35:16.749Z",
@@ -1031,6 +1033,11 @@
       "id": "broken-heat-records-test-the-archive",
       "at": "2026-11-28T05:28:00.167Z",
       "score": 6.8
+    },
+    {
+      "id": "smart-telescope-discount-forces-a-skipped-comparison",
+      "at": "2026-11-28T09:29:45.603Z",
+      "score": 7.3
     }
   ]
 }

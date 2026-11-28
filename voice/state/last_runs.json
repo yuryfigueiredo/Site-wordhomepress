@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-28T05:28:00.162Z",
+  "updated": "2026-11-28T09:29:45.601Z",
   "runs": {
     "analyst": {
-      "id": "broken-heat-records-test-the-archive",
+      "id": "smart-telescope-discount-forces-a-skipped-comparison",
       "date": "2026-11-28",
-      "opening_move": "correction",
-      "ending_move": "flat_statement",
-      "title_pattern": "broken heat records report",
+      "opening_move": "document",
+      "ending_move": "verification",
+      "title_pattern": "smart telescope discounts force",
       "humor_lines": 1
     },
     "lab": {

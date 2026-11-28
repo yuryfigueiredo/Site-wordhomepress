@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "smart-telescope-discount-forces-a-skipped-comparison"
+        }
+      ],
+      "destination": "/a-smart-telescope-discount-forces-a-skipped-comparison.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "broken-heat-records-test-the-archive"
         }
       ],
