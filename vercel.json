@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "moon-salad-trials-measure-the-chamber-not-the-crop"
+        }
+      ],
+      "destination": "/a-moon-salad-trials-measure-the-chamber-not-the-crop.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "black-friday-smart-home-deal-pages-count-stock-not-software"
         }
       ],

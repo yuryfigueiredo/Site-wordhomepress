@@ -5,8 +5,16 @@
     <link>https://www.homeworldpress.com/</link>
     <description>Independent editorial coverage of sci-fi literature, technology, space science, and tested buyer's guides.</description>
     <language>en-us</language>
-    <lastBuildDate>Fri, 27 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 28 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Moon Salad Trials Say More About the Chamber Than the Crop</title>
+      <link>https://www.homeworldpress.com/article.html?id=moon-salad-trials-measure-the-chamber-not-the-crop</link>
+      <description>Three promising crops in a growth chamber tell us about controlled-environment hardware. The edible yield, the repeats and the failure log are still missing.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=moon-salad-trials-measure-the-chamber-not-the-crop</guid>
+      <pubDate>Sat, 28 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Black Friday Smart Home Deals Measure Stock, Not Software</title>
       <link>https://www.homeworldpress.com/article.html?id=black-friday-smart-home-deal-pages-count-stock-not-software</link>
@@ -78,14 +86,6 @@
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=clipper-picks-up-speed-from-earth-and-pays-for-instruments</guid>
       <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Xteink's Price Cut Pushes the Whole Argument Onto Support</title>
-      <link>https://www.homeworldpress.com/article.html?id=a-fifty-dollar-pocket-reader-moves-the-risk-onto-support</link>
-      <description>The X4 Classic's Black Friday price sits under the cost of a phone case, so the buying decision now turns on the return window, the firmware and the support address.</description>
-      <category>tech</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=a-fifty-dollar-pocket-reader-moves-the-risk-onto-support</guid>
-      <pubDate>Wed, 25 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>

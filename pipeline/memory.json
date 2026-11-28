@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-27T21:30:09.697Z",
+  "updated": "2026-11-28T01:27:54.140Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -715,14 +715,16 @@
       "outcome": "publicada",
       "at": "2026-11-27T21:30:09.696Z",
       "id": "black-friday-smart-home-deal-pages-count-stock-not-software"
+    },
+    "https://phys.org/news/2026-11-strawberries-cucumbers-lemon-basil-future.html": {
+      "slug": "strawberries-cucumbers-and-lemon-basil-show-promise-for-future-m",
+      "topic": "Strawberries, cucumbers and lemon basil show promise for future moon and Mars menus",
+      "outcome": "publicada",
+      "at": "2026-11-28T01:27:54.139Z",
+      "id": "moon-salad-trials-measure-the-chamber-not-the-crop"
     }
   },
   "publishes": [
-    {
-      "id": "deadline-without-dependency-list-lunar-return",
-      "at": "2026-11-15T01:38:40.721Z",
-      "score": 6.4
-    },
     {
       "id": "second-pass-webb-images-planet-never-hidden",
       "at": "2026-11-15T06:00:00.055Z",
@@ -1016,6 +1018,11 @@
     {
       "id": "black-friday-smart-home-deal-pages-count-stock-not-software",
       "at": "2026-11-27T21:30:09.696Z",
+      "score": 6.8
+    },
+    {
+      "id": "moon-salad-trials-measure-the-chamber-not-the-crop",
+      "at": "2026-11-28T01:27:54.139Z",
       "score": 6.8
     }
   ]

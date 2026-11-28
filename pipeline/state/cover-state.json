@@ -1,14 +1,6 @@
 {
-  "currentCoverId": "black-friday-smart-home-deal-pages-count-stock-not-software",
+  "currentCoverId": "moon-salad-trials-measure-the-chamber-not-the-crop",
   "changes": [
-    {
-      "at": "2026-11-13T21:46:47.629Z",
-      "dia": "2026-11-13",
-      "rodada": "2026-11-13T16:23",
-      "id": "candidate-neutron-star-mass-gap",
-      "tipo": "do dia",
-      "era": "nasa-stakes-ten-billion-dollars-lunar-infrastructure"
-    },
     {
       "at": "2026-11-14T11:29:05.608Z",
       "dia": "2026-11-14",
@@ -632,6 +624,14 @@
       "id": "black-friday-smart-home-deal-pages-count-stock-not-software",
       "tipo": "do dia",
       "era": "a-galaxy-statistic-asks-the-ocean-where-its-water-connects"
+    },
+    {
+      "at": "2026-11-28T01:27:53.063Z",
+      "dia": "2026-11-27",
+      "rodada": "2026-11-27T22:23",
+      "id": "moon-salad-trials-measure-the-chamber-not-the-crop",
+      "tipo": "do dia",
+      "era": "black-friday-smart-home-deal-pages-count-stock-not-software"
     }
   ],
   "capaVistas": [
@@ -699,6 +699,7 @@
     "black-friday-card-percentages-describe-one-button",
     "the-model-code-decides-what-a-headphone-discount-means",
     "a-galaxy-statistic-asks-the-ocean-where-its-water-connects",
-    "black-friday-smart-home-deal-pages-count-stock-not-software"
+    "black-friday-smart-home-deal-pages-count-stock-not-software",
+    "moon-salad-trials-measure-the-chamber-not-the-crop"
   ]
 }
