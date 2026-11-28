@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-28T01:27:54.140Z",
+  "updated": "2026-11-28T05:28:00.168Z",
   "leads": {
     "https://www.sciencedaily.com/releases/2026/10/261007042108.htm": {
       "outcome": "publicada",
@@ -722,14 +722,16 @@
       "outcome": "publicada",
       "at": "2026-11-28T01:27:54.139Z",
       "id": "moon-salad-trials-measure-the-chamber-not-the-crop"
+    },
+    "https://phys.org/news/2026-11-world-experiencing-abnormally-hot-days.html": {
+      "slug": "the-world-is-experiencing-a-string-of-abnormally-hot-days-and-re",
+      "topic": "The world is experiencing a string of abnormally hot days—and records are being shattered",
+      "outcome": "publicada",
+      "at": "2026-11-28T05:28:00.167Z",
+      "id": "broken-heat-records-test-the-archive"
     }
   },
   "publishes": [
-    {
-      "id": "second-pass-webb-images-planet-never-hidden",
-      "at": "2026-11-15T06:00:00.055Z",
-      "score": 6.8
-    },
     {
       "id": "alien-invasions-promise-a-fight-and-the-warning-has-none",
       "at": "2026-11-15T09:32:12.647Z",
@@ -1023,6 +1025,11 @@
     {
       "id": "moon-salad-trials-measure-the-chamber-not-the-crop",
       "at": "2026-11-28T01:27:54.139Z",
+      "score": 6.8
+    },
+    {
+      "id": "broken-heat-records-test-the-archive",
+      "at": "2026-11-28T05:28:00.167Z",
       "score": 6.8
     }
   ]

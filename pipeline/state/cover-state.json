@@ -1,5 +1,5 @@
 {
-  "currentCoverId": "moon-salad-trials-measure-the-chamber-not-the-crop",
+  "currentCoverId": "broken-heat-records-test-the-archive",
   "changes": [
     {
       "at": "2026-11-14T11:29:05.608Z",
@@ -632,6 +632,14 @@
       "id": "moon-salad-trials-measure-the-chamber-not-the-crop",
       "tipo": "do dia",
       "era": "black-friday-smart-home-deal-pages-count-stock-not-software"
+    },
+    {
+      "at": "2026-11-28T05:27:59.104Z",
+      "dia": "2026-11-28",
+      "rodada": "2026-11-28T02:23",
+      "id": "broken-heat-records-test-the-archive",
+      "tipo": "do dia",
+      "era": "moon-salad-trials-measure-the-chamber-not-the-crop"
     }
   ],
   "capaVistas": [
@@ -700,6 +708,7 @@
     "the-model-code-decides-what-a-headphone-discount-means",
     "a-galaxy-statistic-asks-the-ocean-where-its-water-connects",
     "black-friday-smart-home-deal-pages-count-stock-not-software",
-    "moon-salad-trials-measure-the-chamber-not-the-crop"
+    "moon-salad-trials-measure-the-chamber-not-the-crop",
+    "broken-heat-records-test-the-archive"
   ]
 }

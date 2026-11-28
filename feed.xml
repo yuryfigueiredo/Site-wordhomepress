@@ -8,6 +8,14 @@
     <lastBuildDate>Sat, 28 Nov 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://www.homeworldpress.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>Broken Heat Records Report on the Archive That Holds Them</title>
+      <link>https://www.homeworldpress.com/article.html?id=broken-heat-records-test-the-archive</link>
+      <description>A string of hot days tells you how the comparison window was built and who chose it. The warming itself lives in the distribution behind the maximum, and releases rarely print that.</description>
+      <category>science</category>
+      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=broken-heat-records-test-the-archive</guid>
+      <pubDate>Sat, 28 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>Moon Salad Trials Say More About the Chamber Than the Crop</title>
       <link>https://www.homeworldpress.com/article.html?id=moon-salad-trials-measure-the-chamber-not-the-crop</link>
       <description>Three promising crops in a growth chamber tell us about controlled-environment hardware. The edible yield, the repeats and the failure log are still missing.</description>
@@ -77,14 +85,6 @@
       <description>A substrate trial showed tuber crops tolerate crushed rock under lamps. Water, nitrogen, energy and gravity were never supplied by the dirt.</description>
       <category>science</category>
       <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=simulated-moon-dust-grows-a-potato-root-fine</guid>
-      <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Clipper Picks Up Speed From Earth and Pays for Instruments</title>
-      <link>https://www.homeworldpress.com/article.html?id=clipper-picks-up-speed-from-earth-and-pays-for-instruments</link>
-      <description>The pass is where a launch vehicle limit turns into instrument mass. Timing data, not photographs, will decide whether it worked.</description>
-      <category>science</category>
-      <guid isPermaLink="false">https://www.homeworldpress.com/article.html?id=clipper-picks-up-speed-from-earth-and-pays-for-instruments</guid>
       <pubDate>Thu, 26 Nov 2026 00:00:00 +0000</pubDate>
     </item>
   </channel>

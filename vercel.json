@@ -11,6 +11,17 @@
         {
           "type": "query",
           "key": "id",
+          "value": "broken-heat-records-test-the-archive"
+        }
+      ],
+      "destination": "/a-broken-heat-records-test-the-archive.html"
+    },
+    {
+      "source": "/article.html",
+      "has": [
+        {
+          "type": "query",
+          "key": "id",
           "value": "moon-salad-trials-measure-the-chamber-not-the-crop"
         }
       ],

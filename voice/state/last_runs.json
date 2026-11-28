@@ -1,14 +1,14 @@
 {
   "_comment": "Memória anti-repetição do pipeline. Uma entrada por registro, sobrescrita após cada publicação. O chamador lê antes de montar o briefing e proíbe a abertura e o fecho registrados.",
   "version": 1,
-  "updated": "2026-11-28T01:27:54.135Z",
+  "updated": "2026-11-28T05:28:00.162Z",
   "runs": {
     "analyst": {
-      "id": "moon-salad-trials-measure-the-chamber-not-the-crop",
+      "id": "broken-heat-records-test-the-archive",
       "date": "2026-11-28",
-      "opening_move": "object",
-      "ending_move": "verification",
-      "title_pattern": "moon salad trials say",
+      "opening_move": "correction",
+      "ending_move": "flat_statement",
+      "title_pattern": "broken heat records report",
       "humor_lines": 1
     },
     "lab": {
